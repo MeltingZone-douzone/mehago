@@ -6,7 +6,10 @@ import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AccountPage from './pages/AccountPage';
 import SettingChatRoom from '../chat/SettingChatRoom';
 import Header from '../components/Header';
+import Chatting from '../chat/Chatting';
 
+import PublicRouter from './PublicRouter';
+import PrivateRouter from './PrivateRouter';
 
 
 export default function MainRouter() {
@@ -17,10 +20,11 @@ export default function MainRouter() {
                 <Header />
                 <WebPage>
                     <Switch>
-                        <Route exact path="/"><Redirect to="/account/login" /></Route>
-                        <Route path="/profile" component={ProfileSettingsPage} />
-                        <Route path="/account" component={AccountPage} />
-                        <Route path="/room" component={SettingChatRoom} />
+                        <PublicRouter restricted={true} exact path="/" component={AccountPage} />
+                        <PublicRouter restricted={false} path="/account" component={AccountPage} />
+                        <PublicRouter path="/room" component={SettingChatRoom} />
+                        <PrivateRouter path="/profile" component={ProfileSettingsPage} />
+                        <PrivateRouter path="/chat" component={Chatting} />
                     </Switch>
                 </WebPage>
             </Fragment>
