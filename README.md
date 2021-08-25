@@ -2,6 +2,8 @@
 
 db설정 변경...
 
+application.yml
+
 ```yml
 # datasource
 datasource:
@@ -13,62 +15,31 @@ datasource:
   maxActive: 100
 ```
 
-spring-boot run (backend 나중에 추가해야됨 npm run dev:backend)
+start
 
 ```bash
 $ npm run dev
 ```
 
-frontend와 통신
+spring-boot
 경로 : /api
 
-backend와 통신
+backend
 경로 : /chat
+
+webpack.config.xml
+
+```json
+  proxy:{
+          '/api': 'http://localhost:8080',
+          '/chat': 'http://localhost:8888'           
+        }
+```
 
 ### 구조
 
-#### spring
+링크 달아야 함
 
-<pre>
-    src
-    |--- /main
-            |--- /java
-            |       |--- /com/douzone/mehago
-            |               |--- /config
-            |               |       |--- WebConfig.java
-            |               |--- /controller
-            |               |       |--- AccountController.java
-            |               |--- /repository
-            |               |       |--- AccountRepository.java
-            |               |--- /service
-            |               |       |--- AccountService.java
-            |               |--- /vo
-            |               |       |--- Account.java
-            |               |--- MehagoApplication.java
-            |--- /resource
-                    |--- /mybatis
-                    |       |--- /mappers
-                    |       |       |--- account.xml
-                    |       |--- configuration.xml
-                    |--- application.yml
-</pre>
+### jwt
 
-ResponseEntity
-
-#### frontend
-
-<pre>
-    frontend
-        |--- /config
-        |       |--- babel.config.json
-        |       |--- webpack.config.js
-        |--- /public
-        |       |--- /assets
-        |       |       |--- /js
-        |       |               |-- main.js
-        |       |--- favicon.ico
-        |       |--- index.html
-        |--- /src
-</pre>
-
-#### backend
+링크 달아야 함

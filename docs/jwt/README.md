@@ -58,3 +58,77 @@ jwt library
 
 milliseconds
 signWith(알고리즘, 비밀키)
+
+
+### React에서 사용하기 (header 처리)
+
+1. getMapping
+
+```javascript
+<button
+  onClick={() => {
+    axios
+      .get("/api/account/test", {
+        headers: {
+          Authorization: `Bearer ${localStorage.get("token")}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+  }}
+>
+  auth get
+</button>
+```
+
+2. postMapping
+
+```javascript
+<button
+  onClick={() => {
+    axios
+      .post("/api/account/test", null, {
+        headers: {
+          Authorization: `Bearer ${localStorage.get("token")}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+  }}
+>
+  auth post
+</button>
+```
+
+3. logout
+ 
+```javascript
+<button
+  onClick={() =>
+    axios
+      .post("/api/account/logout", null, {
+        headers: {
+          Authorization: `Bearer ${localStorage.get("token")}`,
+        },
+      })
+      .then((res) => {
+        localStorage.remove("token");
+      })
+  }
+>
+  logout
+</button>
+```
+
+### Node에서 token decode하기 (backend)
+
+```javascript
+        encodedSecretKey = new Buffer(secretKey).toString('base64');
+
+        jwt.verify(socket.token, encodedSecretKey, function (err, decoded) {
+            console.log({ err: err, result: decoded, });
+        });
+```
+
