@@ -7,7 +7,7 @@ export default function Links() {
     <div className={styles.Links}>
       <ul>
         <li>
-          <NavLink to="/account/idsearch" >아이디 찾기</NavLink>
+          <NavLink to="/account/idsearch" >이메일 찾기</NavLink>
         </li>
         <li>
           <NavLink to="/account/passwordsearch" >비밀번호 찾기</NavLink>

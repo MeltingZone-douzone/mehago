@@ -5,7 +5,10 @@ import { Route, Switch, BrowserRouter as Router, Redirect } from 'react-router-d
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AccountPage from './pages/AccountPage';
 import Header from '../components/Header';
+import Chatting from '../chat/Chatting';
 
+import PublicRouter from './PublicRouter';
+import PrivateRouter from './PrivateRouter';
 
 
 export default function MainRouter() {
@@ -16,11 +19,11 @@ export default function MainRouter() {
                 <Header />
                 <WebPage>
                     <Switch>
-                        <Route exact path="/"><Redirect to="/account/login"/></Route>
+                        <PublicRouter restricted={true} exact path="/" component={AccountPage}/>
+                        <PublicRouter restricted={false} path="/account" component={AccountPage}/>
                         
-                        <Route path="/profile"  component={ProfileSettingsPage}/>
-                        <Route path="/account" component={AccountPage}/>
-
+                        <PrivateRouter path="/profile"  component={ProfileSettingsPage}/>
+                        <PrivateRouter path="/chat" component={Chatting} />
                     </Switch>
                 </WebPage>
             </Fragment>
