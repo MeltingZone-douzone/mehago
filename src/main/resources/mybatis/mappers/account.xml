@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="account">
+
+	<!-- insert -->
+	<insert id="insert" parameterType="account">
+		<![CDATA[
+			insert 
+				into account 
+				values(null,#{email},#{password},#{nickname},#{phoneNumber},#{name}, null, now());
+		]]>
+	</insert>
+
+ 	<!-- update account profile -->
+	<update id="updateNickname" parameterType="account">
+		<![CDATA[
+		    update account
+		    set nickname=#{nickname }
+		    where no=${no }
+		]]>
+	</update>
+
+    <update id="updatePassword" parameterType="account">
+		<![CDATA[
+		    update account
+		    set password=#{password}
+		    where no=${no }
+		]]>
+	</update>
+
+    <update id="updateUserInfo" parameterType="account">
+		<![CDATA[
+		    update account
+		    set name=#{name },
+		        phone_number=#{phoneNumber}
+		    where no=#{no }
+		]]>
+	</update>
+
+	<!-- update token for node server -->
+	<update id="updateToken" parameterType="account">
+		<![CDATA[
+				update account 
+				set token= #{token}
+				where no = #{no}
+		  ]]>
+	</update>
+
+	<!-- update RandomPassword -->
+	<update id="updateRandomPassword" parameterType="map">
+		<![CDATA[
+			update account
+			    set password=#{randomPassword }
+			    where email=#{email }
+		]]>
+	</update>
+
+	<!-- select account -->
+	<select id="findByEmailAndPassword" parameterType="account"
+		resultType="account">
+		<![CDATA[
+			select no, email, nickname
+			  from account 
+			where email = #{email } 
+			  and password = #{password } 
+		]]>
+	</select>
+
+	<select id="findByNo" parameterType="account"
+		resultType="account">
+		<![CDATA[
+			select no, email, name, nickname, phone_number as phoneNumber, thumbnail_url as thumbnailUrl
+		 	 from account 
+		 	where no = #{no } 
+		]]>
+	</select>
+
+	<!-- select for account serach -->
+	<select id="searchEmail" parameterType="map"
+		resultType="account">
+		<![CDATA[
+			select email
+				from account 
+				where name = #{name} 
+				and phone_number = #{phoneNumber}
+		]]>
+	</select>
+
+	<select id="searchAccount" parameterType="map"
+		resultType="account">
+		<![CDATA[
+			select email, password
+				from account 
+				where name = #{name} 
+				and email = #{email}
+		]]>
+	</select>
+	<!-- select for validation -->
+
+	<select id="isExistsData" parameterType="Map" resultType="String">
+		<choose>
+			<when test='name == "email"'>
+				<![CDATA[
+					select 
+						email
+					from 
+						account
+					where 
+						email = #{value}
+				]]>
+			</when>
+			<when test='name == "nickname"'>
+				<![CDATA[
+					select 
+						nickname
+					from 
+						account
+					where 
+						nickname = #{value}
+				]]>
+			</when>
+			<when test='name == "phone_number"'>
+				<![CDATA[
+					select 
+						phone_number
+					from 
+						account
+					where 
+						phone_number = #{value}
+				]]>
+			</when>
+		</choose>
+	</select>
+
+</mapper>
