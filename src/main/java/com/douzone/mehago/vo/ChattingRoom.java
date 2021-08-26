@@ -1,5 +1,7 @@
 package com.douzone.mehago.vo;
 
+import java.util.ArrayList;
+
 import lombok.Data;
 
 @Data

@@ -9,6 +9,6 @@ public class Participant {
     private Long notReadChat;
     private Long lastReadChatNo;
 
-    private Long userNo;
+    private Long accountNo;
     private Long chattingRoomNo;
 }

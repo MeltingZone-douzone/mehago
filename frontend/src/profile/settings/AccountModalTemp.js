@@ -7,13 +7,13 @@ import { colors } from '../../assets/styles/properties/Colors';
 import NicknameModal from './NicknameModal';
 import PasswordModal from './PasswordModal';
 import ThumbnailModal from './ThumbnailModal';
-const AccountModalTemp = ({title,content,onClose,settingsApi}) =>{
+const AccountModalTemp = ({nickname,title,content,onClose,settingsApi}) =>{
 
     function getComponent(){
         switch(content){
             case 'thumbnail' : return(<ThumbnailModal onClose={onClose} setThumbnailApi = {settingsApi.setThumbnail}/>);
                 break;
-            case 'nickname' : return(<NicknameModal onClose={onClose} setNicknameApi = {settingsApi.setNickname} />);
+            case 'nickname' : return(<NicknameModal nickname={nickname} onClose={onClose} setNicknameApi = {settingsApi.setNickname} />);
                 break;
             case 'password' : return(<PasswordModal onClose={onClose} setPasswordApi = {settingsApi.setPassword}/>);
                 break;
@@ -21,7 +21,7 @@ const AccountModalTemp = ({title,content,onClose,settingsApi}) =>{
     }
 
     return(
-        <Overlay onClick={ onClose}>
+        <Overlay onClick={onClose}>
             <ModalContainer onClick={(e)=>e.stopPropagation()}>
                 <TitleDiv>{title}<Cancel onClick={onClose}>
                     <FontAwesomeIcon icon={faTimes} size={'sm'} color={colors.mainThemeColor}/>
