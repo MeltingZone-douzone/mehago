@@ -29,7 +29,7 @@ backend
 
 webpack.config.xml
 
-```json
+```javascript
   proxy:{
           '/api': 'http://localhost:8080',
           '/chat': 'http://localhost:8888'           

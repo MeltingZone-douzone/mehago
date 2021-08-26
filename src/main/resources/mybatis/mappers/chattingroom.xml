@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="chattingroom">
+
+    <insert id="createRoom" parameterType="chattingroom">
+		<![CDATA[
+			insert 
+				into chatting_room 
+				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{secretRoom},#{oner})		
+        ]]>
+        <selectKey keyProperty="no" order="AFTER" resultType="Long">
+            select last_insert_id()
+        </selectKey>
+	</insert>
+
+</mapper>
