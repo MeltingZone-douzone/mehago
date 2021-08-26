@@ -1,7 +1,7 @@
 import React, {useState, useEffect}from 'react';
 import styled from 'styled-components';
 
-export default function ReceivedMsg({socket}) {
+export default function ReceivedMsg({socket, messageObject, messageFunction}) {
     
     const [storedMsg, setStoredMsg]  = useState([]);
     const [receivedMsg, setReceivedMsg] = useState();

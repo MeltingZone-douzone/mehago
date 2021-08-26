@@ -6,12 +6,16 @@ const header = {
     "Accept": "application/json",
 }
 
-const headerWithAuth = {
+let AuthHeader = { 
     "Context-Type": "application/json",
     "Accept": "application/json",
-    "Authorization": `Bearer ` + localStorage.get("token")
-
 }
+
+function setAuthHeader() {
+    AuthHeader = Object.assign(AuthHeader,{"Authorization": `Bearer ` + localStorage.get("token")});
+}
+
+
 export function loginApi(account) {
     return axios
         .post("/api/account/login", account, {
@@ -26,9 +30,11 @@ export function signUpApi(user) {
 }
 
 export function getUserInfoApi() {
-    return axios.get("/api/account/get-user", { headers: headerWithAuth })
+    setAuthHeader();
+    return axios.get("/api/account/get-user", { headers:AuthHeader})
                 .then(res => res);
 }
+
 
 // 닉네임, 이메일, 전화번호 존재여부
 export function isExistApi(name, value) { 
@@ -39,17 +45,26 @@ export function isExistApi(name, value) {
 }
 
 export function updateNicknameApi( newNickname ) {
-    return axios.post("/api/account/update/nickname", newNickname, {headers:headerWithAuth})
+    setAuthHeader();
+    return axios.post("/api/account/update/nickname", newNickname, {headers:AuthHeader})
                 .then(res => res);
 }
 
 export function updatePasswordApi( passwords ) {
-    return axios.post("/api/account/update/password", passwords, {headers:headerWithAuth})
+    setAuthHeader();
+    return axios.post("/api/account/update/password", passwords, {headers:AuthHeader})
                 .then(res => res);
 }
 
 export function updateUserInfoApi( newUserInfo ) {
-    console.log(newUserInfo);
-    return axios.post("/api/account/update/userInfo", newUserInfo, {headers:headerWithAuth})
+    setAuthHeader();
+    return axios.post("/api/account/update/userInfo", newUserInfo, {headers:AuthHeader})
                 .then(res => res);
+}
+
+// 토큰만 확인
+export function checkingAuthenticateApi() {
+    setAuthHeader();
+    return axios.get("/api/account/authenticate", {headers:AuthHeader})
+        .then(res =>  res.data.result === "success"? true : false);
 }

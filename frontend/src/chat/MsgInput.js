@@ -1,26 +1,15 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-export default function MsgInput({socket}) {
+import { Button } from '@material-ui/core'
 
-    const [message, setMessage] = useState("");
-
-    const onChanageMessage = (e) =>{
-        setMessage(e.target.value);
-    }
-
-    const onSubmitMessage = (e) => {
-        e.preventDefault();
-        if(message){
-            socket.emit('chat message', message);
-            setMessage('');
-        }
-    }
+export default function MsgInput({messageObject, messageFunction}) {
 
     return(
         <MsgForm>
-            <form onSubmit={ onSubmitMessage }>
-                    <input value={ message } onChange={ onChanageMessage }/>
+            <form onSubmit={ messageFunction.onSubmitMessage }>
+                    <input name='msg' value={ messageObject.msg } onChange={ messageFunction.onChangeMessage }/>
             </form>
+            <Button value={'나가기'} onClick={ messageFunction.leaveRoom } />
         </MsgForm>
     );
 }

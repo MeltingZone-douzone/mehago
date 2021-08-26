@@ -1,26 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-export default function ChatHeader({socket}) {
+export default function ChatHeader({socket, messageObject}) {
 
-    const [roomNum, setRoomNum] = useState("room 1");
+    const [roomName, setRoomName] = useState("헬창모임");
+    const [nickname, setNickname] = useState("손놈");
 
     useEffect(()=>{
-        socket.emit("change room", roomNum);
-    },[roomNum]);
+        const data = { // ~~방에 ~~가 입장했다 보여주기 위해 보냄
+            nickname,
+            roomName 
+        }
+        socket.emit("join", data);
+    },[roomName]);
 
-    const changeRoomNum = (e) =>{
-        setRoomNum(e.target.value);
+    const changeRoomName = (e) =>{
+        setRoomName(e.target.value);
+    }
+    const changeNickname = (e) => {
+        setNickname(e.target.value);
     }
 
     return(
         <Header>
-            <h2>Chatting Title</h2>
-            <select onChange={changeRoomNum}>
-                    <option value={"room 1"}>room 1</option>
-                    <option value={"room 123"}>room 123</option>
-                    <option value={"room 234"}>room 234</option>
+            <h2>채링채링</h2>
+            <br/>
+            <select onChange={changeRoomName}>
+                    <option value={"헬창모임"}>헬창모임</option>
+                    <option value={"아이폰 사용자 모임"}>아이폰 사용자 모임</option>
+                    <option value={"맥창"}>맥창</option>
             </select>
+            <input type={'text'} name='nickname' value={ nickname } onChange={changeNickname}/>
         </Header>
     );
 }

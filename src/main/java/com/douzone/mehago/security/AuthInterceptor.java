@@ -61,7 +61,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 			request.setAttribute("account", decodedAccount);
 
 			// 여기서 accout값을 가져오면 controller에 갈때 그때는 어떻게 가져 갈것인가..?
-			// TODO @authUser을 이용해야 한다면?
+			// TODO: @authUser을 이용해야 한다면?
 
 
 			///////////////지금은 무시무시무시무시무시////////////////////////////////////////////////////

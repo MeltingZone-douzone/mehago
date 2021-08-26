@@ -129,7 +129,7 @@ export default function SignUpForm() {
                 console.log(res.data);
                 console.log(res.data === "signup failed");
                 if(res.statusText === "OK") {
-                  if(res.data === "signup failed") {
+                  if(res.data === false) {
                     console.log('회원가입 실패');
                     return false;
                   }

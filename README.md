@@ -2,6 +2,11 @@
 
 db설정 변경...
 
+<<<<<<< HEAD
+=======
+application.yml
+
+>>>>>>> 518b2f836d1c6d674c7334585cda8691077a7db5
 ```yml
 # datasource
 datasource:
@@ -13,12 +18,17 @@ datasource:
   maxActive: 100
 ```
 
+<<<<<<< HEAD
 spring-boot run (backend 나중에 추가해야됨 npm run dev:backend)
+=======
+start
+>>>>>>> 518b2f836d1c6d674c7334585cda8691077a7db5
 
 ```bash
 $ npm run dev
 ```
 
+<<<<<<< HEAD
 frontend와 통신
 경로 : /api
 
@@ -72,3 +82,27 @@ ResponseEntity
 </pre>
 
 #### backend
+=======
+spring-boot
+경로 : /api
+
+backend
+경로 : /chat
+
+webpack.config.xml
+
+```json
+  proxy:{
+          '/api': 'http://localhost:8080',
+          '/chat': 'http://localhost:8888'           
+        }
+```
+
+### 구조
+
+링크 달아야 함
+
+### jwt
+
+링크 달아야 함
+>>>>>>> 518b2f836d1c6d674c7334585cda8691077a7db5

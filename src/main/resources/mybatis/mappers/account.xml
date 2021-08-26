@@ -10,7 +10,7 @@
 		<![CDATA[
 			insert 
 				into account 
-				values(null,#{email},#{password},#{nickname},#{phoneNumber},#{name}, null, now());
+				values(null,#{email},#{password},#{nickname},#{phoneNumber},#{name}, null, null, now());
 		]]>
 	</insert>
 
