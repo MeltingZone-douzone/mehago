@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { Route, Switch, BrowserRouter as Router, Redirect } from 'react-router-dom';
+import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AccountPage from './pages/AccountPage';
@@ -20,11 +20,11 @@ export default function MainRouter() {
                 <Header />
                 <WebPage>
                     <Switch>
-                        <PublicRouter restricted={true} exact path="/" component={AccountPage} />
-                        <PublicRouter restricted={false} path="/account" component={AccountPage} />
-                        <PublicRouter path="/room" component={SettingChatRoom} />
-                        <PrivateRouter path="/profile" component={ProfileSettingsPage} />
-                        <PrivateRouter path="/chat" component={Chatting} />
+                        <Route exact path="/" component={AccountPage} />
+                        <Route  path="/account" component={AccountPage} />
+                        <Route path="/room" component={SettingChatRoom} />
+                        <Route path="/profile" component={ProfileSettingsPage} />
+                        <Route path="/chat" component={Chatting} />
                     </Switch>
                 </WebPage>
             </Fragment>

@@ -3,6 +3,7 @@ package com.douzone.mehago.service;
 import com.douzone.mehago.repository.AccountRepository;
 import com.douzone.mehago.utils.AES;
 import com.douzone.mehago.vo.Account;
+import com.douzone.mehago.vo.PasswordVo;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,6 @@ public class AccountService {
     }
 
     public Account getAccount(Account account){
-        // email, password
         account = getEncryptPassword(account);
         return accountRepository.getAccount(account);
     }
@@ -56,9 +56,12 @@ public class AccountService {
         return accountRepository.updateNickname(account);
     }
     
-    public boolean updatePassword(Account account) {
-        // 이전 비밀번호 비교
-        return accountRepository.updatePassword(account);        
+    public boolean updatePassword( PasswordVo passwordVo) {
+        passwordVo.setPrevPassword(getEncryptPassword(passwordVo.getPrevPassword()));
+        passwordVo.setNewPassword(getEncryptPassword(passwordVo.getNewPassword()));
+
+        return accountRepository.updatePassword(passwordVo); 
+        
     }
 
     public boolean updateUserInfo(Account account) {
@@ -80,5 +83,9 @@ public class AccountService {
     private Account getEncryptPassword (Account account) {
         account.setPassword(AES.encrypt(account.getPassword(), SECRET_KEY)); // 비밀번호 암호화
         return account;
+    }
+
+    private String getEncryptPassword ( String password ) {
+        return AES.encrypt(password, SECRET_KEY);
     }
 }

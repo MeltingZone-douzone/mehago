@@ -4,7 +4,9 @@ import UserProfile from '../../profile/UserProfile';
 import UserSettingsContainer from '../../profile/settings/ProfileSettings';
 
 
-import { getUserInfoApi, updateUserInfoApi } from '../../../api/AccountApi';
+import { getUserInfoApi, updateNicknameApi, updatePasswordApi, updateUserInfoApi } from '../../../api/AccountApi';
+
+import 'regenerator-runtime';
 export default function ProfileSettingsPage({history}) {
 
     const [userInfo, setUserInfo] = useState({nickname:"", name:"", phoneNumber:"" , thumbnailUrl:"" });
@@ -13,9 +15,8 @@ export default function ProfileSettingsPage({history}) {
         getUserInfoApi().then(res =>{
             if(res.data.result === "fail") {
                 alert(res.data.message);
-                history.push("/");
+                history.replace("/account/login");
             }
-
             setUserInfo(res.data.data);
         })
     },[])
@@ -32,17 +33,44 @@ export default function ProfileSettingsPage({history}) {
                 if(res.data.result === 'fail') {
                     alert(res.data.message);
                 } else {
-                    setUserInfo(...userInfo, newUserInfo) 
+                    setUserInfo({...userInfo, newUserInfo}) 
                 }
             });
         },
 
-        setPassword : (passwords) =>{
+        setPassword : async (passwords) =>{
+            const { newPassword, checkPassword} = passwords;
+            let result;
 
+            if(checkPassword != newPassword ) {
+                return "비밀번호가 맞지 않습니다. 다시 입력해주세요.";
+            }
+
+            await updatePasswordApi(passwords).then(res =>{
+                console.log(res);
+                if(res.data.result === 'fail') {
+                    result = res.data.message;
+                } else {
+                    result = res.data.data;
+                }
+            })
+
+            return result;
         },
 
-        setNickname : (newNickname) =>{
+        setNickname : async (newNickname) =>{
+            const {nickname} = newNickname;
+            let result;
+            await updateNicknameApi(newNickname).then(res=>{
+                if(res.data.result === 'fail') {
+                    result = res.data.message;
+                } else {
+                    setUserInfo({...userInfo, nickname});
+                    result = res.data.data;
+                }
+            })
 
+            return result;
         },
 
         setThumbnail : () =>{

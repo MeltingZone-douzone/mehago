@@ -6,6 +6,7 @@ import { faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
 
 import AccountModalTemp from './AccountModalTemp';
 import Thumbnail from '../../components/thumbnail';
+import CircleDiv from '../../assets/styles/CircleDiv';
 
 
 const AccountSettings = ({nickname, thumbnailUrl, settingsApi}) =>{
@@ -34,8 +35,7 @@ const AccountSettings = ({nickname, thumbnailUrl, settingsApi}) =>{
             setOpenContainer(true);
     },[modalContent]);
 
-    function closeTemplate(e){
-        e.stopPropagation();
+    function closeTemplate(){
         setOpenContainer(false);
         setModalContent(null);
     }
@@ -63,7 +63,7 @@ const AccountSettings = ({nickname, thumbnailUrl, settingsApi}) =>{
             
         </SettingContainer>
         { openContainer ? 
-            <AccountModalTemp title={modalTitle} updateButton={modalButton} content={modalContent} settingsApi={settingsApi} onClose={closeTemplate}/>
+            <AccountModalTemp nickname={nickname} title={modalTitle} updateButton={modalButton} content={modalContent} settingsApi={settingsApi} onClose={closeTemplate}/>
           : null}
         </Fragment>
     );
@@ -88,7 +88,7 @@ const LineSettingButton = styled.button`
     text-align:start;
     align-items:center;
     justify-content:space-between;
-    padding:1rem;
+    padding:1.5rem;
     width:100%;
     background-color:#fff;
     border:none;
@@ -117,9 +117,7 @@ const CurrentInformation = styled.div`
     color:#000;
 
 `
-const ImageDiv =styled.div`
+const ImageDiv =styled(CircleDiv)`
     width:50px;
     height:50px;
-    background-color:#fff;
-    border:1px solid #ccc;
 `

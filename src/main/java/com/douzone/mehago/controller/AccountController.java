@@ -8,6 +8,7 @@ import com.douzone.mehago.service.MailService;
 import com.douzone.mehago.utils.RandomPassword;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.Mail;
+import com.douzone.mehago.vo.PasswordVo;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -53,18 +54,18 @@ public class AccountController {
     @PostMapping(value="/update/nickname")
     public ResponseEntity<?> updateNickname(@AuthUser Account auth, @RequestBody Account account) {
         account.setNo(auth.getNo());
-        accountService.updateNickname(auth);
+        boolean result = accountService.updateNickname(account);
         
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
     }
 
     @Auth
     @PostMapping(value="/update/password")
-    public ResponseEntity<?> updatePassword(@AuthUser Account auth, @RequestBody Account account) {
-        account.setNo(auth.getNo());
-        accountService.updatePassword(auth);
+    public ResponseEntity<?> updatePassword(@AuthUser Account auth, @RequestBody PasswordVo passwordDto) {
+        passwordDto.setNo(auth.getNo());
+        boolean result = accountService.updatePassword(passwordDto);
         
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("비밀번호 변경을 실패 했습니다."));
     }
 
     @Auth
@@ -129,8 +130,13 @@ public class AccountController {
         mail.setTitle("MEHAGO 임시 비밀번호입니다.");
         mail.setMessage("여기 임시비번");
         mail.setAddress("dmswltpwns1@gmail.com");
-        // System.out.println(mailDto.getAddress() + " in controller");
         mailService.mailSend(mail);
+    }
+
+    @Auth
+    @GetMapping("/authenticate")
+    public ResponseEntity<?> checkingAuthenticate() {
+        return ResponseEntity.ok().body(CommonResponse.success(null));
     }
 }
 

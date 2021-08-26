@@ -23,11 +23,12 @@
 		]]>
 	</update>
 
-    <update id="updatePassword" parameterType="account">
+    <update id="updatePassword" parameterType="passwordvo">
 		<![CDATA[
 		    update account
-		    set password=#{password}
+		    set password=#{newPassword}
 		    where no=${no }
+			and password=#{prevPassword}
 		]]>
 	</update>
 

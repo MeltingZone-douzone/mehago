@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.douzone.mehago.vo.Account;
+import com.douzone.mehago.vo.PasswordVo;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -45,11 +46,11 @@ public class AccountRepository {
     }
 
     public boolean updateNickname(Account account) {
-        return sqlSession.update("account.updateNickname", account.getNickname()) == 1 ? true : false;
+        return sqlSession.update("account.updateNickname", account) == 1 ? true : false;
     }
 
-    public boolean updatePassword(Account account) {
-        return sqlSession.update("account.updatePassword", account.getNickname()) == 1 ? true : false;
+    public boolean updatePassword(PasswordVo vo) {
+        return sqlSession.update("account.updatePassword", vo) == 1 ? true : false;
     }
 
     public boolean updateUserInfo(Account account) {
