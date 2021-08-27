@@ -122,7 +122,7 @@ io.on("connection", (socket) =>{
         console.log(messageObject);
         // TODO: DB 저장
         // join할 떄 변수에 넣어둔 curRoom 쓸까 아니면 front에서 받아서 쓸까
-        pubClient.publish(curRoom,`${messageObject.nickname} : ${messageObject.msg}`);
+        pubClient.publish(curRoom,`${messageObject.nickname} : ${messageObject.message}`);
 
     });
     

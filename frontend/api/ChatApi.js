@@ -16,3 +16,17 @@ export function CreateChattingRoom(chattiingRoom) {
     return axios.post("/api/chat/createRoom", chattiingRoom, { headers: AuthHeader })
         .then(res => res);
 }
+
+export function getParticipantNo(chattingRoomNo) {
+    setAuthHeader();
+    const message ={ chattingRoomNo }
+    return axios.post("/api/chat/participantNo", message, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function addMessage(messageObject) {
+    console.log(messageObject);
+    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader})
+        .then(res => res);
+}
+
