@@ -34,5 +34,5 @@ export default function MainRouter() {
 
 const WebPage = styled.div`
     margin-top:51px;
-    padding:0 2em;
+    padding:0 0em;
 `
