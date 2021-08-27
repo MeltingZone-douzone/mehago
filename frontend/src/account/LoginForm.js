@@ -24,7 +24,7 @@ export default function LoginForm({history}) {
           } // 성공하면 메인화면 가기
           
           localStorage.set("token", res.data);
-          history.push('/profile');
+          history.push('/chat');
         }
       });
     } catch (err) {

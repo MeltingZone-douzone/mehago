@@ -8,7 +8,7 @@ import MsgInput from './MsgInput';
 import ReceivedMsg from './ReceivedMsg';
 import localStorage from "local-storage";
 
-const socket = io('http://localhost:8888');
+// const socket = io('http://localhost:8888');
 export default function Chatting() {
     const token = localStorage.get("token");
     console.log(token);
@@ -32,21 +32,21 @@ export default function Chatting() {
             e.preventDefault();
             console.log('onSubmitMessage');
             if(messageObject.msg !== ''){
-                socket.emit('chat message', messageObject); // roomName, nickname 등
+                // socket.emit('chat message', messageObject); // roomName, nickname 등
                 // setMessageObject('');
             }
             console.log(messageObject);
         },
         leaveRoom: (e) => {
-            socket.emit('leave', data); // roomName
+            // socket.emit('leave', data); // roomName
         }
     }
     
     return (
         <ChattingContainer>
-            <ChatHeader socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
+            {/* <ChatHeader socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
             <ReceivedMsg socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
-            <MsgInput socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
+            <MsgInput socket={socket} messageObject={messageObject} messageFunction={messageFunction} /> */}
         </ChattingContainer>
     )
 }
