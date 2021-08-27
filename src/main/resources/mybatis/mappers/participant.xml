@@ -15,5 +15,18 @@
             select last_insert_id()
         </selectKey>
 	</insert>
+<select id="getParticipantNo" parameterType="Map" resultType="Long">
+	<![CDATA[
+		select 
+			no
+		from
+			participant
+		where
+			account_no = #{accountNo}
+		AND
+			chatting_room_no = #{chattingRoomNo}
+	]]>
+</select>
+
 
 </mapper>
