@@ -40,6 +40,7 @@ export default function ChatList(){
                 </List>
                 </Link>
                 <Divider />
+                
             </Grid>
     
       </div>

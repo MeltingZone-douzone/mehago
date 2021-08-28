@@ -1,6 +1,7 @@
 package com.douzone.mehago.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.security.Auth;
@@ -36,7 +37,7 @@ public class ChatController {
     public ResponseEntity<?> createRoom(@AuthUser Account auth, @RequestBody ChattingRoom chattingRoom) {
         boolean result = false;
         // 1. 채팅방 생성
-        chattingRoom.setOner(auth.getNo());
+        chattingRoom.setOwner(auth.getNo());
         chattingRoom.setThumbnailUrl("");
         Long roomNo = chattingRoomService.createRoom(chattingRoom);
         // 2. 참가자 생성
@@ -67,6 +68,13 @@ public class ChatController {
         map.put("accountNo", auth.getNo());
         map.put("chattingRoomNo", message.getChattingRoomNo());
         return ResponseEntity.ok().body(participantService.getParticipantNo(map));
+    }
+
+    @PostMapping("/chatList")
+    public ResponseEntity<?> getChatList(){
+        List<ChattingRoom> chattingRoomList = chattingRoomService.getChatRoomList();
+        System.out.println(chattingRoomList);
+        return ResponseEntity.ok().body(chattingRoomList);
     }
     
 
