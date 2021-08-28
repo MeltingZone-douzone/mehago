@@ -1,29 +1,48 @@
-import React, {useState, useEffect}from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { updateNotReadCount } from "../../api/ChatApi";
 
-export default function ReceivedMsg({socket, messageObject, messageFunction}) {
-    
-    const [storedMsg, setStoredMsg]  = useState([]);
-    const [receivedMsg, setReceivedMsg] = useState();
+export default function ReceivedMsg({ socket, messageObject, messageFunction }) {
 
-    useEffect(()=>{
-        socket.on('chat message', (msg) =>{
-            console.log(msg);
-            setReceivedMsg(msg);
+    const [storedMsg, setStoredMsg] = useState([]);
+    const [receivedMsg, setReceivedMsg] = useState({
+        participantNo: 0,
+        no: 0,
+        message: '',
+        chattingRoomNo: 0,
+        chatMember: 0,
+        notReadCount: 0,
+        nickname: '',
+        thumbnailUrl: "",
+        createdAt: "" //어떻게 가져오지??
+    });
+
+    useEffect(() => {
+        socket.on('chat message', (msg) => {
+            const msgToJson = JSON.parse(msg);
+            updateNotReadCount(msgToJson)
+                .then((res) => {
+                    msgToJson.notReadCount = res.data;
+                })
+            setReceivedMsg(msgToJson);
         });
-    },[]);
+    }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         setStoredMsg([...storedMsg, receivedMsg]);
-    },[receivedMsg]);
+    }, [receivedMsg]);
 
-    return(
-        <ChattingView>
-            <ul>
-                {storedMsg.map( (msg)=> <li>{msg}</li>)}
-            </ul>
-        </ChattingView>
-    );
+
+
+
+    return <div></div>;
+    // )
+    // <ChattingView>
+    //     <ul>
+    //         {storedMsg.map((msg) => <li>{msg}</li>)}
+    //     </ul>
+    // </ChattingView>
+    // );
 }
 
 const ChattingView = styled.div`

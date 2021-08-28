@@ -21,7 +21,7 @@ public class ParticipantRepository {
         return participant.getNo();
     }
 
-    public Long getParticipantNo(Map<String, Long> map) {
+    public Participant getParticipantNo(Map<String, Long> map) {
         return sqlSession.selectOne("participant.getParticipantNo", map);
     }
 

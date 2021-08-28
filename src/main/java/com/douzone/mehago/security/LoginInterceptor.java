@@ -42,6 +42,7 @@ public class LoginInterceptor implements HandlerInterceptor{
 		}
 
 		String token = jwtTokenUtil.generateAccessToken(result);
+		System.out.println(token);
 		account.setToken(token);
 		accountService.updateToken(account);
  		response.getWriter().write(token);

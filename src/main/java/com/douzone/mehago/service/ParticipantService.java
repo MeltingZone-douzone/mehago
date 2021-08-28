@@ -20,7 +20,7 @@ public class ParticipantService {
         return participantRepository.createParticipant(participant);
     }
 
-    public Long getParticipantNo(Map<String, Long> map) {
+    public Participant getParticipantNo(Map<String, Long> map) {
         return participantRepository.getParticipantNo(map);
     }
 
