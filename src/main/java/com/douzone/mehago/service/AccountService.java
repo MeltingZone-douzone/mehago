@@ -88,4 +88,10 @@ public class AccountService {
     private String getEncryptPassword ( String password ) {
         return AES.encrypt(password, SECRET_KEY);
     }
+
+    public void changeRandomPassword(Account account) {
+        account = getEncryptPassword(account);
+        System.out.println(account);
+        accountRepository.changeRandomPassword(account);
+    }
 }

@@ -54,7 +54,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 			}
 			
 			
-			
 //			token이 존재
 			String token = request.getHeader("Authorization");
 			Account decodedAccount = jwtDecoder.decodeJwt(token.split("Bearer ")[1]);

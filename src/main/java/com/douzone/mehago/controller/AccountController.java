@@ -79,25 +79,23 @@ public class AccountController {
 
     @PostMapping("/findByNameAndEmail")
     public ResponseEntity<?> findByNameAndEmail(@RequestBody Account account, Mail mailDto){
-        System.out.println("gdgd");
         Account accountVo = null;
         try {
             String name = account.getName();
             String email = account.getEmail();
             accountVo = accountService.searchAccount(name, email);
+            System.out.println(accountVo + "aaaaaa");
             if(accountVo == null){
-                return ResponseEntity.ok().body("cant find Account");         
+                return ResponseEntity.ok().body("false");         
             }
             if(accountVo.getEmail() != null){
                 System.out.println("이메일 있음 보낼꺼임");
-                String randomPassword = RandomPassword.getRandomPassword(10);
-                accountService.updatePassword(randomPassword, email);
 
-                mailDto.setTitle("MEHAGO 임시 비밀번호입니다.");
-                mailDto.setMessage("요청하신 임시 비밀번호는 다음과 같습니다." + randomPassword);
-                mailDto.setAddress("mehagochat@gmail.com");
-                System.out.println(mailDto.getAddress() + " in controller");
-                mailService.mailSend(mailDto);
+                String randomPassword = RandomPassword.getRandomPassword(10);
+                mailService.mailSend(randomPassword, accountVo.getEmail(), name);
+                account.setPassword(randomPassword);
+                account.setEmail(email);
+                accountService.changeRandomPassword(account);
             } 
         } catch (Exception e) {
             System.out.println(e);
@@ -124,14 +122,6 @@ public class AccountController {
         return ResponseEntity.ok().body(accountVo.getEmail());
     }
 
-    // @RequestBody 
-    @PostMapping("/mail")
-    public void execMail(Mail mail) {
-        mail.setTitle("MEHAGO 임시 비밀번호입니다.");
-        mail.setMessage("여기 임시비번");
-        mail.setAddress("dmswltpwns1@gmail.com");
-        mailService.mailSend(mail);
-    }
 
     @Auth
     @GetMapping("/authenticate")

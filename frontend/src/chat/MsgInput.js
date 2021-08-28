@@ -7,7 +7,7 @@ export default function MsgInput({messageObject, messageFunction}) {
     return(
         <MsgForm>
             <form onSubmit={ messageFunction.onSubmitMessage }>
-                    <input name='msg' value={ messageObject.msg } onChange={ messageFunction.onChangeMessage }/>
+                    <input name='message' value={ messageObject.message } onChange={ messageFunction.onChangeMessage }/>
             </form>
             <Button value={'나가기'} onClick={ messageFunction.leaveRoom } />
         </MsgForm>
