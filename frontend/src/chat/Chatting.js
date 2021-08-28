@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
+import 'regenerator-runtime';
 import { io } from 'socket.io-client';
 
 import ChatHeader from './ChatHeader';
@@ -8,40 +8,77 @@ import MsgInput from './MsgInput';
 import ReceivedMsg from './ReceivedMsg';
 import localStorage from "local-storage";
 
+import { getParticipantNo, addMessage } from "../../api/ChatApi";
+
+/* 
+    parameter로 chatting_room_no 받아야함
+*/
+
 const socket = io('http://localhost:8888');
 export default function Chatting() {
     const token = localStorage.get("token");
-    console.log(token);
-    
+
     // DB에 message 넣을때 p_no, msg, room_no 필요 / nickname, room_name은 pub 위함
     // roomname은 join할 때 roomname 받아와서 변수에 넣어둠
-    const [messageObject, setMessageObject] = useState({participant_no: '1', msg: '', room_no: '1', room_name: 'ㅣㅣㅣ', nickname: '손놈'});
-    
+    const [messageObject, setMessageObject] = useState({
+        participantNo: 0,
+        no: 0,
+        message: '',
+        chattingRoomNo: 6,
+        roomName: 'test',
+        nickname: 'tester',
+        createdAt: '',
+    });
+    const [insertSuccess, setInsertSuccess] = useState(false);
 
-    useEffect(()=>{
-        // console.log(socket);
-    })
+    // participant_no 가져와서 state에 넣기
+    useEffect(() => {
+        // const getParticipantNo = async() => {
+        const chatRoomNo = 6; // 임시로 chat room no 넣어줌. 나중에 받기
+        getParticipantNo(chatRoomNo).then(res => {
+            if (res.statusText === 'OK') {
+                setMessageObject({
+                    ...messageObject,
+                    participantNo: res.data.no,
+                    nickname: res.data.chatNickname
+                });
+            }
+        })
+    }, []);
+
 
     const messageFunction = {
         onChangeMessage: (e) => {
             const { name, value } = e.target;
-            setMessageObject({...messageObject, [name]: value});
-            console.log(messageObject);
+            let date = new Date();
+            let formattedDate = `${1900 + date.getYear()}-${date.getMonth() + 1 >= 10 ? date.getMonth() : '0' + (date.getMonth() + 1)}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds() >= 10 ? date.getSeconds() : '0' + date.getSeconds()}`;
+            setMessageObject({ ...messageObject, [name]: value, createdAt: formattedDate });
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            console.log('onSubmitMessage');
-            if(messageObject.msg !== ''){
-                socket.emit('chat message', messageObject); // roomName, nickname 등
-                // setMessageObject('');
+            if (messageObject.message !== '') {
+                addMessage(messageObject).then(res => {
+                    if (res.statusText === 'OK') {
+                        setInsertSuccess(true);
+                        setMessageObject({ ...messageObject, no: res.data });
+                    }
+                });
+
             }
-            console.log(messageObject);
         },
         leaveRoom: (e) => {
             socket.emit('leave', data); // roomName
         }
     }
-    
+
+    useEffect(() => {
+        if (insertSuccess) {
+            socket.emit('chat message', messageObject);
+            setMessageObject({ ...messageObject, message: '' });
+            setInsertSuccess(false);
+        }
+    }, [messageObject.no]);
+
     return (
         <ChattingContainer>
             <ChatHeader socket={socket} messageObject={messageObject} messageFunction={messageFunction} />

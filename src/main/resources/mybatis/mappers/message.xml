@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="message">
+
+    <insert id="addMessage" parameterType="message">
+		<![CDATA[
+			INSERT INTO 
+                message 
+            VALUES (null, #{participantNo }, #{message }, 0, #{createdAt }, #{chattingRoomNo })
+        ]]>
+        <selectKey keyProperty="no" order="AFTER" resultType="Long">
+            select last_insert_id()
+        </selectKey>
+	</insert>
+    
+    
+    <update id="addMessageUpdate" parameterType="message">
+    <![CDATA[
+        update message
+           set not_read_count = (select count(*) 
+			    			     from participant
+			    			     where chatting_room_no= ${chattingRoomNo }) - ${chatMember }
+        where no = ${no }
+      ]]>
+    <selectKey keyProperty="notReadCount" order="AFTER" resultType="Long">
+     <![CDATA[
+        select not_read_count as notReadCount 
+        from message
+        where no=#{no }
+       ]]>
+      </selectKey>
+    </update>
+</mapper>

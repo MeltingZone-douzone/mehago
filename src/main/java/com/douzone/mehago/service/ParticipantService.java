@@ -1,6 +1,9 @@
 package com.douzone.mehago.service;
 
+import java.util.Map;
+
 import com.douzone.mehago.repository.ParticipantRepository;
+import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.Participant;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +18,14 @@ public class ParticipantService {
 
     public Long createParticipant(Participant participant) {
         return participantRepository.createParticipant(participant);
+    }
+
+    public Participant getParticipantNo(Map<String, Long> map) {
+        return participantRepository.getParticipantNo(map);
+    }
+
+    public Long addMessage(Message message) {
+        return participantRepository.addMessage(message);
     }
 
 }

@@ -10,7 +10,7 @@ public class ChattingRoom {
     private String title;
     private String password;
     private String thumbnailUrl;
-    private String LimitedUserCount;
+    private String limitedUserCount;
     // private Date CreatedAt;
     private boolean onlyAuthorized;
     private boolean searchable;
