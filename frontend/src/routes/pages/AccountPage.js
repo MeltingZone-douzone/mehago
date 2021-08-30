@@ -13,17 +13,17 @@ import IdSearchPage from "../../account/IdSerach";
 export default function AccountPage ({match, setAuthentication}) {
 
     return (
-        <div className = {styles.PageContainer}>
+        <div className={styles.PageContainer}>
             <div className={styles.Page}>
                 <div className={styles.LogoWrapper}>
-                        <NavLink to="/account/login">
-                            <img
-                                src={Logo}
-                                height="24"
-                                alt="MEHAGO"
-                            />
-                        </NavLink>
-                    </div>
+                    <NavLink to="/account/login">
+                        <img
+                            src={Logo}
+                            height="24"
+                            alt="MEHAGO"
+                        />
+                    </NavLink>
+                </div>
                 <div className={styles.ContentWrapper}>
                 
                         <AnimatePresence>
@@ -79,16 +79,16 @@ const pageVariants = {
         opacity: 0,
     }
 };
-  
+
 const pageTransition = {
     type: "tween",
     ease: "linear",
     duration: .2
 };
-  
+
 const pageStyle = {
     width: "100%",
     height: "100%",
     position: "absolute"
-    
+
 };

@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 export default function ChatHeader({socket, messageObject}) {
-
     const [roomName, setRoomName] = useState("헬창모임");
-    const [nickname, setNickname] = useState("손놈");
-
+    // const [nickname, setNickname] = useState(messageObject.nickname);
+    const [nickname, setNickname] = useState('');
     useEffect(()=>{
         const data = { // ~~방에 ~~가 입장했다 보여주기 위해 보냄
-            nickname,
+            nickname: messageObject.nickname,
             roomName 
         }
         socket.emit("join", data);
