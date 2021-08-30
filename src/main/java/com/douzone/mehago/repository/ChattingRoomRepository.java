@@ -1,5 +1,7 @@
 package com.douzone.mehago.repository;
 
+import java.util.List;
+
 import com.douzone.mehago.vo.ChattingRoom;
 
 import org.apache.ibatis.session.SqlSession;
@@ -16,6 +18,10 @@ public class ChattingRoomRepository {
     public Long createRoom(ChattingRoom chattingRoom) {
         sqlSession.insert("chattingroom.createRoom", chattingRoom);
         return chattingRoom.getNo();
+    }
+    
+    public List<ChattingRoom> getChatRoomList() {
+        return sqlSession.selectList("chattingroom.getChatRoomList");
     }
 
     public ChattingRoom getRoomInfo(Long chattingRoomNo) {

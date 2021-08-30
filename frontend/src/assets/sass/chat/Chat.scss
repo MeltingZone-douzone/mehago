@@ -4,13 +4,18 @@ body{
 }
 .nav{
     height: 95vh;
-    display: flex;
+    width: 100%;
+    .chattingRoom{
+        margin-left: 25%;
+    }
 }
 .Chat{
     display: flex;
     height: 95vh;
-    width: 50vh;
+    width: 25vw;
     flex-wrap: nowrap;
+    position: fixed;
+
     
     div{
     flex-direction: column;
@@ -18,8 +23,8 @@ body{
     }
 
     .ChatNavbar{
-        background-color: #263343;
-        width: 7em;
+        background-color: #233b57;
+        width: 5em;
         button{
             padding: 5px 5px;
             margin-top: 10px;

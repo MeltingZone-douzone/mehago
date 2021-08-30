@@ -96,4 +96,11 @@ public class ChatController {
         return ResponseEntity.ok().body(messageService.updateNotReadCount(message));
     }
 
+    @PostMapping("/chatList")
+    public ResponseEntity<?> getChatList(){
+        List<ChattingRoom> chattingRoomList = chattingRoomService.getChatRoomList();
+        return ResponseEntity.ok().body(chattingRoomList);
+    }
+    
+
 }

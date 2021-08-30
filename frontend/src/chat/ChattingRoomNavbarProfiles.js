@@ -11,7 +11,7 @@ import Avatar from '@material-ui/core/Avatar';
 import styles from '../assets/sass/chat/ChatList.scss';
 import { Link } from 'react-router-dom';
 
-export default function ChatList(){
+export default function ChattingRoomNavbarProfiles(){
     return (
         <div>
             <Grid  className={styles.borderRight500}>
@@ -21,8 +21,8 @@ export default function ChatList(){
                 <Divider />
                 <Link to="/chat/c1">
                 <List>
-                    <ListItem button key="RemySharp">
-                        <ListItemIcon>
+                    <ListItem button key="RemySharp" >
+                        <ListItemIcon >
                         <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
                         </ListItemIcon>
                         <ListItemText primary="John Wick"></ListItemText>
@@ -40,6 +40,7 @@ export default function ChatList(){
                 </List>
                 </Link>
                 <Divider />
+                
             </Grid>
     
       </div>

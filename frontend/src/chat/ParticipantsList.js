@@ -9,7 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import styles from '../assets/sass/chat/ChatList.scss';
 
-export default function ChatMember(){
+export default function ParticipantsList(){
     return (
         <div>
               <Grid className={styles.borderRight500}>

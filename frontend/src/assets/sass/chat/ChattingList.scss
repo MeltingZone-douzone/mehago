@@ -1,0 +1,17 @@
+.ChatList{
+    display: grid;
+    place-items: center;
+    padding-top: 3em;
+    .ChatRoom{
+        padding-top: 40px;
+        display: grid;
+        grid-template-rows: repeat(3,12vw);
+        grid-template-columns: repeat(3,43vh);
+        grid-auto-rows:12vw;
+        grid-auto-columns: 43vh;
+        row-gap: 2vw;
+        column-gap: 2vw;
+        
+        
+    }
+}

@@ -1,6 +1,7 @@
 package com.douzone.mehago.vo;
 
-import java.util.Date;
+import java.sql.Date;
+import java.util.ArrayList;
 
 import lombok.Data;
 

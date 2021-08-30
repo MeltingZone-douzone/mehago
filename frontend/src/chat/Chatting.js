@@ -11,6 +11,7 @@ import { getParticipantInfo, getRoomInfo, addMessage } from "../../api/ChatApi";
 */
 
 const socket = io('http://localhost:8888');
+
 export default function Chatting() {
     // DB에 message 넣을때 p_no, msg, room_no 필요 / nickname, room_name은 pub 위함
     // roomname은 join할 때 roomname 받아와서 변수에 넣어둠
