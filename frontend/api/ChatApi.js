@@ -7,12 +7,11 @@ let AuthHeader = {
 }
 
 function setAuthHeader() {
-    AuthHeader = Object.assign(AuthHeader, { "Authorization": `Bearer ` + localStorage.get("token") });
+    AuthHeader = Object.assign(AuthHeader, { "Authorization": localStorage.get("token") !== null ? `Bearer ` + localStorage.get("token") : "nonmember" });
 }
 
 export function CreateChattingRoom(chattiingRoom) {
     setAuthHeader();
-    console.log(chattiingRoom);
     return axios.post("/api/chat/createRoom", chattiingRoom, { headers: AuthHeader })
         .then(res => res);
 }
@@ -42,7 +41,13 @@ export function getMessageList(chattingRoomNo) {
 }
 
 export function addMessage(messageObject) {
-    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader})
+    // console.log(messageObject);
+    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function updateNotReadCount(messageObject) {
+    return axios.post("/api/chat/updateNotReadCount", messageObject)
         .then(res => res);
 }
 

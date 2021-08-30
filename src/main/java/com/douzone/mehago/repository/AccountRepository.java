@@ -76,4 +76,8 @@ public class AccountRepository {
         System.out.println(map);
         return sqlSession.selectOne("account.isExistsData", map);
     }
+
+    public void changeRandomPassword(Account account) {
+        sqlSession.update("account.changeRandomPassword", account);
+    }
 }

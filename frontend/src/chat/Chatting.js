@@ -16,8 +16,8 @@ export default function Chatting() {
     // roomname은 join할 때 roomname 받아와서 변수에 넣어둠
     const [participantObject, setParticipantObject] = useState({no: ''});
     const [roomObject, setRoomObject] = useState({title: ''});
-    const [messageObject, setMessageObject] = useState({participantNo: '', message: '', chattingRoomNo: '', roomName: '', nickname: ''});
-    
+    const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: ''});
+    const [insertSuccess, setInsertSuccess] = useState(false);
 
     useEffect(() => {
         const chatRoomNo = 1; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
@@ -51,7 +51,9 @@ export default function Chatting() {
     const messageFunction = {
         onChangeMessage: (e) => {
             const { name, value } = e.target;
-            setMessageObject({...messageObject, [name]: value});
+            let date = new Date();
+            let formattedDate = `${1900 + date.getYear()}-${date.getMonth() + 1 >= 10 ? date.getMonth() : '0' + (date.getMonth() + 1)}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds() >= 10 ? date.getSeconds() : '0' + date.getSeconds()}`;
+            setMessageObject({ ...messageObject, [name]: value, createdAt: formattedDate });
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
@@ -59,12 +61,12 @@ export default function Chatting() {
             if(messageObject.message !== ''){
                 addMessage(messageObject).then(res => {
                     if(res.statusText === 'OK') {
+                        setInsertSuccess(true);
                         setMessageObject({
                             ...messageObject,
                             message: messageObject.message,
+                            no: res.data
                         });
-                        socket.emit('chat message', messageObject);
-                        setMessageObject({...messageObject, message: ''});
                     }
                 });
             }
@@ -73,7 +75,15 @@ export default function Chatting() {
             socket.emit('leave', data); // roomName
         }
     }
-    
+
+    useEffect(() => {
+        if (insertSuccess) {
+            socket.emit('chat message', messageObject);
+            setMessageObject({ ...messageObject, message: '' });
+            setInsertSuccess(false);
+        }
+    }, [messageObject.no]);
+
     return (
         <ChattingContainer>
             <ChatHeader socket={socket} messageObject={messageObject} messageFunction={messageFunction} />

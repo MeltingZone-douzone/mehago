@@ -19,4 +19,7 @@ public class MessageService {
         return messageRepository.getMessageList(chattingRoomNo);
     }
 
+    public Long updateNotReadCount(Message message) {
+        return messageRepository.updateNotReadCount(message);
+    }
 }

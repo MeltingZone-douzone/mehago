@@ -1,0 +1,37 @@
+body{
+    margin: 0;
+    
+}
+.nav{
+    height: 95vh;
+    display: flex;
+}
+.Chat{
+    display: flex;
+    height: 95vh;
+    width: 50vh;
+    flex-wrap: nowrap;
+    
+    div{
+    flex-direction: column;
+
+    }
+
+    .ChatNavbar{
+        background-color: #263343;
+        width: 7em;
+        button{
+            padding: 5px 5px;
+            margin-top: 10px;
+            border-radius: 50%;
+        }
+    }
+    .ChatList{
+        border-right: 1px solid #e0e0e0;
+        margin-left: 0;
+        width: 50em;
+    }
+}
+
+
+

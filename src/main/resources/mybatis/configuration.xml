@@ -5,8 +5,10 @@
 <configuration>
 	<typeAliases>
 		<typeAlias type="com.douzone.mehago.vo.Account" alias="account"/>
+		<typeAlias type="com.douzone.mehago.vo.PasswordVo" alias="passwordvo"/>
 		<typeAlias type="com.douzone.mehago.vo.ChattingRoom" alias="chattingroom"/>
 		<typeAlias type="com.douzone.mehago.vo.Participant" alias="participant"/>
+		<typeAlias type="com.douzone.mehago.vo.PasswordVo" alias="passwordvo"/>
 		<typeAlias type="com.douzone.mehago.vo.Tag" alias="tag"/>
 		<typeAlias type="com.douzone.mehago.vo.Message" alias="message"/>
 		<typeAlias type="com.douzone.mehago.vo.PasswordVo" alias="passwordvo"/>

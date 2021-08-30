@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.RequiredArgsConstructor;
 
-
 @RequestMapping("/api/chat")
 @Controller
 @RequiredArgsConstructor
@@ -51,7 +50,7 @@ public class ChatController {
         Long participantNo = participantService.createParticipant(participant);
         // 3. 태그 생성
         result = tagService.createTags(chattingRoom.getNo(), chattingRoom.getTagName());
-
+        // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         return ResponseEntity.ok().body(participantNo);
     }
 
@@ -89,6 +88,12 @@ public class ChatController {
         List<Message> list = messageService.getMessageList(Long.parseLong(chattingRoomNo));
         System.out.println(list);
         return ResponseEntity.ok().body(list);
+    }
+
+    @PostMapping("/updateNotReadCount")
+    public ResponseEntity<?> updateNotReadCount(@RequestBody Message message) {
+        System.out.println("updateNotReadCount" + message.toString());
+        return ResponseEntity.ok().body(messageService.updateNotReadCount(message));
     }
 
 }

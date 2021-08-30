@@ -6,7 +6,7 @@ import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AccountPage from './pages/AccountPage';
 import SettingChatRoom from '../chat/SettingChatRoom';
 import Header from '../components/Header';
-import Chatting from '../chat/Chatting';
+import ChatPage from './pages/ChatPage';
 
 import PublicRouter from './PublicRouter';
 import PrivateRouter from './PrivateRouter';
@@ -21,10 +21,10 @@ export default function MainRouter() {
                 <WebPage>
                     <Switch>
                         <Route exact path="/" component={AccountPage} />
-                        <Route  path="/account" component={AccountPage} />
+                        <Route path="/account" component={AccountPage} />
                         <Route path="/room" component={SettingChatRoom} />
                         <Route path="/profile" component={ProfileSettingsPage} />
-                        <Route path="/chat" component={Chatting} />
+                        <Route path="/chat" component={ChatPage} />
                     </Switch>
                 </WebPage>
             </Fragment>
@@ -34,5 +34,5 @@ export default function MainRouter() {
 
 const WebPage = styled.div`
     margin-top:51px;
-    padding:0 2em;
+    padding:0 0em;
 `
