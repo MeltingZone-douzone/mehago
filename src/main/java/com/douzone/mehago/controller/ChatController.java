@@ -54,9 +54,7 @@ public class ChatController {
 
     @PostMapping("/addMessage")
     public ResponseEntity<?> addMessage(@AuthUser Account auth, @RequestBody Message message) {
-        System.out.println(message);
         Long messageNo = participantService.addMessage(message);
-        System.out.println(messageNo);
         return ResponseEntity.ok().body(messageNo);
     }
 
@@ -73,7 +71,6 @@ public class ChatController {
     @PostMapping("/chatList")
     public ResponseEntity<?> getChatList(){
         List<ChattingRoom> chattingRoomList = chattingRoomService.getChatRoomList();
-        System.out.println(chattingRoomList);
         return ResponseEntity.ok().body(chattingRoomList);
     }
     

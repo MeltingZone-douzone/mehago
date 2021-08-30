@@ -1,0 +1,48 @@
+.chatProfile{
+    border: 1px solid #e0e0e0;
+    height: 100%;
+
+    .container{
+        margin-top: 0;
+        height: 100%;
+        border-radius: 10px;
+        .roombutton{
+            display: grid;
+            height: 100%;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 2fr;
+            .item2{
+                background-color: beige;
+            }
+            .item5{
+                background-color: rgb(148, 156, 194);
+            }
+
+            .item1:nth-child(1) {
+                grid-row: 1 / span 2;
+            }
+            .item2:nth-child(2) {
+                grid-column: 2 / span 2;
+            }
+            .item5:nth-child(5) {
+                grid-column: 1 / span 3;
+                grid-row: 3 / span 1
+
+            }
+        }
+
+    }
+    
+}
+// @media screen and (max-width:500px) {
+//     .chatProfile{
+//         .container{
+//             grid-template-columns: 1fr;
+//         }
+//     }
+// }
+// @media screen and (min-width:850px) {
+//     .container{
+//         grid-template-columns: 1fr 1fr 1fr;
+//     }
+// }

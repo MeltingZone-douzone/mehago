@@ -4,8 +4,10 @@ import styles from '../assets/sass/chat/ChattingList.scss';
 import ChattingRoom from './ChattingRoom';
 import axios from 'axios';
 
-export default function ChatList(){
+export default function ChatList({callback}){
     const [rooms, setRooms] = useState([]);
+    const [keyword, setKeyword] = useState('');
+
     useEffect(()=> {
         console.log("chat List ");
         try {
@@ -20,10 +22,20 @@ export default function ChatList(){
             console.log(e);
         }
     },[])
+
+    const handleChange = function (e) {
+        setKeyword(e.target.value);
+        console.log(keyword);
+    }
+
         
     return (
         <Grid className={styles.ChatList} >
-            <TextField label="채팅방 검색" variant="outlined" style={{width: '50em', backgroundColor : 'darkgrey'}} />
+            <TextField 
+                label="채팅방 검색" 
+                variant="outlined" 
+                onChange={(e)=> handleChange(e)}
+                style={{width: '50em', backgroundColor : 'darkgrey'}} />
             <List className={styles.ChatRoom} >
                 {rooms.map((room)=> {
                     return(
@@ -34,11 +46,12 @@ export default function ChatList(){
                             limitedUserCount ={room.limitedUserCount}
                             onlyAuthorized ={room.onlyAuthorized}
                             owner =  {room.owner}
-                            password = {room.password}
                             searchable={room.searchable} 
                             secretRoom = {room.secretRoom}
                             tagName = {room.tagName}
-                            thumbnailUrl = {room.thumbnailUrl} />
+                            thumbnailUrl = {room.thumbnailUrl} 
+                            titleAndTag = { room }
+                            keyword = { keyword }/>
                          )
                     })}
             </List>
