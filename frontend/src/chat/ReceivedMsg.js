@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { getMessageList } from '../../api/ChatApi';
+import { updateNotReadCount, getMessageList } from '../../api/ChatApi';
 
 export default function ReceivedMsg({socket, messageObject, messageFunction}) {
     const [messageList, setMessageList] = useState([]);
@@ -46,7 +46,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction}) {
         <ChattingView>
             <ul>
                 {messageList.slice(0).reverse().map((message)=> <li>{message.nickname} : {message.message}</li>)}
-                {storedMsg.map((message)=> <li>{message}</li>)}
+                {storedMsg.map((message)=> <li>{message.nickname} : {message.message}</li>)}
             </ul>
         </ChattingView>
     );
