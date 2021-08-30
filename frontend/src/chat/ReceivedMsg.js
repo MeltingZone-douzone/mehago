@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { updateNotReadCount, getMessageList } from '../../api/ChatApi';
-
+ 
 export default function ReceivedMsg({socket, messageObject, messageFunction}) {
     const [messageList, setMessageList] = useState([]);
     const [storedMsg, setStoredMsg]  = useState([]);
@@ -16,7 +16,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction}) {
         thumbnailUrl: "",
         createdAt: "" //어떻게 가져오지??
     });
-
+ 
     useEffect(() => {
         const chatRoomNo = 1; 
         getMessageList(chatRoomNo).then(res => {
@@ -26,7 +26,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction}) {
             }
         })
     }, []);
-
+ 
     useEffect(() => {
         socket.on('chat message', (msg) => {
             const msgToJson = JSON.parse(msg);
@@ -37,11 +37,11 @@ export default function ReceivedMsg({socket, messageObject, messageFunction}) {
             setReceivedMsg(msgToJson);
         });
     }, []);
-
+ 
     useEffect(() => {
         setStoredMsg([...storedMsg, receivedMsg]);
     },[receivedMsg]);
-
+ 
     return(
         <ChattingView>
             <ul>
@@ -51,7 +51,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction}) {
         </ChattingView>
     );
 }
-
+ 
 const ChattingView = styled.div`
     min-height: 500px;
     height: auto;
@@ -66,3 +66,5 @@ const ChattingView = styled.div`
         margin-top: 10px;
     }
 `
+
+
