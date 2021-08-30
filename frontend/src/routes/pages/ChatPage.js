@@ -12,9 +12,9 @@ export default function ChatPage(){
         <nav className={styles.nav} >
             <ChatNavber/>
             <div className={styles.chattingRoom}>
+
                 <Route exact path="/chat" component={ChattingList} />
-                <Route exact path="/chat/c1" component={ChatSection} />
-                <Route exact path="/chat/c2" component={Chatting} />
+                <Route exact path="/chat/:no" component={ChatSection} />
             </div>
         </nav>
     )
