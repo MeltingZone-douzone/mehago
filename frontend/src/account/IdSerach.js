@@ -11,9 +11,7 @@ export default function IdSearch() {
   const [accounts, setAccount] = useState({name:"", phoneNumber:""});
   const [searchEmail, setSearchEmail] = useState("");
   const onChangeUserInput = (e)=>{
-
     const {name, value } = e.target;
-    console.log(name ,":", value);
     setAccount({
         ...accounts,
         [name]:value}
@@ -21,8 +19,6 @@ export default function IdSearch() {
   }
 
   const emailReceive = () => {
-    console.log("이메일 받기");
-    console.log(accounts);
     try {
         const url = `/api/account/searchEmail`;
         const account = {
@@ -36,7 +32,6 @@ export default function IdSearch() {
                 if(res.data == "cant find Account"){
                     setSearchEmail(false);
                 } else {
-                    console.log("success");
                     setSearchEmail(res.data);
                 }
         });

@@ -19,10 +19,12 @@ public class ChattingRoomRepository {
         sqlSession.insert("chattingroom.createRoom", chattingRoom);
         return chattingRoom.getNo();
     }
-
+    
     public List<ChattingRoom> getChatRoomList() {
         return sqlSession.selectList("chattingroom.getChatRoomList");
     }
 
-  
+    public ChattingRoom getRoomInfo(Long chattingRoomNo) {
+        return sqlSession.selectOne("chattingroom.getRoomInfo", chattingRoomNo);
+    }
 }

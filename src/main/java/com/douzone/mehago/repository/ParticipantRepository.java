@@ -21,8 +21,9 @@ public class ParticipantRepository {
         return participant.getNo();
     }
 
-    public Long getParticipantNo(Map<String, Long> map) {
-        return sqlSession.selectOne("participant.getParticipantNo", map);
+    public Participant getParticipantInfo(Map<String, Long> map) {
+        Participant result = sqlSession.selectOne("participant.getParticipantInfo", map);
+        return result;
     }
 
     public Long addMessage(Message message) {

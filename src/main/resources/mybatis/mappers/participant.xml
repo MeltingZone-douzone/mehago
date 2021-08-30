@@ -15,10 +15,10 @@
             select last_insert_id()
         </selectKey>
 	</insert>
-<select id="getParticipantNo" parameterType="Map" resultType="Long">
+<select id="getParticipantInfo" parameterType="Map" resultType="participant">
 	<![CDATA[
 		select 
-			no
+			no, chat_nickname as chatNickname, not_read_chat as notReadChat, last_read_chat_no as lastReadChatNo
 		from
 			participant
 		where

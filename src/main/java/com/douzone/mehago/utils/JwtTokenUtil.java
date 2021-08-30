@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenUtil{
 
     // private static final Logger log =LoggerFactory.getLogger(JwtTokenUtil.class);
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 2;            // 2일
 
     @Value("${spring.jwt.secret}")
     private String secretKey;

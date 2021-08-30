@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { NavLink } from 'react-router-dom';
 
-import Logo from '../assets/images/allWhite-wehago.svg';
+import Logo from '../assets/images/white-mehago.png';
 import styled from 'styled-components';
 import { colors } from '../assets/styles/properties/Colors';
 
 export default function Header() {
+
+    
 
     return(
         <HeaderContainer>

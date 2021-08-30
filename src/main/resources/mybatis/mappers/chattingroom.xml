@@ -5,7 +5,7 @@
 
 <mapper namespace="chattingroom">
 
-    <insert id="createRoom" parameterType="chattingroom">
+  <insert id="createRoom" parameterType="chattingroom">
 		<![CDATA[
 			insert 
 				into chatting_room 
@@ -20,6 +20,36 @@
 		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authoried as onlyAuthoried , searchable, secret_room as secretRoom, owner
 		   from chatting_room 
 		]]> 
+  </select>
+
+  <select id="getRoomInfo" parameterType="Long" resultType="chattingroom">
+    <![CDATA[
+      SELECT
+          no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, 
+          created_at as createdAt, only_authorized as onlyAuthorized, searchable as searchable, owner
+      FROM
+          chatting_room
+      WHERE
+          no = #{chattingRoomNo }
+      ]]>
+  </select>
+
+  <select id="getRoomList" parameterType="Long" resultType="chattingroom">
+    <![CDATA[
+      SELECT
+          no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized, searchable, secret_room as secretRoom, owner
+      FROM
+          chatting_room
+      WHERE
+          no IN (SELECT
+                  chatting_room_no
+                FROM
+                  participant
+                WHERE
+                  account_no = #{accountNo })
+      LIMIT
+          10
+    ]]>
   </select>
 
 </mapper>

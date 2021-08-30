@@ -11,8 +11,8 @@ public class ChattingRoom {
     private String title;
     private String password;
     private String thumbnailUrl;
-    private String LimitedUserCount;
-    private Date CreatedAt;
+    private String limitedUserCount;
+    private String createdAt;
     private boolean onlyAuthorized;
     private boolean searchable;
     private boolean secretRoom;

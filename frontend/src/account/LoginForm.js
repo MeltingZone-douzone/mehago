@@ -17,14 +17,15 @@ export default function LoginForm({history}) {
     try {
       loginApi(memberVo).then((res) => {
         if (res.statusText === "OK") {
-          if (res.data === "cant find Account") {
+          if (res.data == "cant find Account") {
             // 틀렸을 경우에
             setLoginFail(true);
             setMemberVo({ ...memberVo, password: "" });
-          } // 성공하면 메인화면 가기
-          
-          localStorage.set("token", res.data);
-          history.push('/chat');
+          } else {
+            // 성공하면 메인화면 가기
+            localStorage.set("token", res.data);
+            history.push('/chat');
+          }
         }
       });
     } catch (err) {
@@ -73,7 +74,7 @@ export default function LoginForm({history}) {
         {loginFail === false ? (
           ""
         ) : (
-          <div className={styles.LoginFail}>
+          <div className={styles.ErrorMessage}>
             <span>가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.</span>
           </div>
         )}

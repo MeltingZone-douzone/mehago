@@ -3,8 +3,6 @@ const http = require('http');
 const path = require('path');
 const dotenv = require("dotenv");
 const argv = require('minimist')(process.argv.slice(2));
-const redis = require('redis');
-const redisAdapter = require('socket.io-redis');
 
 // Environment Variables(환경 변수)
 dotenv.config({ path: path.join(__dirname, 'app.config.env') });
@@ -13,73 +11,73 @@ dotenv.config({ path: path.join(__dirname, 'app.config.env') });
 //Logging
 const logger = require("./logging");
 
+// handlers
+// const ChatRoomHandler = require('./handlers/ChatRoomHandler');
+// const MessageHandler = require('./handlers/MessageHandler');
+
 
 // process Argument
 process.title = argv.name;
 
-
-// const chatRouter = require('./routes/chat');
-
+const redisClient = require("redis").createClient();
 
 const application = express();
 const httpServer = http.createServer(application);
-const io = require("socket.io")(httpServer,{
-    cors:{
+const io = require("socket.io")(httpServer, {
+    cors: {
         // origin: "http://localhost:8080",
         origin: "http://localhost:9999",
-        methods: ["GET","POST"]
-    }
+        methods: ["GET", "POST"]
+    },
+
+    adapter: require("socket.io-redis")(
+        {
+            host: 'localhost',
+            port: 6379
+        },
+        {
+            pubClient: redisClient,
+            subClient: redisClient.duplicate(),
+        })
+
 })
 
-const pubClient = redis.createClient();
-const subClient = redis.createClient();
-
-pubClient.on('error', (err) => console.log(err));
-subClient.on('error', (err) => console.log(err));
-
-io.adapter(redisAdapter({host:'localhost', port:6379}));
-
-
-const rooms = io.of('/').adapter.allRooms();
-console.log(rooms);
-
-// const onConnection = (socket) => {
-//     chatRouter(io, socket);
-// }
+const onConnection = (socket) => {
+    ChatRoomHandler(io, socket);
+    MessageHandler(io, socket);
+}
 
 
 
-application
-                            .use(express.urlencoded({extended: true})) 
-                            .use(express.json())
-                            .use(express.static(path.join(__dirname, process.env.STATIC_RESOURCES_DIRECTORY)))
-                            .set("views",path.join(__dirname,"views"))
-                            .all("*", function(req, res, next) {
-                                console.log(req);
-                                res.locals.req = req;
-                                res.locals.resp = res;
-                                next();
-                            })
-                            // .use("/chatting", chatRouter);
-                            // .use(errorRouter.error404)
-                            // .use(errorRouter.error500);
+application.use(express.urlencoded({ extended: true }))
+    .use(express.json())
+    .use(express.static(path.join(__dirname, process.env.STATIC_RESOURCES_DIRECTORY)))
+    .set("views", path.join(__dirname, "views"))
+    .all("*", function (req, res, next) {
+        console.log(req);
+        res.locals.req = req;
+        res.locals.resp = res;
+        next();
+    })
+// .use(errorRouter.error404)
+// .use(errorRouter.error500);
 
 // Server Setup
 
 httpServer
-    .on('listening', function() {
+    .on('listening', function () {
         logger.info(`Http Server Running on Port ${process.env.PORT}`);
     })
-    .on('error', function(error) {
-        if(error.syscall !== 'listen') {
+    .on('error', function (error) {
+        if (error.syscall !== 'listen') {
             throw error;
         }
-        switch(error.code) {
-            case 'EACCESS' : 
+        switch (error.code) {
+            case 'EACCESS':
                 logger.error(`Port: ${process.env.PORT} requires privileges`);
                 process.exit(1);
                 break;
-            case 'EADDRINUSE' :
+            case 'EADDRINUSE':
                 logger.error(`Port: ${process.env.PORT} is already in use`);
                 process.exit(1);
                 break;
@@ -89,43 +87,45 @@ httpServer
     })
     .listen(process.env.PORT);
 
-
-subClient.on('message', (roomname, message) => {
-    console.log(roomname, '에 보낼 메시지 : ', message);
+// io.on("connection", onConnection);
+io.of('/').adapter.subClient.on('message', (roomname, message) => {
     io.to(roomname).emit('chat message', message);
 });
 
 
+// io.on("connection", (socket) =>{
 io.on("connection", (socket) =>{
     console.log("node connected");
     let curRoom = null;
     let nickname = null;
-    
+
     /** disconnect
      *  다른 방 보려고 잠시 뒤로가기 / 안나감
      * 강제종료, 튕긴거, 뒤로가기 구분?
-     */ 
-        /* if ("비회원") {
-            socket.leave(roomName); //  ㄴㄴ?
-            subClient.unsubscribe(roomName)
-            pubClient.publish(roomName, `${socket.id}님이 방을 나가셨습니다.`);
-            // TODO: DB room에서 비회원 관련 데이터 삭제
-        } 
-        // TODO: DB room에서 회원 관련 데이터 삭제
-        socket.leave(data.roomName); */
-    socket.on("disconnect", (reason) =>{
+     */
+    /* if ("비회원") {
+        socket.leave(roomName); //  ㄴㄴ?
+        subClient.unsubscribe(roomName)
+        pubClient.publish(roomName, `${socket.id}님이 방을 나가셨습니다.`);
+        // TODO: DB room에서 비회원 관련 데이터 삭제
+    } 
+    // TODO: DB room에서 회원 관련 데이터 삭제
+    socket.leave(data.roomName); */
+    socket.on("disconnect", (reason) => {
         console.log("node disconnected", reason)
     })
 
-    
-    socket.on('chat message', (messageObject)=>{
-        console.log(messageObject);
+
+    socket.on('chat message', (messageObject) => {
+        const chatMember = io.of('/').adapter.rooms.get(curRoom).size;
+        // console.log("on chat message", messageObject);
+        messageObject.chatMember = chatMember;
         // TODO: DB 저장
         // join할 떄 변수에 넣어둔 curRoom 쓸까 아니면 front에서 받아서 쓸까
-        pubClient.publish(curRoom,`${messageObject.nickname} : ${messageObject.message}`);
+        io.of('/').adapter.pubClient.publish(curRoom, JSON.stringify(messageObject));
 
     });
-    
+
 
 
     /** leave
@@ -134,11 +134,11 @@ io.on("connection", (socket) =>{
      */
     socket.on('leave', (data) => {
         console.log('user leave', data);
-        socket.leave(data.roomName, (result) => {});
-        subClient.unsubscribe(data.roomName) // 구독하고 있는 방 해제
-        pubClient.publish(data.roomName, `${socket.id}님이 방을 나가셨습니다.`);
-        subClient.end(); // 구독자 설정 해제
-        pubClient.end(); // 발행자 설정 해제
+        socket.leave(data.roomName, (result) => { });
+        io.of('/').adapter.subClient.unsubscribe(data.roomName) // 구독하고 있는 방 해제
+        io.of('/').adapter.pubClient.publish(data.roomName, `${socket.id}님이 방을 나가셨습니다.`);
+        io.of('/').adapter.subClient.end(); // 구독자 설정 해제
+        io.of('/').adapter.pubClient.end(); // 발행자 설정 해제
 
         // TODO: DB room에서 회원 / 비회원 관련 데이터 삭제
     });
@@ -151,12 +151,12 @@ io.on("connection", (socket) =>{
      */
 
     socket.on('join', (data) => {
+
         curRoom = data.roomName;
         nickname = data.nickname;
-        console.log(`nickname ${data.nickname} join room ${data.roomName}`);
         socket.join(data.roomName);
-        subClient.subscribe(data.roomName);
-        pubClient.publish(data.roomName,` [알림] '${data.nickname}' 이 '${data.roomName}'에 입장`); // = SYSTEM = 유준 님이 입장하셨습니다.
+        io.of('/').adapter.subClient.subscribe(data.roomName);
+        // io.of('/').adapter.pubClient.publish(data.roomName, ` [알림] '${data.nickname}' 이 '${data.roomName}'에 입장`); // = SYSTEM = 유준 님이 입장하셨습니다.
         /* if(token.verifyCheck(data.token)) {
             console.log(`User ${data.nickname} join room ${data.roomName}`);
             socket.join(data.roomName);
@@ -171,7 +171,7 @@ io.on("connection", (socket) =>{
 
 
 
-/* 
+/*
     socket.on('change room', (roomName) =>{
         socket.join(roomName);
         subClient.subscribe(roomName);
