@@ -17,4 +17,8 @@ public class ChattingRoomRepository {
         sqlSession.insert("chattingroom.createRoom", chattingRoom);
         return chattingRoom.getNo();
     }
+
+    public ChattingRoom getRoomInfo(Long chattingRoomNo) {
+        return sqlSession.selectOne("chattingroom.getRoomInfo", chattingRoomNo);
+    }
 }

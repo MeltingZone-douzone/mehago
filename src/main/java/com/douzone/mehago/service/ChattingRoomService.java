@@ -1,5 +1,7 @@
 package com.douzone.mehago.service;
 
+import java.util.Map;
+
 import com.douzone.mehago.repository.ChattingRoomRepository;
 import com.douzone.mehago.vo.ChattingRoom;
 
@@ -15,6 +17,10 @@ public class ChattingRoomService {
 
     public Long createRoom(ChattingRoom chattingRoom) {
         return chattingRoomRepository.createRoom(chattingRoom);
+    }
+
+    public ChattingRoom getRoomInfo(Long chattingRoomNo) {
+        return chattingRoomRepository.getRoomInfo(chattingRoomNo);
     }
 
 }

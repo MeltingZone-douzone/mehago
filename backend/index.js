@@ -96,6 +96,7 @@ subClient.on('message', (roomname, message) => {
 });
 
 
+// io.on("connection", (socket) =>{
 io.on("connection", (socket) =>{
     console.log("node connected");
     let curRoom = null;
@@ -120,10 +121,10 @@ io.on("connection", (socket) =>{
     
     socket.on('chat message', (messageObject)=>{
         console.log(messageObject);
+        console.log(messageObject.roomName);
         // TODO: DB 저장
         // join할 떄 변수에 넣어둔 curRoom 쓸까 아니면 front에서 받아서 쓸까
         pubClient.publish(curRoom,`${messageObject.nickname} : ${messageObject.message}`);
-
     });
     
 

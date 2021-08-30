@@ -16,4 +16,25 @@
         </selectKey>
 	</insert>
 
+    <select id="getMessageList" parameterType="Long" resultType="message">
+        <![CDATA[
+            SELECT
+                m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
+                (select count(no) from participant where chatting_room_no) as chatMember, 
+                a.thumbnail_url as thumbnailUrl, a.nickname
+            FROM
+                message m, account a, participant p
+            WHERE
+                m.chatting_room_no = #{chattingRoomNo }
+                AND
+                m.participant_no = p.no
+                AND
+                p.account_no = a.no
+            ORDER BY
+                no DESC
+            LIMIT 
+                20
+        ]]>
+    </select>
+
 </mapper>

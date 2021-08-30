@@ -1,26 +1,38 @@
 import React, {useState, useEffect}from 'react';
 import styled from 'styled-components';
+import { getMessageList } from '../../api/ChatApi';
 
 export default function ReceivedMsg({socket, messageObject, messageFunction}) {
-    
+    const [messageList, setMessageList] = useState([]);
     const [storedMsg, setStoredMsg]  = useState([]);
     const [receivedMsg, setReceivedMsg] = useState();
 
-    useEffect(()=>{
-        socket.on('chat message', (msg) =>{
-            console.log(msg);
-            setReceivedMsg(msg);
+    useEffect(() => {
+        const chatRoomNo = 1; 
+        getMessageList(chatRoomNo).then(res => {
+            if(res.statusText === 'OK') {
+                console.log(res.data);
+                setMessageList(res.data); 
+            }
+        })
+    }, []);
+
+    useEffect(() => {
+        socket.on('chat message', (message) =>{
+            console.log(message);
+            setReceivedMsg(message);
         });
     },[]);
 
-    useEffect(()=>{
+    useEffect(() => {
         setStoredMsg([...storedMsg, receivedMsg]);
     },[receivedMsg]);
 
     return(
         <ChattingView>
             <ul>
-                {storedMsg.map( (msg)=> <li>{msg}</li>)}
+                {messageList.slice(0).reverse().map((message)=> <li>{message.nickname} : {message.message}</li>)}
+                {storedMsg.map((message)=> <li>{message}</li>)}
             </ul>
         </ChattingView>
     );

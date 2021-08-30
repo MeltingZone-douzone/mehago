@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Button } from '@material-ui/core'
 
 export default function MsgInput({messageObject, messageFunction}) {
-
     return(
         <MsgForm>
             <form onSubmit={ messageFunction.onSubmitMessage }>
