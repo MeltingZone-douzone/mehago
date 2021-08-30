@@ -16,18 +16,18 @@ export default function UserInfoSettings({name, phoneNumber, setUserInfoApi}) {
 
     const [newName, setNewName] = useState(name);
     const [newPhoneNumber, setNewphoneNumber] = useState(phoneNumber);
-    
 
     useEffect(() => {
         setNewName(name);
         setNewphoneNumber(phoneNumber);
-        
     }, [name, phoneNumber])
+
+
 
     return (
         <UserInfoSettingsForm>
             <ThemeProvider theme = { theme } >
-                <MatalTextFieldStyle label="이름" variant="outlined" color="primary" onChange={e => setNewName(e.target.value)} value={newName}/>
+                <MatalTextFieldStyle label="이름" variant="outlined" color="primary" onChange={e => setNewName(e.target.value)} value={newName} />
                 <MatalTextFieldStyle label="전화번호" variant="outlined" color="primary" onChange={e => setNewphoneNumber(e.target.value)} value={newPhoneNumber}/>
 
                 <Button className={classes.root} variant="contained" color="primary" onClick={() => setUserInfoApi({name:newName, phoneNumber:newPhoneNumber})} >

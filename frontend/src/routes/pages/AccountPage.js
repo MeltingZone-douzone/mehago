@@ -1,7 +1,7 @@
 import React from 'react';
-import Logo from '../../assets/images/black-wehago.svg';
+import Logo from '../../assets/images/black-mehago.png';
 import styles from "../../assets/sass/account/AccountPage.scss";
-import { Switch, Route, useLocation, NavLink } from "react-router-dom";
+import { Switch, Route, NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 import Links from "../../components/Links";
@@ -10,7 +10,8 @@ import SignUpForm from "../../account/SignUpForm";
 import PasswordSearchPage from "../../account/PasswordSearch";
 import IdSearchPage from "../../account/IdSerach";
 
-export default function AccountPage ({match}) {
+export default function AccountPage ({match, setAuthentication}) {
+
     return (
         <div className = {styles.PageContainer}>
             <div className={styles.Page}>
@@ -37,7 +38,7 @@ export default function AccountPage ({match}) {
                                     <Route
                                       exact
                                       path={`${match.path}/login`}
-                                      component={LoginForm}
+                                      render={ (props) =>( <LoginForm setAuthentication = {setAuthentication} {...props} />)}
                                     />
                                     <Route
                                       exact
