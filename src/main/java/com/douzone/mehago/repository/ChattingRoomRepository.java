@@ -27,4 +27,8 @@ public class ChattingRoomRepository {
     public ChattingRoom getRoomInfo(Long chattingRoomNo) {
         return sqlSession.selectOne("chattingroom.getRoomInfo", chattingRoomNo);
     }
+
+    public List<ChattingRoom> participatingRoom(Long no) {
+        return sqlSession.selectList("chattingroom.participatingRoom", no);
+    }
 }
