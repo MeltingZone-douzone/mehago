@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import ChatHeader from './ChatHeader';
 import MsgInput from './MsgInput';
 import ReceivedMsg from './ReceivedMsg';
-import { getParticipantInfo, getRoomInfo, addMessage } from "../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, addMessage, joinParticipant } from "../../api/ChatApi";
 
 /* 
     TODO: parameter로 chatting_room_no 받아야함
@@ -14,39 +14,40 @@ const socket = io('http://localhost:8888');
 export default function Chatting() {
     // DB에 message 넣을때 p_no, msg, room_no 필요 / nickname, room_name은 pub 위함
     // roomname은 join할 때 roomname 받아와서 변수에 넣어둠
-    const [participantObject, setParticipantObject] = useState({no: ''});
-    const [roomObject, setRoomObject] = useState({title: ''});
-    const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: ''});
+    const [participantObject, setParticipantObject] = useState({ lastReadChatNo: 0 });
+    const [roomObject, setRoomObject] = useState({ title: '' });
+    const [messageObject, setMessageObject] = useState({ participantNo: '', no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: '' });
     const [insertSuccess, setInsertSuccess] = useState(false);
 
     useEffect(() => {
-        const chatRoomNo = 1; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
-        getParticipantInfo(chatRoomNo).then(res => { 
-            if(res.statusText === 'OK') {
-                // console.log(res.data);
+        const chatRoomNo = 6; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
+        getParticipantInfo(chatRoomNo).then(res => {
+            if (res.statusText === 'OK') {
                 setParticipantObject({ ...res.data })
+                console.log(res.data);
             }
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
-        const chatRoomNo = 1; 
+        const chatRoomNo = 6;
         getRoomInfo(chatRoomNo).then(res => {
-            if(res.statusText === 'OK') {
+            if (res.statusText === 'OK') {
                 // console.log(res.data);
                 setRoomObject({ ...res.data })
             }
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
+        joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no);
         setMessageObject({
-                participantNo: participantObject.no,
-                chattingRoomNo: roomObject.no,
-                roomName: roomObject.title,
-                nickname: participantObject.chatNickname
-        })
-    },[participantObject, roomObject]);
+            participantNo: participantObject.no,
+            chattingRoomNo: roomObject.no,
+            roomName: roomObject.title,
+            nickname: participantObject.chatNickname
+        });
+    }, [participantObject, roomObject]);
 
     const messageFunction = {
         onChangeMessage: (e) => {
@@ -57,10 +58,9 @@ export default function Chatting() {
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            console.log(messageObject);
-            if(messageObject.message !== ''){
+            if (messageObject.message !== '') {
                 addMessage(messageObject).then(res => {
-                    if(res.statusText === 'OK') {
+                    if (res.statusText === 'OK') {
                         setInsertSuccess(true);
                         setMessageObject({
                             ...messageObject,
@@ -87,7 +87,7 @@ export default function Chatting() {
     return (
         <ChattingContainer>
             <ChatHeader socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
-            <ReceivedMsg socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
+            <ReceivedMsg socket={socket} participantObject={participantObject} roomObject={roomObject} messageObject={messageObject} messageFunction={messageFunction} />
             <MsgInput socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
         </ChattingContainer>
     )
