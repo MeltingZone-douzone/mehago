@@ -16,7 +16,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction, par
         thumbnailUrl: "",
         createdAt: "" //어떻게 가져오지??
     });
-
+ 
     useEffect(() => {
         const chatRoomNo = 1; 
         getMessageList(chatRoomNo).then(res => {
@@ -26,7 +26,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction, par
             }
         })
     }, []);
-
+ 
     useEffect(() => {
         socket.on('chat message', (msg) => {
             const msgToJson = JSON.parse(msg);
@@ -37,7 +37,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction, par
             setReceivedMsg(msgToJson);
         });
     }, []);
-
+ 
     useEffect(() => {
         setStoredMsg([...storedMsg, receivedMsg]);
     },[receivedMsg]);
@@ -77,7 +77,7 @@ export default function ReceivedMsg({socket, messageObject, messageFunction, par
         </ChattingView>
     );
 }
-
+ 
 const ChattingView = styled.div`
     min-height: 500px;
     height: auto;
@@ -92,3 +92,5 @@ const ChattingView = styled.div`
         margin-top: 10px;
     }
 `
+
+

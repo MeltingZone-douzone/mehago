@@ -1,7 +1,7 @@
 import React from 'react';
 import Logo from '../../assets/images/black-mehago.png';
 import styles from "../../assets/sass/account/AccountPage.scss";
-import { Switch, Route, useLocation, NavLink } from "react-router-dom";
+import { Switch, Route, NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 import Links from "../../components/Links";
@@ -10,7 +10,8 @@ import SignUpForm from "../../account/SignUpForm";
 import PasswordSearchPage from "../../account/PasswordSearch";
 import IdSearchPage from "../../account/IdSerach";
 
-export default function AccountPage({ match }) {
+export default function AccountPage ({match, setAuthentication}) {
+
     return (
         <div className={styles.PageContainer}>
             <div className={styles.Page}>
@@ -24,39 +25,39 @@ export default function AccountPage({ match }) {
                     </NavLink>
                 </div>
                 <div className={styles.ContentWrapper}>
-
-                    <AnimatePresence>
-                        <Switch location={location} key={location.pathname}>
-                            <motion.div
-                                style={pageStyle}
-                                initial="initial"
-                                animate="in"
-                                exit="out"
-                                variants={pageVariants}
-                                transition={pageTransition}>
-                                <Route
-                                    exact
-                                    path={`${match.path}/login`}
-                                    component={LoginForm}
-                                />
-                                <Route
-                                    exact
-                                    path={`${match.path}/signup`}
-                                    component={SignUpForm}
-                                />
-                                <Route
-                                    exact
-                                    path={`${match.path}/idsearch`}
-                                    component={IdSearchPage}
-                                />
-                                <Route
-                                    exact
-                                    path={`${match.path}/passwordsearch`}
-                                    component={PasswordSearchPage}
-                                />
-                            </motion.div>
-                        </Switch>
-                    </AnimatePresence>
+                
+                        <AnimatePresence>
+                            <Switch location={location} key={location.pathname}>
+                                <motion.div
+                                  style={pageStyle}
+                                  initial="initial"
+                                  animate="in"
+                                  exit="out"
+                                  variants={pageVariants}
+                                  transition={pageTransition}>
+                                    <Route
+                                      exact
+                                      path={`${match.path}/login`}
+                                      render={ (props) =>( <LoginForm setAuthentication = {setAuthentication} {...props} />)}
+                                    />
+                                    <Route
+                                      exact
+                                      path={`${match.path}/signup`}
+                                      component={SignUpForm}
+                                    />
+                                    <Route
+                                      exact
+                                      path={`${match.path}/idsearch`}
+                                      component={IdSearchPage}
+                                    />
+                                    <Route
+                                      exact
+                                      path={`${match.path}/passwordsearch`}
+                                      component={PasswordSearchPage}
+                                    />
+                                </motion.div>
+                            </Switch>
+                        </AnimatePresence>
                 </div>
                 <Links />
             </div>

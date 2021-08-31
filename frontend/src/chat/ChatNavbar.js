@@ -3,8 +3,8 @@ import styles from '../assets/sass/chat/Chat.scss';
 
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
-import ChattingRoomNavbarProfiles from './ChattingRoomNavbarProfiles';
-import ParticipantsList from './ParticipantsList';
+import ParticipatingRoom from './ParticipatingRoom';
+import ParticipatingMember from './ParticipatingMember';
 import HomeIcon from '@material-ui/icons/Home';
 import { Link } from 'react-router-dom';
 
@@ -31,8 +31,8 @@ export default function ChatNavbar(){
                 <button onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></button>
             </div>
             <div className={styles.ChatList}>
-                {chatList? <ChattingRoomNavbarProfiles />: null}
-                {chatMember? <ParticipantsList />: null}
+                {chatList? <ParticipatingRoom />: null}
+                {chatMember? <ParticipatingMember />: null}
             </div>
             
         </div>

@@ -27,4 +27,8 @@ public class ChattingRoomService {
         return chattingRoomRepository.getRoomInfo(chattingRoomNo);
     }
 
+    public List<ChattingRoom> participatingRoom(Long no) {
+        return chattingRoomRepository.participatingRoom(no);
+    }
+
 }

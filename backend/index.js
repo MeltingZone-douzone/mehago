@@ -3,6 +3,11 @@ const http = require('http');
 const path = require('path');
 const dotenv = require("dotenv");
 const argv = require('minimist')(process.argv.slice(2));
+const elasticsearch = require('elasticsearch');
+
+const client = new elasticsearch.Client({
+    host:"localhost:9999"
+})
 
 // Environment Variables(환경 변수)
 dotenv.config({ path: path.join(__dirname, 'app.config.env') });
