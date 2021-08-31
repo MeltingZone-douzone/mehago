@@ -15,6 +15,12 @@
             select last_insert_id()
         </selectKey>
 	</insert>
+  <select id="getChatRoomList" resultType="chattingroom">
+    <![CDATA[
+		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized , searchable, secret_room as secretRoom, owner
+		   from chatting_room 
+		]]> 
+  </select>
 
   <select id="getRoomInfo" parameterType="Long" resultType="chattingroom">
     <![CDATA[
@@ -28,7 +34,7 @@
       ]]>
   </select>
 
-  <select id="getRoomList" parameterType="Long" resultType="chattingroom">
+  <select id="participatingRoom" parameterType="Long" resultType="chattingroom">
     <![CDATA[
       SELECT
           no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized, searchable, secret_room as secretRoom, owner
@@ -40,7 +46,7 @@
                 FROM
                   participant
                 WHERE
-                  account_no = #{accountNo })
+                  account_no = #{no})
       LIMIT
           10
     ]]>

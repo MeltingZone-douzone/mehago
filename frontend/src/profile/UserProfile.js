@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
-import Thumbnail from '../components/thumbnail';
+import Thumbnail from '../components/Thumbnail';
 
 export default function UserProfile({user}) {
 
@@ -47,6 +47,7 @@ const UserProfileContainer = styled.div`
     height:70%;
     padding:0 1em;
     margin:auto;
+    margin-top: 5%;
 
     display:flex;
     flex-direction:column;

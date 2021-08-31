@@ -1,22 +1,26 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import Logo from '../assets/images/white-mehago.png';
 import styled from 'styled-components';
 import { colors } from '../assets/styles/properties/Colors';
+import HeaderAuthenticationButtons from './HeaderAuthenticationButtons';
 
-export default function Header() {
 
-    
+export default function Header({handleAuthentication, authentication, userInfo}) {
 
     return(
         <HeaderContainer>
             <NavLink to="/"><LogoImg src={Logo} alt="LogoImage"></LogoImg></NavLink>
             {/* <div style={{marginLeft:"5rem"}}>navi</div> */}
-            <AuthenticationWrapper>
-                <NavLink to="/account/login">로그인</NavLink>
-                <NavLink to="/account/signup">회원가입</NavLink>
-            </AuthenticationWrapper>
+            { authentication? 
+                <HeaderAuthenticationButtons handleAuthentication={handleAuthentication} userInfo={userInfo} />
+                :
+                <AuthenticationWrapper>
+                    <NavLinkButton to="/account/login">로그인</NavLinkButton>
+                    <NavLinkButton to="/account/signup">회원가입</NavLinkButton>
+                </AuthenticationWrapper>
+            }
         </HeaderContainer>
     );
 }
@@ -31,7 +35,8 @@ const HeaderContainer = styled.div`
     position:fixed;
     display:flex;
     align-items:center;
-    place-content:space-around;
+    justify-content: space-between;
+    
     z-index:100;
 `
 
@@ -43,16 +48,22 @@ const LogoImg = styled.img`
 
 const AuthenticationWrapper = styled.div`
     display: flex;
-    
+    margin-right: 20px;
+`
 
-    a {
-        padding: .5rem;
-        color: #fff;
-        border:1px solid #fff;
-        font-weight: bold;
+const NavLinkButton = styled(NavLink) `
+
+    padding: .5rem;
+    color: #fff;
+    border:1px solid #fff;
+    border-radius: 8px;
+    font-weight: bold;
+
+    &: hover{
+        background-color:${colors.mainThemeColor};
     }
 
-    a + a {
+    & + & {
         margin-left: 10px;
     }
 `

@@ -71,3 +71,5 @@ const ChattingView = styled.div`
         margin-top: 10px;
     }
 `
+
+

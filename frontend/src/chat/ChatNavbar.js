@@ -3,15 +3,14 @@ import styles from '../assets/sass/chat/Chat.scss';
 
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
-import ChatList from './ChatList';
-import ChatMember from './ChatMember';
+import ParticipatingRoom from './ParticipatingRoom';
+import ParticipatingMember from './ParticipatingMember';
+import HomeIcon from '@material-ui/icons/Home';
+import { Link } from 'react-router-dom';
 
 export default function ChatNavbar(){
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
-    
-    console.log(`chatList ${chatList}`);
-    console.log(`chatMember ${chatMember}`);
 
     const handleChatList = () => {
         setChatList(true);
@@ -24,16 +23,18 @@ export default function ChatNavbar(){
     }
 
     return (
-        <div className={styles.Chat}>
+        <div className={styles.Chat} onClick={(e)=>e.stopPropagation()}>
             <div className={styles.ChatNavbar}>
+                <Link to="/chat"><button><HomeIcon /></button></Link>
                 <button onClick={() => handleChatList()}><ForumOutlinedIcon /></button>
 
                 <button onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></button>
             </div>
             <div className={styles.ChatList}>
-                {chatList? <ChatList />: null}
-                {chatMember? <ChatMember />: null}
+                {chatList? <ParticipatingRoom />: null}
+                {chatMember? <ParticipatingMember />: null}
             </div>
+            
         </div>
     );
 }

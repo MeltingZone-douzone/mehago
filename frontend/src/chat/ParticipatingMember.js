@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
@@ -9,7 +9,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import styles from '../assets/sass/chat/ChatList.scss';
 
-export default function ChatMember(){
+export default function ParticipatingMember(){
+    
     return (
         <div>
               <Grid className={styles.borderRight500}>
