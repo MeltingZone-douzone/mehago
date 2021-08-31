@@ -99,7 +99,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
 
 
 // io.on("connection", (socket) =>{
-io.on("connection", (socket) =>{
+io.on("connection", (socket) => {
     console.log("node connected");
     let curRoom = null;
     let nickname = null;
@@ -117,14 +117,15 @@ io.on("connection", (socket) =>{
     // TODO: DB room에서 회원 관련 데이터 삭제
     socket.leave(data.roomName); */
     socket.on("disconnect", (reason) => {
+
         console.log("node disconnected", reason)
     })
 
 
     socket.on('chat message', (messageObject) => {
-        const chatMember = io.of('/').adapter.rooms.get(curRoom).size;
+        // const chatMember = io.of('/').adapter.rooms.get(curRoom).size;
         // console.log("on chat message", messageObject);
-        messageObject.chatMember = chatMember;
+        // messageObject.chatMember = chatMember;
         // TODO: DB 저장
         // join할 떄 변수에 넣어둔 curRoom 쓸까 아니면 front에서 받아서 쓸까
         io.of('/').adapter.pubClient.publish(curRoom, JSON.stringify(messageObject));
@@ -161,6 +162,10 @@ io.on("connection", (socket) =>{
         nickname = data.nickname;
         socket.join(data.roomName);
         io.of('/').adapter.subClient.subscribe(data.roomName);
+        // 1. 처음들어온사람 입장 메시지
+        // 2. 기존 채팅방 사람 notreadcount 수정해줘야함
+
+
         // io.of('/').adapter.pubClient.publish(data.roomName, ` [알림] '${data.nickname}' 이 '${data.roomName}'에 입장`); // = SYSTEM = 유준 님이 입장하셨습니다.
         /* if(token.verifyCheck(data.token)) {
             console.log(`User ${data.nickname} join room ${data.roomName}`);

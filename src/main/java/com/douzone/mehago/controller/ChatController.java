@@ -57,17 +57,23 @@ public class ChatController {
 
     @PostMapping("/addMessage")
     public ResponseEntity<?> addMessage(@AuthUser Account auth, @RequestBody Message message) {
-        System.out.println("addMessage called");
+        // 1. 채팅방 전체 멤버 가져와서 add message
+        Long chatMember = participantService.getChatMember(message.getChattingRoomNo());
+        message.setNotReadCount(chatMember);
         Long messageNo = participantService.addMessage(message);
+        message.setNo(messageNo);
+        // 2. 채팅방의 participant에 not_read_chat 의 숫자를 +1
+        participantService.addNotReadCount(message);
         return ResponseEntity.ok().body(messageNo);
     }
 
-    
     // @PostMapping("/participantInfo")
-    // public ResponseEntity<?> getParticipantInfo(@AuthUser Account auth, @RequestBody Message message) {
+    // public ResponseEntity<?> getParticipantInfo(@AuthUser Account auth,
+    // @RequestBody Message message) {
     @Auth
     @GetMapping("/roomInfo")
     public ResponseEntity<?> getRoomInfo(String chattingRoomNo) {
+        ChattingRoom result = chattingRoomService.getRoomInfo(Long.parseLong(chattingRoomNo));
         return ResponseEntity.ok().body(chattingRoomService.getRoomInfo(Long.parseLong(chattingRoomNo)));
     }
 
@@ -86,15 +92,29 @@ public class ChatController {
     @GetMapping("/getMessageList")
     public ResponseEntity<?> getMessageList(String chattingRoomNo) {
         List<Message> list = messageService.getMessageList(Long.parseLong(chattingRoomNo));
-        // System.out.println(list);
         return ResponseEntity.ok().body(list);
     }
 
     @PostMapping("/updateNotReadCount")
     public ResponseEntity<?> updateNotReadCount(@RequestBody Message message) {
-        System.out.println("updateNotReadCount called");
-        System.out.println("updateNotReadCount" + message.toString());
-        return ResponseEntity.ok().body(messageService.updateNotReadCount(message));
+        messageService.updateNotReadCount(message);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/updateLastReadNo")
+    public ResponseEntity<?> updateLastReadNo(@RequestBody Participant participant) {
+        // 접속중이라면 마지막 읽은 채팅창 번호를 update 시켜줘야 한다.
+        participantService.updateLastReadNo(participant);
+        return ResponseEntity.ok().body(participant);
+    }
+
+    @PostMapping("/joinParticipant")
+    public ResponseEntity<?> joinParticipant(@RequestBody Participant participant) {
+        // message not_read_count를 줄여줘야 해.
+        messageService.subtractNotReadCount(participant);
+        // 채팅방 join을 하면 readcount들이 업데이트 되어야 함 !
+        participantService.updateReadCountOfJoin(participant);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/chatList")

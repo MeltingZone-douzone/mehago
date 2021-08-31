@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import ChatHeader from './ChatHeader';
 import MsgInput from './MsgInput';
 import ReceivedMsg from './ReceivedMsg';
-import { getParticipantInfo, getRoomInfo, addMessage } from "../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, addMessage, joinParticipant } from "../../api/ChatApi";
 
 /* 
     TODO: parameter로 chatting_room_no 받아야함
@@ -27,26 +27,27 @@ export default function Chatting() {
     const [insertSuccess, setInsertSuccess] = useState(false);
 
     useEffect(() => {
-        const chatRoomNo = 1; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
-        getParticipantInfo(chatRoomNo).then(res => { 
-            if(res.statusText === 'OK') {
-                // console.log(res.data);
+        const chatRoomNo = 6; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
+        getParticipantInfo(chatRoomNo).then(res => {
+            if (res.statusText === 'OK') {
                 setParticipantObject({ ...res.data })
+                console.log(res.data);
             }
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
-        const chatRoomNo = 1; 
+        const chatRoomNo = 6;
         getRoomInfo(chatRoomNo).then(res => {
-            if(res.statusText === 'OK') {
+            if (res.statusText === 'OK') {
                 // console.log(res.data);
                 setRoomObject({ ...res.data })
             }
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
+        joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no);
         setMessageObject({
                 participantNo: participantObject.no,
                 chattingRoomNo: roomObject.no,
@@ -65,7 +66,7 @@ export default function Chatting() {
             e.preventDefault();
             if(messageObject.message !== ''){
                 addMessage(messageObject).then(res => {
-                    if(res.statusText === 'OK') {
+                    if (res.statusText === 'OK') {
                         setInsertSuccess(true);
                         setMessageObject({
                             ...messageObject,
@@ -92,7 +93,7 @@ export default function Chatting() {
     return (
         <ChattingContainer>
             <ChatHeader socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
-            <ReceivedMsg socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} />
+            <ReceivedMsg socket={socket} participantObject={participantObject} roomObject={roomObject} messageObject={messageObject} messageFunction={messageFunction} />
             <MsgInput socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
         </ChattingContainer>
     )

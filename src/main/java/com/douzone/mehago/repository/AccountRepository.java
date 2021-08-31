@@ -14,35 +14,34 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class AccountRepository {
- 
-    
+
     private final SqlSession sqlSession;
 
     public Boolean signUp(Account account) {
-		return sqlSession.insert("account.insert", account) == 1 ? true : false;
-	}
+        return sqlSession.insert("account.insert", account) == 1 ? true : false;
+    }
 
     public Account getAccount(Account account) {
-        return sqlSession.selectOne("account.findByEmailAndPassword",account);
+        return sqlSession.selectOne("account.findByEmailAndPassword", account);
     }
 
     public Account getAccountByToken(Account account) {
-        return sqlSession.selectOne("account.findByNo",account);
+        return sqlSession.selectOne("account.findByNo", account);
     }
 
-    public Account searchAccount(String name, String email){
+    public Account searchAccount(String name, String email) {
         Map<String, String> map = new HashMap<>();
-            map.put("name", name);
-            map.put("email", email);
+        map.put("name", name);
+        map.put("email", email);
         return sqlSession.selectOne("account.searchAccount", map);
     }
 
-    public Account searchEmail(String name, String phoneNumber){
+    public Account searchEmail(String name, String phoneNumber) {
         Map<String, String> map = new HashMap<>();
-            map.put("name", name);
-            map.put("phoneNumber", phoneNumber);
+        map.put("name", name);
+        map.put("phoneNumber", phoneNumber);
 
-        return sqlSession.selectOne("account.searchEmail",map);
+        return sqlSession.selectOne("account.searchEmail", map);
     }
 
     public boolean updateNickname(Account account) {
@@ -58,23 +57,22 @@ public class AccountRepository {
     }
 
     public boolean updateToken(Account account) {
-        System.out.println("ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ");
         System.out.println(account);
         return sqlSession.update("account.updateToken", account) == 1 ? true : false;
     }
 
-    public void updateRandomPassword(String randomPassword, String email){
+    public void updateRandomPassword(String randomPassword, String email) {
         Map<String, String> map = new HashMap<>();
-            map.put("randomPassword", randomPassword);
-            map.put("email", email);
+        map.put("randomPassword", randomPassword);
+        map.put("email", email);
 
         sqlSession.update("account.updateRendomPassword", map);
     }
 
     public String isExistsData(String name, String value) {
         Map<String, Object> map = new HashMap<>();
-		map.put("name", name);
-		map.put("value", value);
+        map.put("name", name);
+        map.put("value", value);
         System.out.println(map);
         return sqlSession.selectOne("account.isExistsData", map);
     }

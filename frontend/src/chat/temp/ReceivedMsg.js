@@ -1,83 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { updateNotReadCount, getMessageList } from '../../api/ChatApi';
+import { getMessageList, updateNotReadCount, updateLastReadNo } from '../../api/ChatApi';
 
-export default function ReceivedMsg({socket, messageObject, messageFunction, participantObject}) {
+export default function ReceivedMsg({ socket, participantObject, roomObject, messageObject, messageFunction }) {
     const [messageList, setMessageList] = useState([]);
-    const [storedMsg, setStoredMsg]  = useState([]);
     const [receivedMsg, setReceivedMsg] = useState({
         participantNo: 0,
         no: 0,
         message: '',
         chattingRoomNo: 0,
-        chatMember: 0,
         notReadCount: 0,
         nickname: '',
         thumbnailUrl: "",
-        createdAt: "" //어떻게 가져오지??
+        createdAt: ""
     });
- 
+    const [insertSuccess, setInsertSuccess] = useState(false);
+
     useEffect(() => {
-        const chatRoomNo = 1; 
+        const chatRoomNo = 6;
         getMessageList(chatRoomNo).then(res => {
-            if(res.statusText === 'OK') {
+            if (res.statusText === 'OK') {
                 console.log(res.data);
-                setMessageList(res.data); 
+                setMessageList(res.data);
             }
         })
     }, []);
- 
+
     useEffect(() => {
         socket.on('chat message', (msg) => {
             const msgToJson = JSON.parse(msg);
-            updateNotReadCount(msgToJson)
-                .then((res) => {
-                    msgToJson.notReadCount = res.data;
-                })
+            console.log(msgToJson);
+            //이게 message table에서 읽은사람 수 만큼 -1을 해 주는 
+            updateNotReadCount(msgToJson);
             setReceivedMsg(msgToJson);
+            setInsertSuccess(true);
         });
     }, []);
- 
+
     useEffect(() => {
-        setStoredMsg([...storedMsg, receivedMsg]);
-    },[receivedMsg]);
-    
-/* 
-     // 스크롤을 하단으로 이동시키는 함수
-    const scrollToBottom = () => {
-        document.getElementById('messageList').scrollBy({ top: 100 });
-    };
+        console.log(insertSuccess);
+        if (insertSuccess) {
+            console.log("여기");
+            // 읽은 사람이 last_read_chat_no와 not_read_chat을 수정하는건데..
+            updateLastReadNo(participantObject, receivedMsg.no, roomObject);
+            setInsertSuccess(false);
+        }
+        setMessageList([...messageList, receivedMsg]);
+    }, [receivedMsg]);
 
-    useEffect(async () => {
-        (await receivedMsg.message.length) > 0 &&
-         setStoredMsg([...storedMsg, receivedMsg]);
-
-         scrollToBottom()
-        // setReceivedMsg('');
-    },[receivedMsg]);
- */
-    return(
+    return (
         <ChattingView>
             <ul>
-                {messageList
-                    .slice(0).reverse().map(message => 
-                        message.participantNo !== participantObject.no ? 
-                        <li>{message.nickname} : {message.message}</li> : 
-                        <li>😎 : {message.message}</li>
-                    )
-                }
-                {storedMsg
-                    .map((message)=> 
-                        message.participantNo !== participantObject.no ? 
-                        <li>{message.nickname} : {message.message}</li> : 
-                        <li>😎 : {message.message}</li>
-                    )
-                }
+                {messageList.slice(0).reverse().map((message) => <li>{message.nickname} : {message.message}</li>)}
             </ul>
         </ChattingView>
     );
 }
- 
+
 const ChattingView = styled.div`
     min-height: 500px;
     height: auto;
