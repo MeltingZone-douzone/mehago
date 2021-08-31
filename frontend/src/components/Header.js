@@ -38,7 +38,6 @@ const HeaderContainer = styled.div`
 const LogoImg = styled.img`
     margin-left: 1em;
     width: 8em;
-    height: fit-content;
 `
 
 const AuthenticationWrapper = styled.div`

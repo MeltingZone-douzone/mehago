@@ -56,6 +56,7 @@ public class ChatController {
 
     @PostMapping("/addMessage")
     public ResponseEntity<?> addMessage(@AuthUser Account auth, @RequestBody Message message) {
+        System.out.println("addMessage called");
         Long messageNo = participantService.addMessage(message);
         return ResponseEntity.ok().body(messageNo);
     }
@@ -66,8 +67,6 @@ public class ChatController {
     @Auth
     @GetMapping("/roomInfo")
     public ResponseEntity<?> getRoomInfo(String chattingRoomNo) {
-        ChattingRoom result = chattingRoomService.getRoomInfo(Long.parseLong(chattingRoomNo));
-        System.out.println(result);
         return ResponseEntity.ok().body(chattingRoomService.getRoomInfo(Long.parseLong(chattingRoomNo)));
     }
 
@@ -78,20 +77,21 @@ public class ChatController {
         map.put("accountNo", auth.getNo());
         map.put("chattingRoomNo", Long.parseLong(chattingRoomNo));
         Participant result = participantService.getParticipantInfo(map);
+        System.out.println(result);
         return ResponseEntity.ok().body(participantService.getParticipantInfo(map));
     }
 
     @Auth
     @GetMapping("/getMessageList")
     public ResponseEntity<?> getMessageList(String chattingRoomNo) {
-        System.out.println("개새");
         List<Message> list = messageService.getMessageList(Long.parseLong(chattingRoomNo));
-        System.out.println(list);
+        // System.out.println(list);
         return ResponseEntity.ok().body(list);
     }
 
     @PostMapping("/updateNotReadCount")
     public ResponseEntity<?> updateNotReadCount(@RequestBody Message message) {
+        System.out.println("updateNotReadCount called");
         System.out.println("updateNotReadCount" + message.toString());
         return ResponseEntity.ok().body(messageService.updateNotReadCount(message));
     }

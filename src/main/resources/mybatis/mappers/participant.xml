@@ -18,7 +18,7 @@
 <select id="getParticipantInfo" parameterType="Map" resultType="participant">
 	<![CDATA[
 		select 
-			no, chat_nickname as chatNickname, not_read_chat as notReadChat, last_read_chat_no as lastReadChatNo
+			no, chat_nickname as chatNickname, chatting_room_no as chattingRoomNo, not_read_chat as notReadChat, last_read_chat_no as lastReadChatNo
 		from
 			participant
 		where

@@ -58,6 +58,8 @@ public class AccountRepository {
     }
 
     public boolean updateToken(Account account) {
+        System.out.println("ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ");
+        System.out.println(account);
         return sqlSession.update("account.updateToken", account) == 1 ? true : false;
     }
 

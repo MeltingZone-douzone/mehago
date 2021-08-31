@@ -10,12 +10,18 @@ import { getParticipantInfo, getRoomInfo, addMessage } from "../../api/ChatApi";
     TODO: parameter로 chatting_room_no 받아야함
 */
 
+/* 
+소켓 연결은 컴포넌트와 동등한 위치에서 선언되어야 한다.
+왜냐하면 지속적으로 연결이 유지되어야 하기 때문이다
+아래에 선언하면 처음에는 서버로 요청이 순조롭게 가다가 어느 시간이 지나면 요청이 가지 않는 에러(Bad Request)가 발생함
+컴포넌트의 렌더링이 끝나고 난 뒤에 연결이 끊김
+*/
 const socket = io('http://localhost:8888');
 
 export default function Chatting() {
     // DB에 message 넣을때 p_no, msg, room_no 필요 / nickname, room_name은 pub 위함
     // roomname은 join할 때 roomname 받아와서 변수에 넣어둠
-    const [participantObject, setParticipantObject] = useState({no: ''});
+    const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({title: ''});
     const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: ''});
     const [insertSuccess, setInsertSuccess] = useState(false);
@@ -48,7 +54,6 @@ export default function Chatting() {
                 nickname: participantObject.chatNickname
         })
     },[participantObject, roomObject]);
-
     const messageFunction = {
         onChangeMessage: (e) => {
             const { name, value } = e.target;
@@ -58,7 +63,6 @@ export default function Chatting() {
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            console.log(messageObject);
             if(messageObject.message !== ''){
                 addMessage(messageObject).then(res => {
                     if(res.statusText === 'OK') {
@@ -88,7 +92,7 @@ export default function Chatting() {
     return (
         <ChattingContainer>
             <ChatHeader socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
-            <ReceivedMsg socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
+            <ReceivedMsg socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} />
             <MsgInput socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
         </ChattingContainer>
     )

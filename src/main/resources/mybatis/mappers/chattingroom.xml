@@ -17,7 +17,7 @@
 	</insert>
   <select id="getChatRoomList" resultType="chattingroom">
     <![CDATA[
-		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authoried as onlyAuthoried , searchable, secret_room as secretRoom, owner
+		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized , searchable, secret_room as secretRoom, owner
 		   from chatting_room 
 		]]> 
   </select>
