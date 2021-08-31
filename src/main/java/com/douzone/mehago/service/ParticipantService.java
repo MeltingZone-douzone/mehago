@@ -24,10 +24,6 @@ public class ParticipantService {
         return participantRepository.getParticipantInfo(map);
     }
 
-    public Long addMessage(Message message) {
-        return participantRepository.addMessage(message);
-    }
-
     public boolean updateLastReadNo(Participant participant) {
         participantRepository.updateNotReadCount(participant);
         return participantRepository.updateLastReadNo(participant);

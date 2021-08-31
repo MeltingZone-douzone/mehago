@@ -63,7 +63,6 @@ export function joinParticipant(participantNo, lastReadChatNo, roomNo) {
     participant.no = participantNo;
     participant.lastReadChatNo = lastReadChatNo;
     participant.chattingRoomNo = roomNo;
-    console.log(participant);
     return axios.post("/api/chat/joinParticipant", participant);
 }
 

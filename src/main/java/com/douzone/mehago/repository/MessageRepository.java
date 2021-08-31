@@ -16,6 +16,11 @@ public class MessageRepository {
 
     private final SqlSession sqlSession;
 
+    public Long addMessage(Message message) {
+        sqlSession.insert("message.addMessage", message);
+        return message.getNo();
+    }
+
     public List<Message> getMessageList(Long chattingRoomNo) {
         return sqlSession.selectList("message.getMessageList", chattingRoomNo);
     }

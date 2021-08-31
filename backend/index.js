@@ -6,7 +6,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const elasticsearch = require('elasticsearch');
 
 const client = new elasticsearch.Client({
-    host:"localhost:9999"
+    host: "localhost:9999"
 })
 
 // Environment Variables(환경 변수)
@@ -117,7 +117,6 @@ io.on("connection", (socket) => {
     // TODO: DB room에서 회원 관련 데이터 삭제
     socket.leave(data.roomName); */
     socket.on("disconnect", (reason) => {
-
         console.log("node disconnected", reason)
     })
 
@@ -157,11 +156,10 @@ io.on("connection", (socket) => {
      */
 
     socket.on('join', (data) => {
-
-        curRoom = data.roomName;
-        nickname = data.nickname;
-        socket.join(data.roomName);
-        io.of('/').adapter.subClient.subscribe(data.roomName);
+        curRoom = data;
+        socket.join(curRoom);
+        io.of('/').adapter.subClient.subscribe(curRoom);
+        io.to(curRoom).emit('join', 'join!!!!');
         // 1. 처음들어온사람 입장 메시지
         // 2. 기존 채팅방 사람 notreadcount 수정해줘야함
 

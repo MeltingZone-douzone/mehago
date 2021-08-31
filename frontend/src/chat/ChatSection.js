@@ -11,47 +11,68 @@ import Fab from '@material-ui/core/Fab';
 import SendIcon from '@material-ui/icons/Send';
 import styles from '../assets/sass/chat/ChatList.scss';
 import { io } from 'socket.io-client';
-import { getParticipantInfo, getRoomInfo, addMessage } from "../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, addMessage, joinParticipant } from "../../api/ChatApi";
 
-import MsgInput2 from './MsgInput2'
-import Chatting2 from './Chatting2'
+import MsgInput2 from './MsgInput2';
+import Chatting2 from './Chatting2';
 
 const socket = io('http://localhost:8888');
-export default function ChatSection(){
+export default function ChatSection() {
 
     const [participantObject, setParticipantObject] = useState({});
-    const [roomObject, setRoomObject] = useState({title: ''});
-    const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: ''});
+    const [roomObject, setRoomObject] = useState({ title: '' });
+    const [messageObject, setMessageObject] = useState({ participantNo: '', no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: '' });
     const [insertSuccess, setInsertSuccess] = useState(false);
+    const [joinSuccess, setJoinSuccess] = useState(false);
 
     useEffect(() => {
-        const chatRoomNo = 1; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
-        getParticipantInfo(chatRoomNo).then(res => { 
-            if(res.statusText === 'OK') {
+        const chatRoomNo = 6; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
+        getParticipantInfo(chatRoomNo).then(res => {
+            if (res.statusText === 'OK') {
                 // console.log(res.data);
                 setParticipantObject({ ...res.data })
             }
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
-        const chatRoomNo = 1; 
+        const chatRoomNo = 6;
         getRoomInfo(chatRoomNo).then(res => {
-            if(res.statusText === 'OK') {
+            if (res.statusText === 'OK') {
                 // console.log(res.data);
                 setRoomObject({ ...res.data })
+                setJoinSuccess(true);
+                console.log("joinSuccess", joinSuccess);
             }
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
-        setMessageObject({
-                participantNo: participantObject.no,
-                chattingRoomNo: roomObject.no,
-                roomName: roomObject.title,
-                nickname: participantObject.chatNickname
+        socket.on('join', (msg) => {
+            // 사람이 disconnect 했다가 connect했을 때 불러질 거임!
+            // messageList에 읽은 숫자 update를 해 줘야함ㅁㅁㅁㅁㅁ
+            console.log(msg);
         })
-    },[participantObject, roomObject]);
+    }, []);
+
+    useEffect(() => {
+        if (joinSuccess) {
+            console.log("??????");
+            const data = {
+                roomName: roomObject.title
+            }
+            socket.emit('join', roomObject.title);
+            joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no);
+            setJoinSuccess(false);
+        }
+        setMessageObject({
+            participantNo: participantObject.no,
+            chattingRoomNo: roomObject.no,
+            roomName: roomObject.title,
+            nickname: participantObject.chatNickname
+        })
+    }, [joinSuccess]);
+
     const messageFunction = {
         onChangeMessage: (e) => {
             const { name, value } = e.target;
@@ -61,14 +82,15 @@ export default function ChatSection(){
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            if(messageObject.message !== ''){
+            if (messageObject.message !== '') {
                 addMessage(messageObject).then(res => {
-                    if(res.statusText === 'OK') {
+                    if (res.statusText === 'OK') {
                         setInsertSuccess(true);
                         setMessageObject({
                             ...messageObject,
                             message: messageObject.message,
-                            no: res.data
+                            no: res.data.no,
+                            createdAt: res.data.createdAt
                         });
                     }
                 });
@@ -96,12 +118,12 @@ export default function ChatSection(){
                         primary=채팅
                         secondary=보낸 시간
                 */}
-                <Chatting2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} />
+                <Chatting2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} />
                 <Divider />
                 <MsgInput2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
 
             </Grid>
         </div>
     );
-  
+
 }

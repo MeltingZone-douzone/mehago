@@ -16,6 +16,10 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
 
+    public Long addMessage(Message message) {
+        return messageRepository.addMessage(message);
+    }
+
     public List<Message> getMessageList(Long chattingRoomNo) {
         return messageRepository.getMessageList(chattingRoomNo);
     }

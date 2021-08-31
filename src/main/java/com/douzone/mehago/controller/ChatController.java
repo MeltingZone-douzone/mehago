@@ -60,11 +60,11 @@ public class ChatController {
         // 1. 채팅방 전체 멤버 가져와서 add message
         Long chatMember = participantService.getChatMember(message.getChattingRoomNo());
         message.setNotReadCount(chatMember);
-        Long messageNo = participantService.addMessage(message);
-        message.setNo(messageNo);
+        Long result = messageService.addMessage(message);
+        message.setNo(result);
         // 2. 채팅방의 participant에 not_read_chat 의 숫자를 +1
         participantService.addNotReadCount(message);
-        return ResponseEntity.ok().body(messageNo);
+        return ResponseEntity.ok().body(message);
     }
 
     // @PostMapping("/participantInfo")
@@ -118,16 +118,16 @@ public class ChatController {
     }
 
     @PostMapping("/chatList")
-    public ResponseEntity<?> getChatList(){
+    public ResponseEntity<?> getChatList() {
         List<ChattingRoom> chattingRoomList = chattingRoomService.getChatRoomList();
         return ResponseEntity.ok().body(chattingRoomList);
     }
+
     @PostMapping("/participatingRoom")
-    public ResponseEntity<?> participatingRoom(){
-        Long no = 12L;   // 임의로 준것   
+    public ResponseEntity<?> participatingRoom() {
+        Long no = 12L; // 임의로 준것
         List<ChattingRoom> participatingRoom = chattingRoomService.participatingRoom(no);
         return ResponseEntity.ok().body(participatingRoom);
     }
-    
 
 }

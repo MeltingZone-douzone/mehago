@@ -26,11 +26,6 @@ public class ParticipantRepository {
         return result;
     }
 
-    public Long addMessage(Message message) {
-        sqlSession.insert("message.addMessage", message);
-        return message.getNo();
-    }
-
     public boolean updateLastReadNo(Participant participant) {
         return sqlSession.update("participant.updateLastReadNo", participant) == 1 ? true : false;
     }

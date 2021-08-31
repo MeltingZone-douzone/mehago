@@ -22,8 +22,7 @@
         <![CDATA[
             SELECT
                 m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
-                (select count(no) from participant where chatting_room_no = #{chattingRoomNo }) as chatMember, 
-                a.thumbnail_url as thumbnailUrl, a.nickname
+                a.thumbnail_url as thumbnailUrl, p.chat_nickname as nickname 
             FROM
                 message m, account a, participant p
             WHERE
