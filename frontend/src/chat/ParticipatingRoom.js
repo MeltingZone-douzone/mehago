@@ -1,47 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import styles from '../assets/sass/chat/ChatList.scss';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+import styled from 'styled-components';
+import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+
+import { getMyChatListApi } from '../../api/ChatApi';
+import { NavLink } from 'react-router-dom';
 import ChattingRoom from './ChattingRoom';
 
+
 export default function ParticipatingRoom(){
+    const classes = styles();
+
     const [participatingRoom, setParticipatingRoom] = useState([]);
     
     useEffect(()=> {
-        console.log("chatting Room List ");
         try {
-            const url = '/api/chat/participatingRoom';    // account no 줘야함  
-            axios.post(url, {headers:{'Context-Type': 'application/json'}})
-                .then(res => {
-                    console.log(res.data);
-                    setParticipatingRoom(res.data);
-            });
+            getMyChatListApi().then(res => {
+                console.log(res.data);
+                if(res.data.result == "fail"){
 
+                    return false;
+                }
+                setParticipatingRoom(res.data.data);
+            });
         } catch (e) {
             console.log(e);
         }
-    },[])
+    },[]);
+
+    //TODO: Search만들기
 
     return (
-        <div>
-            <Grid  className={styles.borderRight500}>
-                <Grid item xs={12} style={{padding: '10px'}}>
-                    <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
-                </Grid>
-                <Divider />
-                <List className={styles.ChatRoom} >
-                    {participatingRoom.map((room)=> {
+        <MyChatRoomList>
+            <SerachBarWarpper>
+            <TextField
+                className={classes.textField}
+                id="input-with-icon-textfield"
+                label="채팅방 검색"
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon />
+                        </InputAdornment>
+                    ),
+                }}
+            />
+            </SerachBarWarpper>
+            <ContentWrapper>
+                
+                {participatingRoom.map((room)=> {
                         return(
-                            <Link to={`/chat/${room.no}`}>
+                            <NavLink to={`/chat/${room.no}`}>
                                 <ChattingRoom 
                                     key={room.no}
                                     no = {room.no}
@@ -54,15 +63,44 @@ export default function ParticipatingRoom(){
                                     tagName = {room.tagName}
                                     thumbnailUrl = {room.thumbnailUrl} 
                                     />
-                            </Link>
+                            </NavLink>
                             )
                         })}
-                </List>
-              
-            </Grid>
-    
-      </div>
+            </ContentWrapper>
+        </MyChatRoomList>
     );
-  
+
 }
+
+const styles = makeStyles({
+    textField: {
+        padding: "10px",
+        marginTop: "20px"
+    }
+})
   
+const MyChatRoomList = styled.div`
+    display:flex;
+    flex-direction:column;
+    width: 100%;
+    height:100%;
+`
+
+const SerachBarWarpper = styled.div`
+    height:15%;
+`
+
+const ContentWrapper = styled.div`
+    display:flex;
+    flex-direction:column;
+    height: 85%;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+`
+
+const Content = styled(NavLink)`
+
+`

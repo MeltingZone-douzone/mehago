@@ -45,7 +45,7 @@ const AccountSettings = ({nickname, thumbnailUrl, settingsApi}) =>{
         <SettingContainer>
             <LineSettingButton name ="thumbnail" onClick={(e)=>callTemplate(e)}>
                 <span>사진</span> <CurrentInformation/><ImageDiv>
-                    <Thumbnail nickname={nickname} />
+                    <Thumbnail thumbnailUrl={thumbnailUrl} nickname={nickname} />
                     </ImageDiv>
             </LineSettingButton>
             
@@ -105,7 +105,7 @@ const LineSettingButton = styled.button`
     }
     
     &:hover{
-        background-color:${colors.lightMainThemeColor};
+        background-color:${colors.subThemeColor}20;
         color:${colors.mainThemeColor};
     }
 `

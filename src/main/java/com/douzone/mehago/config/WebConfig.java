@@ -18,6 +18,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.douzone.mehago.security.AuthInterceptor;
@@ -111,13 +112,13 @@ public class WebConfig implements WebMvcConfigurer {
 		converters.add(stringHttpMessageConverter());
 		converters.add(mappingJackson2HttpMessageConverter());
 	}
-/* 	
+	
 	// Resource Mapping(URL Magic Mapping)
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry
 			.addResourceHandler(env.getProperty("fileupload.resourceMapping"))
 			.addResourceLocations("file:" + env.getProperty("fileupload.uploadLocation"));
-	}	 */
+	}	 
 
 }

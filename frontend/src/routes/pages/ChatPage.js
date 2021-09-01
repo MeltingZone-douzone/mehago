@@ -1,21 +1,24 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import ChatNavber from '../../chat/ChatNavbar';
-import ChatSection from '../../chat/ChatSection';
-import Chatting from '../../chat/Chatting';
+// import ChatSection from '../../chat/ChatSection';
+// import Chatting from '../../chat/Chatting';
 import styles from '../../assets/sass/chat/Chat.scss';
 import ChattingList from '../../chat/ChattingList';
+import CreateChatRoom from '../../chat/CreateChatRoom';
 
 
-export default function ChatPage(){
+export default function ChatPage({match}){
     return (
-        <nav className={styles.nav} >
+        <div className={styles.ChattingContainer} >
             <ChatNavber/>
             <div className={styles.chattingRoom}>
-
-                <Route exact path="/chat" component={ChattingList} />
-                <Route exact path="/chat/:no" component={ChatSection} />
+                <Switch>
+                    <Route exact path={match.path} component={ChattingList} />
+                    {/* <Route exact path="/chat/:no" component={ChatSection} /> */} 
+                    <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
+                </Switch>
             </div>
-        </nav>
+        </div>
     )
 }

@@ -51,3 +51,8 @@ export function updateNotReadCount(messageObject) {
         .then(res => res);
 }
 
+export function getMyChatListApi() {
+    setAuthHeader();
+    return axios.get("/api/chat/participatingRoom", {headers: AuthHeader})
+                .then(res => res);
+}

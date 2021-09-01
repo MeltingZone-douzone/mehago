@@ -1,12 +1,17 @@
 import React, { useState } from "react";
+import styled from 'styled-components';
 import { Button, ThemeProvider, TextField, makeStyles, FormControlLabel, Switch, FormControl, InputLabel, Select } from '@material-ui/core';
 import { theme } from '../assets/styles/material/MaterialTheme';
 import ChipInput from 'material-ui-chip-input';
 
 import { CreateChattingRoom } from "../../api/ChatApi";
+import BoxShapeDiv from "../assets/styles/BoxShapeDiv";
 
 const styles = makeStyles({
-    root: {},
+    root: {
+        width: "100%",
+        height: "100%",
+    },
     form: {
         display: "flex",
         flexDirection: "column",
@@ -31,7 +36,7 @@ const styles = makeStyles({
     }
 })
 
-export default function SettingChatRoom() {
+export default function CreateChatRoom() {
 
     const [chatRoom, setChatRoom] = useState(
         {
@@ -81,8 +86,12 @@ export default function SettingChatRoom() {
     const classes = styles();
     return (
         <ThemeProvider theme={theme}>
-            <div className={classes.root}>
-                <form className={classes.form} onSubmit={(e) => createChatRoom(e)}>
+            <Container>
+                <h1>나의 채팅방을 만들어 보세요</h1>
+                <p>뭐ㅜ머ㅜ머ㅜ머ㅜ머뭐뭐무머ㅜ머ㅜ머ㅜ 적어야댐</p>
+
+                <CreateTemplate>
+                    <FormWrapper onSubmit={(e) => createChatRoom(e)}>
                     <TextField
                         required className={classes.TextField}
                         label="방 이름을 입력하세요" variant="outlined"
@@ -145,16 +154,42 @@ export default function SettingChatRoom() {
                         label="검색 허용" />
 
                     {/* 이미지 업로드 */}
-
-
-
+                    
                     <div className={classes.buttons}>
                         <Button className={classes.button} variant="contained" color="primary" >취소</Button>
                         <Button className={classes.button} variant="contained" color="primary" type="submit" >저장하기</Button>
                     </div>
-                </form>
-            </div>
+                    </FormWrapper>
+                </CreateTemplate>
+            </Container>
         </ThemeProvider >
     )
-
 }
+
+
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    justify-content:center;
+    width: 100%;
+    height: 100%;
+`
+
+const CreateTemplate = styled(BoxShapeDiv)` 
+    display:flex;
+    width:80%;
+    height:60%;
+    padding: 3em;
+
+    & 
+`
+
+const FormWrapper = styled.form`
+    display:flex;
+    flex-direction:column;
+
+    width:50%;
+    height: 100%;
+`

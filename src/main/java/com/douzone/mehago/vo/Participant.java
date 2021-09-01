@@ -6,7 +6,7 @@ import lombok.Data;
 public class Participant {
     private Long no;
     private String chatNickname;
-    private Long notReadChat;
+    private int notReadChat;
     private Long lastReadChatNo;
 
     private Long accountNo;

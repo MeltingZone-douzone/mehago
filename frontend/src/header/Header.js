@@ -29,7 +29,7 @@ const HeaderContainer = styled.div`
     width:100%;
     height:50px;
     top:0;
-    background: #2c8ae8de;
+    background: ${colors.mainThemeColor};
     backdrop-filter: saturate(180%) blur(4px);
     border-bottom: 1px solid ${colors.mainThemeColor} ;
     position:fixed;
@@ -43,7 +43,6 @@ const HeaderContainer = styled.div`
 const LogoImg = styled.img`
     margin-left: 1em;
     width: 8em;
-    height: fit-content;
 `
 
 const AuthenticationWrapper = styled.div`

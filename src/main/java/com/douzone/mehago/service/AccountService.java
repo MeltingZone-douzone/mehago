@@ -94,4 +94,9 @@ public class AccountService {
         System.out.println(account);
         accountRepository.changeRandomPassword(account);
     }
+
+    public boolean updateThumbnailUrl(Account account) {
+        return accountRepository.updateThumbnailUrl(account);
+        
+    }
 }

@@ -9,6 +9,7 @@ import LoginForm from "../../account/LoginForm";
 import SignUpForm from "../../account/SignUpForm";
 import PasswordSearchPage from "../../account/PasswordSearch";
 import IdSearchPage from "../../account/IdSerach";
+import SignUpSuccess from "../../account/SignUpSuccess";
 
 export default function AccountPage ({match, setAuthentication}) {
 
@@ -54,6 +55,11 @@ export default function AccountPage ({match, setAuthentication}) {
                                       exact
                                       path={`${match.path}/passwordsearch`}
                                       component={PasswordSearchPage}
+                                    />
+                                      <Route
+                                      exact
+                                      path={`${match.path}/signup/success`}
+                                      component={SignUpSuccess}
                                     />
                                 </motion.div>
                             </Switch>

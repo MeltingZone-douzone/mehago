@@ -4,6 +4,7 @@ import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.AccountService;
+import com.douzone.mehago.service.FileUploadService;
 import com.douzone.mehago.service.MailService;
 import com.douzone.mehago.utils.RandomPassword;
 import com.douzone.mehago.vo.Account;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +30,7 @@ public class AccountController {
     
     private final AccountService accountService;
     private final MailService mailService;
+    private final FileUploadService fileUploadService;
     
 
     @PostMapping("/signup")
@@ -77,6 +80,16 @@ public class AccountController {
         return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
     }
 
+    @Auth
+    @PostMapping("/update/thumbnail")
+    public ResponseEntity<?> updateThumbnail(@AuthUser Account account, MultipartFile file) {
+        account.setThumbnailUrl(fileUploadService.restore(file));
+        boolean result = accountService.updateThumbnailUrl(account);
+        
+        return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("섬네일 변경을 실패 했습니다."));
+    }
+
+
     @PostMapping("/findByNameAndEmail")
     public ResponseEntity<?> findByNameAndEmail(@RequestBody Account account, Mail mailDto){
         Account accountVo = null;
@@ -120,13 +133,6 @@ public class AccountController {
             System.out.println(e);
         }
         return ResponseEntity.ok().body(accountVo.getEmail());
-    }
-
-
-    @Auth
-    @GetMapping("/authenticate")
-    public ResponseEntity<?> checkingAuthenticate() {
-        return ResponseEntity.ok().body(CommonResponse.success(null));
     }
 }
 
