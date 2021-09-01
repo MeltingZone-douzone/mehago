@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import styles from '../assets/sass/chat/ChatList.scss';
 
-import { updateNotReadCount, getMessageList, updateLastReadNo } from '../../api/ChatApi';
+import { getMessageList, updateRead } from '../../api/ChatApi';
 
 export default function Chatting2({ socket, participantObject, roomObject }) {
     const classes = madeStyles();
@@ -58,19 +58,13 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
         socket.on('chat message', (msg) => {
             console.log("chat message");
             const msgToJson = JSON.parse(msg);
-            updateNotReadCount(msgToJson);
             setReceivedMsg(msgToJson);
+            updateRead(participantObject, msgToJson.no, roomObject);
             setInsertSuccess(true);
         });
-    }, []);
+    }, [participantObject, roomObject]);
 
     useEffect(() => {
-        console.log(receivedMsg);
-        if (insertSuccess) {
-            // 읽은 사람이 last_read_chat_no와 not_read_chat을 수정하는건데..
-            updateLastReadNo(participantObject, receivedMsg.no, roomObject);
-            setInsertSuccess(false);
-        }
         setMessageList([...messageList, receivedMsg]);
     }, [receivedMsg]);
 
@@ -78,6 +72,7 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
 
     return (
         <List className={styles.messageArea}>
+
             {messageList
                 .slice(0).reverse().map(message =>
                     message.participantNo !== participantObject.no ?

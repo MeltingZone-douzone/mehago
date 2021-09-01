@@ -52,7 +52,8 @@ const onConnection = (socket) => {
     MessageHandler(io, socket);
 }
 
-
+const { applicationRouter } = require("./routes");
+applicationRouter.setup(application);
 
 application.use(express.urlencoded({ extended: true }))
     .use(express.json())
@@ -68,6 +69,7 @@ application.use(express.urlencoded({ extended: true }))
 // .use(errorRouter.error500);
 
 // Server Setup
+
 
 httpServer
     .on('listening', function () {

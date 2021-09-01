@@ -41,20 +41,16 @@ export function getMessageList(chattingRoomNo) {
 }
 
 export function addMessage(messageObject) {
-    // console.log(messageObject);
-    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
+    // return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
+    return axios.post("/message/addMessage", messageObject, { headers: AuthHeader })
         .then(res => res);
 }
 
-export function updateNotReadCount(messageObject) {
-    return axios.post("/api/chat/updateNotReadCount", messageObject)
-        .then(res => res);
-}
 
-export function updateLastReadNo(participantObject, messageNo, roomObject) {
+export function updateRead(participantObject, messageNo, roomObject) {
     participantObject.lastReadChatNo = messageNo;
     participantObject.chattingRoomNo = roomObject.no;
-    return axios.post("/api/chat/updateLastReadNo", participantObject)
+    return axios.post("/message/updateRead", participantObject)
         .then(res => res);
 }
 
@@ -63,6 +59,6 @@ export function joinParticipant(participantNo, lastReadChatNo, roomNo) {
     participant.no = participantNo;
     participant.lastReadChatNo = lastReadChatNo;
     participant.chattingRoomNo = roomNo;
-    return axios.post("/api/chat/joinParticipant", participant);
+    return axios.post("/message/joinParticipant", participant);
 }
 
