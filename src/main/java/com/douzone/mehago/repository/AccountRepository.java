@@ -80,4 +80,8 @@ public class AccountRepository {
     public void changeRandomPassword(Account account) {
         sqlSession.update("account.changeRandomPassword", account);
     }
+
+    public boolean updateThumbnailUrl(Account account) {
+        return sqlSession.update("account.updateThumbnailUrl",account) == 1 ? true : false;
+    }
 }

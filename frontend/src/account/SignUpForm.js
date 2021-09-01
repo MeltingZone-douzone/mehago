@@ -5,10 +5,11 @@ import styles from '../assets/sass/account/Form.scss';
 import { ValidationExp } from '../utils/ValidationExp';
 
 import { isExistApi ,signUpApi } from "../../api/AccountApi";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 
 export default function SignUpForm() {
     //TODO: css 고치기!
+    const history = useHistory();
     const classes = madeStyles();
 
     const [user, setUser] = useState({ email: '', password: '', name: '', nickname: '',  phoneNumber: ''});
@@ -115,11 +116,11 @@ export default function SignUpForm() {
             signUpApi(user).then(res => {
                 if(res.statusText === "OK") {
                   if(res.data === false) {
-                    console.log('회원가입 실패');
+                    alert("회원가입에 실패했습니다.");
                     return false;
                   }
                 }
-                console.log('회원가입 성공');
+                history.push("/account/signup/success");
               })
           }
       }

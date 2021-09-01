@@ -41,6 +41,14 @@
 		]]>
 	</update>
 
+	<update id="updateThumbnailUrl" parameterType="account">
+		<![CDATA[
+		    update account
+		    set thumbnail_url=#{thumbnailUrl }
+		    where no=${no }
+		]]>
+	</update>
+
 	<!-- update token for node server -->
 	<update id="updateToken" parameterType="account">
 		<![CDATA[

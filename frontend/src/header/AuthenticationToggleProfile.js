@@ -29,7 +29,7 @@ const AccountToggleProfile = ({handleAuthentication, userInfo, onClose}) =>{
         <ToggleContainer>
             <>
                 <AccountImage>
-                    <Thumbnail nickname={userInfo.nickname} />
+                    <Thumbnail thumbnailUrl={userInfo.thumbnailUrl} nickname={userInfo.nickname} />
                 </AccountImage>
                 <TextDiv isNickname = {true}><p>{userInfo.nickname}</p></TextDiv>
                 <TextDiv><p>{userInfo.email}</p></TextDiv>
@@ -63,6 +63,9 @@ const AccountImage = styled.div`
     margin:0 auto;
     width: 80px;
     height: 80px;
+
+    overflow:hidden;
+    margin:0 auto;
 
     border: 1px solid #ccc;
     border-color: rgba(0,0,0,.2);
