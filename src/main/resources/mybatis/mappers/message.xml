@@ -9,7 +9,7 @@
 		<![CDATA[
 			INSERT INTO 
                 message 
-            VALUES (null, #{participantNo }, #{message }, #{notReadCount}, #{createdAt }, #{chattingRoomNo })
+            VALUES (null, #{participantNo }, #{message }, #{notReadCount}, #{createdAt }, #{chatRoomNo })
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
