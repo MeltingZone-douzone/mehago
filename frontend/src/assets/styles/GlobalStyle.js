@@ -27,6 +27,10 @@ const GlobalStyle = createGlobalStyle`
         text-decoration: none;
         font-size: 1rem;
     }
+
+    div::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera*/
+    }
 `;
 
 export default GlobalStyle;

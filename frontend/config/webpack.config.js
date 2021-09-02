@@ -36,8 +36,9 @@ module.exports = (env) => ({
         port: 9999,
         proxy: {
             '/api': 'http://localhost:8080',
+            '/images' : 'http://localhost:8080',
             '/message': 'http://localhost:8888',
-
+            
         },
         inline: true,
         liveReload: true,

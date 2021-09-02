@@ -6,7 +6,7 @@ import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { signUpApi } from "../../api/AccountApi";
 
 export default function SignUpSuccess() {
-
+  //TODO : need to modify
   return (
     <div className={styles.SignUpForm}>
       <div className={styles.Message}>

@@ -1,9 +1,6 @@
-// const models = require("../models");
-
-const mysql = require("mysql");
+const dbconn = require("./dbconn");
 const util = require("util");
 
-const dbconn = require("./dbconn");
 
 module.exports = {
     addMessage: async function (message) {

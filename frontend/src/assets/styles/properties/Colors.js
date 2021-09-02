@@ -1,5 +1,5 @@
 export const colors = {
-    mainThemeColor: "#2C8AE8",
-    lightMainThemeColor: "#2C8AE830",
+    mainThemeColor: "#1C90FC",
+    subThemeColor: "#38E0FA",
     lightTextColor: "#636466"
 }

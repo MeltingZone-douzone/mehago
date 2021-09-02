@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.ChattingRoomService;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import lombok.RequiredArgsConstructor;
 
@@ -117,17 +117,19 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
+    
     @PostMapping("/chatList")
     public ResponseEntity<?> getChatList() {
         List<ChattingRoom> chattingRoomList = chattingRoomService.getChatRoomList();
         return ResponseEntity.ok().body(chattingRoomList);
     }
 
-    @PostMapping("/participatingRoom")
-    public ResponseEntity<?> participatingRoom() {
-        Long no = 12L; // 임의로 준것
-        List<ChattingRoom> participatingRoom = chattingRoomService.participatingRoom(no);
-        return ResponseEntity.ok().body(participatingRoom);
+    @Auth
+    @GetMapping("/participatingRoom")
+    public ResponseEntity<?> participatingRoom(@AuthUser Account account){
+        List<ChattingRoom> participatingRoom = chattingRoomService.participatingRoom(account.getNo());
+        return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
+
 
 }

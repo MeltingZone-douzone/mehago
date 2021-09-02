@@ -1,7 +1,11 @@
 .ChatList{
     display: grid;
     place-items: center;
-    padding-top: 3em;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
     .ChatRoom{
         padding-top: 40px;
         display: grid;
@@ -11,7 +15,5 @@
         grid-auto-columns: 43vh;
         row-gap: 2vw;
         column-gap: 2vw;
-        
-        
     }
 }

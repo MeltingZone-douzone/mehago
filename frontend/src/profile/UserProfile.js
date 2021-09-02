@@ -11,7 +11,7 @@ export default function UserProfile({user}) {
         <UserProfileContainer>
             <SettingIcon icon={faCog}/>
             <UserThumbnailTemp>
-                <Thumbnail nickname={user.nickname} />
+                <Thumbnail thumbnailUrl={user.thumbnailUrl} nickname={user.nickname} />
             </UserThumbnailTemp>
             <UserInfoTemp>
                 <ul>
@@ -57,7 +57,10 @@ const UserThumbnailTemp = styled.div`
     max-width:300px;
     width: 100%;
     height: auto;
+
+    overflow:hidden;
     margin:0 auto;
+    
     border: 1px solid #ccc;
     border-color: rgba(0,0,0,.2);
     border-radius:10px;
