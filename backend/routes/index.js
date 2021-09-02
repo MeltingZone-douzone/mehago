@@ -1,19 +1,21 @@
-const errorRouter = require('./error');
-const authorized = require('./authorized');
+const errorRouter = require("./error");
+const express = require('express');
+const models = require("../models");
 
 const applicationRouter = {
     setup: async function (application) {
         application
-            .all('*', function (req, res, next) {
+            .all("*", function (req, res, next) {
                 res.locals.req = req;
                 res.locals.res = res;
                 next();
             })
-            .use('/api/gallery', require('./gallery'))
-            .use('/api/guestbook', require('./guestbook'))
+            .use(express.json()) // application/json
+            .use("/message", require("./message"))
+
             .use(errorRouter.error404)
             .use(errorRouter.error500)
     }
 };
 
-module.exports = {applicationRouter};
+module.exports = { applicationRouter };

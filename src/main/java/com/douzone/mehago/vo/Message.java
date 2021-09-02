@@ -16,6 +16,5 @@ public class Message {
     // socket에 뿌릴 객체에 필요한 컬럼임. DB X
     private String nickname;
     private String roomName;
-    // 현재 채팅방에 접속중인 인원
-    private Long chatMember;
+
 }

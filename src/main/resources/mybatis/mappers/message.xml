@@ -9,19 +9,20 @@
 		<![CDATA[
 			INSERT INTO 
                 message 
-            VALUES (null, #{participantNo }, #{message }, 0, #{createdAt }, #{chattingRoomNo })
+            VALUES (null, #{participantNo }, #{message }, #{notReadCount}, #{createdAt }, #{chattingRoomNo })
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
         </selectKey>
 	</insert>
 
+
+
     <select id="getMessageList" parameterType="Long" resultType="message">
         <![CDATA[
             SELECT
                 m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
-                (select count(no) from participant where chatting_room_no) as chatMember, 
-                a.thumbnail_url as thumbnailUrl, a.nickname
+                a.thumbnail_url as thumbnailUrl, p.chat_nickname as nickname 
             FROM
                 message m, account a, participant p
             WHERE
@@ -36,15 +37,13 @@
                 20
         ]]>
     </select>
-
-    
-    
+ 
     <update id="addMessageUpdate" parameterType="message">
     <![CDATA[
         update message
            set not_read_count = (select count(*) 
 			    			     from participant
-			    			     where chatting_room_no= ${chattingRoomNo }) - ${chatMember }
+			    			     where chatting_room_no= ${chattingRoomNo })
         where no = ${no }
       ]]>
     <selectKey keyProperty="notReadCount" order="AFTER" resultType="Long">
@@ -55,4 +54,30 @@
        ]]>
       </selectKey>
     </update>
+
+    <update id="subtractNotReadCount" parameterType="participant">
+     <![CDATA[
+        update message
+        set not_read_count = not_read_count -1
+          ]]>
+        <choose>
+        <when test='chattingRoomNo != null'>
+            <![CDATA[
+            where no > #{lastReadChatNo }
+            and chatting_room_no = #{chattingRoomNo }
+         ]]>
+         </when>
+         <otherwise>
+         <![CDATA[  where no = #{lastReadChatNo }]]>
+         </otherwise>
+         </choose>
+    </update>
+
+     <update id="subtractNotReadCountOfAddMessage" parameterType="message">
+     <![CDATA[
+        update message
+        set not_read_count = not_read_count -1
+        where no = #{no }
+          ]]>
+     </update>
 </mapper>

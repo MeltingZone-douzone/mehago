@@ -7,7 +7,7 @@ import localStorage from "local-storage";
 import { loginApi } from '../../api/AccountApi'
 import NonMembers from "../components/NonMember";
 
-export default function LoginForm({history}) {
+export default function LoginForm({history, setAuthentication}) {
   const classes = madeStyles();
   const [memberVo, setMemberVo] = useState({ email: "", password: "" });
   const [loginFail, setLoginFail] = useState(false);
@@ -24,7 +24,8 @@ export default function LoginForm({history}) {
           } else {
             // 성공하면 메인화면 가기
             localStorage.set("token", res.data);
-            history.push('/chat');
+            setAuthentication(true);
+            history.replace('/chat');
           }
         }
       });
@@ -32,6 +33,7 @@ export default function LoginForm({history}) {
       console.error(err);
     }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMemberVo({ ...memberVo, [name]: value });

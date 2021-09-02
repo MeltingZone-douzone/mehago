@@ -11,7 +11,22 @@ const client = new elasticsearch.Client({
     
 });
 
-console.log(client);
+// Add this to the VERY top of the first file loaded in your app
+var apm = require('elastic-apm-node').start({
+
+    // Override the service name from package.json
+    // Allowed characters: a-z, A-Z, 0-9, -, _, and space
+    serviceName: 'message',
+    
+    // Use if APM Server requires a secret token
+    secretToken: '',
+    
+    // Set the custom APM Server URL (default: http://localhost:8200)
+    serverUrl: 'http://localhost:8200',
+    
+    // Set the service environment
+    environment: 'production'
+    })
 
 
 // Environment Variables(환경 변수)
@@ -57,7 +72,8 @@ const onConnection = (socket) => {
     MessageHandler(io, socket);
 }
 
-
+const { applicationRouter } = require("./routes");
+applicationRouter.setup(application);
 
 application.use(express.urlencoded({ extended: true }))
     .use(express.json())
@@ -73,6 +89,7 @@ application.use(express.urlencoded({ extended: true }))
 // .use(errorRouter.error500);
 
 // Server Setup
+
 
 httpServer
     .on('listening', function () {
@@ -104,7 +121,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
 
 
 // io.on("connection", (socket) =>{
-io.on("connection", (socket) =>{
+io.on("connection", (socket) => {
     console.log("node connected");
     let curRoom = null;
     let nickname = null;
@@ -127,9 +144,9 @@ io.on("connection", (socket) =>{
 
 
     socket.on('chat message', (messageObject) => {
-        const chatMember = io.of('/').adapter.rooms.get(curRoom).size;
+        // const chatMember = io.of('/').adapter.rooms.get(curRoom).size;
         // console.log("on chat message", messageObject);
-        messageObject.chatMember = chatMember;
+        // messageObject.chatMember = chatMember;
         // TODO: DB 저장
         // join할 떄 변수에 넣어둔 curRoom 쓸까 아니면 front에서 받아서 쓸까
         io.of('/').adapter.pubClient.publish(curRoom, JSON.stringify(messageObject));
@@ -161,11 +178,14 @@ io.on("connection", (socket) =>{
      */
 
     socket.on('join', (data) => {
+        curRoom = data;
+        socket.join(curRoom);
+        io.of('/').adapter.subClient.subscribe(curRoom);
+        io.to(curRoom).emit('join', 'join!!!!');
+        // 1. 처음들어온사람 입장 메시지
+        // 2. 기존 채팅방 사람 notreadcount 수정해줘야함
 
-        curRoom = data.roomName;
-        nickname = data.nickname;
-        socket.join(data.roomName);
-        io.of('/').adapter.subClient.subscribe(data.roomName);
+
         // io.of('/').adapter.pubClient.publish(data.roomName, ` [알림] '${data.nickname}' 이 '${data.roomName}'에 입장`); // = SYSTEM = 유준 님이 입장하셨습니다.
         /* if(token.verifyCheck(data.token)) {
             console.log(`User ${data.nickname} join room ${data.roomName}`);

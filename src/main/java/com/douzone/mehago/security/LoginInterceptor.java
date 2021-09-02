@@ -16,35 +16,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+public class LoginInterceptor implements HandlerInterceptor {
 
-public class LoginInterceptor implements HandlerInterceptor{
-	
-	@Autowired private AccountService accountService;
-	@Autowired private JwtTokenUtil jwtTokenUtil;
-	
+	@Autowired
+	private AccountService accountService;
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-
 
 		String body = JsonBodyConverter.getBody(request);
 
 		Account account = new Account();
 		account.setEmail(body.split("\"")[3]);
 		account.setPassword(body.split("\"")[7]);
-		Account result = accountService.getAccount(account); 
+		Account result = accountService.getAccount(account);
 		response.setContentType("application/json");
- 		response.setCharacterEncoding("UTF-8");
-		 
-		if(result == null){
+		response.setCharacterEncoding("UTF-8");
+
+		if (result == null) {
 			response.getWriter().write("cant find Account");
 			return false;
 		}
 
 		String token = jwtTokenUtil.generateAccessToken(result);
-		System.out.println(token);
-		account.setToken(token);
-		accountService.updateToken(account);
+		result.setToken(token);
+		accountService.updateToken(result);
  		response.getWriter().write(token);
 		return false;
 	}

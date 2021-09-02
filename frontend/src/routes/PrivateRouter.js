@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { checkingAuthenticateApi } from '../../api/AccountApi';
 
-export default function PrivateRouter({component: Component, restricted, ...rest}) {
+export default function PrivateRouter({component: Component, restricted, authentication, reloadUser, userInfo, ...rest}) {
 
     return(
         <Route {...rest} render={props =>(
-            checkingAuthenticateApi().then(res => res) ? 
-            <Component {...props} />
+            authentication ? 
+            <Component  reloadUser={reloadUser} userInfo={userInfo} {...props} />
             : <Redirect to="/account/login" /> )} />
     );
 }

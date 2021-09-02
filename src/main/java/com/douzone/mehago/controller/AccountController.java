@@ -5,11 +5,13 @@ import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.AccountService;
 import com.douzone.mehago.service.MailService;
+import com.douzone.mehago.utils.JwtTokenUtil;
 import com.douzone.mehago.utils.RandomPassword;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.Mail;
 import com.douzone.mehago.vo.PasswordVo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.RequiredArgsConstructor;
 
-
 @RequestMapping("/api/account")
 @Controller
 @RequiredArgsConstructor
 public class AccountController {
-    
+
     private final AccountService accountService;
     private final MailService mailService;
-    
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody Account account) {
@@ -49,46 +51,52 @@ public class AccountController {
         return ResponseEntity.ok().body(CommonResponse.success(account));
     }
 
-
     @Auth
-    @PostMapping(value="/update/nickname")
+    @PostMapping(value = "/update/nickname")
     public ResponseEntity<?> updateNickname(@AuthUser Account auth, @RequestBody Account account) {
         account.setNo(auth.getNo());
+        String token = "";
         boolean result = accountService.updateNickname(account);
-        
-        return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
+        if (result) {
+            // token update
+            token = jwtTokenUtil.generateAccessToken(account);
+        }
+        return ResponseEntity.ok()
+                .body(result ? CommonResponse.success(token) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
     }
 
     @Auth
-    @PostMapping(value="/update/password")
+    @PostMapping(value = "/update/password")
     public ResponseEntity<?> updatePassword(@AuthUser Account auth, @RequestBody PasswordVo passwordDto) {
         passwordDto.setNo(auth.getNo());
         boolean result = accountService.updatePassword(passwordDto);
-        
-        return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("비밀번호 변경을 실패 했습니다."));
+
+        return ResponseEntity.ok()
+                .body(result ? CommonResponse.success(result) : CommonResponse.fail("비밀번호 변경을 실패 했습니다."));
     }
 
     @Auth
-    @PostMapping(value="/update/userInfo")
+    @PostMapping(value = "/update/userInfo")
     public ResponseEntity<?> updateUserInfo(@AuthUser Account auth, @RequestBody Account account) {
         account.setNo(auth.getNo());
         boolean result = accountService.updateUserInfo(account);
-        
-        return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
+
+        return ResponseEntity.ok()
+                .body(result ? CommonResponse.success(result) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
     }
 
     @PostMapping("/findByNameAndEmail")
-    public ResponseEntity<?> findByNameAndEmail(@RequestBody Account account, Mail mailDto){
+    public ResponseEntity<?> findByNameAndEmail(@RequestBody Account account, Mail mailDto) {
         Account accountVo = null;
         try {
             String name = account.getName();
             String email = account.getEmail();
             accountVo = accountService.searchAccount(name, email);
             System.out.println(accountVo + "aaaaaa");
-            if(accountVo == null){
-                return ResponseEntity.ok().body("false");         
+            if (accountVo == null) {
+                return ResponseEntity.ok().body("false");
             }
-            if(accountVo.getEmail() != null){
+            if (accountVo.getEmail() != null) {
                 System.out.println("이메일 있음 보낼꺼임");
 
                 String randomPassword = RandomPassword.getRandomPassword(10);
@@ -96,32 +104,31 @@ public class AccountController {
                 account.setPassword(randomPassword);
                 account.setEmail(email);
                 accountService.changeRandomPassword(account);
-            } 
+            }
         } catch (Exception e) {
             System.out.println(e);
         }
-        
+
         return ResponseEntity.ok().body(accountVo);
     }
 
     @PostMapping("/searchEmail")
-    public ResponseEntity<?> searchEmail(@RequestBody Account account){
+    public ResponseEntity<?> searchEmail(@RequestBody Account account) {
         Account accountVo = null;
         try {
             String name = account.getName();
             String phoneNumber = account.getPhoneNumber();
-            accountVo = accountService.searchEmail(name, phoneNumber);                
+            accountVo = accountService.searchEmail(name, phoneNumber);
             System.out.println(accountVo);
-            if(accountVo == null){
-                return ResponseEntity.ok().body("cant find Account");         
+            if (accountVo == null) {
+                return ResponseEntity.ok().body("cant find Account");
             }
-                
+
         } catch (Exception e) {
             System.out.println(e);
         }
         return ResponseEntity.ok().body(accountVo.getEmail());
     }
-
 
     @Auth
     @GetMapping("/authenticate")
@@ -129,4 +136,3 @@ public class AccountController {
         return ResponseEntity.ok().body(CommonResponse.success(null));
     }
 }
-

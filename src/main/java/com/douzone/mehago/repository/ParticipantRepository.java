@@ -26,9 +26,25 @@ public class ParticipantRepository {
         return result;
     }
 
-    public Long addMessage(Message message) {
-        sqlSession.insert("message.addMessage", message);
-        return message.getNo();
+    public boolean updateLastReadNo(Participant participant) {
+        return sqlSession.update("participant.updateLastReadNo", participant) == 1 ? true : false;
+    }
+
+    public boolean updateNotReadCount(Participant participant) {
+        return sqlSession.update("participant.updateNotReadCount", participant) == 1 ? true : false;
+    }
+
+    public boolean updateLastReadNoForJoin(Participant participant) {
+        System.out.println(participant.getChattingRoomNo());
+        return sqlSession.update("participant.updateLastReadNoForJoin", participant) == 1 ? true : false;
+    }
+
+    public boolean addNotReadCount(Message message) {
+        return sqlSession.update("participant.addNotReadCount", message) == 1 ? true : false;
+    }
+
+    public Long getChatMember(Long chattingRoomNo) {
+        return sqlSession.selectOne("participant.getChatMember", chattingRoomNo);
     }
 
 }

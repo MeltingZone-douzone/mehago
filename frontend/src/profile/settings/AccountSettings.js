@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
 
 import AccountModalTemp from './AccountModalTemp';
-import Thumbnail from '../../components/thumbnail';
+import Thumbnail from '../../components/Thumbnail';
 import CircleDiv from '../../assets/styles/CircleDiv';
 
 

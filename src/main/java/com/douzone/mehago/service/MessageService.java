@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.douzone.mehago.repository.MessageRepository;
 import com.douzone.mehago.vo.Message;
+import com.douzone.mehago.vo.Participant;
 
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,25 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
 
+    public Long addMessage(Message message) {
+        return messageRepository.addMessage(message);
+    }
+
     public List<Message> getMessageList(Long chattingRoomNo) {
         return messageRepository.getMessageList(chattingRoomNo);
     }
 
-    public Long updateNotReadCount(Message message) {
+    public boolean updateNotReadCount(Message message) {
         return messageRepository.updateNotReadCount(message);
+    }
+
+    public boolean subtractNotReadCount(Participant participant) {
+        return messageRepository.subtractNotReadCount(participant);
+    }
+
+    public boolean subtractNotReadCount(Long lastReadChatNo) {
+        Participant participant = new Participant();
+        participant.setLastReadChatNo(lastReadChatNo);
+        return messageRepository.subtractNotReadCount(participant);
     }
 }
