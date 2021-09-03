@@ -7,18 +7,19 @@ import java.util.Map;
 import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
-import com.douzone.mehago.service.ChattingRoomService;
+import com.douzone.mehago.service.ChatRoomService;
 import com.douzone.mehago.service.MessageService;
 import com.douzone.mehago.service.ParticipantService;
 import com.douzone.mehago.service.TagService;
 import com.douzone.mehago.vo.Account;
-import com.douzone.mehago.vo.ChattingRoom;
+import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.Participant;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,27 +31,28 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChattingRoomService chattingRoomService;
+    private final ChatRoomService chatRoomService;
     private final ParticipantService participantService;
     private final TagService tagService;
     private final MessageService messageService;
 
     @Auth
     @PostMapping("/createRoom")
-    public ResponseEntity<?> createRoom(@AuthUser Account auth, @RequestBody ChattingRoom chattingRoom) {
+    public ResponseEntity<?> createRoom(@AuthUser Account auth, @RequestBody ChatRoom chatRoom) {
         boolean result = false;
         // 1. 채팅방 생성
-        chattingRoom.setOwner(auth.getNo());
-        chattingRoom.setThumbnailUrl("");
-        Long roomNo = chattingRoomService.createRoom(chattingRoom);
+        chatRoom.setOwner(auth.getNo());
+        chatRoom.setThumbnailUrl("");
+        Long roomNo = chatRoomService.createRoom(chatRoom);
         // 2. 참가자 생성
         Participant participant = new Participant();
         participant.setAccountNo(auth.getNo());
         participant.setChatNickname(auth.getNickname());
-        participant.setChattingRoomNo(roomNo);
+        participant.setNotReadCount(0);
+        participant.setChatRoomNo(roomNo);
         Long participantNo = participantService.createParticipant(participant);
         // 3. 태그 생성
-        result = tagService.createTags(chattingRoom.getNo(), chattingRoom.getTagName());
+        result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         return ResponseEntity.ok().body(participantNo);
     }
@@ -58,7 +60,7 @@ public class ChatController {
     @PostMapping("/addMessage")
     public ResponseEntity<?> addMessage(@AuthUser Account auth, @RequestBody Message message) {
         // 1. 채팅방 전체 멤버 가져와서 add message
-        Long chatMember = participantService.getChatMember(message.getChattingRoomNo());
+        Long chatMember = participantService.getChatMember(message.getChatRoomNo());
         message.setNotReadCount(chatMember);
         Long result = messageService.addMessage(message);
         message.setNo(result);
@@ -67,33 +69,31 @@ public class ChatController {
         return ResponseEntity.ok().body(message);
     }
 
-    // @PostMapping("/participantInfo")
-    // public ResponseEntity<?> getParticipantInfo(@AuthUser Account auth,
-    // @RequestBody Message message) {
     @Auth
-    @GetMapping("/roomInfo")
-    public ResponseEntity<?> getRoomInfo(String chattingRoomNo) {
-        ChattingRoom result = chattingRoomService.getRoomInfo(Long.parseLong(chattingRoomNo));
-        return ResponseEntity.ok().body(chattingRoomService.getRoomInfo(Long.parseLong(chattingRoomNo)));
+    @GetMapping("/roomInfo/{chatRoomNo}")
+    public ResponseEntity<?> getRoomInfo(@PathVariable Long chatRoomNo) {
+        ChatRoom result = chatRoomService.getRoomInfo(chatRoomNo);
+        return ResponseEntity.ok().body(result != null ? CommonResponse.success(result) : CommonResponse.fail("해당 채팅방이 존재하지 않습니다"));
     }
 
     @Auth
-    @GetMapping("/participantInfo")
-    public ResponseEntity<?> getParticipantInfo(@AuthUser Account auth, String chattingRoomNo) {
-        Map<String, Long> map = new HashMap();
-        map.put("accountNo", auth.getNo());
-        map.put("chattingRoomNo", Long.parseLong(chattingRoomNo));
-        Participant result = participantService.getParticipantInfo(map);
-        System.out.println(result);
-        return ResponseEntity.ok().body(participantService.getParticipantInfo(map));
+    @GetMapping("/getMessageList/{chatRoomNo}")
+    public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo) {
+        List<Message> list = messageService.getMessageList(chatRoomNo);
+        return ResponseEntity.ok().body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
     }
 
     @Auth
-    @GetMapping("/getMessageList")
-    public ResponseEntity<?> getMessageList(String chattingRoomNo) {
-        List<Message> list = messageService.getMessageList(Long.parseLong(chattingRoomNo));
-        return ResponseEntity.ok().body(list);
+    @GetMapping("/participantInfo/{chatRoomNo}")
+    public ResponseEntity<?> getParticipantInfo(@AuthUser Account auth, @PathVariable Long chatRoomNo) {
+        Participant result = participantService.getParticipantInfo(auth, chatRoomNo);
+        return ResponseEntity.ok().body(result != null ? CommonResponse.success(result) : CommonResponse.fail("해당 채팅방에 해당 참여자가 존재하지 않습니다"));
     }
+
+    // 비회원 getParticipantInfo
+    // @Auth
+    // @GetMapping("/participantInfo/{chatRoomNo}")
+    // public ResponseEntity<?> getParticipantInfo(String chatNickname, @PathVariable Long chatRoomNo)
 
     @PostMapping("/updateNotReadCount")
     public ResponseEntity<?> updateNotReadCount(@RequestBody Message message) {
@@ -120,14 +120,14 @@ public class ChatController {
     
     @PostMapping("/chatList")
     public ResponseEntity<?> getChatList() {
-        List<ChattingRoom> chattingRoomList = chattingRoomService.getChatRoomList();
-        return ResponseEntity.ok().body(chattingRoomList);
+        List<ChatRoom> chatRoomList = chatRoomService.getChatRoomList();
+        return ResponseEntity.ok().body(chatRoomList);
     }
 
     @Auth
     @GetMapping("/participatingRoom")
     public ResponseEntity<?> participatingRoom(@AuthUser Account account){
-        List<ChattingRoom> participatingRoom = chattingRoomService.participatingRoom(account.getNo());
+        List<ChatRoom> participatingRoom = chatRoomService.participatingRoom(account.getNo());
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
 

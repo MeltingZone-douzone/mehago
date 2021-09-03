@@ -11,7 +11,6 @@ export default function ChattingRoom({
                                         onlyAuthorized, 
                                         owner, 
                                         searchable, 
-                                        secretRoom, 
                                         tagName, 
                                         thumbnailUrl,
                                         room,
@@ -20,7 +19,7 @@ export default function ChattingRoom({
     return(
         
         <div className={styles.chatProfile}>
-            <Link to="/chat/c1">
+            <Link to={`/chat/${no}`}>
                 <List className={styles.container}>
                     <ListItem button key="RemySharp" className={styles.roombutton}>
                         <Avatar className={styles.item1} alt="프로필 사진" src="https://material-ui.com/static/images/avatar/1.jpg" />

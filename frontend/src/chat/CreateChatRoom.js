@@ -41,7 +41,7 @@ export default function CreateChatRoom() {
     const [chatRoom, setChatRoom] = useState(
         {
             title: "",
-            secretRoom: false,
+            secretRoom: false, // TODO:  ㅎㅇ
             password: "",
             thumbnailUrl: "",
             limitedUserCount: 10,

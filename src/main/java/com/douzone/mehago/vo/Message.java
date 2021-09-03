@@ -1,7 +1,5 @@
 package com.douzone.mehago.vo;
 
-import java.util.Date;
-
 import lombok.Data;
 
 @Data
@@ -11,7 +9,7 @@ public class Message {
     private String message;
     private Long notReadCount;
     private String createdAt;
-    private Long chattingRoomNo;
+    private Long chatRoomNo;
 
     // socket에 뿌릴 객체에 필요한 컬럼임. DB X
     private String nickname;

@@ -21,8 +21,8 @@ public class MessageRepository {
         return message.getNo();
     }
 
-    public List<Message> getMessageList(Long chattingRoomNo) {
-        return sqlSession.selectList("message.getMessageList", chattingRoomNo);
+    public List<Message> getMessageList(Long chatRoomNo) {
+        return sqlSession.selectList("message.getMessageList", chatRoomNo);
     }
 
     public boolean updateNotReadCount(Message message) {
