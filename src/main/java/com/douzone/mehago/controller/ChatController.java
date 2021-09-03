@@ -84,14 +84,15 @@ public class ChatController {
         map.put("accountNo", auth.getNo());
         map.put("chattingRoomNo", Long.parseLong(chattingRoomNo));
         Participant result = participantService.getParticipantInfo(map);
-        System.out.println(result);
         return ResponseEntity.ok().body(participantService.getParticipantInfo(map));
     }
 
     @Auth
     @GetMapping("/getMessageList")
-    public ResponseEntity<?> getMessageList(String chattingRoomNo) {
-        List<Message> list = messageService.getMessageList(Long.parseLong(chattingRoomNo));
+    public ResponseEntity<?> getMessageList(String chattingRoomNo, String offset) {
+        System.out.println("chattingRoomNo " + chattingRoomNo);
+        System.out.println("offset " + offset);
+        List<Message> list = messageService.getMessageList(Long.parseLong(chattingRoomNo), Long.parseLong(offset));
         return ResponseEntity.ok().body(list);
     }
 

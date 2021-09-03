@@ -34,9 +34,10 @@ export function getRoomInfo(chattingRoomNo) {
         .then(res => res);
 }
 
-export function getMessageList(chattingRoomNo) {
+export function getMessageList(chattingRoomNo, offset) {
     setAuthHeader();
-    return axios.get("/api/chat/getMessageList", { params: { chattingRoomNo }, headers: AuthHeader })
+    console.log("getMessageList", offset);
+    return axios.get("/api/chat/getMessageList", { params: { chattingRoomNo, offset }, headers: AuthHeader })
         .then(res => res);
 }
 

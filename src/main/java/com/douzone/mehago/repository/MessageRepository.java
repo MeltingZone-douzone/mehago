@@ -1,6 +1,8 @@
 package com.douzone.mehago.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.Participant;
@@ -20,9 +22,12 @@ public class MessageRepository {
         sqlSession.insert("message.addMessage", message);
         return message.getNo();
     }
-
-    public List<Message> getMessageList(Long chattingRoomNo) {
-        return sqlSession.selectList("message.getMessageList", chattingRoomNo);
+    
+    public List<Message> getMessageList(Long chattingRoomNo, Long offset) {
+        Map<String, Long> map = new HashMap();
+        map.put("chattingRoomNo", chattingRoomNo);
+        map.put("offset", offset);
+        return sqlSession.selectList("message.getMessageList", map);
     }
 
     public boolean updateNotReadCount(Message message) {
