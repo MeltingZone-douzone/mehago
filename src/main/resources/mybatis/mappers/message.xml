@@ -18,9 +18,9 @@
 
 
 
-    <select id="getMessageList" parameterType="Long" resultType="message">
+    <select id="getMessageList" parameterType="map" resultType="message">
         <![CDATA[
-            SELECT
+            SELECT DISTINCT
                 m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
                 (select count(no) from participant where chatting_room_no = #{chattingRoomNo }) as chatMember, 
                 a.thumbnail_url as thumbnailUrl, a.nickname
@@ -35,25 +35,25 @@
             ORDER BY
                 no DESC
             LIMIT 
-                20
+                #{offset }, 30
         ]]>
     </select>
  
     <update id="addMessageUpdate" parameterType="message">
-    <![CDATA[
-        update message
-           set not_read_count = (select count(*) 
-			    			     from participant
-			    			     where chatting_room_no= ${chattingRoomNo })
-        where no = ${no }
-      ]]>
-    <selectKey keyProperty="notReadCount" order="AFTER" resultType="Long">
-     <![CDATA[
-        select not_read_count as notReadCount 
-        from message
-        where no=#{no }
-       ]]>
-      </selectKey>
+        <![CDATA[
+            update message
+            set not_read_count = (select count(*) 
+                                    from participant
+                                    where chatting_room_no= ${chattingRoomNo })
+            where no = ${no }
+        ]]>
+        <selectKey keyProperty="notReadCount" order="AFTER" resultType="Long">
+        <![CDATA[
+            select not_read_count as notReadCount 
+            from message
+            where no=#{no }
+        ]]>
+        </selectKey>
     </update>
 
     <update id="subtractNotReadCount" parameterType="participant">

@@ -14,7 +14,7 @@ export default function ChatList({callback}){
             const url = `/api/chat/chatList`;
             axios.post(url, {headers:{'Context-Type': 'application/json'}})
                 .then(res => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     setRooms(res.data);
             });
 

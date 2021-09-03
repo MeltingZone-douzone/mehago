@@ -94,6 +94,7 @@ httpServer
 
 // io.on("connection", onConnection);
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
+    console.log(`${roomname} 에 ${message}를 보냄`);
     io.to(roomname).emit('chat message', message);
 });
 
@@ -128,6 +129,7 @@ io.on("connection", (socket) => {
         // messageObject.chatMember = chatMember;
         // TODO: DB 저장
         // join할 떄 변수에 넣어둔 curRoom 쓸까 아니면 front에서 받아서 쓸까
+        console.log("chat message 들어옴");
         io.of('/').adapter.pubClient.publish(curRoom, JSON.stringify(messageObject));
 
     });
@@ -156,12 +158,11 @@ io.on("connection", (socket) => {
      * 비회원도 토큰발급
      */
 
-    socket.on('join', (data) => {
+    socket.on('join', (roomName) => {
 
-        curRoom = data.roomName;
-        nickname = data.nickname;
-        socket.join(data.roomName);
-        io.of('/').adapter.subClient.subscribe(data.roomName);
+        curRoom = roomName;
+        socket.join(roomName);
+        io.of('/').adapter.subClient.subscribe(roomName);
         // 1. 처음들어온사람 입장 메시지
         // 2. 기존 채팅방 사람 notreadcount 수정해줘야함
 

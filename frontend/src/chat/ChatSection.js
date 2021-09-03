@@ -1,26 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import Fab from '@material-ui/core/Fab';
-import SendIcon from '@material-ui/icons/Send';
-import styles from '../assets/sass/chat/ChatList.scss';
+import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { getParticipantInfo, getRoomInfo, addMessage } from "../../api/ChatApi";
+import { addMessage, getParticipantInfo, getRoomInfo, joinParticipant } from "../../api/ChatApi";
+import styles from '../assets/sass/chat/ChatList.scss';
+import Chatting2 from './Chatting2';
+import Divider from '@material-ui/core/Divider';
+import MsgInput2 from './MsgInput2';
 
-import MsgInput2 from './MsgInput2'
-import Chatting2 from './Chatting2'
 
 const socket = io('http://localhost:8888');
 export default function ChatSection(){
 
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({title: ''});
+    const [joinSuccess, setJoinSuccess] = useState(false);
     const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: ''});
     const [insertSuccess, setInsertSuccess] = useState(false);
 
@@ -39,19 +32,25 @@ export default function ChatSection(){
         getRoomInfo(chatRoomNo).then(res => {
             if(res.statusText === 'OK') {
                 // console.log(res.data);
-                setRoomObject({ ...res.data })
+                setRoomObject({ ...res.data });
+                setJoinSuccess(true);
             }
         });
     },[]);
 
     useEffect(() => {
+        if(joinSuccess) {
+            socket.emit("join", roomObject.title);
+            joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no);
+            setJoinSuccess(false);
+        }
         setMessageObject({
                 participantNo: participantObject.no,
                 chattingRoomNo: roomObject.no,
                 roomName: roomObject.title,
                 nickname: participantObject.chatNickname
         })
-    },[participantObject, roomObject]);
+    },[joinSuccess]);
     const messageFunction = {
         onChangeMessage: (e) => {
             const { name, value } = e.target;
@@ -90,16 +89,9 @@ export default function ChatSection(){
     return (
         <div className={styles.chatSection}>
             <Grid container>
-                {/* 
-                    ListItemText 
-                        align=right는 나 left는 다른사람 
-                        primary=채팅
-                        secondary=보낸 시간
-                */}
                 <Chatting2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} />
                 <Divider />
                 <MsgInput2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
-
             </Grid>
         </div>
     );

@@ -60,7 +60,7 @@ export default function MainRouter() {
                         <Route path="/room" component={SettingChatRoom} />
                             {/* 로그인(토큰이 존재)을 해야 들어올 수 있는 라우터 => <privateRouter */}
                         <PrivateRouter reloadUser={getUserInfo} authentication={authentication} userInfo={userInfo} path="/profile" component={ProfileSettingsPage} />
-                        <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} />
+                        <Route authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} />
                     </Switch>
                 </WebPage>
             </Fragment>

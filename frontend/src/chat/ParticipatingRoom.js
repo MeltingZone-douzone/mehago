@@ -17,17 +17,17 @@ export default function ParticipatingRoom(){
     const [participatingRoom, setParticipatingRoom] = useState([]);
     
     useEffect(()=> {
-        console.log("chatting Room List ");
+        // console.log("chatting Room List ");
         try {
             const url = '/api/chat/participatingRoom';    // account no 줘야함  
             axios.post(url, {headers:{'Context-Type': 'application/json'}})
                 .then(res => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     setParticipatingRoom(res.data);
             });
 
         } catch (e) {
-            console.log(e);
+            // console.log(e);
         }
     },[])
 
