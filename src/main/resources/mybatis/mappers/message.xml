@@ -9,7 +9,7 @@
 		<![CDATA[
 			INSERT INTO 
                 message 
-            VALUES (null, #{participantNo }, #{message }, #{notReadCount}, #{createdAt }, #{chatRoomNo })
+            VALUES (null, #{participantNo }, #{message }, #{notReadCount}, #{createdAt }, #{chattingRoomNo })
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -18,7 +18,7 @@
 
 
 
-    <select id="getMessageList" parameterType="Long" resultType="message">
+    <select id="getMessageList" parameterType="map" resultType="message">
         <![CDATA[
             SELECT
                 m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
@@ -34,7 +34,7 @@
             ORDER BY
                 no DESC
             LIMIT 
-                20
+                #{offset }, 20
         ]]>
     </select>
  

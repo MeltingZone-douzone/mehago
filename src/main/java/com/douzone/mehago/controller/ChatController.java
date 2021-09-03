@@ -78,8 +78,12 @@ public class ChatController {
 
     @Auth
     @GetMapping("/getMessageList/{chatRoomNo}")
-    public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo) {
-        List<Message> list = messageService.getMessageList(chatRoomNo);
+    public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset) {
+
+        System.out.println(chatRoomNo);
+        System.out.println(offset);
+        List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset));
+        System.out.println(list);
         return ResponseEntity.ok().body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
     }
 

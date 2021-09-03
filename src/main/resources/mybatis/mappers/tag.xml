@@ -19,7 +19,7 @@
     <insert id="linkTagToChatRoom" parameterType="tag">
 		<![CDATA[
 			insert 
-				into chat_room_has_tags 
+				into chat_room_has_tag 
 				values(#{chatRoomNo},#{no})		
         ]]>
 	</insert>

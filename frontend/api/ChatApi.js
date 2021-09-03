@@ -27,15 +27,16 @@ export function getRoomInfo(chatRoomNo) {
         .then(res => res);
 }
 
-export function getMessageList(chatRoomNo) {
+export function getMessageList(chatRoomNo, offset) {
     setAuthHeader();
-    return axios.get(`/api/chat/getMessageList/${chatRoomNo}`, { headers: AuthHeader })
+    console.log("getMessageList", offset);
+    return axios.get(`/api/chat/getMessageList/${chatRoomNo}`, { params: { offset }, headers: AuthHeader })
         .then(res => res);
 }
 
 export function addMessage(messageObject) {
     // return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
-    return axios.post("/message/addMessage", messageObject, { headers: AuthHeader })
+    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
         .then(res => res);
 }
 
@@ -43,7 +44,7 @@ export function addMessage(messageObject) {
 export function updateRead(participantObject, messageNo, roomObject) {
     participantObject.lastReadChatNo = messageNo;
     participantObject.chattingRoomNo = roomObject.no;
-    return axios.post("/message/updateRead", participantObject)
+    return axios.post("/api/chat/updateRead", participantObject)
         .then(res => res);
 }
 
@@ -62,3 +63,8 @@ export function getMyChatListApi() {
 }
 
 
+// 임시로 스프링
+export function updateNotReadCount(messageObject) {
+    return axios.post("/api/chat/updateNotReadCount", messageObject)
+        .then(res => res);
+}

@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import Fab from '@material-ui/core/Fab';
-import SendIcon from '@material-ui/icons/Send';
-import styles from '../assets/sass/chat/ChatList.scss';
+import Grid from '@material-ui/core/Grid';
+import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { getParticipantInfo, getRoomInfo, addMessage, joinParticipant } from "../../api/ChatApi";
-
-import MsgInput2 from './MsgInput2';
+import { getParticipantInfo, getRoomInfo } from "../../api/ChatApi";
+import styles from '../assets/sass/chat/ChatList.scss';
 import Chatting2 from './Chatting2';
+import MsgInput2 from './MsgInput2';
+
 
 const socket = io('http://localhost:8888');
 export default function ChatSection({match}) {
@@ -63,7 +55,7 @@ export default function ChatSection({match}) {
     useEffect(() => {
         if (joinSuccess) {
             // socket.emit('room:join', roomObject, participantObject);
-            socket.emit('room:join', roomObject, participantObject);
+            socket.emit('join', roomObject, participantObject);
             // joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no); not read count, last read chat no update하고 message의 count update
             setJoinSuccess(false);
         }
@@ -76,8 +68,10 @@ export default function ChatSection({match}) {
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
+            console.log(`onSubmitMessage`);
             if (message) {
-                socket.emit('message:insert', message);
+                socket.emit('chat message', message);
+                setMessage('');
             }
         },
         leaveRoom: (e) => {
@@ -88,16 +82,9 @@ export default function ChatSection({match}) {
     return (
         <div className={styles.chatSection}>
             <Grid container>
-                {/* 
-                    ListItemText 
-                        align=right는 나 left는 다른사람 
-                        primary=채팅
-                        secondary=보낸 시간
-                */}
                 <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo}/>
                 <Divider />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />
-
             </Grid>
         </div>
     );

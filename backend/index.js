@@ -90,6 +90,7 @@ httpServer
 
 
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
+    console.log(`${roomname} 에 ${message}를 보냄`);
     io.to(roomname).emit('chat message', message);
 });
 
@@ -99,7 +100,7 @@ io.on("connection", (socket) => {
     console.log("node connected");
     let messageObj = {};
 
-    let curRoom = null;
+    let currentRoom = null;
     let nickname = null;
 
     /** disconnect
@@ -122,9 +123,10 @@ io.on("connection", (socket) => {
     socket.on('chat message', (message) => {
         // TODO: DB 저장
         const insertMsg = Object.assign({}, messageObj, {"message":message});
+        console.log('messageObj: ', messageObj);
         messageController.addMessage(insertMsg);
-
-        io.of('/').adapter.pubClient.publish(curRoom, JSON.stringify(insertMsg));
+        console.log(currentRoom);
+        io.of('/').adapter.pubClient.publish(currentRoom, JSON.stringify(insertMsg));
     });
 
 
@@ -173,11 +175,11 @@ io.on("connection", (socket) => {
         */
 
         console.log(roomObject, participantObject);
-        curRoom = roomObject.no;
-        socket.join(curRoom);
-        io.of('/').adapter.subClient.subscribe(curRoom);
-        io.to(curRoom).emit('join', 'join!!!!');
-        io.of('/').adapter.pubClient.publish(curRoom, ` [알림] '${participantObject.chatNickname}' 이 '${roomObject.title}'에 입장`); // = SYSTEM = 유준 님이 입장하셨습니다.
+        currentRoom = "room " + roomObject.title;
+        socket.join(currentRoom);
+        io.of('/').adapter.subClient.subscribe(currentRoom);
+        // io.to(curRoom).emit('join', 'join!!!!');
+        io.of('/').adapter.pubClient.publish(currentRoom, ` [알림] '${participantObject.chatNickname}' 이 '${roomObject.title}'에 입장`);
 
         messageObj = {
             participantNo: participantObject.no,
