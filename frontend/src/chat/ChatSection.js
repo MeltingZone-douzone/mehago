@@ -18,7 +18,7 @@ export default function ChatSection() {
     const [joinSuccess, setJoinSuccess] = useState(false);
 
     useEffect(() => {
-        const chatRoomNo = 6; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
+        const chatRoomNo = 1; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
         getParticipantInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
                 // console.log(res.data);
@@ -28,7 +28,7 @@ export default function ChatSection() {
     }, []);
 
     useEffect(() => {
-        const chatRoomNo = 6;
+        const chatRoomNo = 1;
         getRoomInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
                 // console.log(res.data);
@@ -90,7 +90,7 @@ export default function ChatSection() {
     return (
         <div className={styles.chatSection}>
             <Grid container>
-                <Chatting2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} />
+                <Chatting2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} />
                 <Divider />
                 <MsgInput2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
             </Grid>

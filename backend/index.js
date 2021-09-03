@@ -52,8 +52,8 @@ const onConnection = (socket) => {
     MessageHandler(io, socket);
 }
 
-const { applicationRouter } = require("./routes");
-applicationRouter.setup(application);
+// const { applicationRouter } = require("./routes");
+// applicationRouter.setup(application);
 
 application.use(express.urlencoded({ extended: true }))
     .use(express.json())

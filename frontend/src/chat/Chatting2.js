@@ -1,12 +1,12 @@
 import { List } from '@material-ui/core';
 import { default as React, useEffect, useRef, useState } from 'react';
 import _ from 'underscore';
-import { getMessageList } from '../../api/ChatApi';
+import { getMessageList, updateRead, updateNotReadCount } from '../../api/ChatApi';
 import styles from '../assets/sass/chat/ChatList.scss';
 import ReceivedMessage from './ReceivedMessage'
 import SendMessage from './SendMessage'
 
-export default function Chatting2({socket, participantObject}) {
+export default function Chatting2({socket, participantObject, roomObject }) {
     const [offset, setOffset] = useState(0);
     const [target, setTarget] = useState(null);
     const [messageList, setMessageList] = useState([]); 
@@ -26,15 +26,26 @@ export default function Chatting2({socket, participantObject}) {
         await fetchItems(offset);
     }, [offset]);
     
-    
-    
-    useEffect(() => {
+/*     useEffect(() => {
         socket.on('chat message', (msg) => {
             console.log("chat message");
             const msgToJson = JSON.parse(msg);
+            setReceivedMsg(msgToJson);
+            updateRead(participantObject, msgToJson.no, roomObject);
+            // setInsertSuccess(true);
+        });
+    }, [participantObject, roomObject]); */
+    useEffect(() => {
+        socket.on('chat message', (msg) => {
+            const msgToJson = JSON.parse(msg);
+            console.log(msgToJson);
+            updateNotReadCount(msgToJson)
+            .then((res) => {
+                msgToJson.notReadCount = res.data;
+            })
+            setReceivedMsg(msgToJson);
         });
     }, []);
-    
 
 
     useEffect(() => {

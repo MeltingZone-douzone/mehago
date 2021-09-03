@@ -43,7 +43,7 @@ export function getMessageList(chattingRoomNo, offset) {
 
 export function addMessage(messageObject) {
     // return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
-    return axios.post("/message/addMessage", messageObject, { headers: AuthHeader })
+    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
         .then(res => res);
 }
 
@@ -51,7 +51,7 @@ export function addMessage(messageObject) {
 export function updateRead(participantObject, messageNo, roomObject) {
     participantObject.lastReadChatNo = messageNo;
     participantObject.chattingRoomNo = roomObject.no;
-    return axios.post("/message/updateRead", participantObject)
+    return axios.post("/api/chat/updateRead", participantObject)
         .then(res => res);
 }
 
@@ -60,11 +60,18 @@ export function joinParticipant(participantNo, lastReadChatNo, roomNo) {
     participant.no = participantNo;
     participant.lastReadChatNo = lastReadChatNo;
     participant.chattingRoomNo = roomNo;
-    return axios.post("/message/joinParticipant", participant);
+    return axios.post("/api/chat/joinParticipant", participant);
 }
 
 export function getMyChatListApi() {
     setAuthHeader();
     return axios.get("/api/chat/participatingRoom", {headers: AuthHeader})
                 .then(res => res);
+}
+
+
+
+export function updateNotReadCount(messageObject) {
+    return axios.post("/api/chat/updateNotReadCount", messageObject)
+        .then(res => res);
 }
