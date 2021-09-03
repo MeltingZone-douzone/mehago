@@ -1,6 +1,6 @@
 const errorRouter = require("./error");
 const express = require('express');
-const models = require("../models");
+// const models = require("../models");
 
 const applicationRouter = {
     setup: async function (application) {

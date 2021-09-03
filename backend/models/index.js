@@ -6,11 +6,11 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     dialect: 'mysql'
 });
 
-const Message = require('./message')(sequelize);
+// const Message = require('./message')(sequelize);
 
-Message.sync({
-    force: process.env.TABLE_CREATE_ALWAYS === 'true',
-    alter: process.env.TABLE_ALTER_SYNC === 'true'
-});
+// Message.sync({
+//     force: process.env.TABLE_CREATE_ALWAYS === 'true',
+//     alter: process.env.TABLE_ALTER_SYNC === 'true'
+// });
 
-module.exports = {Message}
+// module.exports = {Message}

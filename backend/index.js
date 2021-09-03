@@ -5,28 +5,56 @@ const dotenv = require("dotenv");
 const argv = require('minimist')(process.argv.slice(2));
 
 const elasticsearch = require('elasticsearch');
-
 const client = new elasticsearch.Client({
     node:"localhost:9200"
     
 });
 
-// Add this to the VERY top of the first file loaded in your app
-var apm = require('elastic-apm-node').start({
+async function run () {
+    client.ping({
+        // ping usually has a 3000ms timeout
+        requestTimeout: 1000
+      }, function (error) {
+        if (error) {
+          console.trace('elasticsearch cluster is down!');
+        } else {
+          console.log('All is well');
+        }
+      });
+    
+      
+      // callback API
+      const result = await client.search({
+        index: 'my_index',
+        body: {
+          query: {
+            match: { hello: 'world' }
+          }
+        }
+      }, (err, result) => {
+        if (err) console.log(err)
+      });
+      
+      console.log(result);
+}
 
-    // Override the service name from package.json
-    // Allowed characters: a-z, A-Z, 0-9, -, _, and space
-    serviceName: 'message',
+run().catch(console.log)
+
+// // Add this to the VERY top of the first file loaded in your app
+// var apm = require('elastic-apm-node').start({
+
+//     // Override the service name from package.json
+//     // Allowed characters: a-z, A-Z, 0-9, -, _, and space
+//     serviceName: 'message',
     
-    // Use if APM Server requires a secret token
-    secretToken: '',
+//     // Use if APM Server requires a secret token
+//     secretToken: '',
     
-    // Set the custom APM Server URL (default: http://localhost:8200)
-    serverUrl: 'http://localhost:8200',
+//     // Set the custom APM Server URL (default: http://localhost:8200)
+//     serverUrl: 'http://localhost:8200',
     
-    // Set the service environment
-    environment: 'production'
-    })
+   
+//     })
 
 
 // Environment Variables(환경 변수)
@@ -73,6 +101,7 @@ const onConnection = (socket) => {
 }
 
 const { applicationRouter } = require("./routes");
+const { default: axios } = require('axios');
 applicationRouter.setup(application);
 
 application.use(express.urlencoded({ extended: true }))

@@ -8,8 +8,8 @@
   <insert id="createRoom" parameterType="chattingroom">
 		<![CDATA[
 			insert 
-				into chatting_room 
-				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{secretRoom},#{owner})		
+				into chat_room 
+				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner})		
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -17,9 +17,10 @@
 	</insert>
   <select id="getChatRoomList" resultType="chattingroom">
     <![CDATA[
-		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized , searchable, secret_room as secretRoom, owner
-		   from chatting_room 
-		]]> 
+		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized , searchable, owner
+		   from chat_room 
+       order by created_at desc
+		]]>
   </select>
 
   <select id="getRoomInfo" parameterType="Long" resultType="chattingroom">
@@ -28,7 +29,7 @@
           no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, 
           created_at as createdAt, only_authorized as onlyAuthorized, searchable as searchable, owner
       FROM
-          chatting_room
+          chat_room
       WHERE
           no = #{chattingRoomNo }
       ]]>
@@ -37,9 +38,9 @@
   <select id="participatingRoom" parameterType="Long" resultType="chattingroom">
     <![CDATA[
       SELECT
-          no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized, searchable, secret_room as secretRoom, owner
+          no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized, searchable, owner
       FROM
-          chatting_room
+          chat_room
       WHERE
           no IN (SELECT
                   chatting_room_no
