@@ -23,7 +23,7 @@ export default function Chatting() {
     // roomname은 join할 때 roomname 받아와서 변수에 넣어둠
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({title: ''});
-    const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: ''});
+    const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chatRoomNo: '', roomName: '', nickname: '', createdAt: ''});
     const [insertSuccess, setInsertSuccess] = useState(false);
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export default function Chatting() {
         joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no);
         setMessageObject({
                 participantNo: participantObject.no,
-                chattingRoomNo: roomObject.no,
+                chatRoomNo: roomObject.no,
                 roomName: roomObject.title,
                 nickname: participantObject.chatNickname
         })

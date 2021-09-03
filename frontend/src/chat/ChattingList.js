@@ -52,7 +52,7 @@ export default function ChatList(){
             </SearchWrapper>
             <Grid className={styles.ChatList} >
                 <List className={styles.ChatRoom} >
-                    {rooms.map((room)=> {
+                    { rooms ? rooms.map((room)=> {
                         return(
                             <ChattingRoom 
                                 key={room.no}
@@ -62,13 +62,13 @@ export default function ChatList(){
                                 onlyAuthorized ={room.onlyAuthorized}
                                 owner =  {room.owner}
                                 searchable={room.searchable} 
-                                secretRoom = {room.secretRoom}
+                                
                                 tagName = {room.tagName}
                                 thumbnailUrl = {room.thumbnailUrl} 
                                 titleAndTag = { room }
                                 keyword = { keyword }/>
                             )
-                        })}
+                        }) : null}
                 </List>
             </Grid>
         </ChattingListContainer>

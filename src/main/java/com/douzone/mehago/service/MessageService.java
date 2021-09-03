@@ -20,8 +20,8 @@ public class MessageService {
         return messageRepository.addMessage(message);
     }
 
-    public List<Message> getMessageList(Long chattingRoomNo) {
-        return messageRepository.getMessageList(chattingRoomNo);
+    public List<Message> getMessageList(Long chatRoomNo) {
+        return messageRepository.getMessageList(chatRoomNo);
     }
 
     public boolean updateNotReadCount(Message message) {

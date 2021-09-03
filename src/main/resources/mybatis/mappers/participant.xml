@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chattingRoomNo},#{chatNickname},#{notReadChat}, 0, now())
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now())
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -18,13 +18,13 @@
 <select id="getParticipantInfo" parameterType="Map" resultType="participant">
 	<![CDATA[
 		select 
-			no, chat_nickname as chatNickname, chatting_room_no as chattingRoomNo, not_read_count as notReadCount, last_read_chat_no as lastReadChatNo
+			no, chat_nickname as chatNickname, chat_room_no as chatRoomNo, not_read_count as notReadCount, last_read_chat_no as lastReadChatNo
 		from
 			participant
 		where
 			account_no = #{accountNo}
 		AND
-			chatting_room_no = #{chattingRoomNo}
+			chat_room_no = #{chatRoomNo}
 	]]>
 </select>
 
@@ -45,7 +45,7 @@
 	<update id="updateLastReadNoForJoin" parameterType="participant">
 		<![CDATA[
 			update participant
-			set last_read_chat_no =  (select max(no) from message where chatting_room_no = #{chattingRoomNo })
+			set last_read_chat_no =  (select max(no) from message where chat_room_no = #{chatRoomNo })
 			where no = #{no}
 		]]>					
 	</update>
@@ -54,7 +54,7 @@
 	<![CDATA[
 		update participant
 		set not_read_count = not_read_count +1
-		where chatting_room_no= #{chattingRoomNo }
+		where chat_room_no= #{chatRoomNo }
 			]]>			
 	</update>
 
@@ -68,7 +68,7 @@
 
 	<select id="getChatMember" parameterType="Long" resultType="Long">
 	<![CDATA[
-		select count(*) from participant where chatting_room_no = #{chattingRoomNo }
+		select count(*) from participant where chat_room_no = #{chatRoomNo }
 	]]>
 	</select>
 

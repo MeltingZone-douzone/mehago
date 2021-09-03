@@ -16,7 +16,6 @@ export default function ParticipatingRoom(){
     useEffect(()=> {
         try {
             getMyChatListApi().then(res => {
-                console.log(res.data);
                 if(res.data.result == "fail"){
 
                     return false;
@@ -47,12 +46,11 @@ export default function ParticipatingRoom(){
             />
             </SerachBarWarpper>
             <ContentWrapper>
-                
                 {participatingRoom.map((room)=> {
                         return(
+                            <div key={room.no}>
                             <NavLink to={`/chat/${room.no}`}>
                                 <ChattingRoom 
-                                    key={room.no}
                                     no = {room.no}
                                     title={room.title}
                                     limitedUserCount ={room.limitedUserCount}
@@ -64,6 +62,7 @@ export default function ParticipatingRoom(){
                                     thumbnailUrl = {room.thumbnailUrl} 
                                     />
                             </NavLink>
+                            </div>
                             )
                         })}
             </ContentWrapper>

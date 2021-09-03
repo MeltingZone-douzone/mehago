@@ -7,10 +7,10 @@ module.exports = {
         const conn = dbconn();
         const query = util.promisify(conn.query).bind(conn);
         try {
-            // select key???
+            console.log(message);
             return await query(
-                "INSERT INTO message VALUES (null, ?, ?, ?, ?, ?)",
-                [message.participantNo, message.message, message.notReadCount, message.createdAt, message.chattingRoomNo]
+                "INSERT INTO message VALUES (null, ?, ?, ?, now(), ?)",
+                [message.participantNo, message.message, message.notReadCount, message.chatRoomNo]
             );
         } catch (err) {
             console.error(err);
@@ -27,9 +27,9 @@ module.exports = {
                 `update message 
                  set not_read_count = (select count(*) 
                                         from participant 
-                                        where chatting_room_no= ? }) 
+                                        where chat_room_no= ? }) 
                 where no =?`,
-                [message.chattingRoomNo, message.no]
+                [message.chatRoomNo, message.no]
             );
         } catch (err) {
             console.error(err);
@@ -43,13 +43,13 @@ module.exports = {
         //    if else
         try {
             // join 하는 경우에 
-            if (participant.chattingRoomNo !== null) {
+            if (participant.chatRoomNo !== null) {
                 return await query(
                     `update message 
                      set not_read_count = not_read_count -1 
                      where no > ? 
-                     and chatting_room_no = ?`,
-                    [participant.lastReadChatNo, participant.chattingRoomNo]
+                     and chat_room_no = ?`,
+                    [participant.lastReadChatNo, participant.chatRoomNo]
                 );
             }
             // send message를 받은 경우에 participant를 먼저 update 해 주고 not_read_count를 -1 해 준다.
@@ -67,7 +67,7 @@ module.exports = {
             conn.end();
         }
     },
-    getMessageList: async function (chattingRoomNo, messageNo) {
+    getMessageList: async function (chatRoomNo, messageNo) {
         const conn = dbconn();
         const query = util.promisify(conn.query).bind(conn);
         try {
@@ -80,7 +80,7 @@ module.exports = {
             FROM
                 message m, account a, participant p
             WHERE
-                m.chatting_room_no = ?
+                m.chat_room_no = ?
                 AND
                 m.participant_no = p.no
                 AND
@@ -91,7 +91,7 @@ module.exports = {
                 m.no DESC
             LIMIT 
                 0,20`,
-                    [chattingRoomNo, messageNo]
+                    [chatRoomNo, messageNo]
                 );
             } else {
                 return await query(`SELECT m.no, m.participant_no as participantNo, m.message, 
@@ -100,7 +100,7 @@ module.exports = {
             FROM
                 message m, account a, participant p
             WHERE
-                m.chatting_room_no = ?
+                m.chat_room_no = ?
                 AND
                 m.participant_no = p.no
                 AND
@@ -109,7 +109,7 @@ module.exports = {
                 m.no DESC
             LIMIT 
                 0,20`,
-                    [chattingRoomNo]
+                    [chatRoomNo]
                 );
             }
         } catch (err) {
@@ -119,13 +119,13 @@ module.exports = {
         }
 
     },
-    getChatMember: async function (chattingRoomNo) {
+    getChatMember: async function (chatRoomNo) {
         const conn = dbconn();
         const query = util.promisify(conn.query).bind(conn);
         try {
             return await query(
-                "SELECT count(*) as notReadCount from participant where chatting_room_no = ?",
-                [chattingRoomNo]
+                "SELECT count(*) as notReadCount from participant where chat_room_no = ?",
+                [chatRoomNo]
             );
         } catch (err) {
             console.error(err);

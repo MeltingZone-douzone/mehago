@@ -10,17 +10,16 @@ import { getMessageList, updateRead } from '../../api/ChatApi';
 import ReceivedMessage from "./ReceivedMessage";
 import SendMessage from "./SendMessage";
 
-export default function Chatting2({ socket, participantObject, roomObject }) {
+export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo }) {
 
     const [isEnd, setIsEnd] = useState('false');
     const [isFetching, setIsFetching] = useState('false');
     const [messageList, setMessageList] = useState([]);
-    const [storedMsg, setStoredMsg] = useState([]);
     const [receivedMsg, setReceivedMsg] = useState({
         participantNo: 0,
         no: 0,
         message: '',
-        chattingRoomNo: 0,
+        chatRoomNo: 0,
         notReadCount: 0,
         nickname: '',
         thumbnailUrl: "",
@@ -28,10 +27,10 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
     });
     const [insertSuccess, setInsertSuccess] = useState(false);
 
-    // var endNo = $("#list-chat li").first().data("no") || 0;
-    const fetch = () => {
 
-    }
+    useEffect(()=>{
+        console.log(messageList);
+    },[messageList]);
 
     const messagesEndRef = useRef(null)
     const scrollToBottom = () => {
@@ -45,17 +44,19 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
 
 
     useEffect(() => {
-        const chatRoomNo = 6;
         getMessageList(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                setMessageList(res.data);
+                if(res.data.result == 'fail') {
+
+                    return ;
+                }
+                setMessageList(res.data.data);
             }
         })
     }, []);
 
-
-
     useEffect(() => {
+        console.log(socket)
         socket.on('chat message', (msg) => {
             console.log("chat message");
             const msgToJson = JSON.parse(msg);
@@ -63,21 +64,21 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
             updateRead(participantObject, msgToJson.no, roomObject);
             setInsertSuccess(true);
         });
-    }, [participantObject, roomObject]);
+    }, []);
 
-    useEffect(() => {
-        setMessageList([...messageList, receivedMsg]);
-    }, [receivedMsg]);
+    // useEffect(() => {
+    //     setMessageList([...messageList, receivedMsg]);
+    // }, [receivedMsg]);
 
-    // fetch(message.no || 0);
 
     return (
         <List className={styles.messageArea}>
-            {messageList
+            { messageList ? messageList
                 .slice(0).reverse().map((message, index) =>
                     message.participantNo !== participantObject.no ?
                         <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} /> : <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} />
                 )
+                : null 
             }
             <div ref={messagesEndRef}
             />

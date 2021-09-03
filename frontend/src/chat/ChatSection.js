@@ -17,97 +17,73 @@ import MsgInput2 from './MsgInput2';
 import Chatting2 from './Chatting2';
 
 const socket = io('http://localhost:8888');
-export default function ChatSection() {
-
+export default function ChatSection({match}) {
+    const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
-    const [roomObject, setRoomObject] = useState({ title: '' });
-    const [messageObject, setMessageObject] = useState({ participantNo: '', no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: '' });
+    const [roomObject, setRoomObject] = useState({});
+    const [message, setMessage] = useState();
+
     const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
 
-    useEffect(() => {
-        const chatRoomNo = 6; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
-        getParticipantInfo(chatRoomNo).then(res => {
+    useEffect( async () => {
+        await getRoomInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                // console.log(res.data);
-                setParticipantObject({ ...res.data })
+                if(res.data.result == 'fail') {
+                    //데이터가 없거나 실패했을때 들어옴..
+
+                    return;
+                }
+                setRoomObject(res.data.data);
             }
         });
-    }, []);
 
-    useEffect(() => {
-        const chatRoomNo = 6;
-        getRoomInfo(chatRoomNo).then(res => {
+        await getParticipantInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                // console.log(res.data);
-                setRoomObject({ ...res.data })
-                setJoinSuccess(true);
-                console.log("joinSuccess", joinSuccess);
+                if(res.data.result == 'fail') {
+                    // DB에 데이터가 없으면
+                    
+                    return;
+                }
+                setParticipantObject(res.data.data);
             }
         });
+        setJoinSuccess(true);
     }, []);
 
-    useEffect(() => {
-        socket.on('join', (msg) => {
-            // 사람이 disconnect 했다가 connect했을 때 불러질 거임!
-            // messageList에 읽은 숫자 update를 해 줘야함ㅁㅁㅁㅁㅁ
-            console.log(msg);
-        })
-    }, []);
+    // useEffect(() => {
+    //     console.log(roomObject);
+    //     socket.on('join', (msg) => {
+    //         // 사람이 disconnect 했다가 connect했을 때 불러질 거임!
+    //         // messageList에 읽은 숫자 update를 해 줘야함ㅁㅁㅁㅁㅁ
+    //         console.log(msg);
+    //     })
+    // }, []);
 
     useEffect(() => {
         if (joinSuccess) {
-            console.log("??????");
-            const data = {
-                roomName: roomObject.title
-            }
-            socket.emit('join', roomObject.title);
-            joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no);
+            // socket.emit('room:join', roomObject, participantObject);
+            socket.emit('room:join', roomObject, participantObject);
+            // joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no); not read count, last read chat no update하고 message의 count update
             setJoinSuccess(false);
         }
-        setMessageObject({
-            participantNo: participantObject.no,
-            chattingRoomNo: roomObject.no,
-            roomName: roomObject.title,
-            nickname: participantObject.chatNickname
-        })
     }, [joinSuccess]);
 
     const messageFunction = {
         onChangeMessage: (e) => {
-            const { name, value } = e.target;
-            let date = new Date();
-            let formattedDate = `${1900 + date.getYear()}-${date.getMonth() + 1 >= 10 ? date.getMonth() : '0' + (date.getMonth() + 1)}-${date.getDate() >= 10 ? date.getDate() : '0' + date.getDate()} ${date.getHours() >= 10 ? date.getHours() : '0' + date.getHours()}:${date.getMinutes() >= 10 ? date.getMinutes() : '0' + date.getMinutes()}:${date.getSeconds() >= 10 ? date.getSeconds() : '0' + date.getSeconds()}`;
-            setMessageObject({ ...messageObject, [name]: value, createdAt: formattedDate });
+            const { value } = e.target;
+            setMessage(value);
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            if (messageObject.message !== '') {
-                addMessage(messageObject).then(res => {
-                    if (res.statusText === 'OK') {
-                        setInsertSuccess(true);
-                        setMessageObject({
-                            ...messageObject,
-                            message: messageObject.message,
-                            no: res.data.no,
-                            createdAt: res.data.createdAt
-                        });
-                    }
-                });
+            if (message) {
+                socket.emit('message:insert', message);
             }
         },
         leaveRoom: (e) => {
             socket.emit('leave', data); // roomName
         }
     }
-
-    useEffect(() => {
-        if (insertSuccess) {
-            socket.emit('chat message', messageObject);
-            setMessageObject({ ...messageObject, message: '' });
-            setInsertSuccess(false);
-        }
-    }, [messageObject.no]);
 
     return (
         <div className={styles.chatSection}>
@@ -118,9 +94,9 @@ export default function ChatSection() {
                         primary=채팅
                         secondary=보낸 시간
                 */}
-                <Chatting2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} />
+                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo}/>
                 <Divider />
-                <MsgInput2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
+                <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />
 
             </Grid>
         </div>

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Tag {
-    private Long chattingRoomNo;
+    private Long chatRoomNo;
     private Long no;
     private String name;
 }
