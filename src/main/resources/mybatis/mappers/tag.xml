@@ -32,4 +32,13 @@
         ]]>
 	</select>
 
+	<select id="getTags" parameterType="Long" resultType="tag">
+		<![CDATA[
+		select t1.tag as tag
+		from tag t1, chat_room_has_tags t2
+		where t1.no = t2.tags_no
+		and t2.chat_room_no = #{chattingRoomNo }
+		]]>
+	</select>
+
 </mapper>
