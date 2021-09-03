@@ -60,7 +60,6 @@ const StyleLink = styled(Link)`
 `
 
 const AccountImage = styled.div`
-    margin:0 auto;
     width: 80px;
     height: 80px;
 

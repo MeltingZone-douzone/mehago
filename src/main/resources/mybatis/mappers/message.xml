@@ -9,7 +9,7 @@
 		<![CDATA[
 			INSERT INTO 
                 message 
-            VALUES (null, #{participantNo }, #{message }, #{notReadCount}, #{createdAt }, #{chattingRoomNo })
+            VALUES (null, #{participantNo }, #{message }, #{notReadCount}, #{createdAt }, #{chatRoomNo })
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -26,7 +26,7 @@
             FROM
                 message m, account a, participant p
             WHERE
-                m.chatting_room_no = #{chattingRoomNo }
+                m.chat_room_no = #{chatRoomNo }
                 AND
                 m.participant_no = p.no
                 AND
@@ -43,7 +43,7 @@
         update message
            set not_read_count = (select count(*) 
 			    			     from participant
-			    			     where chatting_room_no= ${chattingRoomNo })
+			    			     where chat_room_no= ${chatRoomNo })
         where no = ${no }
       ]]>
     <selectKey keyProperty="notReadCount" order="AFTER" resultType="Long">
@@ -61,10 +61,10 @@
         set not_read_count = not_read_count -1
           ]]>
         <choose>
-        <when test='chattingRoomNo != null'>
+        <when test='chatRoomNo != null'>
             <![CDATA[
             where no > #{lastReadChatNo }
-            and chatting_room_no = #{chattingRoomNo }
+            and chat_room_no = #{chatRoomNo }
          ]]>
          </when>
          <otherwise>

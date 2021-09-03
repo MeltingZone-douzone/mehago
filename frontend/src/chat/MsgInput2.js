@@ -6,7 +6,7 @@ import SendIcon from '@material-ui/icons/Send';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core'
 
-export default function MsgInput2({messageObject, messageFunction}) {
+export default function MsgInput2({message, messageFunction}) {
     return(
         <Grid container style={{padding: '20px'}}>
             <Grid item xs={11}>
@@ -15,7 +15,7 @@ export default function MsgInput2({messageObject, messageFunction}) {
                         id="message" 
                         name="message"
                         label="입력해라" 
-                        value={ messageObject.message || '' }
+                        value={ message }
                         onChange={ messageFunction.onChangeMessage }
                         fullWidth 
                         />

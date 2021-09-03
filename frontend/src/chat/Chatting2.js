@@ -8,17 +8,16 @@ import styles from '../assets/sass/chat/ChatList.scss';
 
 import { getMessageList, updateRead } from '../../api/ChatApi';
 
-export default function Chatting2({ socket, participantObject, roomObject }) {
+export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo }) {
     const classes = madeStyles();
     const [isEnd, setIsEnd] = useState('false');
     const [isFetching, setIsFetching] = useState('false');
     const [messageList, setMessageList] = useState([]);
-    const [storedMsg, setStoredMsg] = useState([]);
     const [receivedMsg, setReceivedMsg] = useState({
         participantNo: 0,
         no: 0,
         message: '',
-        chattingRoomNo: 0,
+        chatRoomNo: 0,
         notReadCount: 0,
         nickname: '',
         thumbnailUrl: "",
@@ -26,10 +25,10 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
     });
     const [insertSuccess, setInsertSuccess] = useState(false);
 
-    // var endNo = $("#list-chat li").first().data("no") || 0;
-    const fetch = () => {
 
-    }
+    useEffect(()=>{
+        console.log(messageList);
+    },[messageList]);
 
     const messagesEndRef = useRef(null)
     const scrollToBottom = () => {
@@ -43,18 +42,19 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
 
 
     useEffect(() => {
-        const chatRoomNo = 6;
         getMessageList(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                console.log(res.data);
-                setMessageList(res.data);
+                if(res.data.result == 'fail') {
+
+                    return ;
+                }
+                setMessageList(res.data.data);
             }
         })
     }, []);
 
-
-
     useEffect(() => {
+        console.log(socket)
         socket.on('chat message', (msg) => {
             console.log("chat message");
             const msgToJson = JSON.parse(msg);
@@ -62,18 +62,16 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
             updateRead(participantObject, msgToJson.no, roomObject);
             setInsertSuccess(true);
         });
-    }, [participantObject, roomObject]);
+    }, []);
 
-    useEffect(() => {
-        setMessageList([...messageList, receivedMsg]);
-    }, [receivedMsg]);
+    // useEffect(() => {
+    //     setMessageList([...messageList, receivedMsg]);
+    // }, [receivedMsg]);
 
-    // fetch(message.no || 0);
 
     return (
         <List className={styles.messageArea}>
-
-            {messageList
+            { messageList ? messageList
                 .slice(0).reverse().map(message =>
                     message.participantNo !== participantObject.no ?
                         (<ListItem key={message.no}>
@@ -112,6 +110,7 @@ export default function Chatting2({ socket, participantObject, roomObject }) {
                             </Grid>
                         </ListItem>)
                 )
+                : null 
             }
             <div ref={messagesEndRef} />
         </List >

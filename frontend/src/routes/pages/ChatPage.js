@@ -15,9 +15,8 @@ export default function ChatPage({match}){
             <div className={styles.chattingRoom}>
                 <Switch>
                 <Route exact path={match.path} component={ChattingList} />
-                <Route exact path="/chat/c1" component={ChatSection} />
+                <Route exact path={`${match.path}/:no`} component={ChatSection} /> 
                 {/* <Route exact path="/chat/c2" component={Chatting} /> */}
-                {/* <Route exact path="/chat/:no" component={ChatSection} /> */} 
                 <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
                 </Switch>
             </div>

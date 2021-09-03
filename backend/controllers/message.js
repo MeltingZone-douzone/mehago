@@ -3,19 +3,17 @@ const messageModel = require("../models/message");
 const participantModel = require("../models/participant");
 
 module.exports = {
-    addMessage: async function (req, res) {
-        const chatMember = await messageModel.getChatMember(req.body.chattingRoomNo);
-        if (chatMember[0].notReadCount > 0) {
-            req.body.notReadCount = chatMember[0].notReadCount;
-            const result = await messageModel.addMessage(req.body);
+    addMessage: async function (insertMsg) {
+        const chatMember = 7;
+        insertMsg.notReadCount = chatMember;
+            
+            const result = await messageModel.addMessage(insertMsg);
             if (result.affectedRows == 1) {
-                req.body.no = result.insertId;
-                const results = await participantModel.addNotReadCount(req.body.chattingRoomNo);
-                console.log(results);
-                res.json(req.body);
+                insertMsg.no = result.insertId;
+                // const results = await participantModel.addNotReadCount(req.body.chattingRoomNo);
             }
-        }
-        return;
+
+        return insertMsg;
     },
     updateRead: async function (req, res) {
         const participant = {
@@ -31,6 +29,7 @@ module.exports = {
             console.log("subStractNotReadCount", results);
         }
     },
+    
     joinParticipant: async function (req, res) {
         const participant = req.body;
         // 먼저 substract를 해 주고
