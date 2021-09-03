@@ -1,77 +1,77 @@
+import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { addMessage, getParticipantInfo, getRoomInfo, joinParticipant } from "../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo } from "../../api/ChatApi";
 import styles from '../assets/sass/chat/ChatList.scss';
 import Chatting2 from './Chatting2';
-import Divider from '@material-ui/core/Divider';
 import MsgInput2 from './MsgInput2';
 
 
 const socket = io('http://localhost:8888');
-export default function ChatSection() {
-
+export default function ChatSection({match}) {
+    const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
-    const [roomObject, setRoomObject] = useState({title: ''});
-    const [messageObject, setMessageObject] = useState({participantNo: '',no: 0, message: '', chattingRoomNo: '', roomName: '', nickname: '', createdAt: ''});
+    const [roomObject, setRoomObject] = useState({});
+    const [message, setMessage] = useState();
+
     const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
 
-    useEffect(() => {
-        const chatRoomNo = 1; // TODO: 임시로 chat room no 넣어줌. 나중에 받기
-        getParticipantInfo(chatRoomNo).then(res => {
+    useEffect( async () => {
+        await getRoomInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                // console.log(res.data);
-                setParticipantObject({ ...res.data })
+                if(res.data.result == 'fail') {
+                    //데이터가 없거나 실패했을때 들어옴..
+
+                    return;
+                }
+                setRoomObject(res.data.data);
             }
         });
-    }, []);
 
-    useEffect(() => {
-        const chatRoomNo = 1;
-        getRoomInfo(chatRoomNo).then(res => {
+        await getParticipantInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                // console.log(res.data);
-                setRoomObject({ ...res.data });
-                setJoinSuccess(true);
+                if(res.data.result == 'fail') {
+                    // DB에 데이터가 없으면
+                    
+                    return;
+                }
+                setParticipantObject(res.data.data);
             }
         });
+        setJoinSuccess(true);
     }, []);
 
+    // useEffect(() => {
+    //     console.log(roomObject);
+    //     socket.on('join', (msg) => {
+    //         // 사람이 disconnect 했다가 connect했을 때 불러질 거임!
+    //         // messageList에 읽은 숫자 update를 해 줘야함ㅁㅁㅁㅁㅁ
+    //         console.log(msg);
+    //     })
+    // }, []);
+
     useEffect(() => {
-        if(joinSuccess) {
-            socket.emit("join", roomObject.title);
-            joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no);
+        if (joinSuccess) {
+            // socket.emit('room:join', roomObject, participantObject);
+            socket.emit('join', roomObject, participantObject);
+            // joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no); not read count, last read chat no update하고 message의 count update
             setJoinSuccess(false);
         }
-        setMessageObject({
-            participantNo: participantObject.no,
-            chattingRoomNo: roomObject.no,
-            roomName: roomObject.title,
-            nickname: participantObject.chatNickname
-        })
-    },[joinSuccess]);
+    }, [joinSuccess]);
+
     const messageFunction = {
         onChangeMessage: (e) => {
-            const { name, value } = e.target;
-            let date = new Date();
-            let formattedDate = `${1900 + date.getYear()}-${date.getMonth() + 1 >= 10 ? date.getMonth() : '0' + (date.getMonth() + 1)}-${date.getDate() >= 10 ? date.getDate() : '0' + date.getDate()} ${date.getHours() >= 10 ? date.getHours() : '0' + date.getHours()}:${date.getMinutes() >= 10 ? date.getMinutes() : '0' + date.getMinutes()}:${date.getSeconds() >= 10 ? date.getSeconds() : '0' + date.getSeconds()}`;
-            setMessageObject({ ...messageObject, [name]: value, createdAt: formattedDate });
+            const { value } = e.target;
+            setMessage(value);
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            if (messageObject.message !== '') {
-                addMessage(messageObject).then(res => {
-                    if (res.statusText === 'OK') {
-                        setInsertSuccess(true);
-                        setMessageObject({
-                            ...messageObject,
-                            message: messageObject.message,
-                            no: res.data.no,
-                            createdAt: res.data.createdAt
-                        });
-                    }
-                });
+            console.log(`onSubmitMessage`);
+            if (message) {
+                socket.emit('chat message', message);
+                setMessage('');
             }
         },
         leaveRoom: (e) => {
@@ -79,20 +79,12 @@ export default function ChatSection() {
         }
     }
 
-    useEffect(() => {
-        if (insertSuccess) {
-            socket.emit('chat message', messageObject);
-            setMessageObject({ ...messageObject, message: '' });
-            setInsertSuccess(false);
-        }
-    }, [messageObject.no]);
-
     return (
         <div className={styles.chatSection}>
             <Grid container>
-                <Chatting2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} />
+                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo}/>
                 <Divider />
-                <MsgInput2 socket={socket} messageObject={messageObject} messageFunction={messageFunction} />
+                <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />
             </Grid>
         </div>
     );

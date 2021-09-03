@@ -35,7 +35,7 @@ public class ParticipantRepository {
     }
 
     public boolean updateLastReadNoForJoin(Participant participant) {
-        System.out.println(participant.getChattingRoomNo());
+        System.out.println(participant.getChatRoomNo());
         return sqlSession.update("participant.updateLastReadNoForJoin", participant) == 1 ? true : false;
     }
 
@@ -43,8 +43,8 @@ public class ParticipantRepository {
         return sqlSession.update("participant.addNotReadCount", message) == 1 ? true : false;
     }
 
-    public Long getChatMember(Long chattingRoomNo) {
-        return sqlSession.selectOne("participant.getChatMember", chattingRoomNo);
+    public Long getChatMember(Long chatRoomNo) {
+        return sqlSession.selectOne("participant.getChatMember", chatRoomNo);
     }
 
 }

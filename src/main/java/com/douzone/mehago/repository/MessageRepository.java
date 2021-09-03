@@ -23,9 +23,9 @@ public class MessageRepository {
         return message.getNo();
     }
     
-    public List<Message> getMessageList(Long chattingRoomNo, Long offset) {
+    public List<Message> getMessageList(Long chatRoomNo, Long offset) {
         Map<String, Long> map = new HashMap();
-        map.put("chattingRoomNo", chattingRoomNo);
+        map.put("chatRoomNo", chatRoomNo);
         map.put("offset", offset);
         return sqlSession.selectList("message.getMessageList", map);
     }

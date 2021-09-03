@@ -6,7 +6,7 @@ import styles from '../assets/sass/chat/ChatList.scss';
 import ReceivedMessage from './ReceivedMessage'
 import SendMessage from './SendMessage'
 
-export default function Chatting2({socket, participantObject, roomObject }) {
+export default function Chatting2({socket, participantObject, roomObject, chatRoomNo}) {
     const [offset, setOffset] = useState(0);
     const [target, setTarget] = useState(null);
     const [messageList, setMessageList] = useState([]); 
@@ -18,12 +18,14 @@ export default function Chatting2({socket, participantObject, roomObject }) {
     }
     
     useEffect(() => {
+        console.log('scrollToBottom');
         scrollToBottom();
-    },[receivedMsg])
-    // },[messageList, receivedMsg])
+    // },[])
+    // },[receivedMsg])
+    },[messageList, receivedMsg])
     
     useEffect(async() => {
-        await fetchItems(offset);
+        await fetchItems(chatRoomNo, offset);
     }, [offset]);
     
 /*     useEffect(() => {
@@ -68,13 +70,12 @@ export default function Chatting2({socket, participantObject, roomObject }) {
         return () => observer && observer.disconnect();
     },[target]);
 
-    const fetchItems = (offset) => {
-        const chatRoomNo = 1; 
+    const fetchItems = (chatRoomNo, offset) => {
         getMessageList(chatRoomNo, offset).then(res => {
             if(res.statusText === 'OK') {
-                console.log(res.data);
+                console.log(res.data.data);
                 setMessageList(prevState => { 
-                    const a = _.filter(prevState.concat(res.data), item => (Object.keys(item).length !== 0)) // : 제거
+                    const a = _.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)) // : 제거
                     console.log(a);
                     const data = _.uniq(a, 'no'); 
                     return data
@@ -87,7 +88,7 @@ export default function Chatting2({socket, participantObject, roomObject }) {
 
     const checkIntersect = ([entry], observer) => {
         if(entry.isIntersecting) {
-            setOffset(prevState => prevState + 30);
+            setOffset(prevState => prevState + 20);
         }
     }
     console.log(offset);
@@ -95,14 +96,14 @@ export default function Chatting2({socket, participantObject, roomObject }) {
     return (
         <List className={styles.messageArea}>
             <div ref={setTarget } />
-            {messageList
+            { messageList ? messageList
                 .slice(0).reverse().map((message, index) =>
                     message.participantNo !== participantObject.no ?
                         <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} /> : <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} />
                 )
+                : null 
             }
-            <div ref={messagesEndRef}
-            />
+            <div ref={messagesEndRef } />
         </List >
     );
 }

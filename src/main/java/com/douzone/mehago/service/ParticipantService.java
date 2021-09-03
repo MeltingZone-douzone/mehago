@@ -1,8 +1,10 @@
 package com.douzone.mehago.service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.douzone.mehago.repository.ParticipantRepository;
+import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.Participant;
 
@@ -19,9 +21,25 @@ public class ParticipantService {
     public Long createParticipant(Participant participant) {
         return participantRepository.createParticipant(participant);
     }
+    
+    
+    public Participant getParticipantInfo(Account auth, Long chatRoomNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("accountNo", auth.getNo());
+        map.put("chatRoomNo", chatRoomNo);
 
-    public Participant getParticipantInfo(Map<String, Long> map) {
-        return participantRepository.getParticipantInfo(map);
+        Participant participant = participantRepository.getParticipantInfo(map);
+        
+        if(participant == null) { 
+            // 회원유저가 처음 들어왔다면
+            participant = new Participant();
+            participant.setAccountNo(auth.getNo());
+            participant.setChatNickname(auth.getNickname());
+            participant.setChatRoomNo(chatRoomNo);
+            participant.setNo(createParticipant(participant));
+        }
+
+        return participant;
     }
 
     public boolean updateLastReadNo(Participant participant) {
@@ -42,7 +60,8 @@ public class ParticipantService {
         return result;
     }
 
-    public Long getChatMember(Long chattingRoomNo) {
-        return participantRepository.getChatMember(chattingRoomNo);
+    public Long getChatMember(Long chatRoomNo) {
+        return participantRepository.getChatMember(chatRoomNo);
     }
+
 }

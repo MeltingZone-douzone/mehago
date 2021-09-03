@@ -16,10 +16,8 @@ dotenv.config({ path: path.join(__dirname, 'app.config.env') });
 //Logging
 const logger = require("./logging");
 
-// handlers
-// const ChatRoomHandler = require('./handlers/ChatRoomHandler');
-// const MessageHandler = require('./handlers/MessageHandler');
-
+// controllers
+const messageController = require('./controllers/message');
 
 // process Argument
 process.title = argv.name;
@@ -28,6 +26,7 @@ const redisClient = require("redis").createClient();
 
 const application = express();
 const httpServer = http.createServer(application);
+
 const io = require("socket.io")(httpServer, {
     cors: {
         // origin: "http://localhost:8080",
@@ -47,13 +46,8 @@ const io = require("socket.io")(httpServer, {
 
 })
 
-const onConnection = (socket) => {
-    ChatRoomHandler(io, socket);
-    MessageHandler(io, socket);
-}
-
-// const { applicationRouter } = require("./routes");
-// applicationRouter.setup(application);
+const { applicationRouter } = require("./routes");
+applicationRouter.setup(application);
 
 application.use(express.urlencoded({ extended: true }))
     .use(express.json())
@@ -94,17 +88,19 @@ httpServer
     })
     .listen(process.env.PORT);
 
-// io.on("connection", onConnection);
+
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     console.log(`${roomname} 에 ${message}를 보냄`);
     io.to(roomname).emit('chat message', message);
 });
 
 
-// io.on("connection", (socket) =>{
+
 io.on("connection", (socket) => {
     console.log("node connected");
-    let curRoom = null;
+    let messageObj = {};
+
+    let currentRoom = null;
     let nickname = null;
 
     /** disconnect
@@ -124,15 +120,13 @@ io.on("connection", (socket) => {
     })
 
 
-    socket.on('chat message', (messageObject) => {
-        // const chatMember = io.of('/').adapter.rooms.get(curRoom).size;
-        // console.log("on chat message", messageObject);
-        // messageObject.chatMember = chatMember;
+    socket.on('chat message', (message) => {
         // TODO: DB 저장
-        // join할 떄 변수에 넣어둔 curRoom 쓸까 아니면 front에서 받아서 쓸까
-        console.log("chat message 들어옴");
-        io.of('/').adapter.pubClient.publish(curRoom, JSON.stringify(messageObject));
-
+        const insertMsg = Object.assign({}, messageObj, {"message":message});
+        console.log('messageObj: ', messageObj);
+        messageController.addMessage(insertMsg);
+        console.log(currentRoom);
+        io.of('/').adapter.pubClient.publish(currentRoom, JSON.stringify(insertMsg));
     });
 
 
@@ -159,16 +153,44 @@ io.on("connection", (socket) => {
      * 비회원도 토큰발급
      */
 
-    socket.on('join', (roomName) => {
+    socket.on('join', (roomObject, participantObject) => {
+        /*  redis에
+            room : {
+                no : {
+                    user :{
 
-        curRoom = roomName;
-        socket.join(roomName);
-        io.of('/').adapter.subClient.subscribe(roomName);
+                    }, {
+
+                    }
+                },
+
+                no2 : {
+                    user :{
+
+                    }, {
+
+                    }
+                }
+            } 이런식으로 담으면 어떨까..? 그러면 어떤 방이 있는지, 누가 처음들어왔는지 이전에 있던 사람인지 성능 측면으로 좋아지지 않을까?
+        */
+
+        console.log(roomObject, participantObject);
+        currentRoom = "room " + roomObject.title;
+        socket.join(currentRoom);
+        io.of('/').adapter.subClient.subscribe(currentRoom);
+        // io.to(curRoom).emit('join', 'join!!!!');
+        io.of('/').adapter.pubClient.publish(currentRoom, ` [알림] '${participantObject.chatNickname}' 이 '${roomObject.title}'에 입장`);
+
+        messageObj = {
+            participantNo: participantObject.no,
+            chatRoomNo: roomObject.no,
+            not_read_count: roomObject.not_read_count, // spring boot 에서 처리후 가져오기 값에 담아서 가져오기
+            message: ""
+        }
         // 1. 처음들어온사람 입장 메시지
         // 2. 기존 채팅방 사람 notreadcount 수정해줘야함
 
 
-        // io.of('/').adapter.pubClient.publish(data.roomName, ` [알림] '${data.nickname}' 이 '${data.roomName}'에 입장`); // = SYSTEM = 유준 님이 입장하셨습니다.
         /* if(token.verifyCheck(data.token)) {
             console.log(`User ${data.nickname} join room ${data.roomName}`);
             socket.join(data.roomName);
