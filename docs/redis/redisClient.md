@@ -28,7 +28,7 @@ $ sadd "roomname" "participant"
 
 
 ```javascript
-const chatMember = redisClient.scard(`room${curRoom}`);
+const chatMembers = redisClient.scard(currentRoom);
 ```
 
 ```bash
@@ -39,7 +39,7 @@ const chatMember = redisClient.scard(`room${curRoom}`);
 3. disconnect시 참가자에서 제거
 
 ```javascript
-redisClient.sram(`room${curRoom}`, participantObject.no);
+redisClient.srem(currentRoom, messageObj.participantNo)
 ```
 
 ```bash
