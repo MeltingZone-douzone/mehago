@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Grid, List, makeStyles } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography'
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import moment from 'moment';
+import { List } from '@material-ui/core';
+import { default as React, useEffect, useRef, useState } from 'react';
+import _ from 'underscore';
+import { getMessageList, updateRead, updateNotReadCount } from '../../api/ChatApi';
 import styles from '../assets/sass/chat/ChatList.scss';
+import ReceivedMessage from './ReceivedMessage'
+import SendMessage from './SendMessage'
 
 import { getMessageList, updateRead } from '../../api/ChatApi';
 import ReceivedMessage from "./ReceivedMessage";
@@ -79,9 +79,52 @@ export default function Chatting2({ socket, participantObject, roomObject, joinS
         setMessageList([...messageList, receivedMsg]);
     }, [receivedMsg]);
 
+    useEffect(() => {
+            setMessageList([receivedMsg, ...messageList]);
+            // setMessageList([...new Set([prevState, ...messageList])]);
+    },[receivedMsg]);
+    
+    const options = {
+        root: null,
+        rootMargin: "200px",
+        threshold: 0.25
+    }
+    
+    useEffect(() => {
+        let observer;
+        if(target) {
+            observer = new IntersectionObserver(checkIntersect, options);
+            observer.observe(target);
+        }
+        return () => observer && observer.disconnect();
+    },[target]);
+
+    const fetchItems = (chatRoomNo, offset) => {
+        getMessageList(chatRoomNo, offset).then(res => {
+            if(res.statusText === 'OK') {
+                console.log(res.data.data);
+                setMessageList(prevState => { 
+                    const a = _.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)) // : 제거
+                    console.log(a);
+                    const data = _.uniq(a, 'no'); 
+                    return data
+                }
+                );
+                // setMessageList(prevState => (prevState.concat(res.data))); 
+            }
+        });
+    };
+
+    const checkIntersect = ([entry], observer) => {
+        if(entry.isIntersecting) {
+            setOffset(prevState => prevState + 20);
+        }
+    }
+    console.log(offset);
 
     return (
         <List className={styles.messageArea}>
+            <div ref={setTarget } />
             { messageList ? messageList
                 .slice(0).reverse().map((message, index) =>
                     message.participantNo !== participantObject.no ?
@@ -89,8 +132,7 @@ export default function Chatting2({ socket, participantObject, roomObject, joinS
                 )
                 : null 
             }
-            <div ref={messagesEndRef}
-            />
+            <div ref={messagesEndRef } />
         </List >
     );
 }
