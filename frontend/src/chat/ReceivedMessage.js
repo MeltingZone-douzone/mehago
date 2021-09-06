@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Grid, List, makeStyles } from '@material-ui/core';
+import React from 'react';
+import { Grid, makeStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';

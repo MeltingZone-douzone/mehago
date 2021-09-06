@@ -4,15 +4,11 @@ const participantModel = require("../models/participant");
 
 module.exports = {
     addMessage: async function (insertMsg) {
-        const chatMember = 7;
-        insertMsg.notReadCount = chatMember;
-            
-            const result = await messageModel.addMessage(insertMsg);
-            if (result.affectedRows == 1) {
-                insertMsg.no = result.insertId;
-                // const results = await participantModel.addNotReadCount(req.body.chattingRoomNo);
-            }
-
+        const result = await messageModel.addMessage(insertMsg);
+        if (result.affectedRows == 1) {
+            insertMsg.no = result.insertId;
+            await participantModel.addNotReadCount(insertMsg.chattingRoomNo);
+        }
         return insertMsg;
     },
 
@@ -24,7 +20,7 @@ module.exports = {
             return results.changedRows;
         }
     },
-    
+
     joinParticipant: async function (req, res) {
         const participant = req.body;
         // 먼저 substract를 해 주고
