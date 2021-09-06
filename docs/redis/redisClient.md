@@ -47,3 +47,8 @@ redisClient.srem(currentRoom, messageObj.participantNo)
 (integer) 1
 ```
 
+4. 참가자 목록
+
+```bash
+> SMEMBERS "roomname"
+```

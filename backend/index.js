@@ -48,6 +48,7 @@ const io = require("socket.io")(httpServer, {
 
 const { applicationRouter } = require("./routes");
 const { notice } = require('./logging');
+const { resolve } = require('path');
 applicationRouter.setup(application);
 
 application.use(express.urlencoded({ extended: true }))
@@ -92,16 +93,17 @@ httpServer
 
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
-    console.log("msgToJson",msgToJson.validation);
+    console.log("msgToJson", msgToJson.validation);
 
-    switch(msgToJson.validation) {
-        case "object" : io.to(roomname).emit('chat message', msgToJson);
+
+    switch (msgToJson.validation) {
+        case "object": io.to(roomname).emit('chat message', msgToJson);
             break;
-        case "notice" : io.to(roomname).emit('notice', message);
+        case "notice": io.to(roomname).emit('notice', message);
             break;
-        case "update" : io.to(roomname).emit('message:update:readCount', msgToJson.changedRows);
+        case "update": io.to(roomname).emit('message:update:readCount', msgToJson.changedRows);
     }
-    
+
 });
 
 io.on("connection", (socket) => {
@@ -113,34 +115,17 @@ io.on("connection", (socket) => {
 
 
     socket.on('join', (roomObject, participantObject) => {
-        /*  redis에
-            room : {
-                no : {
-                    user :{
-
-                    }, {
-
-                    }
-                },
-
-                no2 : {
-                    user :{
-
-                    }, {
-
-                    }
-                }
-            } 이런식으로 담으면 어떨까..? 그러면 어떤 방이 있는지, 누가 처음들어왔는지 이전에 있던 사람인지 성능 측면으로 좋아지지 않을까?
-        */
 
         roomObj = roomObject;
         participantObj = participantObject;
         currentRoomName = "room" + roomObject.no;
+        // console.log("participantObj", participantObj.no);
+        redisClient.sadd(currentRoomName, participantObj.no);
         socket.join(currentRoomName);
         io.of('/').adapter.subClient.subscribe(currentRoomName);
         const noticeMessage = {
             validation: "notice",
-            message : `notice::${socket.id}님이 방을 나가셨습니다.`
+            message: `notice::${socket.id}님이 방을 나가셨습니다.`
         }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(noticeMessage));
         messageObj = {
@@ -151,17 +136,20 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("participant:updateRead", async ()=>{
+    socket.on("participant:updateRead", async (receivedMsg) => {
         console.log("=========================updateRead=========================");
         let changedRows;
         await messageController.updateRead(participantObj).then(res => changedRows = res);
+        if (receivedMsg) {
+            participantObj.lastReadChatNo = receivedMsg.no;
+        }
         console.log(changedRows);
         const object = {
             "validation": "update",
             "changedRows": changedRows
         }
 
-        changedRows ?  io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object)) : null;
+        changedRows ? io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object)) : null;
     })
 
     /** disconnect
@@ -177,15 +165,18 @@ io.on("connection", (socket) => {
     // TODO: DB room에서 회원 관련 데이터 삭제
     socket.leave(data.roomName); */
     socket.on("disconnect", (reason) => {
-        console.log("node disconnected", reason)
+        if (currentRoomName !== null) {
+            redisClient.srem(currentRoomName, participantObj.no);
+        }
+        console.log("node disconnected", reason);
     })
 
 
-    socket.on('chat message', (message) => {
+    socket.on('chat message', async (message) => {
         // TODO: DB 저장
-        const insertMsg = Object.assign({}, messageObj, {"validation" : "object" ,"message":message});
-        messageController.addMessage(insertMsg);
-
+        let chatMember = await getChatMember(currentRoomName);
+        const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
+        await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
 
@@ -208,3 +199,15 @@ io.on("connection", (socket) => {
 
 
 });
+
+const getChatMember = currentRoomName => {
+    return new Promise((resolve, reject) => {
+        redisClient.scard(currentRoomName, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
