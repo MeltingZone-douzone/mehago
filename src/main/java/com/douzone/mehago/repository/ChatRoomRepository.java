@@ -3,6 +3,7 @@ package com.douzone.mehago.repository;
 import java.util.List;
 
 import com.douzone.mehago.vo.ChatRoom;
+import com.douzone.mehago.vo.Tag;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -31,5 +32,13 @@ public class ChatRoomRepository {
 
     public List<ChatRoom> participatingRoom(Long no) {
         return sqlSession.selectList("chatroom.participatingRoom", no);
+    }
+
+    public List<ChatRoom> keywordSearch(String searchValue) {
+        return sqlSession.selectList("chatroom.keywordSearch", searchValue);
+    }
+
+    public List<String> getTagname(Long no) {
+        return sqlSession.selectList("chatroom.getTagName", no);
     }
 }

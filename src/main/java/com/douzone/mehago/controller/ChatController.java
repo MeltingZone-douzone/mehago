@@ -53,6 +53,8 @@ public class ChatController {
         Long participantNo = participantService.createParticipant(participant);
         // 3. 태그 생성
         result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
+        System.out.println(result);
+        
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         return ResponseEntity.ok().body(participantNo);
     }
@@ -78,8 +80,12 @@ public class ChatController {
 
     @Auth
     @GetMapping("/getMessageList/{chatRoomNo}")
-    public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo) {
-        List<Message> list = messageService.getMessageList(chatRoomNo);
+    public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset) {
+
+        System.out.println(chatRoomNo);
+        System.out.println(offset);
+        List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset));
+        System.out.println(list);
         return ResponseEntity.ok().body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
     }
 
@@ -121,6 +127,7 @@ public class ChatController {
     @PostMapping("/chatList")
     public ResponseEntity<?> getChatList() {
         List<ChatRoom> chatRoomList = chatRoomService.getChatRoomList();
+        getTagName(chatRoomList);
         return ResponseEntity.ok().body(chatRoomList);
     }
 
@@ -128,8 +135,23 @@ public class ChatController {
     @GetMapping("/participatingRoom")
     public ResponseEntity<?> participatingRoom(@AuthUser Account account){
         List<ChatRoom> participatingRoom = chatRoomService.participatingRoom(account.getNo());
+        getTagName(participatingRoom);
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
 
+    @GetMapping("/keywordSearch")
+    public ResponseEntity<?> keywordSearch(String searchValue) {
+        List<ChatRoom> keywordSearch = chatRoomService.keywordSearch(searchValue);
+        getTagName(keywordSearch);
+        return ResponseEntity.ok().body(keywordSearch);
+    }
+
+    private void getTagName(List<ChatRoom> room) {
+        for(int i=0 ; i< room.size() ; i++){
+            Long no = room.get(i).getNo();
+            List<String> tag = chatRoomService.getTagName(no);
+            room.get(i).setTagName(tag);
+        }
+    }
 
 }

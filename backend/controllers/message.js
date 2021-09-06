@@ -4,7 +4,7 @@ const participantModel = require("../models/participant");
 
 module.exports = {
     addMessage: async function (insertMsg) {
-        const chatMember = 7;
+        const chatMember = 8;
         insertMsg.notReadCount = chatMember;
             
             const result = await messageModel.addMessage(insertMsg);

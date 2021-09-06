@@ -34,7 +34,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message 
                         }
                         secondary={
                             <Typography className={classes.notReadCountLeft}>
-                                <span>{message.notReadCount}</span>
+                                <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
                                 <span className={classes.createdAt}>
                                     {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
                                 </span>

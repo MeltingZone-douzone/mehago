@@ -10,13 +10,15 @@ import axios from 'axios';
 export default function ChatList(){
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
-    const [keyword, setKeyword] = useState('');
+    const [searchValue, setSearchValue] = useState('');
+
 
     useEffect(()=> {
         try {
             const url = `/api/chat/chatList`;
             axios.post(url, {headers:{'Context-Type': 'application/json'}})
                 .then(res => {
+                    console.log("asdasdad");
                     console.log(res.data);
                     setRooms(res.data);
             });
@@ -26,9 +28,19 @@ export default function ChatList(){
         }
     },[])
 
-    const handleChange = function (e) {
-        setKeyword(e.target.value);
-        console.log(keyword);
+    const keywordSearch = (e) => {
+        console.log(searchValue);
+        try {
+            const url = `/api/chat/keywordSearch?searchValue=`+searchValue;
+            axios.get(url, {headers:{'Context-Type': 'application/json'}})
+                .then(res => {
+                    console.log(res.data);
+                    setRooms(res.data);
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     //TODO: Grid 틀 변경, search 구현
@@ -40,14 +52,17 @@ export default function ChatList(){
                     className={classes.textField}
                     id="input-with-icon-textfield"
                     label="채팅방 검색"
+                    onChange ={ (e) => { setSearchValue(e.target.value)} }
                     InputProps={{
-                        startAdornment: (
+                        endAdornment: (
                             <InputAdornment position="start">
-                                <SearchIcon />
+                                <button 
+                                    onClick={ keywordSearch }>
+                                        <SearchIcon />
+                                </button>
                             </InputAdornment>
-                        ),
+                        )
                     }}
-                    onChange={e => handleChange}
                 />
             </SearchWrapper>
             <Grid className={styles.ChatList} >
@@ -62,11 +77,10 @@ export default function ChatList(){
                                 onlyAuthorized ={room.onlyAuthorized}
                                 owner =  {room.owner}
                                 searchable={room.searchable} 
-                                
                                 tagName = {room.tagName}
                                 thumbnailUrl = {room.thumbnailUrl} 
                                 titleAndTag = { room }
-                                keyword = { keyword }/>
+                               />
                             )
                         }) : null}
                 </List>

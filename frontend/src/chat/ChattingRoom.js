@@ -26,7 +26,7 @@ export default function ChattingRoom({
                         <ListItemText className={styles.item2} primary={title}></ListItemText>
                         <ListItemText className={styles.item3} primary="참여자 수"></ListItemText>
                         <ListItemText className={styles.item4} primary="마지막 보낸 시간"></ListItemText>
-                        <ListItemText className={styles.item5} primary="#태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그 #태그"></ListItemText>
+                        <ListItemText className={styles.item5} primary={'# ' + tagName}></ListItemText>
                     </ListItem>
                 </List>
             </Link>

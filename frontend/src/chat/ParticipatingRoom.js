@@ -12,6 +12,7 @@ export default function ParticipatingRoom(){
     const classes = styles();
 
     const [participatingRoom, setParticipatingRoom] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
     
     useEffect(()=> {
         try {
@@ -20,13 +21,17 @@ export default function ParticipatingRoom(){
 
                     return false;
                 }
+                console.log(res.data.data + "qweqweqwe");
                 setParticipatingRoom(res.data.data);
             });
         } catch (e) {
-            console.log(e);
+            // console.log(e);
         }
     },[]);
 
+    useEffect((e) => {
+        console.log(searchValue);
+    }, [searchValue])
     //TODO: Search만들기
 
     return (
@@ -34,6 +39,7 @@ export default function ParticipatingRoom(){
             <SerachBarWarpper>
             <TextField
                 className={classes.textField}
+                onChange={ (e) => { setSearchValue(e.target.value)} }
                 id="input-with-icon-textfield"
                 label="채팅방 검색"
                 InputProps={{
@@ -46,7 +52,9 @@ export default function ParticipatingRoom(){
             />
             </SerachBarWarpper>
             <ContentWrapper>
-                {participatingRoom.map((room)=> {
+                {participatingRoom && participatingRoom
+                    .filter(room =>room.title.indexOf(searchValue) != -1 )
+                    .map((room)=> {
                         return(
                             <div key={room.no}>
                             <NavLink to={`/chat/${room.no}`}>

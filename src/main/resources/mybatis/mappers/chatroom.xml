@@ -15,6 +15,7 @@
             select last_insert_id()
         </selectKey>
 	</insert>
+
   <select id="getChatRoomList" resultType="chatroom">
     <![CDATA[
 		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized , searchable, owner
@@ -50,6 +51,44 @@
                   account_no = #{no})
       LIMIT
           10
+    ]]>
+  </select>
+
+  <select id="keywordSearch" parameterType="String" resultType="chatroom">
+    <![CDATA[
+      SELECT
+          no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized, searchable, owner
+      FROM
+        chat_room
+      where
+        no in (select
+                  chat_room_no
+              FROM
+                  chat_room_has_tag
+              where
+                  tag_no = (select
+                              no
+                          from
+                              tag
+                          where 
+                              tag = #{searchValue}))
+        OR
+            title = #{searchValue}
+    ]]>
+  </select>
+
+  <select id="getTagName" parameterType="Long" resultType="String">
+    <![CDATA[
+      select 
+        tag
+      from 
+        tag 
+      where no in (select 
+              tag_no
+            from 
+              chat_room_has_tag
+            where 
+              chat_room_no = #{no})
     ]]>
   </select>
 

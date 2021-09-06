@@ -1,5 +1,7 @@
 package com.douzone.mehago.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -14,5 +16,5 @@ public class ChatRoom {
     private boolean searchable;
     private Long owner;
 
-    private String[] tagName;
+    private List<String> tagName;
 }
