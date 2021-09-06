@@ -10,26 +10,43 @@ import { getMessageList, updateRead } from '../../api/ChatApi';
 import ReceivedMessage from "./ReceivedMessage";
 import SendMessage from "./SendMessage";
 
-export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo }) {
+export default function Chatting2({ socket, participantObject, roomObject, joinSuccess, chatRoomNo }) {
 
     const [isEnd, setIsEnd] = useState('false');
     const [isFetching, setIsFetching] = useState('false');
     const [messageList, setMessageList] = useState([]);
-    const [receivedMsg, setReceivedMsg] = useState({
-        participantNo: 0,
-        no: 0,
-        message: '',
-        chatRoomNo: 0,
-        notReadCount: 0,
-        nickname: '',
-        thumbnailUrl: "",
-        createdAt: ""
-    });
-    const [insertSuccess, setInsertSuccess] = useState(false);
+    const [receivedMsg, setReceivedMsg] = useState({});
+    const [receviedMessageSuccess, setReceviedMessageSuccess] = useState(false);
+
+    useEffect(() => {
+        socket.on('chat message', (msg) => {
+            setReceivedMsg(msg);
+            setReceviedMessageSuccess(true);
+        });
+
+        socket.on('message:update:readCount', (changedRows) =>{
+            // let arr1 = messageList.slice(-changedRows);
+            // console.log(arr1);
+        })
+    }, []);
+
+    useEffect(()=>{
+        if(receviedMessageSuccess){
+            socket.emit("participant:updateRead");
+        }
+    },[receviedMessageSuccess])
 
 
     useEffect(()=>{
         console.log(messageList);
+
+        if(messageList) {
+            const changedRows = 2;
+
+            let arr1 = messageList.slice(-changedRows);
+            console.log(arr1);
+        }
+
     },[messageList]);
 
     const messagesEndRef = useRef(null)
@@ -44,31 +61,23 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
 
     useEffect(() => {
-        getMessageList(chatRoomNo).then(res => {
-            if (res.statusText === 'OK') {
-                if(res.data.result == 'fail') {
+        if(joinSuccess) {
+            getMessageList(chatRoomNo).then(res => {
+                if (res.statusText === 'OK') {
+                    if(res.data.result == 'fail') {
 
-                    return ;
+                        return ;
+                    }
+                    setMessageList(res.data.data);
+                    socket.emit("participant:updateRead");
                 }
-                setMessageList(res.data.data);
-            }
-        })
-    }, []);
+            });
+        }
+    }, [joinSuccess]);
 
     useEffect(() => {
-        console.log(socket)
-        socket.on('chat message', (msg) => {
-            console.log("chat message");
-            const msgToJson = JSON.parse(msg);
-            setReceivedMsg(msgToJson);
-            updateRead(participantObject, msgToJson.no, roomObject);
-            setInsertSuccess(true);
-        });
-    }, []);
-
-    // useEffect(() => {
-    //     setMessageList([...messageList, receivedMsg]);
-    // }, [receivedMsg]);
+        setMessageList([...messageList, receivedMsg]);
+    }, [receivedMsg]);
 
 
     return (

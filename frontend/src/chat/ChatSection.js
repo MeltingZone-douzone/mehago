@@ -62,10 +62,8 @@ export default function ChatSection({match}) {
 
     useEffect(() => {
         if (joinSuccess) {
-            // socket.emit('room:join', roomObject, participantObject);
-            socket.emit('room:join', roomObject, participantObject);
-            // joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no); not read count, last read chat no update하고 message의 count update
-            setJoinSuccess(false);
+            socket.emit('join', roomObject, participantObject);
+            
         }
     }, [joinSuccess]);
 
@@ -77,7 +75,7 @@ export default function ChatSection({match}) {
         onSubmitMessage: (e) => {
             e.preventDefault();
             if (message) {
-                socket.emit('message:insert', message);
+                socket.emit('chat message', message);
             }
         },
         leaveRoom: (e) => {
@@ -94,7 +92,7 @@ export default function ChatSection({match}) {
                         primary=채팅
                         secondary=보낸 시간
                 */}
-                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo}/>
+                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} joinSuccess={joinSuccess} chatRoomNo={chatRoomNo}/>
                 <Divider />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />
 

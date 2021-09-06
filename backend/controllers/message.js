@@ -15,18 +15,13 @@ module.exports = {
 
         return insertMsg;
     },
-    updateRead: async function (req, res) {
-        const participant = {
-            chattingRoomNo: req.body.chattingRoomNo,
-            lastReadChatNo: req.body.lastReadChatNo,
-            no: req.body.no
-        }
-        await participantModel.updateLastReadChatNo(participant);
-        const result = await participantModel.updateNotReadCountToZero(participant);
+
+    updateRead: async function (participantObj) {
+        await participantModel.updateLastReadChatNo(participantObj);
+        const result = await participantModel.updateNotReadCountToZero(participantObj);
         if (result.serverStatus == 2) {
-            participant.chattingRoomNo = null;
-            const results = await messageModel.subStractNotReadCount(participant);
-            console.log("subStractNotReadCount", results);
+            const results = await messageModel.subStractNotReadCount(participantObj);
+            return results.changedRows;
         }
     },
     

@@ -15,7 +15,7 @@ export default function MsgInput2({message, messageFunction}) {
                         id="message" 
                         name="message"
                         label="입력해라" 
-                        value={ message }
+                        // value={ message }
                         onChange={ messageFunction.onChangeMessage }
                         fullWidth 
                         />
