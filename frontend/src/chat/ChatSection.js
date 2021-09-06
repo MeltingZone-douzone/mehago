@@ -54,10 +54,8 @@ export default function ChatSection({match}) {
 
     useEffect(() => {
         if (joinSuccess) {
-            // socket.emit('room:join', roomObject, participantObject);
             socket.emit('join', roomObject, participantObject);
-            // joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no); not read count, last read chat no update하고 message의 count update
-            setJoinSuccess(false);
+            
         }
     }, [joinSuccess]);
 
@@ -82,7 +80,13 @@ export default function ChatSection({match}) {
     return (
         <div className={styles.chatSection}>
             <Grid container>
-                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo}/>
+                {/* 
+                    ListItemText 
+                        align=right는 나 left는 다른사람 
+                        primary=채팅
+                        secondary=보낸 시간
+                */}
+                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} joinSuccess={joinSuccess} chatRoomNo={chatRoomNo}/>
                 <Divider />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />
             </Grid>

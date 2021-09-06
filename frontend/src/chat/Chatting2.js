@@ -6,49 +6,78 @@ import styles from '../assets/sass/chat/ChatList.scss';
 import ReceivedMessage from './ReceivedMessage'
 import SendMessage from './SendMessage'
 
-export default function Chatting2({socket, participantObject, roomObject, chatRoomNo}) {
-    const [offset, setOffset] = useState(0);
-    const [target, setTarget] = useState(null);
-    const [messageList, setMessageList] = useState([]); 
+import { getMessageList, updateRead } from '../../api/ChatApi';
+import ReceivedMessage from "./ReceivedMessage";
+import SendMessage from "./SendMessage";
+
+export default function Chatting2({ socket, participantObject, roomObject, joinSuccess, chatRoomNo }) {
+
+    const [isEnd, setIsEnd] = useState('false');
+    const [isFetching, setIsFetching] = useState('false');
+    const [messageList, setMessageList] = useState([]);
     const [receivedMsg, setReceivedMsg] = useState({});
+    const [receviedMessageSuccess, setReceviedMessageSuccess] = useState(false);
+
+    useEffect(() => {
+        socket.on('chat message', (msg) => {
+            setReceivedMsg(msg);
+            setReceviedMessageSuccess(true);
+        });
+
+        socket.on('message:update:readCount', (changedRows) =>{
+            // let arr1 = messageList.slice(-changedRows);
+            // console.log(arr1);
+        })
+    }, []);
+
+    useEffect(()=>{
+        if(receviedMessageSuccess){
+            socket.emit("participant:updateRead");
+        }
+    },[receviedMessageSuccess])
+
+
+    useEffect(()=>{
+        console.log(messageList);
+
+        if(messageList) {
+            const changedRows = 2;
+
+            let arr1 = messageList.slice(-changedRows);
+            console.log(arr1);
+        }
+
+    },[messageList]);
 
     const messagesEndRef = useRef(null)
     const scrollToBottom = () => {
         messagesEndRef.current.scrollIntoView({ behavior: "auto" })
     }
-    
-    useEffect(() => {
-        console.log('scrollToBottom');
-        scrollToBottom();
-    // },[])
-    // },[receivedMsg])
-    },[messageList, receivedMsg])
-    
-    useEffect(async() => {
-        await fetchItems(chatRoomNo, offset);
-    }, [offset]);
-    
-/*     useEffect(() => {
-        socket.on('chat message', (msg) => {
-            console.log("chat message");
-            const msgToJson = JSON.parse(msg);
-            setReceivedMsg(msgToJson);
-            updateRead(participantObject, msgToJson.no, roomObject);
-            // setInsertSuccess(true);
-        });
-    }, [participantObject, roomObject]); */
-    useEffect(() => {
-        socket.on('chat message', (msg) => {
-            const msgToJson = JSON.parse(msg);
-            console.log(msgToJson);
-            updateNotReadCount(msgToJson)
-            .then((res) => {
-                msgToJson.notReadCount = res.data;
-            })
-            setReceivedMsg(msgToJson);
-        });
-    }, []);
 
+    // useEffect(() => {
+    //     scrollToBottom();
+    // }, [messageList, receivedMsg])
+
+
+
+    useEffect(() => {
+        if(joinSuccess) {
+            getMessageList(chatRoomNo).then(res => {
+                if (res.statusText === 'OK') {
+                    if(res.data.result == 'fail') {
+
+                        return ;
+                    }
+                    setMessageList(res.data.data);
+                    socket.emit("participant:updateRead");
+                }
+            });
+        }
+    }, [joinSuccess]);
+
+    useEffect(() => {
+        setMessageList([...messageList, receivedMsg]);
+    }, [receivedMsg]);
 
     useEffect(() => {
             setMessageList([receivedMsg, ...messageList]);
