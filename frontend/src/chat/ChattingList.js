@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Grid, List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import styles from '../assets/sass/chat/ChattingList.scss';
+import '../assets/sass/chat/ChattingList.scss';
 import ChattingRoom from './ChattingRoom';
 import axios from 'axios';
 
@@ -50,8 +50,8 @@ export default function ChatList(){
                     onChange={e => handleChange}
                 />
             </SearchWrapper>
-            <Grid className={styles.ChatList} >
-                <List className={styles.ChatRoom} >
+            <Grid className={"ChatList"} >
+                <List className={"ChatRoom"} >
                     { rooms ? rooms.map((room)=> {
                         return(
                             <ChattingRoom 

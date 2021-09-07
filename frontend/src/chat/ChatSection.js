@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { getParticipantInfo, getRoomInfo, getSearchMessage } from "../../api/ChatApi";
-import styles from '../assets/sass/chat/ChatList.scss';
+import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
 import MsgInput2 from './MsgInput2';
@@ -97,7 +97,7 @@ export default function ChatSection({match}) {
     }
     console.log(searchMessage);
     return (
-        <div className={styles.chatSection}>
+        <div className={"chatSection"}>
             <Grid container>
                 <ChatHeader socket={socket} messageFunction={messageFunction} />
                 <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />

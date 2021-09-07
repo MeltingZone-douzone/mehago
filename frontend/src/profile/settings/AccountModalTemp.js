@@ -7,11 +7,12 @@ import { colors } from '../../assets/styles/properties/Colors';
 import NicknameModal from './NicknameModal';
 import PasswordModal from './PasswordModal';
 import ThumbnailModal from './ThumbnailModal';
-const AccountModalTemp = ({nickname,title,content,onClose,settingsApi}) =>{
+const AccountModalTemp = ({thumbnailUrl,nickname,title,content,onClose,settingsApi}) =>{
 
     function getComponent(){
+        
         switch(content){
-            case 'thumbnail' : return(<ThumbnailModal onClose={onClose} setThumbnailApi = {settingsApi.setThumbnail}/>);
+            case 'thumbnail' : return(<ThumbnailModal thumbnailUrl={thumbnailUrl} nickname={nickname} onClose={onClose} setThumbnailApi = {settingsApi.setThumbnail}/>);
                 break;
             case 'nickname' : return(<NicknameModal nickname={nickname} onClose={onClose} setNicknameApi = {settingsApi.setNickname} />);
                 break;
@@ -52,7 +53,7 @@ const ModalContainer = styled.div`
     top:0;
     left:0;
     width:50%;
-    max-width:600px;
+    max-width:1000px;
     height:auto;
     
     left: 50%;

@@ -2,7 +2,7 @@ import { List } from '@material-ui/core';
 import { default as React, useEffect, useRef, useState } from 'react';
 import _ from 'underscore';
 import { getMessageList, updateNotReadCount } from '../../api/ChatApi';
-import styles from '../assets/sass/chat/ChatList.scss';
+import '../assets/sass/chat/ChatList.scss';
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
 
@@ -167,7 +167,7 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
     console.log(searchMessage);
 
     return (
-        <List className={styles.messageArea}>
+        <List className={"messageArea"}>
             <div ref={setTarget } />
             { 
                 Object.keys(searchMessage).length !== 0 ? 

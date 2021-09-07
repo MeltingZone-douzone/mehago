@@ -33,6 +33,7 @@
     "moment": "^2.29.1",
     "mysql2": "^2.3.0",
     "react": "^17.0.2",
+    "react-cropper": "^2.1.8",
     "react-dom": "^17.0.2",
     "react-intersection-observer": "^8.32.1",
     "react-jdenticon": "0.0.9",

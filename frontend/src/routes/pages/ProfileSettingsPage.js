@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import UserProfile from '../../profile/UserProfile';
 import UserSettingsContainer from '../../profile/settings/ProfileSettings';
 import localStorage from 'local-storage';
 
-import { getUserInfoApi, updateNicknameApi, updatePasswordApi, updateUserInfoApi } from '../../../api/AccountApi';
+import { updateNicknameApi, updatePasswordApi, updateThumbnailApi, updateUserInfoApi } from '../../../api/AccountApi';
 
 import 'regenerator-runtime';
-import { Fragment } from 'react';
+
 export default function ProfileSettingsPage({ userInfo, reloadUser }) {
 
     const settingsApi = {
+        
         setUserInfo: (newUserInfo) => {
             updateUserInfoApi(newUserInfo).then(res => {
                 console.log(res);
@@ -58,8 +59,18 @@ export default function ProfileSettingsPage({ userInfo, reloadUser }) {
             return result;
         },
 
-        setThumbnail: () => {
-            console.log("thumbnail");
+        setThumbnail: async (form) => {
+            let result;
+            await updateThumbnailApi(form).then(res => {
+                if(res.data.result === 'fail') {
+                    result = res.data.message;
+                } else {
+                    reloadUser();
+                    result = true;
+                }
+            })
+
+            return result;
         }
 
     }
