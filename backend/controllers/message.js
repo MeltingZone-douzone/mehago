@@ -4,32 +4,23 @@ const participantModel = require("../models/participant");
 
 module.exports = {
     addMessage: async function (insertMsg) {
-        const chatMember = 8;
-        insertMsg.notReadCount = chatMember;
-            
-            const result = await messageModel.addMessage(insertMsg);
-            if (result.affectedRows == 1) {
-                insertMsg.no = result.insertId;
-                // const results = await participantModel.addNotReadCount(req.body.chattingRoomNo);
-            }
-
+        const result = await messageModel.addMessage(insertMsg);
+        if (result.affectedRows == 1) {
+            insertMsg.no = result.insertId;
+            await participantModel.addNotReadCount(insertMsg.chattingRoomNo);
+        }
         return insertMsg;
     },
-    updateRead: async function (req, res) {
-        const participant = {
-            chattingRoomNo: req.body.chattingRoomNo,
-            lastReadChatNo: req.body.lastReadChatNo,
-            no: req.body.no
-        }
-        await participantModel.updateLastReadChatNo(participant);
-        const result = await participantModel.updateNotReadCountToZero(participant);
+
+    updateRead: async function (participantObj) {
+        await participantModel.updateLastReadChatNo(participantObj);
+        const result = await participantModel.updateNotReadCountToZero(participantObj);
         if (result.serverStatus == 2) {
-            participant.chattingRoomNo = null;
-            const results = await messageModel.subStractNotReadCount(participant);
-            console.log("subStractNotReadCount", results);
+            const results = await messageModel.subStractNotReadCount(participantObj);
+            return results.changedRows;
         }
     },
-    
+
     joinParticipant: async function (req, res) {
         const participant = req.body;
         // 먼저 substract를 해 주고

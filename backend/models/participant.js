@@ -11,7 +11,7 @@ module.exports = {
             // send message를 받은 경우에,join 할 때 
             // lastReadNo를 변경
             return await query(
-                "update participant set last_read_chat_no = (select max(no) from message where chat_room_no = ?) where no = ?",
+                "update participant set last_read_chat_no = (select ifnull(max(no),0) from message where chat_room_no = ?) where no = ?",
                 [participant.chatRoomNo, participant.no]
             );
 

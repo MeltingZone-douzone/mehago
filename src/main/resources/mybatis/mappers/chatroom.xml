@@ -71,9 +71,9 @@
                           from
                               tag
                           where 
-                              tag = #{searchValue}))
+                              tag like CONCAT('%',#{searchValue},'%'))
         OR
-            title = #{searchValue}
+            title like CONCAT('%',#{searchValue},'%'))
     ]]>
   </select>
 

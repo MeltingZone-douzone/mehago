@@ -36,7 +36,7 @@ const styles = makeStyles({
     }
 })
 
-export default function CreateChatRoom() {
+export default function CreateChatRoom({history}) {
 
     const [chatRoom, setChatRoom] = useState(
         {
@@ -77,6 +77,7 @@ export default function CreateChatRoom() {
                 if (res.statusText === "OK") {
                     // history.push('/chat');
                 }
+                history.replace('/chat');
             });
         } catch (err) {
             console.error(err);
@@ -88,7 +89,9 @@ export default function CreateChatRoom() {
         <ThemeProvider theme={theme}>
             <Container>
                 <h1>나의 채팅방을 만들어 보세요</h1>
+                <br />
                 <p>뭐ㅜ머ㅜ머ㅜ머ㅜ머뭐뭐무머ㅜ머ㅜ머ㅜ 적어야댐</p>
+                <br />
 
                 <CreateTemplate>
                     <FormWrapper onSubmit={(e) => createChatRoom(e)}>
@@ -146,7 +149,6 @@ export default function CreateChatRoom() {
                             <Switch checked={chatRoom.onlyAuthorized} onChange={handleChange}
                                 name="onlyAuthorized" color="primary" />}
                         label="회원만 이용 가능" />
-
                     <FormControlLabel
                         control={
                             <Switch checked={chatRoom.searchable} onChange={handleChange}

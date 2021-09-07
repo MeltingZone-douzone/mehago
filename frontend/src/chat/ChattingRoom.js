@@ -15,7 +15,17 @@ export default function ChattingRoom({
                                         thumbnailUrl,
                                         room,
                                         ketword}){
-    
+    const tagNames = () =>{
+        var tagNames = [];
+        for(var i = 0; i < tagName.length ; i++){
+            console.log(tagName[i]);
+            tagNames[i] = "#" + tagName[i];
+        }
+        console.log(tagNames);
+        return tagNames.join(' ');// TODO: 태그클릭
+
+    }
+
     return(
         
         <div className={styles.chatProfile}>
@@ -26,7 +36,7 @@ export default function ChattingRoom({
                         <ListItemText className={styles.item2} primary={title}></ListItemText>
                         <ListItemText className={styles.item3} primary="참여자 수"></ListItemText>
                         <ListItemText className={styles.item4} primary="마지막 보낸 시간"></ListItemText>
-                        <ListItemText className={styles.item5} primary={'# ' + tagName}></ListItemText>
+                        <ListItemText className={styles.item5} primary={tagNames()}></ListItemText>
                     </ListItem>
                 </List>
             </Link>
