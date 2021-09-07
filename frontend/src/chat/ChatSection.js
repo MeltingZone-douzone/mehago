@@ -18,7 +18,6 @@ export default function ChatSection({ match }) {
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
 
-    const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
 
     const [todoOpen, setTodoOpen] = useState(false);
@@ -52,14 +51,15 @@ export default function ChatSection({ match }) {
     }, []);
 
     // useEffect(() => {
-    //     return()=>{console.log("unmount")}
-    //     disconnect
+    //     return() =>{
+    //         console.log("unmount");
+    //     }
     // }, []);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (joinSuccess) {
-            socket.emit('join', roomObject, participantObject);
-
+            await socket.emit('join', roomObject, participantObject);
+            await socket.emit('participant:join:updateRead');
         }
     }, [joinSuccess]);
 
@@ -70,7 +70,6 @@ export default function ChatSection({ match }) {
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            console.log(`onSubmitMessage`);
             if (message) {
                 socket.emit('chat message', message);
                 e.target.message.value = '';

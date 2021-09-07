@@ -1,8 +1,9 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { List } from '@material-ui/core';
-import { default as React, useEffect, useRef, useState } from 'react';
+import '../assets/sass/chat/ChatList.scss';
 import _ from 'underscore';
 import { getMessageList } from '../../api/ChatApi';
-import '../assets/sass/chat/ChatList.scss';
+
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
 
@@ -10,10 +11,10 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     const lastScroll = document.querySelectorAll("p");
     const [offset, setOffset] = useState(0);
     const [target, setTarget] = useState(null);
-    const [messageList, setMessageList] = useState([]);
+    const [changedRows,setChangedRows] = useState(0);
+    const [messageList, setMessageList] = useState([]); 
     const [receivedMsg, setReceivedMsg] = useState({});
     const [receviedMessageSuccess, setReceviedMessageSuccess] = useState(false);
-    // const [target, setTarget] = useState();
 
     useEffect(() => {
         socket.on('chat message', (msg) => {
@@ -22,10 +23,32 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
         });
 
         socket.on('message:update:readCount', (changedRows) => {
-            // let arr1 = messageList.slice(-changedRows);
-            // console.log(arr1);
-        })
+            setChangedRows(changedRows);
+        });
+
     }, []);
+    
+    useEffect(() => {
+        setMessageList([receivedMsg, ...messageList]);
+    }, [receivedMsg]);
+
+    useEffect(()=>{
+        if(changedRows) {
+            let needToUpdateList = messageList.splice(0,changedRows);
+            let modifiedList = [];
+            needToUpdateList.map(list =>{
+                const updatedList = Object.assign({},list,{notReadCount: list.notReadCount - 1});
+                modifiedList.push(updatedList);
+            })
+
+            setMessageList([...modifiedList, ...messageList]);
+            setChangedRows(0);
+        }
+    },[changedRows])
+
+    useEffect(()=>{
+        console.log(messageList);
+    },[messageList])
 
     useEffect(() => {
         if (receviedMessageSuccess) {
@@ -33,19 +56,6 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
             setReceviedMessageSuccess(false);
         }
     }, [receviedMessageSuccess])
-
-
-    useEffect(() => {
-        console.log(messageList);
-
-        if (messageList) {
-            const changedRows = 2;
-
-            let arr1 = messageList.slice(-changedRows);
-            console.log(arr1);
-        }
-
-    }, [messageList]);
 
     const messagesEndRef = useRef(null)
     const scrollToBottom = () => {
@@ -55,7 +65,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
 
     useEffect(() => {
-        console.log('1');
+        // console.log('1');
         scrollToBottom();
     }, []);
 
@@ -63,8 +73,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     // 근데 fetchItems()에서 setState를 해서 다시 랜더링 됨
     useEffect(async () => {
         await fetchItems(chatRoomNo, offset);
-        console.log(`messageList.length 는 ${messageList.length}`);
-    }, [offset]);
+    },[offset]);
     // console.log(lastScroll[messageList.length - 1]);
     // useEffect(() => {
     //     console.log("fetchItems() in useEffect()");
@@ -73,19 +82,14 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     // }, []); // offset
 
     const fetchItems = async (chatRoomNo, offset) => {
-        console.log(`fetchItems() ${chatRoomNo}, ${offset}`);
         await getMessageList(chatRoomNo, offset).then(res => {
-            console.log(res);
-            if (res.statusText === 'OK') {
-                console.log("res.statusText === OK");
-                setMessageList(prevState => {
-                    console.log(res.data.data);
+            if(res.statusText === 'OK') {
+                setMessageList(prevState => { 
                     return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
                 });
 
             };
         });
-        console.log('ㅎㅎㅎㅎㅎㅎ');
     };
 
     // 입력할 때 messageList 갱신해야함 stroedMsg?
@@ -105,32 +109,23 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     // },[messageList, receivedMsg])
 
 
-    /*     useEffect(async() => {
-            await fetchItems(chatRoomNo, offset);
-            offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
-            // console.log(messageList[messageList.length - 1].no);
-            // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
-            // fetch하면 offset  에 스크롤 설정
-        }, [offset]); */
-
-    /*     useEffect(() => {
-            socket.on('chat message', (msg) => {
-                console.log("chat message");
-                const msgToJson = JSON.parse(msg);
-                setReceivedMsg(msgToJson);
-                updateRead(participantObject, msgToJson.no, roomObject);
-                // setInsertSuccess(true);
-            });
-        }, [participantObject, roomObject]); */
-    useEffect(() => {
+/*     useEffect(async() => {
+        await fetchItems(chatRoomNo, offset);
+        offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
+        // console.log(messageList[messageList.length - 1].no);
+        // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
+        // fetch하면 offset  에 스크롤 설정
+    }, [offset]); */
+    
+/*     useEffect(() => {
         socket.on('chat message', (msg) => {
-            setReceivedMsg(msg);
+            console.log("chat message");
+            const msgToJson = JSON.parse(msg);
+            setReceivedMsg(msgToJson);
+            updateRead(participantObject, msgToJson.no, roomObject);
+            // setInsertSuccess(true);
         });
-    }, []);
-
-    useEffect(() => {
-        setMessageList([receivedMsg, ...messageList]);
-    }, [receivedMsg]);
+    }, [participantObject, roomObject]); */
 
 
     const options = {
@@ -156,7 +151,6 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
             console.log(`if(entry.isIntersecting)`);
         }
     }
-
 
     return (
         <List className={"messageArea"}>

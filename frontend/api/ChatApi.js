@@ -28,7 +28,6 @@ export function getRoomInfo(chatRoomNo) {
 }
 
 export function getMessageList(chatRoomNo, offset) {
-    console.log(`getMessageList() ${chatRoomNo} ${offset}`);
     setAuthHeader();
     return axios.get(`/api/chat/getMessageList/${chatRoomNo}`, { params: { offset }, headers: AuthHeader })
         .then(res => res);
@@ -62,10 +61,7 @@ export function addNotice(roomNo, participantNo, notice) {
 }
 
 export function getSearchMessage(searchKeyword) {
-    console.log(searchKeyword);
     setAuthHeader();
     return axios.get("/api/chat/getSearchMessage?searchKeyword=" + searchKeyword, { headers: AuthHeader })
         .then(res => res);
 }
-
-

@@ -142,8 +142,7 @@ httpServer
 
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
-    console.log("msgToJson", msgToJson.validation);
-
+    console.log("msgToJson", msgToJson.validation, msgToJson);
 
     switch (msgToJson.validation) {
         case "object": io.to(roomname).emit('chat message', msgToJson);
@@ -224,6 +223,7 @@ io.on("connection", (socket) => {
     socket.on('chat message', async (message) => {
         // TODO: DB 저장
         let chatMember = await getChatMember(currentRoomName);
+        // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
         const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
