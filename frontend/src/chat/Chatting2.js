@@ -12,6 +12,40 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
     const [target, setTarget] = useState(null);
     const [messageList, setMessageList] = useState([]); 
     const [receivedMsg, setReceivedMsg] = useState({});
+    const [receviedMessageSuccess, setReceviedMessageSuccess] = useState(false);
+    // const [target, setTarget] = useState();
+
+    useEffect(() => {
+        socket.on('chat message', (msg) => {
+            setReceivedMsg(msg);
+            setReceviedMessageSuccess(true);
+        });
+
+        socket.on('message:update:readCount', (changedRows) => {
+            // let arr1 = messageList.slice(-changedRows);
+            // console.log(arr1);
+        })
+    }, []);
+
+    useEffect(() => {
+        if (receviedMessageSuccess) {
+            socket.emit("participant:updateRead", receivedMsg);
+            setReceviedMessageSuccess(false);
+        }
+    }, [receviedMessageSuccess])
+
+
+    useEffect(() => {
+        console.log(messageList);
+
+        if (messageList) {
+            const changedRows = 2;
+
+            let arr1 = messageList.slice(-changedRows);
+            console.log(arr1);
+        }
+
+    }, [messageList]);
 
     const messagesEndRef = useRef(null)
     const scrollToBottom = () => {
@@ -101,6 +135,9 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
         });
     }, []);
 
+    useEffect(() => {
+        setMessageList([...messageList, receivedMsg]);
+    }, [receivedMsg]);
 
     
     const options = {
@@ -144,9 +181,9 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
                         : 
                         <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} />
                 )
-                : null 
+                : null
             }
-            <div ref={messagesEndRef } />
+            <div ref={messagesEndRef} />
         </List >
     );
 }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Grid, List, makeStyles } from '@material-ui/core';
+import React from 'react';
+import { Grid, makeStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -41,9 +41,11 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                         secondary={
                             <Typography className={classes.notReadCountLeft}>
                                 <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
-                                <span className={classes.createdAt}>
-                                    {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
-                                </span>
+                                {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
+                                    <span className={classes.createdAt}>
+                                        {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
+                                    </span>
+                                    : ''}
                             </Typography>
                         }>
                     </ListItemText>

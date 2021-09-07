@@ -1,29 +1,29 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Fab from '@material-ui/core/Fab';
+import { TextField, Fab, makeStyles } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
-import styled from 'styled-components';
-import { Button } from '@material-ui/core'
 
-export default function MsgInput2({message, messageFunction}) {
-    return(
-        <Grid container style={{padding: '20px'}}>
-            <Grid item xs={11}>
-                <form onSubmit={ messageFunction.onSubmitMessage }>
-                    <TextField 
-                        id="message" 
-                        name="message"
-                        label="입력해라" 
-                        value={ message }
-                        onChange={ messageFunction.onChangeMessage }
-                        fullWidth 
-                        />
-                </form>
-            </Grid>
-            <Grid item xs={1} align="right">
-                <Fab color="primary" aria-label="보내기"><SendIcon /></Fab>
-            </Grid>
-        </Grid>
+
+export default function MsgInput2({ messageFunction }) {
+    const classes = madeStyles();
+
+    return (
+        <div>
+            <form onSubmit={messageFunction.onSubmitMessage} className={classes.inputMsgContainer}>
+                <TextField
+                    id="message"
+                    name="message"
+                    label="메시지를 입력하세요"
+                    onChange={messageFunction.onChangeMessage}
+                    fullWidth
+                />
+                <Fab type="submit" color="primary" aria-label="보내기"><SendIcon /></Fab>
+            </form>
+        </div>
     );
 }
+const madeStyles = makeStyles({
+    inputMsgContainer: {
+        display: "flex",
+        backgroundColor: "white",
+    }
+});

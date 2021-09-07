@@ -57,10 +57,8 @@ export default function ChatSection({match}) {
 
     useEffect(() => {
         if (joinSuccess) {
-            // socket.emit('room:join', roomObject, participantObject);
             socket.emit('join', roomObject, participantObject);
-            // joinParticipant(participantObject.no, participantObject.lastReadChatNo, roomObject.no); not read count, last read chat no update하고 message의 count update
-            setJoinSuccess(false);
+            
         }
     }, [joinSuccess]);
 
