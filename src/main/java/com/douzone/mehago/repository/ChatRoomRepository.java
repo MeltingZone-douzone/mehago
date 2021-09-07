@@ -3,7 +3,6 @@ package com.douzone.mehago.repository;
 import java.util.List;
 
 import com.douzone.mehago.vo.ChatRoom;
-import com.douzone.mehago.vo.Tag;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -20,7 +19,7 @@ public class ChatRoomRepository {
         sqlSession.insert("chatroom.createRoom", chatRoom);
         return chatRoom.getNo();
     }
-    
+
     public List<ChatRoom> getChatRoomList() {
         // 추후에 offset 줘서 리스트 뽑아야댐
         return sqlSession.selectList("chatroom.getChatRoomList");

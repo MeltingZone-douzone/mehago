@@ -1,16 +1,16 @@
 import { List } from '@material-ui/core';
 import { default as React, useEffect, useRef, useState } from 'react';
 import _ from 'underscore';
-import { getMessageList, updateNotReadCount } from '../../api/ChatApi';
+import { getMessageList } from '../../api/ChatApi';
 import '../assets/sass/chat/ChatList.scss';
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
 
-export default function Chatting2({socket, participantObject, roomObject, chatRoomNo, searchMessage}) {
+export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo, searchMessage }) {
     const lastScroll = document.querySelectorAll("p");
     const [offset, setOffset] = useState(0);
     const [target, setTarget] = useState(null);
-    const [messageList, setMessageList] = useState([]); 
+    const [messageList, setMessageList] = useState([]);
     const [receivedMsg, setReceivedMsg] = useState({});
     const [receviedMessageSuccess, setReceviedMessageSuccess] = useState(false);
     // const [target, setTarget] = useState();
@@ -64,7 +64,7 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
     useEffect(async () => {
         await fetchItems(chatRoomNo, offset);
         console.log(`messageList.length 는 ${messageList.length}`);
-    },[offset]);
+    }, [offset]);
     // console.log(lastScroll[messageList.length - 1]);
     // useEffect(() => {
     //     console.log("fetchItems() in useEffect()");
@@ -76,9 +76,9 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
         console.log(`fetchItems() ${chatRoomNo}, ${offset}`);
         await getMessageList(chatRoomNo, offset).then(res => {
             console.log(res);
-            if(res.statusText === 'OK') {
+            if (res.statusText === 'OK') {
                 console.log("res.statusText === OK");
-                setMessageList(prevState => { 
+                setMessageList(prevState => {
                     console.log(res.data.data);
                     return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
                 });
@@ -93,7 +93,7 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
         console.log('setMessageList(), scrollToBottom() in useEffect()');
         // setMessageList([receivedMsg, ...messageList]);
         scrollToBottom();
-    },[receivedMsg]);
+    }, [receivedMsg]);
 
 
 
@@ -105,80 +105,72 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
     // },[messageList, receivedMsg])
 
 
-/*     useEffect(async() => {
-        await fetchItems(chatRoomNo, offset);
-        offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
-        // console.log(messageList[messageList.length - 1].no);
-        // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
-        // fetch하면 offset  에 스크롤 설정
-    }, [offset]); */
-    
-/*     useEffect(() => {
-        socket.on('chat message', (msg) => {
-            console.log("chat message");
-            const msgToJson = JSON.parse(msg);
-            setReceivedMsg(msgToJson);
-            updateRead(participantObject, msgToJson.no, roomObject);
-            // setInsertSuccess(true);
-        });
-    }, [participantObject, roomObject]); */
+    /*     useEffect(async() => {
+            await fetchItems(chatRoomNo, offset);
+            offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
+            // console.log(messageList[messageList.length - 1].no);
+            // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
+            // fetch하면 offset  에 스크롤 설정
+        }, [offset]); */
+
+    /*     useEffect(() => {
+            socket.on('chat message', (msg) => {
+                console.log("chat message");
+                const msgToJson = JSON.parse(msg);
+                setReceivedMsg(msgToJson);
+                updateRead(participantObject, msgToJson.no, roomObject);
+                // setInsertSuccess(true);
+            });
+        }, [participantObject, roomObject]); */
     useEffect(() => {
         socket.on('chat message', (msg) => {
-            const msgToJson = JSON.parse(msg);
-            console.log(msgToJson);
-            updateNotReadCount(msgToJson)
-            .then((res) => {
-                msgToJson.notReadCount = res.data;
-
-            })
-            setReceivedMsg(msgToJson);
+            setReceivedMsg(msg);
         });
     }, []);
 
     useEffect(() => {
-        setMessageList([...messageList, receivedMsg]);
+        setMessageList([receivedMsg, ...messageList]);
     }, [receivedMsg]);
 
-    
+
     const options = {
         root: null,
         rootMargin: "200px",
         threshold: 0.25
     }
-    
+
     useEffect(() => {
         let observer;
-        if(target) {
+        if (target) {
             observer = new IntersectionObserver(checkIntersect, options);
             observer.observe(target);
         }
         return () => observer && observer.disconnect();
-    },[target]);
+    }, [target]);
 
 
 
     const checkIntersect = ([entry], observer) => {
-        if(entry.isIntersecting) {
+        if (entry.isIntersecting) {
             setOffset(prevState => prevState + 20);
             console.log(`if(entry.isIntersecting)`);
         }
     }
-    console.log(offset);
-    console.log(searchMessage);
+
 
     return (
         <List className={"messageArea"}>
-            <div ref={setTarget } />
-            { 
-                Object.keys(searchMessage).length !== 0 ? 
-                messageList.filter(({no}) => searchMessage.includes(no)).map(message => <p key={message.no}>{message.no}</p>)
-                : null
+            <div ref={setTarget} />
+            {
+                Object.keys(searchMessage).length !== 0 ?
+                    messageList.filter(({ no }) => searchMessage.includes(no)).map(message => <p key={message.no}>{message.no}</p>)
+                    : null
             }
-            { messageList ? messageList
+            {messageList ? messageList
                 .slice(0).reverse().map((message, index) =>
                     message.participantNo !== participantObject.no ?
                         <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchMessage={searchMessage} />
-                        : 
+                        :
                         <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} />
                 )
                 : null

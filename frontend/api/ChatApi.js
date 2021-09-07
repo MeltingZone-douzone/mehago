@@ -23,7 +23,7 @@ export function getParticipantInfo(chatRoomNo) {
 }
 
 export function getRoomInfo(chatRoomNo) {
-    return axios.get(`/api/chat/roomInfo/${chatRoomNo}`, {headers: AuthHeader })
+    return axios.get(`/api/chat/roomInfo/${chatRoomNo}`, { headers: AuthHeader })
         .then(res => res);
 }
 
@@ -34,45 +34,37 @@ export function getMessageList(chatRoomNo, offset) {
         .then(res => res);
 }
 
-export function addMessage(messageObject) {
-    // return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
-    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
-        .then(res => res);
-}
-
-
-export function updateRead(participantObject, messageNo, roomObject) {
-    participantObject.lastReadChatNo = messageNo;
-    participantObject.chattingRoomNo = roomObject.no;
-    return axios.post("/api/chat/updateRead", participantObject)
-        .then(res => res);
-}
-
-export function joinParticipant(participantNo, lastReadChatNo, roomNo) {
-    const participant = { no: 0, lastReadChatNo: 0, chattingRoomNo: 0 };
-    participant.no = participantNo;
-    participant.lastReadChatNo = lastReadChatNo;
-    participant.chatRoomNo = roomNo;
-    return axios.post("/message/joinParticipant", participant);
-}
-
 export function getMyChatListApi() {
     setAuthHeader();
-    return axios.get("/api/chat/participatingRoom", {headers: AuthHeader})
-                .then(res => res);
+    return axios.get("/api/chat/participatingRoom", { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function addTodo(roomNo, participantNo, date, todo) {
+    const todoObject = {
+        chatRoomNo: roomNo,
+        participantNo: participantNo,
+        date: date,
+        todo: todo,
+    }
+    return axios.post("/api/chat/addTodo", todoObject, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function addNotice(roomNo, participantNo, notice) {
+    const noticeObject = {
+        chatRoomNo: roomNo,
+        participantNo: participantNo,
+        notice: notice,
+    }
+    return axios.post("/api/chat/addNotice", noticeObject, { headers: AuthHeader })
+        .then(res => res);
 }
 
 export function getSearchMessage(searchKeyword) {
     console.log(searchKeyword);
     setAuthHeader();
     return axios.get("/api/chat/getSearchMessage?searchKeyword=" + searchKeyword, { headers: AuthHeader })
-        .then(res => res);
-}
-
-
-// 임시로 스프링
-export function updateNotReadCount(messageObject) {
-    return axios.post("/api/chat/updateNotReadCount", messageObject)
         .then(res => res);
 }
 

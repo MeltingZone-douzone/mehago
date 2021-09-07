@@ -16,26 +16,8 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
 
-    public Long addMessage(Message message) {
-        return messageRepository.addMessage(message);
-    }
-
     public List<Message> getMessageList(Long chatRoomNo, Long offset) {
         return messageRepository.getMessageList(chatRoomNo, offset);
-    }
-
-    public boolean updateNotReadCount(Message message) {
-        return messageRepository.updateNotReadCount(message);
-    }
-
-    public boolean subtractNotReadCount(Participant participant) {
-        return messageRepository.subtractNotReadCount(participant);
-    }
-
-    public boolean subtractNotReadCount(Long lastReadChatNo) {
-        Participant participant = new Participant();
-        participant.setLastReadChatNo(lastReadChatNo);
-        return messageRepository.subtractNotReadCount(participant);
     }
 
     public List<Long> getSearchMessage(String searchKeyword) {

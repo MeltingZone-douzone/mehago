@@ -4,32 +4,21 @@ import { Link } from 'react-router-dom';
 import '../assets/sass/chat/ChatProfile.scss';
 
 export default function ChattingRoom({
-                                        key, 
-                                        no, 
-                                        title, 
-                                        limitedUserCount, 
-                                        onlyAuthorized, 
-                                        owner, 
-                                        searchable, 
-                                        tagName, 
-                                        thumbnailUrl,
-                                        room,
-                                        ketword}){
-    const tagNames = () =>{
+    key, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, ketword }) {
+
+    const tagNames = () => {
         var tagNames = [];
-        for(var i = 0; i < tagName.length ; i++){
+        for (var i = 0; i < tagName.length; i++) {
             tagNames[i] = "#" + tagName[i];
         }
         return tagNames.join(' ');// TODO: 태그클릭
-
     }
 
-    return(
-        
+    return (
         <div className={"chatProfile"}>
             <Link to={`/chat/${no}`}>
                 <List className={"container"}>
-                    <ListItem button key="RemySharp" className={"roombutton"}>
+                    <ListItem button key={`${no}`} className={"roombutton"}>
                         <Avatar className={"item1"} alt="프로필 사진" src="https://material-ui.com/static/images/avatar/1.jpg" />
                         <ListItemText className={"item2"} primary={title}></ListItemText>
                         <ListItemText className={"item3"} primary="참여자 수"></ListItemText>

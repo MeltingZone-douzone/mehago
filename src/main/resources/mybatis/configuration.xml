@@ -10,6 +10,8 @@
 		<typeAlias type="com.douzone.mehago.vo.Participant" alias="participant"/>
 		<typeAlias type="com.douzone.mehago.vo.PasswordVo" alias="passwordvo"/>
 		<typeAlias type="com.douzone.mehago.vo.Tag" alias="tag"/>
+		<typeAlias type="com.douzone.mehago.vo.Todo" alias="todo"/>
+		<typeAlias type="com.douzone.mehago.vo.Notice" alias="notice"/>
 		<typeAlias type="com.douzone.mehago.vo.Message" alias="message"/>
 		<typeAlias type="com.douzone.mehago.vo.PasswordVo" alias="passwordvo"/>
 	</typeAliases>
@@ -19,5 +21,7 @@
 		<mapper resource="mybatis/mappers/message.xml" />
 		<mapper resource="mybatis/mappers/participant.xml" />
 		<mapper resource="mybatis/mappers/tag.xml" />
+		<mapper resource="mybatis/mappers/todo.xml" />
+		<mapper resource="mybatis/mappers/notice.xml" />
 	</mappers>
 </configuration>
