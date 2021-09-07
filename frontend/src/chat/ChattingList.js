@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Grid, List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import styles from '../assets/sass/chat/ChattingList.scss';
+import '../assets/sass/chat/ChattingList.scss';
 import ChattingRoom from './ChattingRoom';
 import axios from 'axios';
 
@@ -34,8 +34,8 @@ export default function ChatList(){
             const url = `/api/chat/keywordSearch?searchValue=`+searchValue;
             axios.get(url, {headers:{'Context-Type': 'application/json'}})
                 .then(res => {
-                    console.log(res.data);
-                    setRooms(res.data);
+                    console.log(res);
+                    setRooms(res.data.data);
             });
 
         } catch (e) {
@@ -65,8 +65,8 @@ export default function ChatList(){
                     }}
                 />
             </SearchWrapper>
-            <Grid className={styles.ChatList} >
-                <List className={styles.ChatRoom} >
+            <Grid className={"ChatList"} >
+                <List className={"ChatRoom"} >
                     { rooms ? rooms.map((room)=> {
                         return(
                             <ChattingRoom 
@@ -82,7 +82,7 @@ export default function ChatList(){
                                 titleAndTag = { room }
                                />
                             )
-                        }) : null}
+                        }) : rooms != null ? null : rooms}
                 </List>
             </Grid>
         </ChattingListContainer>

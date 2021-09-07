@@ -1,10 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
 import Jdenticon from 'react-jdenticon';
 
 export default function Thumbnail({ thumbnailUrl, nickname }) {
 
-    console.log(thumbnailUrl);
     return(
         <>
             {

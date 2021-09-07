@@ -37,4 +37,8 @@ public class MessageService {
         participant.setLastReadChatNo(lastReadChatNo);
         return messageRepository.subtractNotReadCount(participant);
     }
+
+    public List<Long> getSearchMessage(String searchKeyword) {
+        return messageRepository.getSearchMessage(searchKeyword);
+    }
 }

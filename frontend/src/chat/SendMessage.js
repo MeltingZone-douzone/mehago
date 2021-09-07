@@ -4,9 +4,9 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
-import styles from '../assets/sass/chat/ChatList.scss';
 
-export default function SendMessage({ nextMessage, previousMessage, message }) {
+
+export default function SendMessage({ nextMessage, previousMessage, message, searchMessage }) {
     const classes = madeStyles();
 
     return (
@@ -15,9 +15,9 @@ export default function SendMessage({ nextMessage, previousMessage, message }) {
                 <Grid item xs={12}>
                     <ListItemText align="right" className={classes.chatContainer, classes.right}
                         primary={
-                            <Typography className={classes.myChatMessage}>
-                                {message.message}
-                            </Typography>
+                            <p className={classes.myChatMessage} no={message.no}>
+                                {message.message} {message.no}
+                            </p>
                         }
                         secondary={
                             <Typography className={classes.notReadCountRight}>

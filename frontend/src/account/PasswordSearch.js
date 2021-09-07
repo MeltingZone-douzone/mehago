@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, ThemeProvider, TextField, makeStyles } from '@material-ui/core';
 import { theme } from '../assets/styles/material/MaterialTheme';
-import styles from "../assets/sass/account/Form.scss";
+import "../assets/sass/account/Form.scss";
 import axios from "axios";
 
 import NonMembers from "../components/NonMember";
@@ -44,10 +44,10 @@ export default function PasswordSearch() {
   }
 
   return (
-    <div className={styles.ContentContainer}>
-      <div className={styles.TitleWrapper}>
+    <div className={"ContentContainer"}>
+      <div className={"TitleWrapper"}>
         <h1>비밀번호 찾기</h1>
-        <div className={styles.TitleInfo}>
+        <div className={"TitleInfo"}>
           <span>입력하신 이메일로 임시 비밀번호가 발송됩니다.</span>
         </div>
       </div>
@@ -74,16 +74,16 @@ export default function PasswordSearch() {
               value={accounts.email} 
               onChange={(e) => {onChangeUserInput(e)}}/>
               {sendMassege === false ? ( 
-                <div className={styles.ErrorMessage} name="loginFail">
+                <div className={"ErrorMessage"} name="loginFail">
                     <span>가입되지 않은 이름거나, 잘못된 이메일 입니다.</span>
                 </div>
                 ) : (
-                <div className={styles.CorrectMessage} name="loginFail">
+                <div className={"CorrectMessage"} name="loginFail">
                     <span>{sendMassege === true ? "요청하신 이메일로 비밀번호를 전송 하였습니다." : ''}</span>
                 </div>
               )}
           </div>
-          <div className={styles.ButtonWrapper}>
+          <div className={"ButtonWrapper"}>
             <Button
               className={classes.root}
               variant="contained"

@@ -141,9 +141,12 @@ public class ChatController {
 
     @GetMapping("/keywordSearch")
     public ResponseEntity<?> keywordSearch(String searchValue) {
-        List<ChatRoom> keywordSearch = chatRoomService.keywordSearch(searchValue);
-        getTagName(keywordSearch);
-        return ResponseEntity.ok().body(keywordSearch);
+        List<ChatRoom> keywordSearch = null;
+        if(searchValue != null){
+            keywordSearch = chatRoomService.keywordSearch(searchValue);
+            getTagName(keywordSearch);
+        }
+        return ResponseEntity.ok().body(keywordSearch != null ? CommonResponse.success(keywordSearch) : "검색결과가 없습니다.");
     }
 
     private void getTagName(List<ChatRoom> room) {
@@ -152,6 +155,14 @@ public class ChatController {
             List<String> tag = chatRoomService.getTagName(no);
             room.get(i).setTagName(tag);
         }
+    }
+    @Auth
+    @GetMapping("/getSearchMessage")
+    public ResponseEntity<?> getSearchMessage(String searchKeyword) {
+        System.out.println(searchKeyword);
+        List<Long> messageNo = messageService.getSearchMessage(searchKeyword);
+        System.out.println(messageNo);
+        return ResponseEntity.ok().body(messageNo != null ? CommonResponse.success(messageNo) : "검색결과가 없습니다."); //  채팅방에 검색한 결과가 없음
     }
 
 }

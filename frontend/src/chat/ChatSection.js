@@ -2,8 +2,9 @@ import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { getParticipantInfo, getRoomInfo } from "../../api/ChatApi";
-import styles from '../assets/sass/chat/ChatList.scss';
+import { getParticipantInfo, getRoomInfo, getSearchMessage } from "../../api/ChatApi";
+import '../assets/sass/chat/ChatList.scss';
+import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
 import MsgInput2 from './MsgInput2';
 
@@ -13,7 +14,9 @@ export default function ChatSection({match}) {
     const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
+    const [searchMessage, setSearchMessage] = useState([]);
     const [message, setMessage] = useState();
+    const [searchKeyword, setSearchKeyword] = useState('');
 
     const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
@@ -59,7 +62,7 @@ export default function ChatSection({match}) {
         }
     }, [joinSuccess]);
 
-    const messageFunction = {
+    const messageFunction = { // 헤더 search도 넣을꺼라서 이름 바꾸기
         onChangeMessage: (e) => {
             const { value } = e.target;
             setMessage(value);
@@ -72,21 +75,32 @@ export default function ChatSection({match}) {
                 setMessage('');
             }
         },
+        onChangeSearchKeyword: (e) => {
+            setSearchKeyword(e.target.value);
+        },
+        onSearchKeyPress: (e) => {
+            if(e.key == 'Enter') {
+                getSearchMessage(searchKeyword).then(res => {
+                  if(res.statusText === 'OK') {
+                      console.log('res.data.data: ', res.data.data); // 길이, 번호, 키워드
+                      setSearchMessage([
+                          ...res.data.data,
+                          searchKeyword]);
+                    //   ]);
+                  };
+                });
+            }
+        },
         leaveRoom: (e) => {
             socket.emit('leave', data); // roomName
         }
     }
-
+    console.log(searchMessage);
     return (
-        <div className={styles.chatSection}>
+        <div className={"chatSection"}>
             <Grid container>
-                {/* 
-                    ListItemText 
-                        align=right는 나 left는 다른사람 
-                        primary=채팅
-                        secondary=보낸 시간
-                */}
-                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} joinSuccess={joinSuccess} chatRoomNo={chatRoomNo}/>
+                <ChatHeader socket={socket} messageFunction={messageFunction} />
+                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
                 <Divider />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />
             </Grid>

@@ -53,7 +53,7 @@ export default function ParticipatingRoom(){
             </SerachBarWarpper>
             <ContentWrapper>
                 {participatingRoom && participatingRoom
-                    .filter(room =>room.title.indexOf(searchValue) != -1 )
+                    .filter(room =>room.title.indexOf(searchValue) != -1 || room.tagName.indexOf(searchValue) != -1)
                     .map((room)=> {
                         return(
                             <div key={room.no}>
