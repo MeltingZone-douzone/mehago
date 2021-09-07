@@ -28,32 +28,9 @@ export function getRoomInfo(chatRoomNo) {
 }
 
 export function getMessageList(chatRoomNo, offset) {
-    console.log(`getMessageList() ${chatRoomNo} ${offset}`);
     setAuthHeader();
     return axios.get(`/api/chat/getMessageList/${chatRoomNo}`, { params: { offset }, headers: AuthHeader })
         .then(res => res);
-}
-
-export function addMessage(messageObject) {
-    // return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
-    return axios.post("/api/chat/addMessage", messageObject, { headers: AuthHeader })
-        .then(res => res);
-}
-
-
-export function updateRead(participantObject, messageNo, roomObject) {
-    participantObject.lastReadChatNo = messageNo;
-    participantObject.chattingRoomNo = roomObject.no;
-    return axios.post("/api/chat/updateRead", participantObject)
-        .then(res => res);
-}
-
-export function joinParticipant(participantNo, lastReadChatNo, roomNo) {
-    const participant = { no: 0, lastReadChatNo: 0, chattingRoomNo: 0 };
-    participant.no = participantNo;
-    participant.lastReadChatNo = lastReadChatNo;
-    participant.chatRoomNo = roomNo;
-    return axios.post("/message/joinParticipant", participant);
 }
 
 export function getMyChatListApi() {
@@ -63,17 +40,7 @@ export function getMyChatListApi() {
 }
 
 export function getSearchMessage(searchKeyword) {
-    console.log(searchKeyword);
     setAuthHeader();
     return axios.get("/api/chat/getSearchMessage?searchKeyword=" + searchKeyword, { headers: AuthHeader })
         .then(res => res);
 }
-
-
-// 임시로 스프링
-export function updateNotReadCount(messageObject) {
-    return axios.post("/api/chat/updateNotReadCount", messageObject)
-        .then(res => res);
-}
-
-

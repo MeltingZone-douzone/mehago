@@ -18,7 +18,6 @@ export default function ChatSection({match}) {
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
 
-    const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
 
     useEffect( async () => {
@@ -47,18 +46,15 @@ export default function ChatSection({match}) {
     }, []);
 
     // useEffect(() => {
-    //     console.log(roomObject);
-    //     socket.on('join', (msg) => {
-    //         // 사람이 disconnect 했다가 connect했을 때 불러질 거임!
-    //         // messageList에 읽은 숫자 update를 해 줘야함ㅁㅁㅁㅁㅁ
-    //         console.log(msg);
-    //     })
+    //     return() =>{
+    //         console.log("unmount");
+    //     }
     // }, []);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (joinSuccess) {
-            socket.emit('join', roomObject, participantObject);
-            
+            await socket.emit('join', roomObject, participantObject);
+            await socket.emit('participant:join:updateRead');
         }
     }, [joinSuccess]);
 
@@ -69,7 +65,6 @@ export default function ChatSection({match}) {
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            console.log(`onSubmitMessage`);
             if (message) {
                 socket.emit('chat message', message);
                 setMessage('');
@@ -82,7 +77,6 @@ export default function ChatSection({match}) {
             if(e.key == 'Enter') {
                 getSearchMessage(searchKeyword).then(res => {
                   if(res.statusText === 'OK') {
-                      console.log('res.data.data: ', res.data.data); // 길이, 번호, 키워드
                       setSearchMessage([
                           ...res.data.data,
                           searchKeyword]);
@@ -95,7 +89,7 @@ export default function ChatSection({match}) {
             socket.emit('leave', data); // roomName
         }
     }
-    console.log(searchMessage);
+    // console.log(searchMessage);
     return (
         <div className={"chatSection"}>
             <Grid container>

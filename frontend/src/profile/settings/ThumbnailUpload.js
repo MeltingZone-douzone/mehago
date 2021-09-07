@@ -7,8 +7,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Cropper from 'react-cropper';
 import "cropperjs/dist/cropper.css";
 
-import ImageFileUploader from './component/ImageFileUpload';
-import TextFileUploader from './component/TextFileUploader';
+import ImageFileUploader from '../../components/ImageFileUpload';
+import TextFileUploader from '../../components/TextFileUploader';
 
 export default function ThumbnailUpload({handleUpdateForm, setThumbnailApi, onClose}) {
     const classes = styles();
@@ -66,12 +66,13 @@ export default function ThumbnailUpload({handleUpdateForm, setThumbnailApi, onCl
                     <TextFileUploader imageName={imageName} isMultiple={false} onChange={onChange}/>
                     <ChangeDescription>이미지를 변경하려면 위 영역 사진 업로드를 클릭하여 프로필 사진을 변경하세요</ChangeDescription>
                     <Cropper
-                        style={{ height: "auto", width: "100%", maxWidth: 750}}
+                        style={{ height: "auto", width: "auto", maxWidth:700, maxHeight:500}}
                         src={image}
-                        viewMode={3}
-                        guides={true}
+                        viewMode={1}
                         minCropBoxHeight={100}
-                        minCropBoxWidth={30}
+                        minCropBoxWidth={100}
+                        zoomable={true}
+                        zoomOnWheel={true}
                         background={true}
                         responsive={true}
                         autoCropArea={1}
@@ -164,7 +165,6 @@ const AfterFileUpload = styled.div`
     width: 90%;
     min-height:400px;
 `
-
 const ChangeDescription = styled.span`
     margin: 1em 0;
     font-size:0.8rem;
