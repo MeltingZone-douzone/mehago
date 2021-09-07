@@ -1,8 +1,6 @@
 package com.douzone.mehago.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
@@ -59,6 +57,8 @@ public class ChatController {
         Long participantNo = participantService.createParticipant(participant);
         // 3. 태그 생성
         result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
+        System.out.println(result);
+
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         return ResponseEntity.ok().body(participantNo);
     }
@@ -100,6 +100,7 @@ public class ChatController {
     @PostMapping("/chatList")
     public ResponseEntity<?> getChatList() {
         List<ChatRoom> chatRoomList = chatRoomService.getChatRoomList();
+        getTagName(chatRoomList);
         return ResponseEntity.ok().body(chatRoomList);
     }
 
@@ -107,6 +108,7 @@ public class ChatController {
     @GetMapping("/participatingRoom")
     public ResponseEntity<?> participatingRoom(@AuthUser Account account) {
         List<ChatRoom> participatingRoom = chatRoomService.participatingRoom(account.getNo());
+        getTagName(participatingRoom);
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
 
@@ -122,6 +124,36 @@ public class ChatController {
         boolean result = false;
         result = noticeService.addNotice(notice);
         return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+
+    @GetMapping("/keywordSearch")
+    public ResponseEntity<?> keywordSearch(String searchValue) {
+        List<ChatRoom> keywordSearch = null;
+        if (searchValue != null) {
+            keywordSearch = chatRoomService.keywordSearch(searchValue);
+            getTagName(keywordSearch);
+        }
+        return ResponseEntity.ok().body(keywordSearch != null ? CommonResponse.success(keywordSearch) : "검색결과가 없습니다.");
+    }
+
+    private void getTagName(List<ChatRoom> room) {
+        for (int i = 0; i < room.size(); i++) {
+            Long no = room.get(i).getNo();
+            List<String> tag = chatRoomService.getTagName(no);
+            room.get(i).setTagName(tag);
+        }
+    }
+
+    @Auth
+    @GetMapping("/getSearchMessage")
+    public ResponseEntity<?> getSearchMessage(String searchKeyword) {
+        System.out.println(searchKeyword);
+        List<Long> messageNo = messageService.getSearchMessage(searchKeyword);
+        System.out.println(messageNo);
+        return ResponseEntity.ok().body(messageNo != null ? CommonResponse.success(messageNo) : "검색결과가 없습니다."); // 채팅방에
+                                                                                                                // 검색한
+                                                                                                                // 결과가
+                                                                                                                // 없음
     }
 
 }

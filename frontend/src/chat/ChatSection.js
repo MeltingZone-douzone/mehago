@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 
-import { getParticipantInfo, getRoomInfo, addTodo, addNotice } from "../../api/ChatApi";
-import styles from '../assets/sass/chat/ChatList.scss';
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
+import '../assets/sass/chat/ChatList.scss';
+import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
 import MsgInput2 from './MsgInput2';
 import Dialogs from './Dialogs';
@@ -13,10 +14,17 @@ export default function ChatSection({ match }) {
     const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
+    const [searchMessage, setSearchMessage] = useState([]);
     const [message, setMessage] = useState();
+    const [searchKeyword, setSearchKeyword] = useState('');
 
     const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
+
+    const [todoOpen, setTodoOpen] = useState(false);
+    const [noticeOpen, setNoticeOpen] = useState(false);
+    const [fileUploadOpen, setFileUploadOpen] = useState(false);
+
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
@@ -55,7 +63,7 @@ export default function ChatSection({ match }) {
         }
     }, [joinSuccess]);
 
-    const messageFunction = {
+    const messageFunction = { // 헤더 search도 넣을꺼라서 이름 바꾸기
         onChangeMessage: (e) => {
             const { value } = e.target;
             setMessage(value);
@@ -68,13 +76,26 @@ export default function ChatSection({ match }) {
                 e.target.message.value = '';
             }
         },
+        onChangeSearchKeyword: (e) => {
+            setSearchKeyword(e.target.value);
+        },
+        onSearchKeyPress: (e) => {
+            if (e.key == 'Enter') {
+                getSearchMessage(searchKeyword).then(res => {
+                    if (res.statusText === 'OK') {
+                        console.log('res.data.data: ', res.data.data); // 길이, 번호, 키워드
+                        setSearchMessage([
+                            ...res.data.data,
+                            searchKeyword]);
+                        //   ]);
+                    };
+                });
+            }
+        },
         leaveRoom: (e) => {
             socket.emit('leave', data); // roomName
         }
     }
-    const [todoOpen, setTodoOpen] = useState(false);
-    const [noticeOpen, setNoticeOpen] = useState(false);
-    const [fileUploadOpen, setFileUploadOpen] = useState(false);
 
     const buttonFunction = {
         todo: (e) => {
@@ -124,10 +145,13 @@ export default function ChatSection({ match }) {
     }
 
     return (
-        <div className={styles.chatSection}>
-            <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} joinSuccess={joinSuccess} chatRoomNo={chatRoomNo} />
-            <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
-            <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
+        <div className={"chatSection"}>
+            <Grid container>
+                <ChatHeader socket={socket} messageFunction={messageFunction} />
+                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
+                <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
+                <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
+            </Grid>
         </div>
     );
 

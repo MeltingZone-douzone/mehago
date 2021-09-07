@@ -80,4 +80,15 @@
         where no = #{no }
           ]]>
      </update>
+
+     <select id="getSearchMessage" parameterType="String" resultType="Long">
+    <![CDATA[
+        SELECT
+            no
+        FROM
+            message
+        WHERE
+            message LIKE CONCAT('%', #{searchKeyword },'%')
+    ]]>
+     </select>
 </mapper>

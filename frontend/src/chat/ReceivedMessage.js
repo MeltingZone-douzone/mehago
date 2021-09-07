@@ -4,16 +4,16 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
-import styles from '../assets/sass/chat/ChatList.scss';
+import '../assets/sass/chat/ChatList.scss';
 
-export default function ReceivedMessage({ nextMessage, previousMessage, message }) {
+export default function ReceivedMessage({ nextMessage, previousMessage, message, searchMessage }) {
     const classes = madeStyles();
     return (
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
                 <Grid item xs={1} align="center">
                     {!previousMessage || previousMessage.participantNo !== message.participantNo ?
-                        <img src="https://www.vets4pets.com/siteassets/dental-webheaders-dog---oct-20.jpg" className={styles.profile} />
+                        <img src="https://image.fmkorea.com/files/attach/new2/20210407/486616/3384152332/3508461211/99b983892094b5c6d2fc3736e15da7d1.jpg" className={"profile"} />
                         : ''}
                 </Grid>
                 <Grid item xs={11}>
@@ -30,7 +30,13 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message 
 
                     <ListItemText align="left" className={classes.chatContainer, classes.left}
                         primary={
-                            <Typography className={classes.receivedMessage}>{message.message}</Typography>
+                            // <Typography className={classes.receivedMessage}>
+                            //     <div no={message.no}></div>
+                            //     {message.message}
+                            // </Typography>
+                            <p className={classes.receivedMessage} no={message.no}>
+                                {message.message} {message.no}
+                            </p>
                         }
                         secondary={
                             <Typography className={classes.notReadCountLeft}>

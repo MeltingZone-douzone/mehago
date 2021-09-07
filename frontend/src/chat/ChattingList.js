@@ -3,21 +3,23 @@ import styled from 'styled-components';
 import { Grid, List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import styles from '../assets/sass/chat/ChattingList.scss';
+import '../assets/sass/chat/ChattingList.scss';
 import ChattingRoom from './ChattingRoom';
 import axios from 'axios';
 
 export default function ChatList(){
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
-    const [keyword, setKeyword] = useState('');
+    const [searchValue, setSearchValue] = useState('');
+
 
     useEffect(()=> {
         try {
             const url = `/api/chat/chatList`;
             axios.post(url, {headers:{'Context-Type': 'application/json'}})
                 .then(res => {
-                    // console.log(res.data);
+                    console.log("asdasdad");
+                    console.log(res.data);
                     setRooms(res.data);
             });
 
@@ -26,9 +28,19 @@ export default function ChatList(){
         }
     },[])
 
-    const handleChange = function (e) {
-        setKeyword(e.target.value);
-        console.log(keyword);
+    const keywordSearch = (e) => {
+        console.log(searchValue);
+        try {
+            const url = `/api/chat/keywordSearch?searchValue=`+searchValue;
+            axios.get(url, {headers:{'Context-Type': 'application/json'}})
+                .then(res => {
+                    console.log(res);
+                    setRooms(res.data.data);
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     //TODO: Grid 틀 변경, search 구현
@@ -40,18 +52,21 @@ export default function ChatList(){
                     className={classes.textField}
                     id="input-with-icon-textfield"
                     label="채팅방 검색"
+                    onChange ={ (e) => { setSearchValue(e.target.value)} }
                     InputProps={{
-                        startAdornment: (
+                        endAdornment: (
                             <InputAdornment position="start">
-                                <SearchIcon />
+                                <button 
+                                    onClick={ keywordSearch }>
+                                        <SearchIcon />
+                                </button>
                             </InputAdornment>
-                        ),
+                        )
                     }}
-                    onChange={e => handleChange}
                 />
             </SearchWrapper>
-            <Grid className={styles.ChatList} >
-                <List className={styles.ChatRoom} >
+            <Grid className={"ChatList"} >
+                <List className={"ChatRoom"} >
                     { rooms ? rooms.map((room)=> {
                         return(
                             <ChattingRoom 
@@ -62,13 +77,12 @@ export default function ChatList(){
                                 onlyAuthorized ={room.onlyAuthorized}
                                 owner =  {room.owner}
                                 searchable={room.searchable} 
-                                
                                 tagName = {room.tagName}
                                 thumbnailUrl = {room.thumbnailUrl} 
                                 titleAndTag = { room }
-                                keyword = { keyword }/>
+                               />
                             )
-                        }) : null}
+                        }) : rooms != null ? null : rooms}
                 </List>
             </Grid>
         </ChattingListContainer>

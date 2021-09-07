@@ -6,7 +6,7 @@
 <mapper namespace="notice">
     <insert id="addNotice" parameterType="notice">
         <![CDATA[
-        insert into todo values(null, #{participantNo}, #{chatRoomNo}, #{notice})
+        insert into notice values(null, #{participantNo}, #{chatRoomNo}, #{notice})
         ]]>
     </insert>
 

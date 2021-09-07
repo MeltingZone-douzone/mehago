@@ -10,6 +10,6 @@ public class Todo {
     private Long participantNo;
     private Long chatRoomNo;
     private String todo;
-    private Date date;
+    private String date;
     private boolean checked;
 }

@@ -1,5 +1,7 @@
 package com.douzone.mehago.service;
 
+import java.util.List;
+
 import com.douzone.mehago.repository.TagRepository;
 import com.douzone.mehago.vo.Tag;
 
@@ -13,7 +15,7 @@ public class TagService {
 
     private final TagRepository tagRepository;
 
-    public boolean createTags(Long chatRoomNo, String[] tagNames) {
+    public boolean createTags(Long chatRoomNo, List<String> tagNames) {
         boolean result = false;
         Tag tag = new Tag();
         for (String tagName : tagNames) {

@@ -19,7 +19,7 @@ public class ChatRoomRepository {
         sqlSession.insert("chatroom.createRoom", chatRoom);
         return chatRoom.getNo();
     }
-    
+
     public List<ChatRoom> getChatRoomList() {
         // 추후에 offset 줘서 리스트 뽑아야댐
         return sqlSession.selectList("chatroom.getChatRoomList");
@@ -31,5 +31,13 @@ public class ChatRoomRepository {
 
     public List<ChatRoom> participatingRoom(Long no) {
         return sqlSession.selectList("chatroom.participatingRoom", no);
+    }
+
+    public List<ChatRoom> keywordSearch(String searchValue) {
+        return sqlSession.selectList("chatroom.keywordSearch", searchValue);
+    }
+
+    public List<String> getTagname(Long no) {
+        return sqlSession.selectList("chatroom.getTagName", no);
     }
 }

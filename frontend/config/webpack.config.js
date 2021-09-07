@@ -13,10 +13,16 @@ module.exports = (env) => ({
             test: /\.(png|gif|jpe?g|svg|ico|tiff?|bmp)$/i,
             type: 'asset/resource'
         }, {
-            test: /\.(sa|sc|c)ss$/i,
+            test: /\.css$/i,
             use: [
                 "style-loader",
-                { loader: "css-loader", options: { modules: true } },
+                "css-loader"
+            ],
+        }, {
+            test: /\.(sa|sc)ss$/i,
+            use: [
+                "style-loader",
+                { loader: "css-loader", options: { modules: false } },
                 "sass-loader",
             ],
         }, {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, ThemeProvider, TextField, makeStyles } from '@material-ui/core';
 import { theme } from '../assets/styles/material/MaterialTheme';
-import styles from '../assets/sass/account/Form.scss';
+import '../assets/sass/account/Form.scss';
 import { ValidationExp } from '../utils/ValidationExp';
 
 import { isExistApi ,signUpApi } from "../../api/AccountApi";
@@ -126,10 +126,10 @@ export default function SignUpForm() {
       }
     }
     return(
-        <div className={styles.ContentContainer}>
-            <div className={styles.TitleWrapper}>
+        <div className={"ContentContainer"}>
+            <div className={"TitleWrapper"}>
                 <h1>회원가입</h1>
-                <div className={styles.TitleInfo}>
+                <div className={"TitleInfo"}>
                     <span>회원가입을 통해 mehago를 이용해 보세요.</span>
                 </div>
             </div>
@@ -202,7 +202,7 @@ export default function SignUpForm() {
                             />
                         </div>
 
-                        <div className={styles.ButtonWrapper}>
+                        <div className={"ButtonWrapper"}>
                             <Button
                                 className={classes.root}
                                 variant="contained"

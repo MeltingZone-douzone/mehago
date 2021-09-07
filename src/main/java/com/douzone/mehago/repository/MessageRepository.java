@@ -18,11 +18,6 @@ public class MessageRepository {
 
     private final SqlSession sqlSession;
 
-    public Long addMessage(Message message) {
-        sqlSession.insert("message.addMessage", message);
-        return message.getNo();
-    }
-    
     public List<Message> getMessageList(Long chatRoomNo, Long offset) {
         Map<String, Long> map = new HashMap();
         map.put("chatRoomNo", chatRoomNo);
@@ -30,12 +25,8 @@ public class MessageRepository {
         return sqlSession.selectList("message.getMessageList", map);
     }
 
-    public boolean updateNotReadCount(Message message) {
-        return sqlSession.update("message.subtractNotReadCountOfAddMessage", message) == 1 ? true : false;
-    }
-
-    public boolean subtractNotReadCount(Participant participant) {
-        return sqlSession.update("message.subtractNotReadCount", participant) == 1 ? true : false;
+    public List<Long> getSearchMessage(String searchKeyword) {
+        return sqlSession.selectList("message.getSearchMessage", searchKeyword);
     }
 
 }
