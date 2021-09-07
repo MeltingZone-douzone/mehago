@@ -63,7 +63,7 @@ const AccountSettings = ({nickname, thumbnailUrl, settingsApi}) =>{
             
         </SettingContainer>
         { openContainer ? 
-            <AccountModalTemp nickname={nickname} title={modalTitle} updateButton={modalButton} content={modalContent} settingsApi={settingsApi} onClose={closeTemplate}/>
+            <AccountModalTemp thumbnailUrl={thumbnailUrl} nickname={nickname} title={modalTitle} updateButton={modalButton} content={modalContent} settingsApi={settingsApi} onClose={closeTemplate}/>
           : null}
         </Fragment>
     );

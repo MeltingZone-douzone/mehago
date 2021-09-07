@@ -7,13 +7,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import styles from '../assets/sass/chat/ChatList.scss';
+import '../assets/sass/chat/ChatList.scss';
 
 export default function ParticipatingMember(){
     
     return (
         <div>
-              <Grid className={styles.borderRight500}>
+              <Grid className={"borderRight500"}>
                   <List>
                       <ListItem button key="RemySharp">
                           <ListItemIcon>

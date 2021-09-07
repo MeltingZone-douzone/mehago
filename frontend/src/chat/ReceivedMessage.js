@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
-import styles from '../assets/sass/chat/ChatList.scss';
+import '../assets/sass/chat/ChatList.scss';
 
 export default function ReceivedMessage({ nextMessage, previousMessage, message }) {
     const classes = madeStyles();
@@ -13,7 +13,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message 
             <Grid container>
                 <Grid item xs={1} align="center">
                     {!previousMessage || previousMessage.participantNo !== message.participantNo ?
-                        <img src="https://www.vets4pets.com/siteassets/dental-webheaders-dog---oct-20.jpg" className={styles.profile} />
+                        <img src="https://www.vets4pets.com/siteassets/dental-webheaders-dog---oct-20.jpg" className={"profile"} />
                         : ''}
                 </Grid>
                 <Grid item xs={11}>

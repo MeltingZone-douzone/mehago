@@ -1,14 +1,10 @@
 import { List } from '@material-ui/core';
 import { default as React, useEffect, useRef, useState } from 'react';
 import _ from 'underscore';
-import { getMessageList, updateRead, updateNotReadCount } from '../../api/ChatApi';
+import { getMessageList, updateRead } from '../../api/ChatApi';
 import styles from '../assets/sass/chat/ChatList.scss';
 import ReceivedMessage from './ReceivedMessage'
 import SendMessage from './SendMessage'
-
-import { getMessageList, updateRead } from '../../api/ChatApi';
-import ReceivedMessage from "./ReceivedMessage";
-import SendMessage from "./SendMessage";
 
 export default function Chatting2({ socket, participantObject, roomObject, joinSuccess, chatRoomNo }) {
 

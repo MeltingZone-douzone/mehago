@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, ThemeProvider, TextField, makeStyles } from '@material-ui/core';
 import { theme } from '../assets/styles/material/MaterialTheme';
-import styles from "../assets/sass/account/Form.scss";
+import "../assets/sass/account/Form.scss";
 
 import NonMembers from "../components/NonMember";
 import axios from 'axios';
@@ -44,10 +44,10 @@ export default function IdSearch() {
   }
 
   return (
-    <div className={styles.ContentContainer}>
-      <div className={styles.TitleWrapper}>
+    <div className={"ContentContainer"}>
+      <div className={"TitleWrapper"}>
         <h1>이메일 찾기</h1>
-        <div className={styles.TitleInfo}>
+        <div className={"TitleInfo"}>
           <span>이메일을 잊으셨나요?</span>
         </div>
       </div>
@@ -76,18 +76,18 @@ export default function IdSearch() {
             value={accounts.phoneNumber}
             onChange={(e)=>{onChangeUserInput(e)}}/>
           {searchEmail === false ? (
-            <div className={styles.ErrorMessage}>
+            <div className={"ErrorMessage"}>
               <span>가입되지 않은 이름거나, 잘못된 전화번호입니다.</span>
             </div>
             ) : (
-            <div className={styles.CorrectMessage} >
+            <div className={"CorrectMessage"} >
               <span>{searchEmail === '' ? '' : `이메일은 ${searchEmail} 입니다`}</span>
             </div>
           )}
         </div>
 
 
-        <div className={styles.ButtonWrapper}>
+        <div className={"ButtonWrapper"}>
           <Button
             className={classes.root}
             variant="contained"

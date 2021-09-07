@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
-import styles from '../assets/sass/chat/ChatList.scss';
+
 
 export default function SendMessage({ nextMessage, previousMessage, message }) {
     const classes = madeStyles();
