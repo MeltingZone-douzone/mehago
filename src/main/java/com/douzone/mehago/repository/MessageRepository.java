@@ -38,4 +38,8 @@ public class MessageRepository {
         return sqlSession.update("message.subtractNotReadCount", participant) == 1 ? true : false;
     }
 
+    public List<Long> getSearchMessage(String searchKeyword) {
+        return sqlSession.selectList("message.getSearchMessage", searchKeyword);
+    }
+
 }

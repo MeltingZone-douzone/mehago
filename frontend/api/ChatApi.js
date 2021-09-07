@@ -28,8 +28,8 @@ export function getRoomInfo(chatRoomNo) {
 }
 
 export function getMessageList(chatRoomNo, offset) {
+    console.log(`getMessageList() ${chatRoomNo} ${offset}`);
     setAuthHeader();
-    console.log("getMessageList", offset);
     return axios.get(`/api/chat/getMessageList/${chatRoomNo}`, { params: { offset }, headers: AuthHeader })
         .then(res => res);
 }
@@ -62,9 +62,18 @@ export function getMyChatListApi() {
                 .then(res => res);
 }
 
+export function getSearchMessage(searchKeyword) {
+    console.log(searchKeyword);
+    setAuthHeader();
+    return axios.get("/api/chat/getSearchMessage?searchKeyword=" + searchKeyword, { headers: AuthHeader })
+        .then(res => res);
+}
+
 
 // 임시로 스프링
 export function updateNotReadCount(messageObject) {
     return axios.post("/api/chat/updateNotReadCount", messageObject)
         .then(res => res);
 }
+
+

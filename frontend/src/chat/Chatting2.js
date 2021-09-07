@@ -1,12 +1,13 @@
 import { List } from '@material-ui/core';
 import { default as React, useEffect, useRef, useState } from 'react';
 import _ from 'underscore';
-import { getMessageList, updateRead, updateNotReadCount } from '../../api/ChatApi';
+import { getMessageList, updateNotReadCount } from '../../api/ChatApi';
 import styles from '../assets/sass/chat/ChatList.scss';
-import ReceivedMessage from './ReceivedMessage'
-import SendMessage from './SendMessage'
+import ReceivedMessage from './ReceivedMessage';
+import SendMessage from './SendMessage';
 
-export default function Chatting2({socket, participantObject, roomObject, chatRoomNo}) {
+export default function Chatting2({socket, participantObject, roomObject, chatRoomNo, searchMessage}) {
+    const lastScroll = document.querySelectorAll("p");
     const [offset, setOffset] = useState(0);
     const [target, setTarget] = useState(null);
     const [messageList, setMessageList] = useState([]); 
@@ -15,18 +16,68 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
     const messagesEndRef = useRef(null)
     const scrollToBottom = () => {
         messagesEndRef.current.scrollIntoView({ behavior: "auto" })
+        console.log('scrollToBottom()');
     }
-    
+
+
     useEffect(() => {
-        console.log('scrollToBottom');
+        console.log('1');
         scrollToBottom();
+    }, []);
+
+    // 들어오자마자 바로 내려가야지 intersector에 안걸림 fetchItems()하고 scroll밑에 내려가야함
+    // 근데 fetchItems()에서 setState를 해서 다시 랜더링 됨
+    useEffect(async () => {
+        await fetchItems(chatRoomNo, offset);
+        console.log(`messageList.length 는 ${messageList.length}`);
+    },[offset]);
+    // console.log(lastScroll[messageList.length - 1]);
+    // useEffect(() => {
+    //     console.log("fetchItems() in useEffect()");
+    //     // console.log(messagesEndRef.current);  <div></div>
+    //     fetchItems(chatRoomNo, offset);
+    // }, []); // offset
+
+    const fetchItems = async (chatRoomNo, offset) => {
+        console.log(`fetchItems() ${chatRoomNo}, ${offset}`);
+        await getMessageList(chatRoomNo, offset).then(res => {
+            console.log(res);
+            if(res.statusText === 'OK') {
+                console.log("res.statusText === OK");
+                setMessageList(prevState => { 
+                    console.log(res.data.data);
+                    return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
+                });
+
+            };
+        });
+        console.log('ㅎㅎㅎㅎㅎㅎ');
+    };
+
+    // 입력할 때 messageList 갱신해야함 stroedMsg?
+    useEffect(() => {
+        console.log('setMessageList(), scrollToBottom() in useEffect()');
+        // setMessageList([receivedMsg, ...messageList]);
+        scrollToBottom();
+    },[receivedMsg]);
+
+
+
+    // useEffect(() => {
+    //     console.log('scrollToBottom');
+    //     scrollToBottom();
     // },[])
     // },[receivedMsg])
-    },[messageList, receivedMsg])
-    
-    useEffect(async() => {
+    // },[messageList, receivedMsg])
+
+
+/*     useEffect(async() => {
         await fetchItems(chatRoomNo, offset);
-    }, [offset]);
+        offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
+        // console.log(messageList[messageList.length - 1].no);
+        // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
+        // fetch하면 offset  에 스크롤 설정
+    }, [offset]); */
     
 /*     useEffect(() => {
         socket.on('chat message', (msg) => {
@@ -44,16 +95,13 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
             updateNotReadCount(msgToJson)
             .then((res) => {
                 msgToJson.notReadCount = res.data;
+
             })
             setReceivedMsg(msgToJson);
         });
     }, []);
 
 
-    useEffect(() => {
-            setMessageList([receivedMsg, ...messageList]);
-            // setMessageList([...new Set([prevState, ...messageList])]);
-    },[receivedMsg]);
     
     const options = {
         root: null,
@@ -70,36 +118,31 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
         return () => observer && observer.disconnect();
     },[target]);
 
-    const fetchItems = (chatRoomNo, offset) => {
-        getMessageList(chatRoomNo, offset).then(res => {
-            if(res.statusText === 'OK') {
-                console.log(res.data.data);
-                setMessageList(prevState => { 
-                    const a = _.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)) // : 제거
-                    console.log(a);
-                    const data = _.uniq(a, 'no'); 
-                    return data
-                }
-                );
-                // setMessageList(prevState => (prevState.concat(res.data))); 
-            }
-        });
-    };
+
 
     const checkIntersect = ([entry], observer) => {
         if(entry.isIntersecting) {
             setOffset(prevState => prevState + 20);
+            console.log(`if(entry.isIntersecting)`);
         }
     }
     console.log(offset);
+    console.log(searchMessage);
 
     return (
         <List className={styles.messageArea}>
             <div ref={setTarget } />
+            { 
+                Object.keys(searchMessage).length !== 0 ? 
+                messageList.filter(({no}) => searchMessage.includes(no)).map(message => <p key={message.no}>{message.no}</p>)
+                : null
+            }
             { messageList ? messageList
                 .slice(0).reverse().map((message, index) =>
                     message.participantNo !== participantObject.no ?
-                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} /> : <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} />
+                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchMessage={searchMessage} />
+                        : 
+                        <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} />
                 )
                 : null 
             }

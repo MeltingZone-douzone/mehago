@@ -135,5 +135,15 @@ public class ChatController {
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
 
+    @Auth
+    @GetMapping("/getSearchMessage")
+    public ResponseEntity<?> getSearchMessage(String searchKeyword) {
+        System.out.println(searchKeyword);
+        List<Long> messageNo = messageService.getSearchMessage(searchKeyword);
+        System.out.println(messageNo);
+        return ResponseEntity.ok().body(messageNo != null ? CommonResponse.success(messageNo) : "검색결과가 없습니다."); //  채팅방에 검색한 결과가 없음
+    }
+
+
 
 }
