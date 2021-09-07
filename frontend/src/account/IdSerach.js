@@ -75,15 +75,15 @@ export default function IdSearch() {
             name="phoneNumber"
             value={accounts.phoneNumber}
             onChange={(e)=>{onChangeUserInput(e)}}/>
-          {searchEmail === false ? (
-            <div className={"ErrorMessage"}>
-              <span>가입되지 않은 이름거나, 잘못된 전화번호입니다.</span>
-            </div>
-            ) : (
-            <div className={"CorrectMessage"} >
-              <span>{searchEmail === '' ? '' : `이메일은 ${searchEmail} 입니다`}</span>
-            </div>
-          )}
+            {searchEmail === false ? (
+              <div className={"ErrorMessage"}>
+                <span>가입되지 않은 이름거나, 잘못된 전화번호입니다.</span>
+              </div>
+              ) : (
+              <div className={"CorrectMessage"} >
+                <span>{searchEmail === '' ? '' : `이메일은 ${searchEmail} 입니다`}</span>
+              </div>
+            )}
         </div>
 
 

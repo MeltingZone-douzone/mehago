@@ -141,12 +141,9 @@ public class ChatController {
 
     @GetMapping("/keywordSearch")
     public ResponseEntity<?> keywordSearch(String searchValue) {
-        List<ChatRoom> keywordSearch = null;
-        if(searchValue != null){
-            keywordSearch = chatRoomService.keywordSearch(searchValue);
-            getTagName(keywordSearch);
-        }
-        return ResponseEntity.ok().body(keywordSearch != null ? CommonResponse.success(keywordSearch) : "검색결과가 없습니다.");
+        List<ChatRoom> keywordSearch = chatRoomService.keywordSearch(searchValue);
+        getTagName(keywordSearch);
+        return ResponseEntity.ok().body(!keywordSearch.isEmpty() ? CommonResponse.success(keywordSearch) : CommonResponse.fail("검색결과가 없습니다."));
     }
 
     private void getTagName(List<ChatRoom> room) {

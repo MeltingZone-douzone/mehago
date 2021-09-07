@@ -18,6 +18,7 @@ export default function ChatNavbar(){
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
+
     }
 
     const handleChatMember = () => {
