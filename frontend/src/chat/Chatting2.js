@@ -163,23 +163,16 @@ export default function Chatting2({socket, participantObject, roomObject, chatRo
             console.log(`if(entry.isIntersecting)`);
         }
     }
-    console.log(offset);
-    console.log(searchMessage);
 
     return (
         <List className={styles.messageArea}>
             <div ref={setTarget } />
-            { 
-                Object.keys(searchMessage).length !== 0 ? 
-                messageList.filter(({no}) => searchMessage.includes(no)).map(message => <p key={message.no}>{message.no}</p>)
-                : null
-            }
-            { messageList ? messageList
-                .slice(0).reverse().map((message, index) =>
+            { messageList ? 
+            messageList.slice(0).reverse().map((message, index) =>
                     message.participantNo !== participantObject.no ?
-                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchMessage={searchMessage} />
+                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchKeyword={searchMessage[searchMessage.length-1]} searchMessage={searchMessage} no={searchMessage.includes(message.no) ? message.no : null}/>
                         : 
-                        <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} />
+                        <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} searchKeyword={searchMessage[searchMessage.length-1]} no={searchMessage.includes(message.no) ? message.no : null} />
                 )
                 : null
             }

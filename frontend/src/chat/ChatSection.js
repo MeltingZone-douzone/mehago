@@ -17,6 +17,7 @@ export default function ChatSection({match}) {
     const [searchMessage, setSearchMessage] = useState([]);
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
+    const [cursor, setCursor] = useState({firstIndex: 0, index: 0, lastIndex: 0});
 
     const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
@@ -62,6 +63,21 @@ export default function ChatSection({match}) {
         }
     }, [joinSuccess]);
 
+    const scrollTo = () => {
+        // console.log('document.querySelectorAll("p[name=chat-message]"): ', document.querySelectorAll("p[name=chat-message]").values());
+        // console.log('document.getElementsByName("chat-message"): ', document.getElementsByName("chat-message"));
+        const af = Array.from(document.querySelectorAll("p[name=chat-message]"));
+        // af.map(item => console.log(item.getAttribute('no')));
+        // const a = af.map(item => console.log(item.getBoundingClientRect().top));
+        
+        // const a = af.map(item => +item.getBoundingClientRect().top);
+        const a = af.map(item => +item.offsetTop);
+        console.log(a);
+        // window.scrollTo(window.pageYOffset + a[1], 0);
+        window.scrollTo({top:0, behavior:'smooth'});
+        window.scrollTo(0, 0);
+    }
+
     const messageFunction = { // 헤더 search도 넣을꺼라서 이름 바꾸기
         onChangeMessage: (e) => {
             const { value } = e.target;
@@ -81,25 +97,50 @@ export default function ChatSection({match}) {
         onSearchKeyPress: (e) => {
             if(e.key == 'Enter') {
                 getSearchMessage(searchKeyword).then(res => {
-                  if(res.statusText === 'OK') {
-                      console.log('res.data.data: ', res.data.data); // 길이, 번호, 키워드
-                      setSearchMessage([
-                          ...res.data.data,
-                          searchKeyword]);
-                    //   ]);
-                  };
+                    if(res.statusText === 'OK') {
+                        // console.log('res.data.data: ', res.data.data); // 필요한거 : 길이, 번호, 키워드
+                        setSearchMessage([
+                        ...res.data.data,
+                        searchKeyword]);
+                        setCursor({
+                            firstIndex: 1,
+                            index: res.data.data.length,
+                            lastIndex: res.data.data.length
+                        });
+                    };
                 });
             }
+        },
+        moveSearchResult: (e, direction) => { // TODO: 마지막요소이면  '마지막 요소입니다'
+            console.log(cursor);
+            // if(cursor.index + 1 > cursor.firstIndex && cursor.index - 1 < cursor.lastIndex) {
+                // if(cursor.index !== cursor.firstIndex && cursor.index <cursor.lastIndex)
+
+                if(direction === "left") {
+                    if(cursor.index - 1 >= cursor.firstIndex) {
+                        setCursor({...cursor, index: cursor.index - 1 });
+                        console.log(`left ${cursor.index}`);
+                        scrollTo()
+                        return;
+                    }
+                } else {
+                    if(cursor.index < cursor.lastIndex) {
+                        // 처음값인경우 (length 초과로 들어오면 막기)
+                        setCursor({...cursor, index: cursor.index + 1 });
+                        console.log(`right ${cursor.index}`);
+                        return;
+                    }
+                }
         },
         leaveRoom: (e) => {
             socket.emit('leave', data); // roomName
         }
     }
-    console.log(searchMessage);
+    // console.log(searchMessage);
     return (
         <div className={styles.chatSection}>
             <Grid container>
-                <ChatHeader socket={socket} messageFunction={messageFunction} />
+                <ChatHeader socket={socket} messageFunction={messageFunction} roomObject={roomObject} cursor={cursor} />
                 <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
                 <Divider />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />

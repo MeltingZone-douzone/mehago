@@ -6,8 +6,22 @@ import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import styles from '../assets/sass/chat/ChatList.scss';
 
-export default function ReceivedMessage({ nextMessage, previousMessage, message, searchMessage }) {
+export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
     const classes = madeStyles();
+
+    const getHighlightedText = ({text=message.message, highlight=searchKeyword}) => {
+        const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+        return  <p className={classes.receivedMessage} name={'chat-message'} no={message.no}> 
+                    { parts.map((part, index) => 
+                        part.toLowerCase() === highlight.toLowerCase() ? 
+                        (<mark key={index}>{part}</mark>) 
+                        : 
+                        (part)
+                    )
+                    } 
+                </p>;   
+    }
+    
     return (
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
@@ -27,7 +41,25 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                             </ListItemText>
                             : ''}
                     </Grid>
-
+                        
+                        
+                    { no ?
+                    <ListItemText align="left" className={classes.chatContainer, classes.left}
+                        primary={
+                            getHighlightedText(message.message, searchKeyword)
+                        }
+                        secondary={
+                            <Typography className={classes.notReadCountLeft}>
+                                <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
+                                {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
+                                    <span className={classes.createdAt}>
+                                        {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
+                                    </span>
+                                    : ''}
+                            </Typography>
+                        }>
+                    </ListItemText>
+                        :
                     <ListItemText align="left" className={classes.chatContainer, classes.left}
                         primary={
                             // <Typography className={classes.receivedMessage}>
@@ -35,7 +67,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                             //     {message.message}
                             // </Typography>
                             <p className={classes.receivedMessage} no={message.no}>
-                                {message.message} {message.no}
+                                {message.message}
                             </p>
                         }
                         secondary={
@@ -49,6 +81,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                             </Typography>
                         }>
                     </ListItemText>
+                    }
                 </Grid>
             </Grid>
         </ListItem >
