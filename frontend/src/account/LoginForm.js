@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, ThemeProvider, TextField, makeStyles } from '@material-ui/core';
 import { theme } from "../assets/styles/material/MaterialTheme";
-import styles from "../assets/sass/account/Form.scss";
+import "../assets/sass/account/Form.scss";
 import localStorage from "local-storage";
 
 import { loginApi } from '../../api/AccountApi'
@@ -40,10 +40,10 @@ export default function LoginForm({history, setAuthentication}) {
   };
 
   return (
-    <div className={styles.ContentContainer}>
-      <div className={styles.TitleWrapper}>
+    <div className={"ContentContainer"}>
+      <div className={"TitleWrapper"}>
         <h1>로그인</h1>
-        <div className={styles.TitleInfo}>
+        <div className={"TitleInfo"}>
           <span>로그인을 통해 mehago를 이용해 보세요.</span>
         </div>
       </div>
@@ -76,12 +76,12 @@ export default function LoginForm({history, setAuthentication}) {
         {loginFail === false ? (
           ""
         ) : (
-          <div className={styles.ErrorMessage}>
+          <div className={"ErrorMessage"}>
             <span>가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.</span>
           </div>
         )}
         </div>
-        <div className={styles.ButtonWrapper}>
+        <div className={"ButtonWrapper"}>
           <Button
             className={classes.root}
             variant="contained"

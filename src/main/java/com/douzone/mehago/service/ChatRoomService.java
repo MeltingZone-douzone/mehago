@@ -31,4 +31,14 @@ public class ChatRoomService {
         return chatRoomRepository.participatingRoom(no);
     }
 
+    public List<ChatRoom> keywordSearch(String searchValue) {
+        return chatRoomRepository.keywordSearch(searchValue);
+    }
+
+    public List<String> getTagName(Long no) {
+        return chatRoomRepository.getTagname(no);
+    }
+
+   
+
 }

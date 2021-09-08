@@ -1,6 +1,6 @@
 import React from 'react';
 import Logo from '../../assets/images/black-mehago.png';
-import styles from "../../assets/sass/account/AccountPage.scss";
+import "../../assets/sass/account/AccountPage.scss";
 import { Switch, Route, NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -14,9 +14,9 @@ import SignUpSuccess from "../../account/SignUpSuccess";
 export default function AccountPage ({match, setAuthentication}) {
 
     return (
-        <div className={styles.PageContainer}>
-            <div className={styles.Page}>
-                <div className={styles.LogoWrapper}>
+        <div className={"PageContainer"}>
+            <div className={"Page"}>
+                <div className={"LogoWrapper"}>
                     <NavLink to="/account/login">
                         <img
                             src={Logo}
@@ -25,7 +25,7 @@ export default function AccountPage ({match, setAuthentication}) {
                         />
                     </NavLink>
                 </div>
-                <div className={styles.ContentWrapper}>
+                <div className={"ContentWrapper"}>
                 
                         <AnimatePresence>
                             <Switch location={location} key={location.pathname}>

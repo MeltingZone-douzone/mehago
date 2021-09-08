@@ -3,11 +3,59 @@ const http = require('http');
 const path = require('path');
 const dotenv = require("dotenv");
 const argv = require('minimist')(process.argv.slice(2));
-const elasticsearch = require('elasticsearch');
 
-const client = new elasticsearch.Client({
-    host: "localhost:9999"
-})
+// const elasticsearch = require('elasticsearch');
+// const client = new elasticsearch.Client({
+//     node:"localhost:9200"
+    
+// });
+
+// async function run () {
+//     client.ping({
+//         // ping usually has a 3000ms timeout
+//         requestTimeout: 1000
+//       }, function (error) {
+//         if (error) {
+//           console.trace('elasticsearch cluster is down!');
+//         } else {
+//           console.log('All is well');
+//         }
+//       });
+    
+      
+//       // callback API
+//       const result = await client.search({
+//         index: 'my_index',
+//         body: {
+//           query: {
+//             match: { hello: 'world' }
+//           }
+//         }
+//       }, (err, result) => {
+//         if (err) console.log(err)
+//       });
+      
+//       console.log(result);
+// }
+
+// run().catch(console.log)
+
+// // Add this to the VERY top of the first file loaded in your app
+// var apm = require('elastic-apm-node').start({
+
+//     // Override the service name from package.json
+//     // Allowed characters: a-z, A-Z, 0-9, -, _, and space
+//     serviceName: 'message',
+    
+//     // Use if APM Server requires a secret token
+//     secretToken: '',
+    
+//     // Set the custom APM Server URL (default: http://localhost:8200)
+//     serverUrl: 'http://localhost:8200',
+    
+   
+//     })
+
 
 // Environment Variables(환경 변수)
 dotenv.config({ path: path.join(__dirname, 'app.config.env') });
@@ -47,6 +95,7 @@ const io = require("socket.io")(httpServer, {
 })
 
 const { applicationRouter } = require("./routes");
+const { default: axios } = require('axios');
 const { notice } = require('./logging');
 const { resolve } = require('path');
 applicationRouter.setup(application);
@@ -93,8 +142,7 @@ httpServer
 
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
-    console.log("msgToJson", msgToJson.validation);
-
+    console.log("msgToJson", msgToJson.validation, msgToJson);
 
     switch (msgToJson.validation) {
         case "object": io.to(roomname).emit('chat message', msgToJson);
@@ -175,6 +223,7 @@ io.on("connection", (socket) => {
     socket.on('chat message', async (message) => {
         // TODO: DB 저장
         let chatMember = await getChatMember(currentRoomName);
+        // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
         const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));

@@ -4,8 +4,8 @@ module.exports = function () {
     return mysql.createConnection({
         host: "localhost",
         port: 3306,
-        user: "root",
-        password: "asd003786",
-        database: "mehago",
+        user: "bookmall_local",
+        password: "bookmall_local",
+        database: "chat",
     });
 };

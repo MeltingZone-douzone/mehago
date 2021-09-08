@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import styles from '../assets/sass/chat/Chat.scss';
+import '../assets/sass/chat/Chat.scss';
 import { colors } from '../assets/styles/properties/Colors';
 import { Link } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ export default function ChatNavbar(){
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
+
     }
 
     const handleChatMember = () => {
@@ -26,14 +27,14 @@ export default function ChatNavbar(){
     }
 
     return (
-        <div className={styles.Chat} onClick={(e)=>e.stopPropagation()}>
-            <div className={styles.ChatNavbar}>
-                <div className={styles.BasicNav}>
+        <div className={"Chat"} onClick={(e)=>e.stopPropagation()}>
+            <div className={"ChatNavbar"}>
+                <div className={"BasicNav"}>
                     <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>
-                <div className={styles.FavoriteNav}>
+                <div className={"FavoriteNav"}>
                     <NaviButton>즐겨찾기</NaviButton>
                     <NaviButton>이미지</NaviButton>
                     <NaviButton>버튼들</NaviButton>
@@ -41,7 +42,7 @@ export default function ChatNavbar(){
                     <NaviButton>될듯</NaviButton>
                 </div>
             </div>
-            <div className={styles.ChatList}>
+            <div className={"ChatList"}>
                 {chatList? <ParticipatingRoom />: null}
                 {chatMember? <ParticipatingMember />: null}
             </div>

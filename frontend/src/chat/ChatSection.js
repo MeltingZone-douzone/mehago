@@ -1,16 +1,16 @@
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { getParticipantInfo, getRoomInfo, getSearchMessage } from "../../api/ChatApi";
-import styles from '../assets/sass/chat/ChatList.scss';
+import Grid from '@material-ui/core/Grid';
+
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
+import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
 import MsgInput2 from './MsgInput2';
-
+import Dialogs from './Dialogs';
 
 const socket = io('http://localhost:8888');
-export default function ChatSection({match}) {
+export default function ChatSection({ match }) {
     const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
@@ -19,13 +19,17 @@ export default function ChatSection({match}) {
     const [searchKeyword, setSearchKeyword] = useState('');
     const [cursor, setCursor] = useState({firstIndex: 0, index: 0, lastIndex: 0});
 
-    const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
 
-    useEffect( async () => {
+    const [todoOpen, setTodoOpen] = useState(false);
+    const [noticeOpen, setNoticeOpen] = useState(false);
+    const [fileUploadOpen, setFileUploadOpen] = useState(false);
+
+
+    useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                if(res.data.result == 'fail') {
+                if (res.data.result == 'fail') {
                     //데이터가 없거나 실패했을때 들어옴..
 
                     return;
@@ -36,9 +40,9 @@ export default function ChatSection({match}) {
 
         await getParticipantInfo(chatRoomNo).then(res => {
             if (res.statusText === 'OK') {
-                if(res.data.result == 'fail') {
+                if (res.data.result == 'fail') {
                     // DB에 데이터가 없으면
-                    
+
                     return;
                 }
                 setParticipantObject(res.data.data);
@@ -48,18 +52,15 @@ export default function ChatSection({match}) {
     }, []);
 
     // useEffect(() => {
-    //     console.log(roomObject);
-    //     socket.on('join', (msg) => {
-    //         // 사람이 disconnect 했다가 connect했을 때 불러질 거임!
-    //         // messageList에 읽은 숫자 update를 해 줘야함ㅁㅁㅁㅁㅁ
-    //         console.log(msg);
-    //     })
+    //     return() =>{
+    //         console.log("unmount");
+    //     }
     // }, []);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (joinSuccess) {
-            socket.emit('join', roomObject, participantObject);
-            
+            await socket.emit('join', roomObject, participantObject);
+            await socket.emit('participant:join:updateRead');
         }
     }, [joinSuccess]);
 
@@ -85,17 +86,16 @@ export default function ChatSection({match}) {
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            console.log(`onSubmitMessage`);
             if (message) {
                 socket.emit('chat message', message);
-                setMessage('');
+                e.target.message.value = '';
             }
         },
         onChangeSearchKeyword: (e) => {
             setSearchKeyword(e.target.value);
         },
         onSearchKeyPress: (e) => {
-            if(e.key == 'Enter') {
+            if (e.key == 'Enter') {
                 getSearchMessage(searchKeyword).then(res => {
                     if(res.statusText === 'OK') {
                         // console.log('res.data.data: ', res.data.data); // 필요한거 : 길이, 번호, 키워드
@@ -136,16 +136,64 @@ export default function ChatSection({match}) {
             socket.emit('leave', data); // roomName
         }
     }
-    // console.log(searchMessage);
+
+    const buttonFunction = {
+        todo: (e) => {
+            e.preventDefault();
+            setTodoOpen(true);
+        },
+        notice: (e) => {
+            e.preventDefault();
+            setNoticeOpen(true);
+        },
+        fileupload: (e) => {
+            e.preventDefault();
+            setFileUploadOpen(true);
+        },
+        handleClose: (e) => {
+            setTodoOpen(false);
+            setNoticeOpen(false);
+            setFileUploadOpen(false);
+        },
+        handleTodoSubmit: (e) => {
+            e.preventDefault();
+            if (e.target.todo.value === '') {
+                //error 메시지 보내기
+            };
+            const date = e.target.date.value;
+            const todo = e.target.todo.value;
+            addTodo(roomObject.no, participantObject.no, date, todo);
+            // 이거 하고 뭐 해야 하는거지???????????
+            setTodoOpen(false);
+        },
+        handleNoticeSubmit: (e) => {
+            e.preventDefault();
+            if (e.target.notice.value === '') {
+                //error 메시지 보내기
+            };
+            const notice = e.target.notice.value;
+            addNotice(roomObject.no, participantObject.no, notice);
+            // 이거 하고 뭐 해야 하는거지???????????
+            setNoticeOpen(false);
+        },
+        handleFileUploadSubmit: (files) => {
+            console.log(files);
+            // addFileUpload(roomObject.no, participantObject.no, files);
+            // 이거 하고 뭐 해야 하는거지???????????
+            setFileUploadOpen(false);
+        }
+    }
+
     return (
-        <div className={styles.chatSection}>
+        <div className={"chatSection"}>
             <Grid container>
                 <ChatHeader socket={socket} messageFunction={messageFunction} roomObject={roomObject} cursor={cursor} />
                 <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
-                <Divider />
-                <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} />
+                <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
+                <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
             </Grid>
         </div>
     );
 
 }
+
