@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import Grid from '@material-ui/core/Grid';
 
 import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
 import '../assets/sass/chat/ChatList.scss';
@@ -23,7 +22,6 @@ export default function ChatSection({ match }) {
     const [todoOpen, setTodoOpen] = useState(false);
     const [noticeOpen, setNoticeOpen] = useState(false);
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
-
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
@@ -122,7 +120,6 @@ export default function ChatSection({ match }) {
             const date = e.target.date.value;
             const todo = e.target.todo.value;
             addTodo(roomObject.no, participantObject.no, date, todo);
-            // 이거 하고 뭐 해야 하는거지???????????
             setTodoOpen(false);
         },
         handleNoticeSubmit: (e) => {
@@ -132,25 +129,23 @@ export default function ChatSection({ match }) {
             };
             const notice = e.target.notice.value;
             addNotice(roomObject.no, participantObject.no, notice);
-            // 이거 하고 뭐 해야 하는거지???????????
             setNoticeOpen(false);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
             // addFileUpload(roomObject.no, participantObject.no, files);
-            // 이거 하고 뭐 해야 하는거지???????????
             setFileUploadOpen(false);
         }
     }
 
     return (
-        <div className={"chatSection"}>
-            <Grid container>
+        <div className={"chatSection"} key={match.params.no}>
+            <div className={"container"}>
                 <ChatHeader socket={socket} messageFunction={messageFunction} />
                 <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
                 <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
-            </Grid>
+            </div>
         </div>
     );
 

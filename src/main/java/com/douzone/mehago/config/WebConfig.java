@@ -117,8 +117,11 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry
-			.addResourceHandler(env.getProperty("fileupload.resourceMapping"))
-			.addResourceLocations("file:" + env.getProperty("fileupload.uploadLocation"));
+			.addResourceHandler(env.getProperty("fileupload.resourceMapping.account"))
+			.addResourceLocations("file:" + env.getProperty("fileupload.uploadLocation.account"));
+		registry
+			.addResourceHandler(env.getProperty("fileupload.resourceMapping.chatroom"))
+			.addResourceLocations("file:" + env.getProperty("fileupload.uploadLocation.chatroom"));
 	}	 
 
 }

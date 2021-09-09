@@ -43,22 +43,47 @@ export default function CreateChatRoom({history}) {
     const [chatRoom, setChatRoom] = useState(
         {
             title: "",
-            secretRoom: false, // TODO:  ㅎㅇ
+            secretRoom: false, // TODO: 시간이 있다면 이 변수는 사람들이 들어오지 못하게 막는 변수.
             password: "",
-            thumbnailUrl: "",
             limitedUserCount: 10,
             onlyAuthorized: false,
             searchable: false,
             tagName: []
         }
     );
+    
+    const [image, setImage] = useState();
+    const [imageName, setImageName] = useState();
+    const [cropImage, setCropImage] = useState();
+    const [cropper, setCropper] = useState();
 
     useEffect(() =>{
         if(!chatRoom.secretRoom) {
             setChatRoom({ ...chatRoom, password: ""});
         }
     },[chatRoom.secretRoom])
+
+    useEffect(()=>{
+        if(cropImage) {
+            createChatRoom();
+        }
+    },[cropImage])
     
+    const handleImageChange = (e) => {
+        e.preventDefault();
+        let files;
+        if (e.dataTransfer) {
+          files = e.dataTransfer.files;
+        } else if (e.target) {
+          files = e.target.files;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImage(reader.result);
+          setImageName(files[0].name);
+        };
+        reader.readAsDataURL(files[0]);
+    };
 
     const handleChange = (e) => {
         const { name, value, checked } = e.target;
@@ -73,13 +98,26 @@ export default function CreateChatRoom({history}) {
     const handleDeleteTagName = (name) => {
         const deleteArray = chatRoom.tagName.filter(tag => tag !== name);
         setChatRoom({ ...chatRoom, tagName: deleteArray })
-
     }
 
-    const createChatRoom = (e) => {
-        e.preventDefault();
+    const createChatRoom = () => {
+        const {title, password, limitedUserCount, onlyAuthorized, searchable, tagName} = chatRoom;
+     
+        let form = new FormData();
+        
+        form.append("title", title);
+        form.append("password", password);
+        form.append("limitedUserCount",limitedUserCount);
+        form.append("onlyAuthorized", onlyAuthorized);
+        form.append("searchable", searchable);
+        form.append("tagName", tagName);
+        
+        if(cropImage) {
+            form.append("file", cropImage);
+        }
+        
         try {
-            CreateChattingRoom(chatRoom).then((res) => {
+            CreateChattingRoom(form).then((res) => {
                 if (res.statusText === "OK") {
                     // history.push('/chat');
                 }
@@ -90,19 +128,28 @@ export default function CreateChatRoom({history}) {
         }
     }
 
+    const getCropData = () => {
+        if(typeof cropper !== "undefined") {
+            cropper.getCroppedCanvas().toBlob(blob =>{
+                setCropImage(blob);
+            });
+        }
+    };
+    
+
     const classes = styles();
     return (
         <ThemeProvider theme={theme}>
             <Container>
                 <h1>오픈 채팅방을 만들어 보세요</h1>
                 <CreateTemplate>
-                    <FormTemplate onSubmit={(e) => createChatRoom(e)}>
+                    <FormTemplate onSubmit={(e) => {e.preventDefault(); image ? getCropData() : createChatRoom()}}>
                         <FormWrapper>
                             <InfoFormWrapper>
                                 <CreateChatForm classes={classes} chatRoom={chatRoom} handleChange={handleChange} handleAddTagName={handleAddTagName} handleDeleteTagName={handleDeleteTagName}/>
                             </InfoFormWrapper>
                             <CropperWrapper>
-                                <CreateChatImage />
+                                <CreateChatImage image={image} imageName={imageName} setCropper={setCropper} onChange={handleImageChange}/>
                             </CropperWrapper>
                         </FormWrapper>
                         <ButtonWrapper>

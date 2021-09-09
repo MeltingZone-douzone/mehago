@@ -8,7 +8,8 @@ import ChattingList from '../../chat/ChattingList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
 
 
-export default function ChatPage({match}){
+export default function ChatPage({userInfo,match}){
+    // console.log(userInfo);
     return (
         <div className={"ChattingContainer"} >
             <ChatNavber/>
