@@ -8,9 +8,10 @@ import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
 
 export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo, searchMessage }) {
-    const lastScroll = document.querySelectorAll("p");
-    const [offset, setOffset] = useState(0);
-    const [target, setTarget] = useState(null);
+    const chattingRef = useRef(null);
+    const [offsetNo, setOffsetNo] = useState(0);
+    const [isFetching, setIsFetching] = useState(false);
+
     const [changedRows,setChangedRows] = useState(0);
     const [messageList, setMessageList] = useState([]); 
     const [receivedMsg, setReceivedMsg] = useState({});
@@ -26,8 +27,18 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
             setChangedRows(changedRows);
         });
 
+        fetchItems();
     }, []);
     
+    useEffect(()=>{
+        // chattingRef.current.
+        // window.addEventListener('scroll', handleScroll);
+
+        // return(()=>{
+        //     window.removeEventListener('scroll',handleScroll);
+        // })
+    })
+
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
     }, [receivedMsg]);
@@ -48,6 +59,10 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
     useEffect(()=>{
         console.log(messageList);
+        if(messageList.length > 1){
+            const lastIndex = messageList[messageList.length -1];
+            setOffsetNo(lastIndex.no);
+        }
     },[messageList])
 
     useEffect(() => {
@@ -57,114 +72,54 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
         }
     }, [receviedMessageSuccess])
 
-    const messagesEndRef = useRef(null)
-    const scrollToBottom = () => {
-        messagesEndRef.current.scrollIntoView({ behavior: "auto" })
-        console.log('scrollToBottom()');
-    }
-
-
-    useEffect(() => {
-        // console.log('1');
-        scrollToBottom();
-    }, []);
-
-    // 들어오자마자 바로 내려가야지 intersector에 안걸림 fetchItems()하고 scroll밑에 내려가야함
-    // 근데 fetchItems()에서 setState를 해서 다시 랜더링 됨
-    useEffect(async () => {
-        await fetchItems(chatRoomNo, offset);
-    },[offset]);
-    // console.log(lastScroll[messageList.length - 1]);
-    // useEffect(() => {
-    //     console.log("fetchItems() in useEffect()");
-    //     // console.log(messagesEndRef.current);  <div></div>
-    //     fetchItems(chatRoomNo, offset);
-    // }, []); // offset
-
-    const fetchItems = async (chatRoomNo, offset) => {
-        await getMessageList(chatRoomNo, offset).then(res => {
+    const fetchItems = async () => {
+        await getMessageList(chatRoomNo, offsetNo).then(res => {
             if(res.statusText === 'OK') {
                 setMessageList(prevState => { 
                     return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
                 });
-
+                setIsFetching(false);
             };
         });
     };
 
-    // 입력할 때 messageList 갱신해야함 stroedMsg?
-    useEffect(() => {
-        console.log('setMessageList(), scrollToBottom() in useEffect()');
-        // setMessageList([receivedMsg, ...messageList]);
-        scrollToBottom();
-    }, [receivedMsg]);
+    const onScroll = e => {
+        const scrollHeight = e.target.scrollHeight; // messageArea div 총 크기
+        // console.log(scrollHeight);
+        const fetchPointHeight = scrollHeight * 3/4; // 해당지점에 오면 패치하는 이벤트 발생!
+        const scrollTop = Math.abs(e.target.scrollTop);
+        const clientHeight = e.target.clientHeight; // 사용자 화면 크기
 
-
-
-    // useEffect(() => {
-    //     console.log('scrollToBottom');
-    //     scrollToBottom();
-    // },[])
-    // },[receivedMsg])
-    // },[messageList, receivedMsg])
-
-
-/*     useEffect(async() => {
-        await fetchItems(chatRoomNo, offset);
-        offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
-        // console.log(messageList[messageList.length - 1].no);
-        // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
-        // fetch하면 offset  에 스크롤 설정
-    }, [offset]); */
-    
-/*     useEffect(() => {
-        socket.on('chat message', (msg) => {
-            console.log("chat message");
-            const msgToJson = JSON.parse(msg);
-            setReceivedMsg(msgToJson);
-            updateRead(participantObject, msgToJson.no, roomObject);
-            // setInsertSuccess(true);
-        });
-    }, [participantObject, roomObject]); */
-
-
-    const options = {
-        root: null,
-        rootMargin: "200px",
-        threshold: 0.25
-    }
-
-    useEffect(() => {
-        let observer;
-        if (target) {
-            observer = new IntersectionObserver(checkIntersect, options);
-            observer.observe(target);
+        if(scrollTop + clientHeight >= fetchPointHeight && !isFetching) {
+            console.log(offsetNo);
+            fetchItems();
+            setIsFetching(true);
         }
-        return () => observer && observer.disconnect();
-    }, [target]);
 
-
-
-    const checkIntersect = ([entry], observer) => {
-        if (entry.isIntersecting) {
-            setOffset(prevState => prevState + 20);
-            console.log(`if(entry.isIntersecting)`);
-        }
     }
 
     return (
-        <List className={"messageArea"}>
-            <div ref={setTarget } />
-            { messageList ? 
-            messageList.slice(0).reverse().map((message, index) =>
+        <List className={"messageArea"} onScroll={onScroll}>
+            {messageList ? messageList
+                .map((message, index) =>
                     message.participantNo !== participantObject.no ?
-                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchKeyword={searchMessage[searchMessage.length-1]} searchMessage={searchMessage} no={searchMessage.includes(message.no) ? message.no : null}/>
-                        : 
-                        <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} searchKeyword={searchMessage[searchMessage.length-1]} no={searchMessage.includes(message.no) ? message.no : null} />
+                        <ReceivedMessage key={index} 
+                            nextMessage={messageList[index + 1]} 
+                            previousMessage={messageList[index - 1]} 
+                            message={message} 
+                            searchKeyword={searchMessage[searchMessage.length-1]} 
+                            searchMessage={searchMessage} 
+                            no={searchMessage.includes(message.no) ? message.no : null} />
+                        :
+                        <SendMessage 
+                            key={index} 
+                            nextMessage={messageList[index + 1]} 
+                            message={message} 
+                            searchKeyword={searchMessage[searchMessage.length-1]} 
+                            no={searchMessage.includes(message.no) ? message.no : null} />
                 )
                 : null
             }
-            <div ref={messagesEndRef} />
         </List >
     );
 }
