@@ -7,8 +7,9 @@ import { getMessageList } from '../../api/ChatApi';
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
 
-export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo, searchMessage }) {
-    const chattingRef = useRef(null);
+export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor }) {
+    const messageAreaRef = useRef();
+
     const [offsetNo, setOffsetNo] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
 
@@ -16,6 +17,8 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     const [messageList, setMessageList] = useState([]); 
     const [receivedMsg, setReceivedMsg] = useState({});
     const [receviedMessageSuccess, setReceviedMessageSuccess] = useState(false);
+    const [noData, setNoData] =  useState(false);
+    const [searchMessageOffset, setSearchMessageOffset] = useState([]);
 
     useEffect(() => {
         socket.on('chat message', (msg) => {
@@ -29,15 +32,6 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
         fetchItems();
     }, []);
-    
-    useEffect(()=>{
-        // chattingRef.current.
-        // window.addEventListener('scroll', handleScroll);
-
-        // return(()=>{
-        //     window.removeEventListener('scroll',handleScroll);
-        // })
-    })
 
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
@@ -58,7 +52,6 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     },[changedRows])
 
     useEffect(()=>{
-        console.log(messageList);
         if(messageList.length > 1){
             const lastIndex = messageList[messageList.length -1];
             setOffsetNo(lastIndex.no);
@@ -75,31 +68,55 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     const fetchItems = async () => {
         await getMessageList(chatRoomNo, offsetNo).then(res => {
             if(res.statusText === 'OK') {
-                setMessageList(prevState => { 
-                    return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
-                });
-                setIsFetching(false);
+                if(res.data.result == "success"){
+                    if(res.data.data.length < 1) {
+                        setNoData(true);
+                    }
+                    setMessageList(prevState => { 
+                        return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
+                    });
+                    setIsFetching(false);
+                }
             };
         });
     };
 
+    useEffect(()=>{
+        if(searchMessage){
+            const af = Array.from(document.querySelectorAll("p[name=chat-message]"));
+            const messageOffset = af.map(item => +item.offsetParent.offsetTop);
+            if(messageOffset.length !== cursor.lastIndex){
+                setSearchMessageOffset(messageOffset);
+            }
+        }
+    },[searchMessage,messageList])
+
+    useEffect(()=>{
+        if(searchMessageOffset[cursor.index-1] === undefined && cursor.lastIndex > cursor.index){
+            fetchItems();
+            setIsFetching(true);
+        }
+        messageAreaRef.current.scrollTo({top:searchMessageOffset[cursor.index-1]-300, behavior: 'auto'});
+    },[cursor.index, searchMessageOffset])
+
+
+    
     const onScroll = e => {
         const scrollHeight = e.target.scrollHeight; // messageArea div 총 크기
-        // console.log(scrollHeight);
         const fetchPointHeight = scrollHeight * 3/4; // 해당지점에 오면 패치하는 이벤트 발생!
         const scrollTop = Math.abs(e.target.scrollTop);
         const clientHeight = e.target.clientHeight; // 사용자 화면 크기
 
-        if(scrollTop + clientHeight >= fetchPointHeight && !isFetching) {
-            console.log(offsetNo);
+        if(scrollTop + clientHeight >= fetchPointHeight && !isFetching && !noData) {
             fetchItems();
             setIsFetching(true);
         }
 
     }
 
+
     return (
-        <List className={"messageArea"} onScroll={onScroll}>
+        <List className={"messageArea"} onScroll={onScroll} ref={messageAreaRef} >
             {messageList ? messageList
                 .map((message, index) =>
                     message.participantNo !== participantObject.no ?

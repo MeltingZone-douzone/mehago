@@ -62,21 +62,6 @@ export default function ChatSection({ match }) {
         }
     }, [joinSuccess]);
 
-    const scrollTo = () => {
-        // console.log('document.querySelectorAll("p[name=chat-message]"): ', document.querySelectorAll("p[name=chat-message]").values());
-        // console.log('document.getElementsByName("chat-message"): ', document.getElementsByName("chat-message"));
-        const af = Array.from(document.querySelectorAll("p[name=chat-message]"));
-        // af.map(item => console.log(item.getAttribute('no')));
-        // const a = af.map(item => console.log(item.getBoundingClientRect().top));
-        
-        // const a = af.map(item => +item.getBoundingClientRect().top);
-        const a = af.map(item => +item.offsetTop);
-        console.log(a);
-        // window.scrollTo(window.pageYOffset + a[1], 0);
-        window.scrollTo({top:0, behavior:'smooth'});
-        window.scrollTo(0, 0);
-    }
-
     const messageFunction = { // 헤더 search도 넣을꺼라서 이름 바꾸기
         onChangeMessage: (e) => {
             const { value } = e.target;
@@ -96,13 +81,12 @@ export default function ChatSection({ match }) {
             if (e.key == 'Enter') {
                 getSearchMessage(searchKeyword).then(res => {
                     if(res.statusText === 'OK') {
-                        // console.log('res.data.data: ', res.data.data); // 필요한거 : 길이, 번호, 키워드
                         setSearchMessage([
                         ...res.data.data,
                         searchKeyword]);
                         setCursor({
                             firstIndex: 1,
-                            index: res.data.data.length,
+                            index: 1,
                             lastIndex: res.data.data.length
                         });
                     };
@@ -110,22 +94,15 @@ export default function ChatSection({ match }) {
             }
         },
         moveSearchResult: (e, direction) => { // TODO: 마지막요소이면  '마지막 요소입니다'
-            console.log(cursor);
-            // if(cursor.index + 1 > cursor.firstIndex && cursor.index - 1 < cursor.lastIndex) {
-                // if(cursor.index !== cursor.firstIndex && cursor.index <cursor.lastIndex)
-
                 if(direction === "left") {
                     if(cursor.index - 1 >= cursor.firstIndex) {
                         setCursor({...cursor, index: cursor.index - 1 });
-                        console.log(`left ${cursor.index}`);
-                        scrollTo()
                         return;
                     }
                 } else {
                     if(cursor.index < cursor.lastIndex) {
                         // 처음값인경우 (length 초과로 들어오면 막기)
                         setCursor({...cursor, index: cursor.index + 1 });
-                        console.log(`right ${cursor.index}`);
                         return;
                     }
                 }
@@ -182,8 +159,14 @@ export default function ChatSection({ match }) {
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} messageFunction={messageFunction} />
-                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} />
+                <Chatting2 socket={socket} 
+                    messageFunction={messageFunction} 
+                    participantObject={participantObject} 
+                    roomObject={roomObject} 
+                    chatRoomNo={chatRoomNo} 
+                    searchMessage={searchMessage}
+                    cursor={cursor} />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
                 <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
             </div>
