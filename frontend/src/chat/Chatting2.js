@@ -11,8 +11,8 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     const lastScroll = document.querySelectorAll("p");
     const [offset, setOffset] = useState(0);
     const [target, setTarget] = useState(null);
-    const [changedRows,setChangedRows] = useState(0);
-    const [messageList, setMessageList] = useState([]); 
+    const [changedRows, setChangedRows] = useState(0);
+    const [messageList, setMessageList] = useState([]);
     const [receivedMsg, setReceivedMsg] = useState({});
     const [receviedMessageSuccess, setReceviedMessageSuccess] = useState(false);
 
@@ -27,28 +27,28 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
         });
 
     }, []);
-    
+
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
     }, [receivedMsg]);
 
-    useEffect(()=>{
-        if(changedRows) {
-            let needToUpdateList = messageList.splice(0,changedRows);
+    useEffect(() => {
+        if (changedRows) {
+            let needToUpdateList = messageList.splice(0, changedRows);
             let modifiedList = [];
-            needToUpdateList.map(list =>{
-                const updatedList = Object.assign({},list,{notReadCount: list.notReadCount - 1});
+            needToUpdateList.map(list => {
+                const updatedList = Object.assign({}, list, { notReadCount: list.notReadCount - 1 });
                 modifiedList.push(updatedList);
             })
 
             setMessageList([...modifiedList, ...messageList]);
             setChangedRows(0);
         }
-    },[changedRows])
+    }, [changedRows])
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(messageList);
-    },[messageList])
+    }, [messageList])
 
     useEffect(() => {
         if (receviedMessageSuccess) {
@@ -73,7 +73,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     // 근데 fetchItems()에서 setState를 해서 다시 랜더링 됨
     useEffect(async () => {
         await fetchItems(chatRoomNo, offset);
-    },[offset]);
+    }, [offset]);
     // console.log(lastScroll[messageList.length - 1]);
     // useEffect(() => {
     //     console.log("fetchItems() in useEffect()");
@@ -83,8 +83,8 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
     const fetchItems = async (chatRoomNo, offset) => {
         await getMessageList(chatRoomNo, offset).then(res => {
-            if(res.statusText === 'OK') {
-                setMessageList(prevState => { 
+            if (res.statusText === 'OK') {
+                setMessageList(prevState => {
                     return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
                 });
 
@@ -109,23 +109,23 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     // },[messageList, receivedMsg])
 
 
-/*     useEffect(async() => {
-        await fetchItems(chatRoomNo, offset);
-        offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
-        // console.log(messageList[messageList.length - 1].no);
-        // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
-        // fetch하면 offset  에 스크롤 설정
-    }, [offset]); */
-    
-/*     useEffect(() => {
-        socket.on('chat message', (msg) => {
-            console.log("chat message");
-            const msgToJson = JSON.parse(msg);
-            setReceivedMsg(msgToJson);
-            updateRead(participantObject, msgToJson.no, roomObject);
-            // setInsertSuccess(true);
-        });
-    }, [participantObject, roomObject]); */
+    /*     useEffect(async() => {
+            await fetchItems(chatRoomNo, offset);
+            offset === 0 ? scrollToBottom() : console.log('불러오기 스크롤()')
+            // console.log(messageList[messageList.length - 1].no);
+            // 첫 init fetch이면 lastReadChatNo로 스크롤 설정 - offset === 0 ? TolastReadChatNoScroll() : offsetScroll()
+            // fetch하면 offset  에 스크롤 설정
+        }, [offset]); */
+
+    /*     useEffect(() => {
+            socket.on('chat message', (msg) => {
+                console.log("chat message");
+                const msgToJson = JSON.parse(msg);
+                setReceivedMsg(msgToJson);
+                updateRead(participantObject, msgToJson.no, roomObject);
+                // setInsertSuccess(true);
+            });
+        }, [participantObject, roomObject]); */
 
 
     const options = {
@@ -154,13 +154,13 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
     return (
         <List className={"messageArea"}>
-            <div ref={setTarget } />
-            { messageList ? 
-            messageList.slice(0).reverse().map((message, index) =>
+            <div ref={setTarget} />
+            {messageList ?
+                messageList.slice(0).reverse().map((message, index) =>
                     message.participantNo !== participantObject.no ?
-                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchKeyword={searchMessage[searchMessage.length-1]} searchMessage={searchMessage} no={searchMessage.includes(message.no) ? message.no : null}/>
-                        : 
-                        <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} searchKeyword={searchMessage[searchMessage.length-1]} no={searchMessage.includes(message.no) ? message.no : null} />
+                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchKeyword={searchMessage[searchMessage.length - 1]} searchMessage={searchMessage} no={searchMessage.includes(message.no) ? message.no : null} />
+                        :
+                        <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} searchKeyword={searchMessage[searchMessage.length - 1]} no={searchMessage.includes(message.no) ? message.no : null} />
                 )
                 : null
             }

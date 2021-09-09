@@ -6,6 +6,7 @@ import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.ChatRoomService;
+import com.douzone.mehago.service.FileUploadService;
 import com.douzone.mehago.service.MessageService;
 import com.douzone.mehago.service.NoticeService;
 import com.douzone.mehago.service.ParticipantService;
@@ -13,6 +14,7 @@ import com.douzone.mehago.service.TagService;
 import com.douzone.mehago.service.TodoService;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.ChatRoom;
+import com.douzone.mehago.vo.FileUpload;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.Notice;
 import com.douzone.mehago.vo.Participant;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +42,7 @@ public class ChatController {
     private final MessageService messageService;
     private final TodoService todoService;
     private final NoticeService noticeService;
+    private final FileUploadService fileUploadService;
 
     @Auth
     @PostMapping("/createRoom")
@@ -119,17 +123,14 @@ public class ChatController {
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
 
-    @PostMapping("/addTodo")
-    public ResponseEntity<?> addTodo(@RequestBody Todo todo) {
+    // @RequestBody FileUpload fileUpload,
+    @PostMapping("/fileUpload")
+    public ResponseEntity<?> fileUpload(String chatRoomNo, String participantNo, List<MultipartFile> files) {
+        for (int i = 0; i < files.size(); i++) {
+            FileUpload file = new FileUpload();
+            // file.setUrl(fileUploadService.restore(files.get(i)));
+        }
         boolean result = false;
-        result = todoService.addTodo(todo);
-        return ResponseEntity.ok().body(CommonResponse.success(result));
-    }
-
-    @PostMapping("/addNotice")
-    public ResponseEntity<?> addNotice(@RequestBody Notice notice) {
-        boolean result = false;
-        result = noticeService.addNotice(notice);
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 

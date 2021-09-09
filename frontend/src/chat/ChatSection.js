@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import Grid from '@material-ui/core/Grid';
-
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, fileUpload } from "../../api/ChatApi";
 import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
@@ -17,7 +16,7 @@ export default function ChatSection({ match }) {
     const [searchMessage, setSearchMessage] = useState([]);
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
-    const [cursor, setCursor] = useState({firstIndex: 0, index: 0, lastIndex: 0});
+    const [cursor, setCursor] = useState({ firstIndex: 0, index: 0, lastIndex: 0 });
 
     const [joinSuccess, setJoinSuccess] = useState(false);
 
@@ -70,12 +69,12 @@ export default function ChatSection({ match }) {
         const af = Array.from(document.querySelectorAll("p[name=chat-message]"));
         // af.map(item => console.log(item.getAttribute('no')));
         // const a = af.map(item => console.log(item.getBoundingClientRect().top));
-        
+
         // const a = af.map(item => +item.getBoundingClientRect().top);
         const a = af.map(item => +item.offsetTop);
         console.log(a);
         // window.scrollTo(window.pageYOffset + a[1], 0);
-        window.scrollTo({top:0, behavior:'smooth'});
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         window.scrollTo(0, 0);
     }
 
@@ -97,11 +96,11 @@ export default function ChatSection({ match }) {
         onSearchKeyPress: (e) => {
             if (e.key == 'Enter') {
                 getSearchMessage(searchKeyword).then(res => {
-                    if(res.statusText === 'OK') {
+                    if (res.statusText === 'OK') {
                         // console.log('res.data.data: ', res.data.data); // 필요한거 : 길이, 번호, 키워드
                         setSearchMessage([
-                        ...res.data.data,
-                        searchKeyword]);
+                            ...res.data.data,
+                            searchKeyword]);
                         setCursor({
                             firstIndex: 1,
                             index: res.data.data.length,
@@ -114,23 +113,23 @@ export default function ChatSection({ match }) {
         moveSearchResult: (e, direction) => { // TODO: 마지막요소이면  '마지막 요소입니다'
             console.log(cursor);
             // if(cursor.index + 1 > cursor.firstIndex && cursor.index - 1 < cursor.lastIndex) {
-                // if(cursor.index !== cursor.firstIndex && cursor.index <cursor.lastIndex)
+            // if(cursor.index !== cursor.firstIndex && cursor.index <cursor.lastIndex)
 
-                if(direction === "left") {
-                    if(cursor.index - 1 >= cursor.firstIndex) {
-                        setCursor({...cursor, index: cursor.index - 1 });
-                        console.log(`left ${cursor.index}`);
-                        scrollTo()
-                        return;
-                    }
-                } else {
-                    if(cursor.index < cursor.lastIndex) {
-                        // 처음값인경우 (length 초과로 들어오면 막기)
-                        setCursor({...cursor, index: cursor.index + 1 });
-                        console.log(`right ${cursor.index}`);
-                        return;
-                    }
+            if (direction === "left") {
+                if (cursor.index - 1 >= cursor.firstIndex) {
+                    setCursor({ ...cursor, index: cursor.index - 1 });
+                    console.log(`left ${cursor.index}`);
+                    scrollTo()
+                    return;
                 }
+            } else {
+                if (cursor.index < cursor.lastIndex) {
+                    // 처음값인경우 (length 초과로 들어오면 막기)
+                    setCursor({ ...cursor, index: cursor.index + 1 });
+                    console.log(`right ${cursor.index}`);
+                    return;
+                }
+            }
         },
         leaveRoom: (e) => {
             socket.emit('leave', data); // roomName
@@ -162,8 +161,8 @@ export default function ChatSection({ match }) {
             };
             const date = e.target.date.value;
             const todo = e.target.todo.value;
-            addTodo(roomObject.no, participantObject.no, date, todo);
-            // 이거 하고 뭐 해야 하는거지???????????
+
+            socket.emit("todo:send", date, todo);
             setTodoOpen(false);
         },
         handleNoticeSubmit: (e) => {
@@ -172,14 +171,13 @@ export default function ChatSection({ match }) {
                 //error 메시지 보내기
             };
             const notice = e.target.notice.value;
-            addNotice(roomObject.no, participantObject.no, notice);
-            // 이거 하고 뭐 해야 하는거지???????????
+            socket.emit("notice:send", notice);
             setNoticeOpen(false);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
-            // addFileUpload(roomObject.no, participantObject.no, files);
-            // 이거 하고 뭐 해야 하는거지???????????
+            // socket.emit("file:send", files);
+            // fileUpload(files);
             setFileUploadOpen(false);
         }
     }
