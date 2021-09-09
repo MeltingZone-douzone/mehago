@@ -6,18 +6,19 @@ import ChatSection from '../../chat/ChatSection';
 import '../../assets/sass/chat/Chat.scss';
 import ChattingList from '../../chat/ChattingList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
+import SettingChatRoom from '../../chat/SettingChatRoom';
 
-
-export default function ChatPage({match}){
+export default function ChatPage({ match }) {
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavber/>
+            <ChatNavber />
             <div className={"chattingRoom"}>
                 <Switch>
-                <Route exact path={match.path} component={ChattingList} />
-                <Route exact path={`${match.path}/:no`} component={ChatSection} /> 
-                {/* <Route exact path="/chat/c2" component={Chatting} /> */}
-                <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
+                    <Route exact path={match.path} component={ChattingList} />
+                    <Route exact path={`${match.path}/:no`} component={ChatSection} />
+                    {/* <Route exact path="/chat/c2" component={Chatting} /> */}
+                    <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
+                    <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>
             </div>
         </div>

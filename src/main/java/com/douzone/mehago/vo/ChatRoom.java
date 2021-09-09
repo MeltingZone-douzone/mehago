@@ -17,4 +17,6 @@ public class ChatRoom {
     private Long owner;
 
     private List<String> tagName;
+    private boolean secretRoom;
+
 }

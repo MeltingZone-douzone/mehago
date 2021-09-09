@@ -67,6 +67,13 @@ public class ChatController {
     @GetMapping("/roomInfo/{chatRoomNo}")
     public ResponseEntity<?> getRoomInfo(@PathVariable Long chatRoomNo) {
         ChatRoom result = chatRoomService.getRoomInfo(chatRoomNo);
+        if ("".equals(result.getPassword()) == false) {
+            result.setSecretRoom(true);
+            result.setPassword("");
+        }
+        List<String> tag = chatRoomService.getTagName(chatRoomNo);
+        result.setTagName(tag);
+        System.out.println(result.toString());
         return ResponseEntity.ok()
                 .body(result != null ? CommonResponse.success(result) : CommonResponse.fail("해당 채팅방이 존재하지 않습니다"));
     }
@@ -130,7 +137,8 @@ public class ChatController {
     public ResponseEntity<?> keywordSearch(String searchValue) {
         List<ChatRoom> keywordSearch = chatRoomService.keywordSearch(searchValue);
         getTagName(keywordSearch);
-        return ResponseEntity.ok().body(!keywordSearch.isEmpty() ? CommonResponse.success(keywordSearch) : CommonResponse.fail("검색결과가 없습니다."));
+        return ResponseEntity.ok().body(
+                !keywordSearch.isEmpty() ? CommonResponse.success(keywordSearch) : CommonResponse.fail("검색결과가 없습니다."));
     }
 
     private void getTagName(List<ChatRoom> room) {
