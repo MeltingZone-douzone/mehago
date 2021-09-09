@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import Grid from '@material-ui/core/Grid';
-
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, fileUpload } from "../../api/ChatApi";
 import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
@@ -59,7 +58,6 @@ export default function ChatSection({ match }) {
     useEffect(() => {
         if (joinSuccess) {
             socket.emit('join', roomObject, participantObject);
-
         }
     }, [joinSuccess]);
 
@@ -122,8 +120,8 @@ export default function ChatSection({ match }) {
             };
             const date = e.target.date.value;
             const todo = e.target.todo.value;
-            addTodo(roomObject.no, participantObject.no, date, todo);
-            // 이거 하고 뭐 해야 하는거지???????????
+
+            socket.emit("todo:send", date, todo);
             setTodoOpen(false);
         },
         handleNoticeSubmit: (e) => {
@@ -132,14 +130,13 @@ export default function ChatSection({ match }) {
                 //error 메시지 보내기
             };
             const notice = e.target.notice.value;
-            addNotice(roomObject.no, participantObject.no, notice);
-            // 이거 하고 뭐 해야 하는거지???????????
+            socket.emit("notice:send", notice);
             setNoticeOpen(false);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
-            // addFileUpload(roomObject.no, participantObject.no, files);
-            // 이거 하고 뭐 해야 하는거지???????????
+            // socket.emit("file:send", files);
+            // fileUpload(files);
             setFileUploadOpen(false);
         }
     }

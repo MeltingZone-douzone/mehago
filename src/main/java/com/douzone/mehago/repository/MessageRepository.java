@@ -29,4 +29,8 @@ public class MessageRepository {
         return sqlSession.selectList("message.getSearchMessage", searchKeyword);
     }
 
+    public Long getLastReadChatNo(Long roomNo) {
+        return sqlSession.selectOne("message.getLastReadChatNo", roomNo);
+    }
+
 }

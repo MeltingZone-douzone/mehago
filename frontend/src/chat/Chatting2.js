@@ -122,11 +122,6 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
                 // setInsertSuccess(true);
             });
         }, [participantObject, roomObject]); */
-    useEffect(() => {
-        socket.on('chat message', (msg) => {
-            setReceivedMsg(msg);
-        });
-    }, []);
 
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
@@ -161,15 +156,10 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     return (
         <List className={"messageArea"}>
             <div ref={setTarget} />
-            {
-                Object.keys(searchMessage).length !== 0 ?
-                    messageList.filter(({ no }) => searchMessage.includes(no)).map(message => <p key={message.no}>{message.no}</p>)
-                    : null
-            }
             {messageList ? messageList
-                .slice(0).reverse().map((message, index) =>
+                .map((message, index) =>
                     message.participantNo !== participantObject.no ?
-                        <ReceivedMessage key={index} nextMessage={messageList.slice(0).reverse()[index + 1]} previousMessage={messageList.slice(0).reverse()[index - 1]} message={message} searchMessage={searchMessage} />
+                        <ReceivedMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} />
                         :
                         <SendMessage key={index} nextMessage={messageList[index + 1]} previousMessage={messageList[index - 1]} message={message} searchMessage={searchMessage} />
                 )

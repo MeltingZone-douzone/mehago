@@ -91,4 +91,12 @@
             message LIKE CONCAT('%', #{searchKeyword },'%')
     ]]>
      </select>
+     
+     <select id="getLastReadCount" parameterType="Long" resultType="Long">
+        <![CDATA[
+            select ifnull(max(no), 0)
+            from message
+            where chat_room_no = #{no}
+         ]]>
+     </select>
 </mapper>
