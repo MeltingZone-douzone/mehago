@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.vo.Message;
-import com.douzone.mehago.vo.Participant;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -19,7 +18,7 @@ public class MessageRepository {
     private final SqlSession sqlSession;
 
     public List<Message> getMessageList(Long chatRoomNo, Long offset) {
-        Map<String, Long> map = new HashMap();
+        Map<String, Long> map = new HashMap<>();
         map.put("chatRoomNo", chatRoomNo);
         map.put("offset", offset);
         return sqlSession.selectList("message.getMessageList", map);

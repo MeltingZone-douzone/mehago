@@ -19,23 +19,48 @@
 
 
     <select id="getMessageList" parameterType="map" resultType="message">
-        <![CDATA[
-            SELECT
-                m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
-                a.thumbnail_url as thumbnailUrl, p.chat_nickname as nickname 
-            FROM
-                message m, account a, participant p
-            WHERE
-                m.chat_room_no = #{chatRoomNo }
-                AND
-                m.participant_no = p.no
-                AND
-                p.account_no = a.no
-            ORDER BY
-                no DESC
-            LIMIT 
-                #{offset }, 20
-        ]]>
+        <choose>
+            <when test="offset == 0">
+                <![CDATA[
+                    SELECT
+                        m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
+                        a.thumbnail_url as thumbnailUrl, p.chat_nickname as nickname 
+                    FROM
+                        message m, account a, participant p
+                    WHERE
+                        m.chat_room_no = #{chatRoomNo }
+                        AND
+                        m.participant_no = p.no
+                        AND
+                        p.account_no = a.no
+                    ORDER BY
+                        no DESC
+                    LIMIT 
+                        #{offset }, 20
+                ]]>
+            </when>
+            <otherwise>
+                <![CDATA[
+                    SELECT
+                        m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
+                        a.thumbnail_url as thumbnailUrl, p.chat_nickname as nickname 
+                    FROM
+                        message m, account a, participant p
+                    WHERE
+                        m.chat_room_no = #{chatRoomNo }
+                        AND
+                        m.participant_no = p.no
+                        AND
+                        p.account_no = a.no
+                        AND
+                        m.no < #{offset }
+                    ORDER BY
+                        no DESC
+                    LIMIT 
+                        20
+                ]]>
+            </otherwise>
+        </choose>
     </select>
  
     <update id="addMessageUpdate" parameterType="message">
@@ -92,7 +117,7 @@
     ]]>
      </select>
      
-     <select id="getLastReadCount" parameterType="Long" resultType="Long">
+     <select id="getLastReadChatNo" parameterType="Long" resultType="Long">
         <![CDATA[
             select ifnull(max(no), 0)
             from message

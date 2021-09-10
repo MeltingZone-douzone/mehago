@@ -90,7 +90,7 @@ public class AccountController {
     @Auth
     @PostMapping("/update/thumbnail")
     public ResponseEntity<?> updateThumbnail(@AuthUser Account account, MultipartFile file) {
-        account.setThumbnailUrl(fileUploadService.restore(file));
+        account.setThumbnailUrl(fileUploadService.restore("account", file));
         boolean result = accountService.updateThumbnailUrl(account);
         
         return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("섬네일 변경을 실패 했습니다."));

@@ -8,21 +8,18 @@ import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.ChatRoomService;
 import com.douzone.mehago.service.FileUploadService;
 import com.douzone.mehago.service.MessageService;
-import com.douzone.mehago.service.NoticeService;
 import com.douzone.mehago.service.ParticipantService;
 import com.douzone.mehago.service.TagService;
-import com.douzone.mehago.service.TodoService;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.FileUpload;
 import com.douzone.mehago.vo.Message;
-import com.douzone.mehago.vo.Notice;
 import com.douzone.mehago.vo.Participant;
-import com.douzone.mehago.vo.Todo;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,22 +33,28 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatController {
 
+    private final FileUploadService fileUploadService;
     private final ChatRoomService chatRoomService;
     private final ParticipantService participantService;
     private final TagService tagService;
     private final MessageService messageService;
-    private final TodoService todoService;
-    private final NoticeService noticeService;
-    private final FileUploadService fileUploadService;
 
     @Auth
     @PostMapping("/createRoom")
-    public ResponseEntity<?> createRoom(@AuthUser Account auth, @RequestBody ChatRoom chatRoom) {
+    public ResponseEntity<?> createRoom(@AuthUser Account auth, @ModelAttribute ChatRoom chatRoom, MultipartFile file) {
+
         boolean result = false;
         // 1. 채팅방 생성
+        String url = "";
+
+        if (file != null) {
+            url = fileUploadService.restore("chatroom", file);
+        }
+
         chatRoom.setOwner(auth.getNo());
-        chatRoom.setThumbnailUrl("");
+        chatRoom.setThumbnailUrl(url);
         Long roomNo = chatRoomService.createRoom(chatRoom);
+
         // 2. 참가자 생성
         Participant participant = new Participant();
         participant.setAccountNo(auth.getNo());
@@ -59,6 +62,7 @@ public class ChatController {
         participant.setNotReadCount(0);
         participant.setChatRoomNo(roomNo);
         Long participantNo = participantService.createParticipant(participant);
+
         // 3. 태그 생성
         result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
         System.out.println(result);
@@ -67,7 +71,6 @@ public class ChatController {
         return ResponseEntity.ok().body(participantNo);
     }
 
-    @Auth
     @GetMapping("/roomInfo/{chatRoomNo}")
     public ResponseEntity<?> getRoomInfo(@PathVariable Long chatRoomNo) {
         ChatRoom result = chatRoomService.getRoomInfo(chatRoomNo);
@@ -77,7 +80,6 @@ public class ChatController {
         }
         List<String> tag = chatRoomService.getTagName(chatRoomNo);
         result.setTagName(tag);
-        System.out.println(result.toString());
         return ResponseEntity.ok()
                 .body(result != null ? CommonResponse.success(result) : CommonResponse.fail("해당 채팅방이 존재하지 않습니다"));
     }
@@ -85,11 +87,8 @@ public class ChatController {
     @Auth
     @GetMapping("/getMessageList/{chatRoomNo}")
     public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset) {
-        offset = "0";
-        System.out.println(chatRoomNo);
         System.out.println(offset);
         List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset));
-        // System.out.println(list);
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
     }
@@ -150,16 +149,59 @@ public class ChatController {
         }
     }
 
-    @Auth
     @GetMapping("/getSearchMessage")
     public ResponseEntity<?> getSearchMessage(String searchKeyword) {
         System.out.println(searchKeyword);
         List<Long> messageNo = messageService.getSearchMessage(searchKeyword);
         System.out.println(messageNo);
         return ResponseEntity.ok().body(messageNo != null ? CommonResponse.success(messageNo) : "검색결과가 없습니다."); // 채팅방에
-                                                                                                                // 검색한
-                                                                                                                // 결과가
-                                                                                                                // 없음
+                                                                                                                // // 없음
+    }
+
+    @PostMapping("/vaildatePassword")
+    public ResponseEntity<?> vaildatePassword(@RequestBody ChatRoom chatRoom) {
+        boolean result = chatRoomService.vaildatePassword(chatRoom);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @Auth
+    @PostMapping("/updateChatRoomInfo")
+    public ResponseEntity<?> updateChatRoomInfo(@AuthUser Account auth, MultipartFile file,
+            @ModelAttribute ChatRoom chatRoom) {
+        if (auth.getNo() != chatRoom.getOwner()) {
+            return ResponseEntity.ok().body(CommonResponse.fail("권한이 아닙니다."));
+        }
+
+        boolean result = false;
+        String url = "";
+
+        if (file != null) {
+            url = fileUploadService.restore("chatroom", file);
+            chatRoom.setThumbnailUrl(url);
+        }
+
+        result = chatRoomService.updateChatRoomInfo(chatRoom);
+
+        // 수정 전 태그 지우고, 새로 연결시키기
+        if (result) {
+            tagService.unlinkTags(chatRoom.getNo());
+            tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
+        }
+        return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+
+    @Auth
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@AuthUser Account auth, @RequestBody ChatRoom chatRoom) {
+
+        if (auth.getNo() != chatRoom.getOwner()) {
+            return ResponseEntity.ok().body(CommonResponse.fail("권한이 아닙니다."));
+        }
+        if (chatRoom.getPassword() == null) {
+            chatRoom.setPassword("");
+        }
+        boolean result = chatRoomService.changePassword(chatRoom);
+        return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 
 }

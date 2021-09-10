@@ -23,6 +23,7 @@ public class ChatRoomService {
     public List<ChatRoom> getChatRoomList() {
         return chatRoomRepository.getChatRoomList();
     }
+
     public ChatRoom getRoomInfo(Long chatRoomNo) {
         return chatRoomRepository.getRoomInfo(chatRoomNo);
     }
@@ -39,6 +40,16 @@ public class ChatRoomService {
         return chatRoomRepository.getTagname(no);
     }
 
-   
+    public boolean vaildatePassword(ChatRoom chatRoom) {
+        return chatRoomRepository.vaildatePassword(chatRoom);
+    }
+
+    public boolean changePassword(ChatRoom chatRoom) {
+        return chatRoomRepository.changePassword(chatRoom);
+    }
+
+    public boolean updateChatRoomInfo(ChatRoom chatRoom) {
+        return chatRoomRepository.updateChatRoomInfo(chatRoom);
+    }
 
 }

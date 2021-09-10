@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import Grid from '@material-ui/core/Grid';
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, fileUpload } from "../../api/ChatApi";
+
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
 import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
@@ -23,7 +23,6 @@ export default function ChatSection({ match }) {
     const [todoOpen, setTodoOpen] = useState(false);
     const [noticeOpen, setNoticeOpen] = useState(false);
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
-
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
@@ -176,20 +175,20 @@ export default function ChatSection({ match }) {
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
-            // socket.emit("file:send", files);
             // fileUpload(files);
+            // socket.emit("file:send", files);    
             setFileUploadOpen(false);
         }
     }
 
     return (
-        <div className={"chatSection"}>
-            <Grid container>
+        <div className={"chatSection"} key={match.params.no}>
+            <div className={"container"}>
                 <ChatHeader socket={socket} messageFunction={messageFunction} roomObject={roomObject} cursor={cursor} />
                 <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
                 <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
-            </Grid>
+            </div>
         </div>
     );
 

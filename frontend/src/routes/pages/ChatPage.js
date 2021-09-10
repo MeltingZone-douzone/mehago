@@ -8,7 +8,13 @@ import ChattingList from '../../chat/ChattingList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
 import SettingChatRoom from '../../chat/SettingChatRoom';
 
+<<<<<<< HEAD
 export default function ChatPage({ match }) {
+=======
+
+export default function ChatPage({userInfo,match}){
+    // console.log(userInfo);
+>>>>>>> 4c058ef165ed474c91d0c5190ff47a743bc6ef18
     return (
         <div className={"ChattingContainer"} >
             <ChatNavber />

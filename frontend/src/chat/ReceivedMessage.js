@@ -5,29 +5,32 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
 import '../assets/sass/chat/ChatList.scss';
+import Thumbnail from '../components/Thumbnail';
 
 export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
     const classes = madeStyles();
 
-    const getHighlightedText = ({text=message.message, highlight=searchKeyword}) => {
+    const getHighlightedText = ({ text = message.message, highlight = searchKeyword }) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
-        return  <p className={classes.receivedMessage} name={'chat-message'} no={message.no}> 
-                    { parts.map((part, index) => 
-                        part.toLowerCase() === highlight.toLowerCase() ? 
-                        (<mark key={index}>{part}</mark>) 
-                        : 
-                        (part)
-                    )
-                    } 
-                </p>;   
+        return <p className={classes.receivedMessage} name={'chat-message'} no={message.no}>
+            {parts.map((part, index) =>
+                part.toLowerCase() === highlight.toLowerCase() ?
+                    (<mark key={index}>{part}</mark>)
+                    :
+                    (part)
+            )
+            }
+        </p>;
     }
-    
+
     return (
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
                 <Grid item xs={1} align="center">
                     {!nextMessage || nextMessage.participantNo !== message.participantNo ?
-                        <img src="https://image.fmkorea.com/files/attach/new2/20210407/486616/3384152332/3508461211/99b983892094b5c6d2fc3736e15da7d1.jpg" className={"profile"} />
+                        <div className="profile">
+                            <Thumbnail nickname={message.nickname} />
+                        </div>
                         : ''}
                 </Grid>
                 <Grid item xs={11}>
@@ -41,46 +44,46 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                             </ListItemText>
                             : ''}
                     </Grid>
-                        
-                        
-                    { no ?
-                    <ListItemText align="left" className={classes.chatContainer, classes.left}
-                        primary={
-                            getHighlightedText(message.message, searchKeyword)
-                        }
-                        secondary={
-                            <Typography className={classes.notReadCountLeft}>
-                                <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
-                                {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
-                                    <span className={classes.createdAt}>
-                                        {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
-                                    </span>
-                                    : ''}
-                            </Typography>
-                        }>
-                    </ListItemText>
+
+
+                    {no ?
+                        <ListItemText align="left" className={classes.chatContainer, classes.left}
+                            primary={
+                                getHighlightedText(message.message, searchKeyword)
+                            }
+                            secondary={
+                                <Typography className={classes.notReadCountLeft}>
+                                    <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
+                                    {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
+                                        <span className={classes.createdAt}>
+                                            {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
+                                        </span>
+                                        : ''}
+                                </Typography>
+                            }>
+                        </ListItemText>
                         :
-                    <ListItemText align="left" className={classes.chatContainer, classes.left}
-                        primary={
-                            // <Typography className={classes.receivedMessage}>
-                            //     <div no={message.no}></div>
-                            //     {message.message}
-                            // </Typography>
-                            <p className={classes.receivedMessage} no={message.no}>
-                                {message.message}
-                            </p>
-                        }
-                        secondary={
-                            <Typography className={classes.notReadCountLeft}>
-                                <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
-                                {!previousMessage || previousMessage.participantNo !== message.participantNo || moment(previousMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
-                                    <span className={classes.createdAt}>
-                                        {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
-                                    </span>
-                                    : ''}
-                            </Typography>
-                        }>
-                    </ListItemText>
+                        <ListItemText align="left" className={classes.chatContainer, classes.left}
+                            primary={
+                                // <Typography className={classes.receivedMessage}>
+                                //     <div no={message.no}></div>
+                                //     {message.message}
+                                // </Typography>
+                                <p className={classes.receivedMessage} no={message.no}>
+                                    {message.message}
+                                </p>
+                            }
+                            secondary={
+                                <Typography className={classes.notReadCountLeft}>
+                                    <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
+                                    {!previousMessage || previousMessage.participantNo !== message.participantNo || moment(previousMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
+                                        <span className={classes.createdAt}>
+                                            {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
+                                        </span>
+                                        : ''}
+                                </Typography>
+                            }>
+                        </ListItemText>
                     }
                 </Grid>
             </Grid>

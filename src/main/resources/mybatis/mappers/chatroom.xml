@@ -91,5 +91,37 @@
               chat_room_no = #{no})
     ]]>
   </select>
+  <select id="vaildatePassword" parameterType="chatRoom" resultType="String">
+    <![CDATA[
+      select no
+       from  chat_room
+       where no= #{no}
+       and  password = #{password}
+    ]]>
+  </select>
+  <update id="changePassword" parameterType="chatRoom">
+    <![CDATA[
+      update chat_room
+      set password= #{password }
+      where no = #{no }
+    ]]>
+  </update>
 
+  <update id="updateChatRoomInfo" parameterType="chatRoom">
+    <![CDATA[
+      update chat_room
+      set title= #{title }, limited_user_count= #{limitedUserCount }
+      , only_authorized= #{onlyAuthorized }, searchable = #{searchable} , thumbnail_url= #{thumbnailUrl }
+    ]]>
+    <choose>
+    <when test='("").equals(password) == false'>
+    <![CDATA[
+      , password = #{password}
+    ]]>
+    </when>
+    </choose>
+    <![CDATA[
+      where no = #{no }
+    ]]>
+  </update>
 </mapper>

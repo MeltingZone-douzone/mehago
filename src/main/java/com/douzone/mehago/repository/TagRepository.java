@@ -28,4 +28,8 @@ public class TagRepository {
         return sqlSession.selectOne("tag.searchTag", tagName);
     }
 
+    public boolean unlinkTag(Long chatRoomNo) {
+        return sqlSession.delete("tag.unlinkTag", chatRoomNo) == 1 ? true : false;
+    }
+
 }

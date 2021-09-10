@@ -4,7 +4,6 @@ import { TextField, FormControlLabel, Switch, FormControl, InputLabel, Select, B
 import ChipInput from 'material-ui-chip-input';
 
 export default function SettingChatForm({ classes, chatRoom, handleChange, handleAddTagName, handleDeleteTagName, passwordFunction }) {
-
     return (
         <FormWrapper>
             <TextField
@@ -67,7 +66,7 @@ export default function SettingChatForm({ classes, chatRoom, handleChange, handl
                     <TextField
                         className={classes.TextField, classes.passwordInput}
                         type="password" variant="outlined" size="small"
-                        name="newPassword" value={chatRoom.newPassword} onChange={handleChange} />
+                        name="password" value={chatRoom.newPassword} onChange={handleChange} />
                     : null}
             </div>
         </FormWrapper>

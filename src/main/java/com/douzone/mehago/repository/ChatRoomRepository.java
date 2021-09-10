@@ -1,6 +1,8 @@
 package com.douzone.mehago.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.douzone.mehago.vo.ChatRoom;
 
@@ -39,5 +41,18 @@ public class ChatRoomRepository {
 
     public List<String> getTagname(Long no) {
         return sqlSession.selectList("chatroom.getTagName", no);
+    }
+
+    public boolean vaildatePassword(ChatRoom chatRoom) {
+        return sqlSession.selectOne("chatroom.vaildatePassword", chatRoom) != null ? true : false;
+    }
+
+    public boolean changePassword(ChatRoom chatRoom) {
+        return sqlSession.update("chatroom.changePassword", chatRoom) == 1 ? true : false;
+    }
+
+    public boolean updateChatRoomInfo(ChatRoom chatRoom) {
+        return sqlSession.update("chatroom.updateChatRoomInfo", chatRoom) == 1 ? true : false;
+
     }
 }
