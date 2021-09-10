@@ -20,23 +20,31 @@ public class ChatRoomService {
         return chatRoomRepository.createRoom(chatRoom);
     }
 
-    public List<ChatRoom> getChatRoomList() {
-        return chatRoomRepository.getChatRoomList();
+    public List<Map<String, Object>> getAllChatList() {
+        return chatRoomRepository.getAllChatList();
     }
     public ChatRoom getRoomInfo(Long chatRoomNo) {
         return chatRoomRepository.getRoomInfo(chatRoomNo);
     }
 
-    public List<ChatRoom> participatingRoom(Long no) {
+    public List<Map<String, Object>> participatingRoom(Long no) {
         return chatRoomRepository.participatingRoom(no);
     }
 
-    public List<ChatRoom> keywordSearch(String searchValue) {
+    public List<Map<String, Object>> keywordSearch(String searchValue) {
         return chatRoomRepository.keywordSearch(searchValue);
     }
 
     public List<String> getTagName(Long no) {
         return chatRoomRepository.getTagname(no);
+    }
+
+    public boolean isExistsPassword(Long no) {
+        return chatRoomRepository.isExistsPassword(no);
+    }
+
+    public boolean checkPassword(Long no, String password) {
+        return chatRoomRepository.checkPassword(no,password);
     }
 
    

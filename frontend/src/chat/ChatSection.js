@@ -10,7 +10,8 @@ import MsgInput2 from './MsgInput2';
 import Dialogs from './Dialogs';
 
 const socket = io('http://localhost:8888');
-export default function ChatSection({ match }) {
+
+export default function ChatSection({match}) {
     const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
@@ -128,6 +129,7 @@ export default function ChatSection({ match }) {
         },
         handleNoticeSubmit: (e) => {
             e.preventDefault();
+            console.log(e.target.notice.value);
             if (e.target.notice.value === '') {
                 //error 메시지 보내기
             };
@@ -145,7 +147,7 @@ export default function ChatSection({ match }) {
     }
 
     return (
-        <div className={"chatSection"}>
+        <div className={"chatSection"} key={match.params.no}>
             <Grid container>
                 <ChatHeader socket={socket} messageFunction={messageFunction} />
                 <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />

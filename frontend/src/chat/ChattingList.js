@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Grid, List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import moment from 'moment';
 
 import '../assets/sass/chat/ChattingList.scss';
 import ChattingRoom from './ChattingRoom';
@@ -20,8 +21,7 @@ export default function ChatList(){
             const url = `/api/chat/chatList`;
             axios.post(url, {headers:{'Context-Type': 'application/json'}})
                 .then(res => {
-                    console.log("asdasdad");
-                    console.log(res.data);
+                    //  console.log(res.data);
                     setRooms(res.data);
             });
 
@@ -67,8 +67,6 @@ export default function ChatList(){
         }
     }
 
-    
-
     //TODO: Grid 틀 변경, search 구현
         
     return (
@@ -83,7 +81,7 @@ export default function ChatList(){
                     onChange ={ (e) => { setSearchValue(e.target.value)} }
                     InputProps={{
                         endAdornment: (
-                            <InputAdornment position="start">
+                            <InputAdornment>
                                 <button 
                                     onClick={searchValue === "" ?  null : keywordSearch}>
                                         <SearchIcon />
@@ -113,6 +111,8 @@ export default function ChatList(){
                                         tagName = {room.tagName}
                                         thumbnailUrl = {room.thumbnailUrl} 
                                         titleAndTag = { room }
+                                        participantCount = { room.participantCount}
+                                        lastMessage = { room.lastMessage }
                                     />
                                     )
                                 }) : null }

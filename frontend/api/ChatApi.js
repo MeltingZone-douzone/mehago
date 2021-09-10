@@ -68,4 +68,13 @@ export function getSearchMessage(searchKeyword) {
         .then(res => res);
 }
 
+export function isExistsPasswords(no){
+    setAuthHeader();
+    return axios.get(`/api/chat/isExistsPassword/${no}`, { headers: AuthHeader })
+        .then(res => res);
+}
 
+export function checkPassword(no, password) {
+    return axios.get(`/api/chat/checkPassword/${no}?password=`+ password , {headers:{'Context-Type': 'application/json'}})
+        .then(res => res);
+}

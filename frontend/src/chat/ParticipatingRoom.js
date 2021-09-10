@@ -59,15 +59,19 @@ export default function ParticipatingRoom(){
                             <div key={room.no}>
                             <NavLink to={`/chat/${room.no}`}>
                                 <ChattingRoom 
+                                    key={room.no}
                                     no = {room.no}
                                     title={room.title}
                                     limitedUserCount ={room.limitedUserCount}
                                     onlyAuthorized ={room.onlyAuthorized}
                                     owner =  {room.owner}
                                     searchable={room.searchable} 
-                                    secretRoom = {room.secretRoom}
                                     tagName = {room.tagName}
                                     thumbnailUrl = {room.thumbnailUrl} 
+                                    titleAndTag = { room }
+                                    participantCount = { room.participantCount}
+                                    lastMessage = { room.lastMessage }
+
                                     />
                             </NavLink>
                             </div>
