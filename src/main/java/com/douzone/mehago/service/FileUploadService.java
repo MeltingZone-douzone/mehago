@@ -12,10 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileUploadService {
     
-    private static final String SAVE_PATH = "/uploads-mehago";
-    private static final String URL_BASE = "/images";
+    private static final String ACCOUNT_SAVE_PATH = "/uploads-mehago/account";
+	private static final String CATHROOM_SAVE_PATH = "/uploads-mehago/chatroom";
+	private static final String ACCOUNT_URL_BASE = "/images/account";
+    private static final String CATHROOM_URL_BASE = "/images/chatroom";
 
-    public String restore(MultipartFile file) {
+    public String restore(String imageCategory, MultipartFile file) {
         String url = null;
         try{
             if(file.isEmpty()){
@@ -34,12 +36,22 @@ public class FileUploadService {
 			byte[] data = file.getBytes();
             // 경로 지정
             
+			OutputStream os = null;
+			if(imageCategory == "account"){
+				os = new FileOutputStream(ACCOUNT_SAVE_PATH +"/"+saveFilename);
+			} else if(imageCategory == "chatroom") {
+				os = new FileOutputStream(CATHROOM_SAVE_PATH +"/"+saveFilename);
+			}
 
-			OutputStream os = new FileOutputStream(SAVE_PATH +"/"+saveFilename);
 			os.write(data);
 			os.close();
+
+			if(imageCategory == "account"){
+				url = ACCOUNT_URL_BASE +"/"+ saveFilename;
+			} else if(imageCategory == "chatroom") {
+				url = CATHROOM_URL_BASE +"/"+ saveFilename;
+			}
 			
-			url = URL_BASE +"/"+ saveFilename;
         } catch (IOException e) {
 			throw new RuntimeException();
 		}

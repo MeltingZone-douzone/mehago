@@ -100,6 +100,7 @@ export default function ChatList(){
                         <List className={"ChatRoom"} >
                             { rooms ? getChatrooms().map((room)=> {
                                 return(
+                                    <div key={room.no}>
                                     <ChattingRoom 
                                         key={room.no}
                                         no = {room.no}
@@ -114,6 +115,7 @@ export default function ChatList(){
                                         participantCount = { room.participantCount}
                                         lastMessage = { room.lastMessage }
                                     />
+                                    </div>
                                     )
                                 }) : null }
                         </List>

@@ -10,9 +10,19 @@ function setAuthHeader() {
     AuthHeader = Object.assign(AuthHeader, { "Authorization": localStorage.get("token") !== null ? `Bearer ` + localStorage.get("token") : "nonmember" });
 }
 
-export function CreateChattingRoom(chattiingRoom) {
+function formDataHeader(){
+    const headers={
+      'Content-Type': 'multipart/form-data',
+      'Authorization': "Bearer "+ localStorage.get("token")
+    }
+  
+    return headers;
+}
+
+
+export function CreateChattingRoom(chatRoom) {
     setAuthHeader();
-    return axios.post("/api/chat/createRoom", chattiingRoom, { headers: AuthHeader })
+    return axios.post("/api/chat/createRoom", chatRoom, { headers: formDataHeader() })
         .then(res => res);
 }
 
@@ -28,9 +38,15 @@ export function getRoomInfo(chatRoomNo) {
 }
 
 export function getMessageList(chatRoomNo, offset) {
-    console.log(`getMessageList() ${chatRoomNo} ${offset}`);
     setAuthHeader();
     return axios.get(`/api/chat/getMessageList/${chatRoomNo}`, { params: { offset }, headers: AuthHeader })
+        .then(res => res);
+}
+
+export function getParticipantsList(chatRoomNo) {
+    console.log(chatRoomNo);
+    setAuthHeader();
+    return axios.get(`/api/chat/participants/${chatRoomNo}`, { headers: AuthHeader})
         .then(res => res);
 }
 
@@ -62,7 +78,6 @@ export function addNotice(roomNo, participantNo, notice) {
 }
 
 export function getSearchMessage(searchKeyword) {
-    console.log(searchKeyword);
     setAuthHeader();
     return axios.get("/api/chat/getSearchMessage?searchKeyword=" + searchKeyword, { headers: AuthHeader })
         .then(res => res);
@@ -75,6 +90,6 @@ export function isExistsPasswords(no){
 }
 
 export function checkPassword(no, password) {
-    return axios.get(`/api/chat/checkPassword/${no}?password=`+ password , {headers:{'Context-Type': 'application/json'}})
+    return axios.post(`/api/chat/checkPassword/${no}`, password , {headers:{'Context-Type': 'application/json'}})
         .then(res => res);
 }

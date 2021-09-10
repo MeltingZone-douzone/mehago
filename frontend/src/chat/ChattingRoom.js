@@ -9,7 +9,7 @@ import ReactModal from "react-modal";
 import '../assets/sass/chat/ChatProfile.scss';
 import '../assets/sass/chat/modal.scss';
 import {isExistsPasswords, checkPassword} from '../../api/ChatApi';
-import FaceIcon from '@material-ui/icons/Face';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 ReactModal.setAppElement('body'); 
 
@@ -27,7 +27,7 @@ export default function ChattingRoom({
         for (var i = 0; i < tagName.length; i++) {
             tagNames[i] = "#" + tagName[i];
         }
-        return tagNames.join(' ');// TODO: 태그클릭
+        return tagNames.join(' '); 
     }
 
     const check = (no) => {
@@ -43,9 +43,9 @@ export default function ChattingRoom({
     }
 
     const joinValidation = (no) => {
-        console.log(no);   // account 처리 해야함
+        console.log(password);   // account 처리 해야함
         try {
-            if(password != "")(
+            if(password !== "")(
                 checkPassword(no, password).then((res) => {
                     console.log(res.data);
                     setPassword({password:""});
@@ -85,12 +85,19 @@ export default function ChattingRoom({
         <div className={"chatProfile"}>
             <List className={"container"}>
                 <ListItem button key={`${no}`} className={"roombutton"}  onClick={ () => {setModalIsOpen(true) , check(`${no}`)} }>
-                    <Avatar className={"item1"} alt="프로필 사진" imgProps={thumbnailUrl} />
-                    <img src = {thumbnailUrl}></img>
+                    <Avatar className={"item1"} alt="프로필 사진" src = {thumbnailUrl} />
                     <ListItemText className={"item2"} primary={title}></ListItemText>
                     <ListItemText className={"item3"} primary={"참여중: " + participantCount}></ListItemText>
                     <ListItemText className={"item4"} primary={timeForToday(lastMessage)}></ListItemText>
-                    <ListItemText className={"item5"} primary={tagNames()}></ListItemText>
+                    { tagName.map((tag, index)=> {
+                                    return(
+                                        <Chip
+                                        icon={<LocalOfferIcon />}
+                                        variant="outlined"
+                                        label={tag}
+                                        />
+                                    )}) 
+                                }
                 </ListItem>
                 <Modal 
                     className={"modal"}
@@ -100,7 +107,7 @@ export default function ChattingRoom({
                     contentLabel="채팅방">
                         <div className={"top"}>
                             <Button className={classes.closed} variant="contained" onClick={ () => setModalIsOpen(false) }><CancelPresentationIcon /></Button>
-                            <Avatar className={classes.large} alt="프로필 사진" imgProps={thumbnailUrl} />
+                            <Avatar className={classes.large} alt="프로필 사진" src={thumbnailUrl} />
                         </div>
                         <ListItem className={"container"}>
                             <ListItemText classes={{primary:classes.titleText}} primary={title}></ListItemText>
@@ -109,7 +116,7 @@ export default function ChattingRoom({
                                 { tagName.map((tag, index)=> {
                                     return(
                                         <Chip
-                                        icon={<FaceIcon />}
+                                        icon={<LocalOfferIcon />}
                                         variant="outlined"
                                         label={tag}
                                         />

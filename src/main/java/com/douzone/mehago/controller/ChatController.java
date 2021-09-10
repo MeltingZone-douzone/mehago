@@ -10,6 +10,7 @@ import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.ChatRoomService;
+import com.douzone.mehago.service.FileUploadService;
 import com.douzone.mehago.service.MessageService;
 import com.douzone.mehago.service.NoticeService;
 import com.douzone.mehago.service.ParticipantService;
@@ -25,10 +26,12 @@ import com.douzone.mehago.vo.Todo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +40,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatController {
 
+    private final FileUploadService fileUploadService;
     private final ChatRoomService chatRoomService;
     private final ParticipantService participantService;
     private final TagService tagService;
@@ -46,12 +50,20 @@ public class ChatController {
 
     @Auth
     @PostMapping("/createRoom")
-    public ResponseEntity<?> createRoom(@AuthUser Account auth, @RequestBody ChatRoom chatRoom) {
+    public ResponseEntity<?> createRoom(@AuthUser Account auth, @ModelAttribute ChatRoom chatRoom, MultipartFile file) {
+
         boolean result = false;
         // 1. 채팅방 생성
+        String url = "";
+
+        if(file != null) {
+            url = fileUploadService.restore("chatroom",file);
+        }
+
         chatRoom.setOwner(auth.getNo());
-        chatRoom.setThumbnailUrl("");
+        chatRoom.setThumbnailUrl(url);
         Long roomNo = chatRoomService.createRoom(chatRoom);
+
         // 2. 참가자 생성
         Participant participant = new Participant();
         participant.setAccountNo(auth.getNo());
@@ -59,6 +71,7 @@ public class ChatController {
         participant.setNotReadCount(0);
         participant.setChatRoomNo(roomNo);
         Long participantNo = participantService.createParticipant(participant);
+
         // 3. 태그 생성
         result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
         System.out.println(result);
@@ -78,11 +91,8 @@ public class ChatController {
     @Auth
     @GetMapping("/getMessageList/{chatRoomNo}")
     public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset) {
-        offset = "0";
-        System.out.println(chatRoomNo);
         System.out.println(offset);
         List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset));
-        // System.out.println(list);
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
     }
@@ -114,6 +124,16 @@ public class ChatController {
         List<Map<String, Object>> participatingRoom = chatRoomService.participatingRoom(account.getNo());
         getTagName(participatingRoom);
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
+    }
+
+    @GetMapping("/participants/{chatRoomNo}")
+    public ResponseEntity<?> getParticipantsList(@PathVariable Long chatRoomNo) {
+        System.out.println(chatRoomNo); 
+        List<Participant> list = participantService.getParticipantsList(chatRoomNo);
+        System.out.println(list);
+        return ResponseEntity.ok().body(
+            list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 참여자가 존재하지 않습니다")
+        );
     }
 
     @PostMapping("/addTodo")
@@ -169,7 +189,7 @@ public class ChatController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("checkPassword/{no}")
+    @PostMapping("checkPassword/{no}")
     public ResponseEntity<?> chatRoomNondisclosure(@PathVariable Long no,  String password) {
         boolean checkPassword = chatRoomService.checkPassword(no, password);
         return ResponseEntity.ok().body(checkPassword == true ? (checkPassword) : "비밀번호가 틀렸습니다.");

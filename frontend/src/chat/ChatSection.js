@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import Grid from '@material-ui/core/Grid';
 
 import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
 import '../assets/sass/chat/ChatList.scss';
@@ -10,22 +9,20 @@ import MsgInput2 from './MsgInput2';
 import Dialogs from './Dialogs';
 
 const socket = io('http://localhost:8888');
-
-export default function ChatSection({match}) {
+export default function ChatSection({history, match, setCurrentParticipants}) {
     const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
     const [searchMessage, setSearchMessage] = useState([]);
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
+    const [cursor, setCursor] = useState({firstIndex: 0, index: 0, lastIndex: 0});
 
-    const [insertSuccess, setInsertSuccess] = useState(false);
     const [joinSuccess, setJoinSuccess] = useState(false);
 
     const [todoOpen, setTodoOpen] = useState(false);
     const [noticeOpen, setNoticeOpen] = useState(false);
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
-
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
@@ -53,14 +50,15 @@ export default function ChatSection({match}) {
     }, []);
 
     // useEffect(() => {
-    //     return()=>{console.log("unmount")}
-    //     disconnect
+    //     return() =>{
+    //         console.log("unmount");
+    //     }
     // }, []);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (joinSuccess) {
-            socket.emit('join', roomObject, participantObject);
-
+            await socket.emit('join', roomObject, participantObject);
+            await socket.emit('participant:join:updateRead');
         }
     }, [joinSuccess]);
 
@@ -71,10 +69,10 @@ export default function ChatSection({match}) {
         },
         onSubmitMessage: (e) => {
             e.preventDefault();
-            console.log(`onSubmitMessage`);
             if (message) {
                 socket.emit('chat message', message);
                 e.target.message.value = '';
+                setMessage('');
             }
         },
         onChangeSearchKeyword: (e) => {
@@ -83,18 +81,38 @@ export default function ChatSection({match}) {
         onSearchKeyPress: (e) => {
             if (e.key == 'Enter') {
                 getSearchMessage(searchKeyword).then(res => {
-                    if (res.statusText === 'OK') {
-                        console.log('res.data.data: ', res.data.data); // 길이, 번호, 키워드
+                    if(res.statusText === 'OK') {
                         setSearchMessage([
-                            ...res.data.data,
-                            searchKeyword]);
-                        //   ]);
+                        ...res.data.data,
+                        searchKeyword]);
+                        setCursor({
+                            firstIndex: 1,
+                            index: 1,
+                            lastIndex: res.data.data.length
+                        });
                     };
                 });
             }
         },
+        moveSearchResult: (e, direction) => { // TODO: 마지막요소이면  '마지막 요소입니다'
+                if(direction === "left") {
+                    if(cursor.index - 1 >= cursor.firstIndex) {
+                        setCursor({...cursor, index: cursor.index - 1 });
+                        return;
+                    }
+                } else {
+                    if(cursor.index < cursor.lastIndex) {
+                        // FIXME: 처음값인경우 (length 초과로 들어오면 막기)
+                        setCursor({...cursor, index: cursor.index + 1 });
+                        return;
+                    }
+                }
+        },
         leaveRoom: (e) => {
-            socket.emit('leave', data); // roomName
+            // socket.emit('leave', data); // roomName
+            console.log('leaveRoom()호출 in ChatSection');
+            socket.emit('leave', roomObject.roomName); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
+            history.push('/chat') // TODO: 참여자 조회하는것도 나가야함 Nav에서
         }
     }
 
@@ -124,7 +142,6 @@ export default function ChatSection({match}) {
             const date = e.target.date.value;
             const todo = e.target.todo.value;
             addTodo(roomObject.no, participantObject.no, date, todo);
-            // 이거 하고 뭐 해야 하는거지???????????
             setTodoOpen(false);
         },
         handleNoticeSubmit: (e) => {
@@ -135,25 +152,30 @@ export default function ChatSection({match}) {
             };
             const notice = e.target.notice.value;
             addNotice(roomObject.no, participantObject.no, notice);
-            // 이거 하고 뭐 해야 하는거지???????????
             setNoticeOpen(false);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
             // addFileUpload(roomObject.no, participantObject.no, files);
-            // 이거 하고 뭐 해야 하는거지???????????
             setFileUploadOpen(false);
         }
     }
 
     return (
         <div className={"chatSection"} key={match.params.no}>
-            <Grid container>
-                <ChatHeader socket={socket} messageFunction={messageFunction} />
-                <Chatting2 socket={socket} messageFunction={messageFunction} participantObject={participantObject} roomObject={roomObject} chatRoomNo={chatRoomNo} searchMessage={searchMessage} />
+            <div className={"container"}>
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} />
+                <Chatting2 socket={socket} 
+                    messageFunction={messageFunction} 
+                    participantObject={participantObject} 
+                    roomObject={roomObject} 
+                    chatRoomNo={chatRoomNo} 
+                    searchMessage={searchMessage}
+                    setCurrentParticipants={setCurrentParticipants} 
+                    cursor={cursor} />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
                 <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
-            </Grid>
+            </div>
         </div>
     );
 

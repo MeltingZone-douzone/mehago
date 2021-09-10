@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from 'styled-components';
-import { Button, ThemeProvider, TextField, makeStyles, FormControlLabel, Switch, FormControl, InputLabel, Select } from '@material-ui/core';
+import { Button, ThemeProvider, makeStyles } from '@material-ui/core';
 import { theme } from '../assets/styles/material/MaterialTheme';
 import ChipInput from 'material-ui-chip-input';
 
 import { CreateChattingRoom } from "../../api/ChatApi";
 import BoxShapeDiv from "../assets/styles/BoxShapeDiv";
+import CreateChatForm from "./components/CreateChatForm";
+import CreateChatImage from "./components/CreateChatImage";
 
 const styles = makeStyles({
     root: {
@@ -41,21 +43,50 @@ export default function CreateChatRoom({history}) {
     const [chatRoom, setChatRoom] = useState(
         {
             title: "",
-            secretRoom: false, // TODO:  ㅎㅇ
+            secretRoom: false, // TODO: 시간이 있다면 이 변수는 사람들이 들어오지 못하게 막는 변수.
             password: "",
-            thumbnailUrl: "",
             limitedUserCount: 10,
             onlyAuthorized: false,
             searchable: false,
             tagName: []
-        });
+        }
+    );
+    
+    const [image, setImage] = useState();
+    const [imageName, setImageName] = useState();
+    const [cropImage, setCropImage] = useState();
+    const [cropper, setCropper] = useState();
+
+    useEffect(() =>{
+        if(!chatRoom.secretRoom) {
+            setChatRoom({ ...chatRoom, password: ""});
+        }
+    },[chatRoom.secretRoom])
+
+    useEffect(()=>{
+        if(cropImage) {
+            createChatRoom();
+        }
+    },[cropImage])
+    
+    const handleImageChange = (e) => {
+        e.preventDefault();
+        let files;
+        if (e.dataTransfer) {
+          files = e.dataTransfer.files;
+        } else if (e.target) {
+          files = e.target.files;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImage(reader.result);
+          setImageName(files[0].name);
+        };
+        reader.readAsDataURL(files[0]);
+    };
 
     const handleChange = (e) => {
         const { name, value, checked } = e.target;
-        if (name === "secretRoom" && checked === false) {
-            // 이거 왜 안돼????
-            setChatRoom({ ...chatRoom, password: "" });
-        }
         setChatRoom({ ...chatRoom, [name]: (name === "secretRoom" || name === "onlyAuthorized" || name === "searchable" ? checked : value) });
     };
 
@@ -67,13 +98,26 @@ export default function CreateChatRoom({history}) {
     const handleDeleteTagName = (name) => {
         const deleteArray = chatRoom.tagName.filter(tag => tag !== name);
         setChatRoom({ ...chatRoom, tagName: deleteArray })
-
     }
 
-    const createChatRoom = (e) => {
-        e.preventDefault();
+    const createChatRoom = () => {
+        const {title, password, limitedUserCount, onlyAuthorized, searchable, tagName} = chatRoom;
+     
+        let form = new FormData();
+        
+        form.append("title", title);
+        form.append("password", password);
+        form.append("limitedUserCount",limitedUserCount);
+        form.append("onlyAuthorized", onlyAuthorized);
+        form.append("searchable", searchable);
+        form.append("tagName", tagName);
+        
+        if(cropImage) {
+            form.append("file", cropImage);
+        }
+        
         try {
-            CreateChattingRoom(chatRoom).then((res) => {
+            CreateChattingRoom(form).then((res) => {
                 if (res.statusText === "OK") {
                     // history.push('/chat');
                 }
@@ -84,84 +128,37 @@ export default function CreateChatRoom({history}) {
         }
     }
 
+    const getCropData = () => {
+        if(typeof cropper !== "undefined") {
+            cropper.getCroppedCanvas().toBlob(blob =>{
+                setCropImage(blob);
+            });
+        }
+    };
+    
+
     const classes = styles();
     return (
         <ThemeProvider theme={theme}>
             <Container>
-                <h1>나의 채팅방을 만들어 보세요</h1>
-                <br />
-                <p>뭐ㅜ머ㅜ머ㅜ머ㅜ머뭐뭐무머ㅜ머ㅜ머ㅜ 적어야댐</p>
-                <br />
-
+                <h1>오픈 채팅방을 만들어 보세요</h1>
                 <CreateTemplate>
-                    <FormWrapper onSubmit={(e) => createChatRoom(e)}>
-                    <TextField
-                        required className={classes.TextField}
-                        label="방 이름을 입력하세요" variant="outlined"
-                        name="title" value={chatRoom.title} onChange={handleChange} />
+                    <FormTemplate onSubmit={(e) => {e.preventDefault(); image ? getCropData() : createChatRoom()}}>
+                        <FormWrapper>
+                            <InfoFormWrapper>
+                                <CreateChatForm classes={classes} chatRoom={chatRoom} handleChange={handleChange} handleAddTagName={handleAddTagName} handleDeleteTagName={handleDeleteTagName}/>
+                            </InfoFormWrapper>
+                            <CropperWrapper>
+                                <CreateChatImage image={image} imageName={imageName} setCropper={setCropper} onChange={handleImageChange}/>
+                            </CropperWrapper>
+                        </FormWrapper>
+                        <ButtonWrapper>
+                            <div className={classes.buttons}>
+                                <Button className={classes.button} variant="outlined" color="primary" type="submit" >채팅방 개설하기</Button>
+                            </div>
+                        </ButtonWrapper>
 
-                    <ChipInput
-                        className={classes.TextField} variant="outlined" name="tagName"
-                        label='태그를 입력하세요' placeholder='Type and press enter to add Tag'
-                        value={chatRoom.tagName}
-                        onAdd={(name) => handleAddTagName(name)} onDelete={(name) => handleDeleteTagName(name)} />
-
-                    <div className={classes.password}>
-                        <FormControlLabel
-                            control={
-                                <Switch checked={chatRoom.secretRoom} onChange={handleChange}
-                                    name="secretRoom" color="primary" />
-                            }
-                            label="password"
-                        />
-                        {chatRoom.secretRoom ?
-                            <TextField
-                                className={classes.TextField, classes.passwordInput}
-                                type="password" variant="outlined" size="small"
-                                name="password" value={chatRoom.password} onChange={handleChange} />
-                            : ""}
-                    </div>
-
-                    <FormControl variant="outlined" className={classes.TextField}>
-                        <InputLabel htmlFor="limitedUserCount">최대 인원 수</InputLabel>
-                        <Select
-                            native
-                            value={chatRoom.limitedUserCount} onChange={handleChange}
-                            name="limitedUserCount" inputProps={{
-                                name: "limitedUserCount",
-                                id: 'limitedUserCount',
-                            }} >
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={30}>30</option>
-                            <option value={40}>40</option>
-                            <option value={50}>50</option>
-                            <option value={60}>60</option>
-                            <option value={70}>70</option>
-                            <option value={80}>80</option>
-                            <option value={90}>90</option>
-                            <option value={100}>100</option>
-                        </Select>
-                    </FormControl>
-
-                    <FormControlLabel
-                        control={
-                            <Switch checked={chatRoom.onlyAuthorized} onChange={handleChange}
-                                name="onlyAuthorized" color="primary" />}
-                        label="회원만 이용 가능" />
-                    <FormControlLabel
-                        control={
-                            <Switch checked={chatRoom.searchable} onChange={handleChange}
-                                name="searchable" color="primary" />}
-                        label="검색 허용" />
-
-                    {/* 이미지 업로드 */}
-                    
-                    <div className={classes.buttons}>
-                        <Button className={classes.button} variant="contained" color="primary" >취소</Button>
-                        <Button className={classes.button} variant="contained" color="primary" type="submit" >저장하기</Button>
-                    </div>
-                    </FormWrapper>
+                    </FormTemplate>
                 </CreateTemplate>
             </Container>
         </ThemeProvider >
@@ -175,23 +172,47 @@ const Container = styled.div`
     flex-direction: column;
 
     justify-content:center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    h1{
+        font-Size: 1.5rem;
+        font-weight: bold;
+        margin:1em 0;
+    }
+`
+
+const CreateTemplate = styled(BoxShapeDiv)`
+    width:70%;
+    height:70%;
+    padding: 3em;
+`
+
+const FormTemplate = styled.form`
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
 `
 
-const CreateTemplate = styled(BoxShapeDiv)` 
+const FormWrapper = styled.div`
     display:flex;
-    width:80%;
-    height:60%;
-    padding: 3em;
-
-    & 
+    width: 100%;
+    height:90%;
 `
 
-const FormWrapper = styled.form`
-    display:flex;
-    flex-direction:column;
-
-    width:50%;
+const InfoFormWrapper = styled.div`
+    width: 40%;
     height: 100%;
+    margin-right:auto;
+`
+
+const CropperWrapper = styled.div`
+    width: 55%;
+    height: 100%;
+`
+
+const ButtonWrapper = styled.div`
+    margin-left: auto;
 `

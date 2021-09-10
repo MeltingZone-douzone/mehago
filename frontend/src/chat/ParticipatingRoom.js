@@ -21,7 +21,6 @@ export default function ParticipatingRoom(){
 
                     return false;
                 }
-                console.log(res.data.data + "qweqweqwe");
                 setParticipatingRoom(res.data.data);
             });
         } catch (e) {
@@ -32,7 +31,6 @@ export default function ParticipatingRoom(){
     useEffect((e) => {
         console.log(searchValue);
     }, [searchValue])
-    //TODO: Search만들기
 
     return (
         <MyChatRoomList>
@@ -57,7 +55,6 @@ export default function ParticipatingRoom(){
                     .map((room)=> {
                         return(
                             <div key={room.no}>
-                            <NavLink to={`/chat/${room.no}`}>
                                 <ChattingRoom 
                                     key={room.no}
                                     no = {room.no}
@@ -73,7 +70,6 @@ export default function ParticipatingRoom(){
                                     lastMessage = { room.lastMessage }
 
                                     />
-                            </NavLink>
                             </div>
                             )
                         })}
