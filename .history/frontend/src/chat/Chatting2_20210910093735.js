@@ -98,7 +98,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
                 setSearchMessageOffset(messageOffset);
             }
         }
-    },[searchMessage, messageList])
+    },[searchMessage,messageList])
 
     useEffect(()=>{
         if(searchMessageOffset[cursor.index-1] === undefined && cursor.lastIndex > cursor.index){
@@ -115,10 +115,12 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
         const fetchPointHeight = scrollHeight * 3/4; // 해당지점에 오면 패치하는 이벤트 발생!
         const scrollTop = Math.abs(e.target.scrollTop);
         const clientHeight = e.target.clientHeight; // 사용자 화면 크기
+
         if(scrollTop + clientHeight >= fetchPointHeight && !isFetching && !noData) {
             fetchItems();
             setIsFetching(true);
         }
+
     }
 
 

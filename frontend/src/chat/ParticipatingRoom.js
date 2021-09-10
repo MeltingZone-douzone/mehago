@@ -55,7 +55,6 @@ export default function ParticipatingRoom(){
                     .map((room)=> {
                         return(
                             <div key={room.no}>
-                            <NavLink to={`/chat/${room.no}`}>
                                 <ChattingRoom 
                                     no = {room.no}
                                     title={room.title}
@@ -67,7 +66,6 @@ export default function ParticipatingRoom(){
                                     tagName = {room.tagName}
                                     thumbnailUrl = {room.thumbnailUrl} 
                                     />
-                            </NavLink>
                             </div>
                             )
                         })}

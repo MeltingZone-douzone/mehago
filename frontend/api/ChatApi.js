@@ -10,9 +10,19 @@ function setAuthHeader() {
     AuthHeader = Object.assign(AuthHeader, { "Authorization": localStorage.get("token") !== null ? `Bearer ` + localStorage.get("token") : "nonmember" });
 }
 
-export function CreateChattingRoom(chattiingRoom) {
+function formDataHeader(){
+    const headers={
+      'Content-Type': 'multipart/form-data',
+      'Authorization': "Bearer "+ localStorage.get("token")
+    }
+  
+    return headers;
+}
+
+
+export function CreateChattingRoom(chatRoom) {
     setAuthHeader();
-    return axios.post("/api/chat/createRoom", chattiingRoom, { headers: AuthHeader })
+    return axios.post("/api/chat/createRoom", chatRoom, { headers: formDataHeader() })
         .then(res => res);
 }
 

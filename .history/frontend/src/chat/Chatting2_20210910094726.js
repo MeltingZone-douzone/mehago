@@ -98,7 +98,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
                 setSearchMessageOffset(messageOffset);
             }
         }
-    },[searchMessage, messageList])
+    },[searchMessage,messageList])
 
     useEffect(()=>{
         if(searchMessageOffset[cursor.index-1] === undefined && cursor.lastIndex > cursor.index){

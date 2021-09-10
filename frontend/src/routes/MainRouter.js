@@ -41,7 +41,6 @@ export default function MainRouter() {
                 alert(res.data.message);
                 history.replace("/account/login");
             }
-            console.log(res.data.data);
             setUserInfo(res.data.data);
         });
     }
@@ -60,6 +59,7 @@ export default function MainRouter() {
                             {/* 로그인(토큰이 존재)을 해야 들어올 수 있는 라우터 => <privateRouter */}
                         <PrivateRouter reloadUser={getUserInfo} authentication={authentication} userInfo={userInfo} path="/profile" component={ProfileSettingsPage} />
                         <Route authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} />
+                        {/* <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} /> */}
                     </Switch>
                 </WebPage>
             </Fragment>

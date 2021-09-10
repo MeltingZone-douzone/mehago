@@ -10,8 +10,6 @@ import Thumbnail from '../components/Thumbnail';
 export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
     const classes = madeStyles();
 
-    console.log(searchKeyword);
-
     const getHighlightedText = ({text=message.message, highlight=searchKeyword}) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
         return  <p className={classes.receivedMessage} name={'chat-message'} no={message.no}> 

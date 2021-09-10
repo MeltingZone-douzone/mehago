@@ -10,8 +10,6 @@ import Thumbnail from '../components/Thumbnail';
 export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
     const classes = madeStyles();
 
-    console.log(searchKeyword);
-
     const getHighlightedText = ({text=message.message, highlight=searchKeyword}) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
         return  <p className={classes.receivedMessage} name={'chat-message'} no={message.no}> 
@@ -29,10 +27,15 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
                 <Grid item xs={1} align="center">
+<<<<<<< HEAD
+                    {!previousMessage || previousMessage.participantNo !== message.participantNo ?
+                        <img src="https://post-phinf.pstatic.net/MjAyMDExMTdfMTcy/MDAxNjA1NTgwNDg0NjMy.RyjcYDkTbdF6nNyVpVO_0akhrYLahMJU5OPR0lD06Log.b8sgKUU2QfqEvdI80uhg5rqfSV0YCaoh-VOUb_x6850g.PNG/img.png?type=w1200" className={"profile"} />
+=======
                     {!nextMessage || nextMessage.participantNo !== message.participantNo ?
                         <div className="profile">
                             <Thumbnail nickname={message.nickname} />
                         </div>
+>>>>>>> 4ce4d7760db1005b2779ca4d2033a711eca17858
                         : ''}
                 </Grid>
                 <Grid item xs={11}>
@@ -67,6 +70,10 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                         :
                     <ListItemText align="left" className={classes.chatContainer, classes.left}
                         primary={
+                            // <Typography className={classes.receivedMessage}>
+                            //     <div no={message.no}></div>
+                            //     {message.message}
+                            // </Typography>
                             <p className={classes.receivedMessage} no={message.no}>
                                 {message.message}
                             </p>

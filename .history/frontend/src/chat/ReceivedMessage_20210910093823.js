@@ -10,8 +10,6 @@ import Thumbnail from '../components/Thumbnail';
 export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
     const classes = madeStyles();
 
-    console.log(searchKeyword);
-
     const getHighlightedText = ({text=message.message, highlight=searchKeyword}) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
         return  <p className={classes.receivedMessage} name={'chat-message'} no={message.no}> 
@@ -67,6 +65,10 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                         :
                     <ListItemText align="left" className={classes.chatContainer, classes.left}
                         primary={
+                            // <Typography className={classes.receivedMessage}>
+                            //     <div no={message.no}></div>
+                            //     {message.message}
+                            // </Typography>
                             <p className={classes.receivedMessage} no={message.no}>
                                 {message.message}
                             </p>

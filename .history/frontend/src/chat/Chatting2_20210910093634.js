@@ -35,11 +35,14 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
             setChangedRows(msgToJson.changedRows);
         });
 
+<<<<<<< HEAD
         socket.on('leave', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             setCurrentParticipants(arrayOfNumbers); // user on/off
         });
+=======
         fetchItems();
+>>>>>>> 4ce4d7760db1005b2779ca4d2033a711eca17858
     }, []);
 
     useEffect(() => {
@@ -77,6 +80,11 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     const fetchItems = async () => {
         await getMessageList(chatRoomNo, offsetNo).then(res => {
             if(res.statusText === 'OK') {
+<<<<<<< HEAD
+                setMessageList(prevState => { 
+                    return _.uniq(_.filter(prevState.concat(res.data.data), item => (Object.keys(item).length !== 0)), 'no');
+                });
+=======
                 if(res.data.result == "success"){
                     if(res.data.data.length < 1) {
                         setNoData(true);
@@ -86,6 +94,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
                     });
                     setIsFetching(false);
                 }
+>>>>>>> 4ce4d7760db1005b2779ca4d2033a711eca17858
             };
         });
     };
@@ -98,7 +107,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
                 setSearchMessageOffset(messageOffset);
             }
         }
-    },[searchMessage, messageList])
+    },[searchMessage,messageList])
 
     useEffect(()=>{
         if(searchMessageOffset[cursor.index-1] === undefined && cursor.lastIndex > cursor.index){
@@ -115,10 +124,12 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
         const fetchPointHeight = scrollHeight * 3/4; // 해당지점에 오면 패치하는 이벤트 발생!
         const scrollTop = Math.abs(e.target.scrollTop);
         const clientHeight = e.target.clientHeight; // 사용자 화면 크기
+
         if(scrollTop + clientHeight >= fetchPointHeight && !isFetching && !noData) {
             fetchItems();
             setIsFetching(true);
         }
+
     }
 
 
