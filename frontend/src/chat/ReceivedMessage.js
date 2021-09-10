@@ -27,7 +27,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
             <Grid container>
                 <Grid item xs={1} align="center">
                     {!previousMessage || previousMessage.participantNo !== message.participantNo ?
-                        <img src="https://image.fmkorea.com/files/attach/new2/20210407/486616/3384152332/3508461211/99b983892094b5c6d2fc3736e15da7d1.jpg" className={"profile"} />
+                        <img src="https://post-phinf.pstatic.net/MjAyMDExMTdfMTcy/MDAxNjA1NTgwNDg0NjMy.RyjcYDkTbdF6nNyVpVO_0akhrYLahMJU5OPR0lD06Log.b8sgKUU2QfqEvdI80uhg5rqfSV0YCaoh-VOUb_x6850g.PNG/img.png?type=w1200" className={"profile"} />
                         : ''}
                 </Grid>
                 <Grid item xs={11}>

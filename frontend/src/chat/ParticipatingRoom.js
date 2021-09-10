@@ -21,7 +21,6 @@ export default function ParticipatingRoom(){
 
                     return false;
                 }
-                console.log(res.data.data + "qweqweqwe");
                 setParticipatingRoom(res.data.data);
             });
         } catch (e) {
@@ -32,7 +31,6 @@ export default function ParticipatingRoom(){
     useEffect((e) => {
         console.log(searchValue);
     }, [searchValue])
-    //TODO: Search만들기
 
     return (
         <MyChatRoomList>

@@ -33,6 +33,13 @@ export function getMessageList(chatRoomNo, offset) {
         .then(res => res);
 }
 
+export function getParticipantsList(chatRoomNo) {
+    console.log(chatRoomNo);
+    setAuthHeader();
+    return axios.get(`/api/chat/participants/${chatRoomNo}`, { headers: AuthHeader})
+        .then(res => res);
+}
+
 export function getMyChatListApi() {
     setAuthHeader();
     return axios.get("/api/chat/participatingRoom", { headers: AuthHeader })

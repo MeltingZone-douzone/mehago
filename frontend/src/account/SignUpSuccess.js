@@ -12,7 +12,7 @@ export default function SignUpSuccess() {
       <div className={"Message"}>
         <h1>회원가입 완료</h1>
         <br/>
-        <FontAwesomeIcon icon={faCheckCircle} className="search" size={'4x'} color={'#34d12c'}/>
+        <FontAwesomeIcon icon={faCheckCircle} className="search" size={'2x'} color={'#34d12c'}/>
         {/* <Route exact path={`${match.path}/login`} component={LoginForm}/> */}
       </div>
     </div>

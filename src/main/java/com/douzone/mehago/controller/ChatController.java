@@ -112,6 +112,16 @@ public class ChatController {
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
 
+    @GetMapping("/participants/{chatRoomNo}")
+    public ResponseEntity<?> getParticipantsList(@PathVariable Long chatRoomNo) {
+        System.out.println(chatRoomNo); 
+        List<Participant> list = participantService.getParticipantsList(chatRoomNo);
+        System.out.println(list);
+        return ResponseEntity.ok().body(
+            list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 참여자가 존재하지 않습니다")
+        );
+    }
+
     @PostMapping("/addTodo")
     public ResponseEntity<?> addTodo(@RequestBody Todo todo) {
         boolean result = false;

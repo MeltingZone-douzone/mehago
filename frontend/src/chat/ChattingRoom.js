@@ -11,7 +11,7 @@ export default function ChattingRoom({
         for (var i = 0; i < tagName.length; i++) {
             tagNames[i] = "#" + tagName[i];
         }
-        return tagNames.join(' ');// TODO: 태그클릭
+        return tagNames.join(' '); 
     }
 
     return (
