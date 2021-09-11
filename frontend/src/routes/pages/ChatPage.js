@@ -21,7 +21,6 @@ export default function ChatPage({ match }) {
                     <Route exact path={match.path} component={ChattingList} />
                     <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} setCurrentParticipants={setCurrentParticipants} />} />
                     <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
-                    <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>
             </div>
         </div>

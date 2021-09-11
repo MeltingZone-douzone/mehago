@@ -43,10 +43,6 @@ public class ChatRoomRepository {
         return sqlSession.selectList("chatroom.getTagName", no);
     }
 
-    public boolean vaildatePassword(ChatRoom chatRoom) {
-        return sqlSession.selectOne("chatroom.vaildatePassword", chatRoom) != null ? true : false;
-    }
-
     public boolean changePassword(ChatRoom chatRoom) {
         return sqlSession.update("chatroom.changePassword", chatRoom) == 1 ? true : false;
     }
@@ -66,5 +62,13 @@ public class ChatRoomRepository {
         map.put("password", password);
         String result = sqlSession.selectOne("chatroom.checkPassword", map);
         return result != null ? true : false;
+    }
+
+    public boolean checkIsDeleted(Long chatRoomNo) {
+        return sqlSession.selectOne("chatroom.checkIsDeleted", chatRoomNo);
+    }
+
+    public boolean deleteChatRoom(Long chatRoomNo) {
+        return sqlSession.update("chatroom.deleteChatRoom", chatRoomNo) == 1 ? true : false;
     }
 }

@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { Button, ThemeProvider, makeStyles } from '@material-ui/core';
 import { theme } from '../assets/styles/material/MaterialTheme';
 
-import { getRoomInfo, vaildatePassword, changePassword, updateChatRoomInfo } from "../../api/ChatApi";
+import { getRoomInfo, vaildatePassword, changePassword, updateChatRoomInfo, deleteChatRoom } from "../../api/ChatApi";
 import Thumbnail from '../components/Thumbnail';
 import BoxShapeDiv from "../assets/styles/BoxShapeDiv";
 import SettingChatForm from "./components/SettingChatForm";
 import UpdateChatImage from "./components/UpdateChatImage";
-import SettingDialog from "./SettingDialog";
+import SettingDialog from "./dialogs/SettingDialog";
+import DeleteDialog from "./dialogs/DeleteDialog";
 
 export default function SettingChatRoom({ match, history }) {
     const chatRoomNo = match.params.no;
@@ -86,6 +87,7 @@ export default function SettingChatRoom({ match, history }) {
     const [password, setPassword] = useState();
     const [newPassword, setNewPassword] = useState();
     const [vaildateNewPassword, setVaildateNewPassword] = useState();
+
     const passwordFunction = {
         open: (e) => {
             e.preventDefault();
@@ -113,10 +115,11 @@ export default function SettingChatRoom({ match, history }) {
                 await changePassword(chatRoomNo, newPassword, chatRoom.owner).then(res => {
                     if (res.data.result === "fail") {
                         window.alert('권한이 없습니다.');
+                        history.goBack();
                         return;
                     } else {
                         setPasswordDialog(false);
-                        window.location.reload();
+                        history.go(0);
 
                     }
                 }
@@ -152,14 +155,36 @@ export default function SettingChatRoom({ match, history }) {
             updateChatRoomInfo(form).then((res) => {
                 if (res.data.result === "fail") {
                     window.alert('권한이 없습니다.');
+                    history.goBack();
                     return;
                 };
-                window.location.reload();
+                window.alert('수정되었습니다. ');
+                history.go(0);
                 return;
             });
         } catch (err) {
             console.error(err);
         }
+    }
+
+    const [deleteDialog, setDeleteDialog] = useState(false);
+    const deleteFunction = {
+        open: () => { setDeleteDialog(true) },
+        close: () => { setDeleteDialog(false) },
+        deleteChatRoom: () => {
+            deleteChatRoom(chatRoom)
+                .then(res => {
+                    if (res.data.result === "fail") {
+                        window.alert('권한이 없습니다.');
+                        history.goBack();
+                        return;
+                    };
+                    window.alert(`${chatRoom.title} 채팅방이 삭제되었습니다.`);
+                    // 먹게 해주세요...
+                    history.push('/chat')
+                    return;
+                })
+        },
     }
 
     const classes = styles();
@@ -189,12 +214,14 @@ export default function SettingChatRoom({ match, history }) {
                             <div className={classes.buttons}>
                                 <Button className={classes.button} variant="outlined" color="primary" type="button" onClick={() => { history.goBack(); }}>취소</Button>
                                 <Button className={classes.button} variant="outlined" color="primary" type="submit" >채팅방 정보 변경하기</Button>
-                                <Button className={classes.button} variant="contained" color="secondary" type="button">채팅방 삭제하기</Button>
+                                <Button className={classes.button} variant="contained" color="secondary" type="button" onClick={deleteFunction.open}>채팅방 삭제하기</Button>
                             </div>
                         </ButtonWrapper>
                     </FormTemplate>
                 </CreateTemplate>
                 <SettingDialog passwordDialog={passwordDialog} classes={classes} passwordFunction={passwordFunction} isCorrectPassword={isCorrectPassword} isWrongPassword={isWrongPassword} password={password} vaildateNewPassword={vaildateNewPassword} />
+                <DeleteDialog deleteDialog={deleteDialog} deleteFunction={deleteFunction} />
+
             </Container>
         </ThemeProvider >
     )

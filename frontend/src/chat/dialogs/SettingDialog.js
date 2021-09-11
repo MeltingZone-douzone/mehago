@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, TextField, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@material-ui/core';
 
-export default function SettingDialog({ passwordDialog, classes, passwordFunction, isCorrectPassword, isWrongPassword, password, vaildateNewPassword }) {
+export default function SettingDialog({ passwordDialog, passwordFunction, isCorrectPassword, isWrongPassword, password, vaildateNewPassword }) {
 
     return (
         <Dialog open={passwordDialog} onClose={passwordFunction.close} aria-labelledby="form-dialog-title">

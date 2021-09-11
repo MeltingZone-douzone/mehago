@@ -6,7 +6,7 @@ import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
 import MsgInput2 from './MsgInput2';
-import Dialogs from './Dialogs';
+import Dialogs from './dialogs/Dialogs';
 
 const socket = io('http://localhost:8888');
 export default function ChatSection({ history, match, setCurrentParticipants }) {
@@ -40,7 +40,6 @@ export default function ChatSection({ history, match, setCurrentParticipants }) 
             if (res.statusText === 'OK') {
                 if (res.data.result == 'fail') {
                     // DB에 데이터가 없으면
-
                     return;
                 }
                 setParticipantObject(res.data.data);

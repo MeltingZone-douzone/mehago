@@ -40,10 +40,6 @@ public class ChatRoomService {
         return chatRoomRepository.getTagname(no);
     }
 
-    public boolean vaildatePassword(ChatRoom chatRoom) {
-        return chatRoomRepository.vaildatePassword(chatRoom);
-    }
-
     public boolean changePassword(ChatRoom chatRoom) {
         return chatRoomRepository.changePassword(chatRoom);
     }
@@ -58,6 +54,14 @@ public class ChatRoomService {
 
     public boolean checkPassword(Long no, String password) {
         return chatRoomRepository.checkPassword(no, password);
+    }
+
+    public boolean checkIsDeleted(Long chatRoomNo) {
+        return chatRoomRepository.checkIsDeleted(chatRoomNo);
+    }
+
+    public boolean deleteChatRoom(Long chatRoomNo) {
+        return chatRoomRepository.deleteChatRoom(chatRoomNo);
     }
 
 }

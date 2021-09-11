@@ -118,7 +118,6 @@ public class ChatController {
     @GetMapping("/participatingRoom")
     public ResponseEntity<?> participatingRoom(@AuthUser Account account) {
         List<Map<String, Object>> participatingRoom = chatRoomService.participatingRoom(account.getNo());
-        getTagName(participatingRoom);
         return ResponseEntity.ok().body(CommonResponse.success(participatingRoom));
     }
 
@@ -181,7 +180,7 @@ public class ChatController {
 
     @PostMapping("/vaildatePassword")
     public ResponseEntity<?> vaildatePassword(@RequestBody ChatRoom chatRoom) {
-        boolean result = chatRoomService.vaildatePassword(chatRoom);
+        boolean result = chatRoomService.checkPassword(chatRoom.getNo(), chatRoom.getPassword());
         return ResponseEntity.ok().body(result);
     }
 
@@ -248,13 +247,28 @@ public class ChatController {
     @PostMapping("/nicknameValidation")
     public ResponseEntity<?> nicknameValidation(@RequestBody Participant participant) {
         boolean checkNicname = participantService.nicknameValidation(participant);
-        if(checkNicname == false){
+        if (checkNicname == false) {
             Long lastReadChatno = participantService.getLastReadChatNo(participant.getChatRoomNo());
             participant.setLastReadChatNo(lastReadChatno);
             participantService.addNonMember(participant);
         }
         return ResponseEntity.ok().body(checkNicname ? "사용중인 닉네임 입니다." : true);
     }
-}
 
-      
+    @Auth
+    @PostMapping("/deleteChatRoom")
+    public ResponseEntity<?> deleteChatRoom(@AuthUser Account auth, @RequestBody ChatRoom chatRoom) {
+        if (auth.getNo() != chatRoom.getOwner()) {
+            return ResponseEntity.ok().body(CommonResponse.fail("권한이 아닙니다."));
+        }
+        boolean result = chatRoomService.deleteChatRoom(chatRoom.getNo());
+        return ResponseEntity.ok()
+                .body(result ? CommonResponse.success(result) : CommonResponse.fail("채팅방 삭제에 실패했습니다."));
+    }
+
+    @GetMapping("/checkIsDeleted")
+    public ResponseEntity<?> checkIsDeleted(String chatRoomNo) {
+        boolean result = chatRoomService.checkIsDeleted(Long.valueOf(chatRoomNo));
+        return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+}

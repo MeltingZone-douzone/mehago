@@ -149,4 +149,9 @@ export function isExistsPasswords(no) {
         .then(res => res);
 }
 
+export function deleteChatRoom(roomObject) {
+    setAuthHeader();
+    return axios.post('/api/chat/deleteChatRoom', roomObject, { headers: AuthHeader }).then(res => res);
+}
+
 
