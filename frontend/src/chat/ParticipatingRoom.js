@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { getMyChatListApi } from '../../api/ChatApi';
+import { getMyChatListApi, getParticipantsList } from '../../api/ChatApi';
 import { NavLink } from 'react-router-dom';
-import ChattingRoom from './ChattingRoom';
+import ParticipatingList from './ParticipatingList';
 
 
 export default function ParticipatingRoom(){
@@ -55,7 +55,7 @@ export default function ParticipatingRoom(){
                     .map((room)=> {
                         return(
                             <div key={room.no}>
-                                <ChattingRoom 
+                                <ParticipatingList 
                                     key={room.no}
                                     no = {room.no}
                                     title={room.title}

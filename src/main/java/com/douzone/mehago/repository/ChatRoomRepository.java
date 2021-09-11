@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.vo.ChatRoom;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
