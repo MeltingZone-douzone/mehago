@@ -15,10 +15,9 @@ export default function ParticipatingRoom(){
     const [searchValue, setSearchValue] = useState('');
     
     useEffect(()=> {
-        try {
+        try {               // TODO: ParticipantingMember는 userInfo에서 뽑아오고 이건 spring에서 AuthUser에서 뽑아오니까 통일시켜야함
             getMyChatListApi().then(res => {
                 if(res.data.result == "fail"){
-
                     return false;
                 }
                 setParticipatingRoom(res.data.data);

@@ -66,7 +66,7 @@
               FROM
                   chat_room_has_tag
               where
-                  tag_no = (select
+                  tag_no in (select
                               no
                           from
                               tag

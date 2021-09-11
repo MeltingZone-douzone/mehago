@@ -12,7 +12,7 @@ import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
 
-export default function ChatNavbar({currentParticipants}){
+export default function ChatNavbar({currentParticipants, userInfo, participants}){
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
 
@@ -45,7 +45,7 @@ export default function ChatNavbar({currentParticipants}){
             </div>
             <div className={"ChatList"}>
                 {chatList? <ParticipatingRoom />: null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} />: null}
+                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
             </div>
             
         </div>

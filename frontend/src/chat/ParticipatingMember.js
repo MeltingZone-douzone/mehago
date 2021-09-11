@@ -10,37 +10,18 @@ import Avatar from '@material-ui/core/Avatar';
 import styled from 'styled-components';
 import ParticipantsStatus from '@material-ui/icons/FiberManualRecord';
 
-import { getParticipantsList } from '../../api/ChatApi';
 import '../assets/sass/chat/ChatList.scss';
 
-export default function ParticipatingMember({currentParticipants}){
-    const [participants, setParticipants] = useState([]); // 온라인 true/false
+export default function ParticipatingMember({currentParticipants, userInfo, participants}){
     const [searchNickname, setSearchNickname] = useState('');
-    /* 
-        participantingRoom 에서 room클릭하면 room no 받아서 getParicipants에 넣어야함
-    */
-    useEffect(() => {
-        try {
-            getParticipantsList(24).then(res => {
-                if(res.data.result == "fail") {
-                    console.log('fail');
-                    return;
-                }
-                console.log(res.data.data);
-                setParticipants(res.data.data);
-            })
-        } catch (error) {
-            console.log(error);
-        }
-    },[]);
 
     console.log(currentParticipants);
     console.log(participants); 
 
     const showParticipantsList = (participants, currentParticipants) => {
-        let b;
+        let onlineParticipants;
         participants.filter(participant => { 
-            b = currentParticipants.filter(currentParticipant => 
+            onlineParticipants = currentParticipants.filter(currentParticipant => 
                 participant.no === currentParticipant ? participant.no : "not"
             )
         })
@@ -53,10 +34,8 @@ export default function ParticipatingMember({currentParticipants}){
                     <Avatar alt={participant.chatNickname} src={participant.chatNickname} />
                 </ListItemIcon>
                 <ListItemText primary={participant.chatNickname}>{participant.chatNickname}</ListItemText>
-                {/* <ListItemText secondary="online" align="right"></ListItemText> */}
-                <ListItemText align="right"/> 
                 {
-                    b.includes(participant.no)?
+                    onlineParticipants.includes(participant.no)?
                     <ParticipantsStatus style={{fontSize:'12px', color: '#34d12c'}}/>
                     :
                     <ParticipantsStatus style={{fontSize:'12px', color: '#0000'}}/>
@@ -70,11 +49,11 @@ export default function ParticipatingMember({currentParticipants}){
         <ParticipatingMemberList>
             <Grid className={"borderRight500"}>
                     <List>
-                        <ListItem key="RemySharp">
+                        <ListItem key={userInfo.nickname}>
                             <ListItemIcon>
-                            <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
+                            <Avatar alt={userInfo.nickname} src={userInfo.nickname} />
                             </ListItemIcon>
-                            <ListItemText primary="John Wick"></ListItemText>
+                            <ListItemText primary={userInfo.nickname}></ListItemText>
                         </ListItem>
                     </List>
                     <Divider />
@@ -89,30 +68,7 @@ export default function ParticipatingMember({currentParticipants}){
                     <Divider />
                     {/* 접속자 리스트 */}
                     <List>
-                        {/* 
-                            전체접속자 뽑고 맨위에 소켓접속자, 
-
-                        */}
-                        { 
-                            showParticipantsList(participants, currentParticipants)
-                            
-                //             participants && participants
-                //             .filter(participants => participants.chatNickname.indexOf(searchNickname) != -1)
-                //             .map(participant => 
-                //                 <ListItem button key={participant.no}>
-                //                     <ListItemIcon>
-                //                         <Avatar alt={participant.chatNickname} src={participant.chatNickname} />
-                //                     </ListItemIcon>
-                //                     <ListItemText primary={participant.chatNickname}>{participant.chatNickname}</ListItemText>
-                //                     {/* <ListItemText secondary="online" align="right"></ListItemText> */}
-                //                     <ListItemText align="right"/> {b.includes(participant.no)?
-                // <ParticipantsStatus style={{fontSize:'12px', color: '#34d12c'}}/>
-                // :
-                // <ParticipantsStatus style={{fontSize:'12px', color: '#34d12c'}}/>
-                //                     }
-                //                 </ListItem>
-                //             )
-                        }
+                        { showParticipantsList(participants, currentParticipants) }
                     </List>
                 </Grid>
             </ParticipatingMemberList>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppBar from '@material-ui/core/AppBar';
@@ -14,8 +14,8 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 
-export default function ChatHeader({messageFunction, roomObject, cursor, }) {
-  const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
+export default function ChatHeader({messageFunction, roomObject, cursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
+  // const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
   const [hiddenSearchResult, setHiddenSearchResult] = useState(true);
 //   const [searchKeyword, setSearchKeyword] = useState('');
 
@@ -27,10 +27,10 @@ export default function ChatHeader({messageFunction, roomObject, cursor, }) {
       if(e.target.value === '') {
         handleSetSearch();
         setHiddenSearchResult(true);
+        setSearchMessage(''); // SearchInput을 끄고 message를 ''초기화해서 ReceivedMessage, SendMessage에서 뿌릴때 no ? 삼항연산식에서 searchMessage가 존재하면 하이라이트, 없으면 일반문자로 출력
         return;
       }
   }
-  
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
@@ -56,7 +56,7 @@ export default function ChatHeader({messageFunction, roomObject, cursor, }) {
                 </IconButton>
             }
             <Typography className={classes.title} variant="h6" noWrap>
-              {roomObject.title}
+            {roomObject.title}
             </Typography>
             {
                 hiddenSearchInput ?
@@ -76,7 +76,7 @@ export default function ChatHeader({messageFunction, roomObject, cursor, }) {
                         <SearchIcon />
                     </div>
                     <InputBase
-                        placeholder="Search…"
+                        placeholder="내용 검색"
                         autoComplete="off"
                         autoFocus={true}
                         classes={{
@@ -87,7 +87,7 @@ export default function ChatHeader({messageFunction, roomObject, cursor, }) {
                         onBlur={(e) => handleBlur(e)}
                         onChange={messageFunction.onChangeSearchKeyword}
                         onKeyPress={(e) => {
-                          if(e.target.value !== '') { 
+                          if(e.key == 'Enter') { 
                             messageFunction.onSearchKeyPress(e); 
                             hiddenSearchResult? handleKeyPress() : null
                           }}

@@ -9,14 +9,18 @@ import MsgInput2 from './MsgInput2';
 import Dialogs from './Dialogs';
 
 const socket = io('http://localhost:8888');
-export default function ChatSection({history, match, setCurrentParticipants}) {
+export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants}) {
     const chatRoomNo = match.params.no;
+    const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
     const [searchMessage, setSearchMessage] = useState([]);
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
+    const [prevSearchKeyword, setPrevSearchKeyword] = useState('');
     const [cursor, setCursor] = useState({firstIndex: 0, index: 0, lastIndex: 0});
+
+    const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
 
     const [joinSuccess, setJoinSuccess] = useState(false);
 
@@ -29,7 +33,6 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
             if (res.statusText === 'OK') {
                 if (res.data.result == 'fail') {
                     //데이터가 없거나 실패했을때 들어옴..
-
                     return;
                 }
                 setRoomObject(res.data.data);
@@ -40,29 +43,65 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
             if (res.statusText === 'OK') {
                 if (res.data.result == 'fail') {
                     // DB에 데이터가 없으면
-
                     return;
                 }
                 setParticipantObject(res.data.data);
             }
         });
-        setJoinSuccess(true);
-    }, []);
 
-    // useEffect(() => {
-    //     return() =>{
-    //         console.log("unmount");
-    //     }
-    // }, []);
+        handleParticipants(chatRoomNo); // 방의 participants 뽑아옴
+        setJoinSuccess(true);
+        
+        if(prevChatRoomNo != chatRoomNo){
+            console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
+            socket.emit('leave', roomObject.title);
+            setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
+        }
+    }, [chatRoomNo]);
+
+    useEffect(()=>{
+        console.log('## chatRoomNo: ', chatRoomNo);
+        socket.on('join', (msgToJson) => {
+            const arrayOfNumbers = msgToJson.chatMember.map(Number);
+            console.log("join socket : ", chatRoomNo, arrayOfNumbers);
+            handleCurrentParticipants(arrayOfNumbers);
+        });
+
+        socket.on('leave', (msgToJson) => {
+            const arrayOfNumbers = msgToJson.chatMember.map(Number);
+            console.log("leave socket : "); // FIXME: 이건왜안찍힘 
+            handleCurrentParticipants(arrayOfNumbers);
+        });
+        
+        socket.on('disconnect', (msgToJson) => {
+            const arrayOfNumbers = msgToJson.chatMember.map(Number);
+            console.log("disconnect socket : "); // FIXME: 이건왜안찍힘 
+            handleCurrentParticipants(arrayOfNumbers);
+        });
+        socket.on('disconnected', (msgToJson) => {
+            const arrayOfNumbers = msgToJson.chatMember.map(Number);
+            console.log("disconnect socket : "); // FIXME: 이건왜안찍힘 
+            handleCurrentParticipants(arrayOfNumbers);
+        });
+    },[chatRoomNo])
+
+    console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
+    useEffect(() => {
+        return() =>{
+            console.log("unmount");
+        }
+    }, []);
 
     useEffect(async () => {
         if (joinSuccess) {
+            console.log('joinSuccess');
             await socket.emit('join', roomObject, participantObject);
             await socket.emit('participant:join:updateRead');
+            setJoinSuccess(false);
         }
     }, [joinSuccess]);
 
-    const messageFunction = { // 헤더 search도 넣을꺼라서 이름 바꾸기
+    const messageFunction = { // FIXME: Header의 search도 넣을꺼라서 이름 바꾸기
         onChangeMessage: (e) => {
             const { value } = e.target;
             setMessage(value);
@@ -79,9 +118,14 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
             setSearchKeyword(e.target.value);
         },
         onSearchKeyPress: (e) => {
-            if (e.key == 'Enter') {
-                getSearchMessage(searchKeyword).then(res => {
-                    if(res.statusText === 'OK') {
+            if (e.target.value !== '') {
+                if(prevSearchKeyword === searchKeyword) {
+                    messageFunction.moveSearchResult(e, "right")
+                    return;
+                }
+                getSearchMessage(chatRoomNo, searchKeyword).then(res => {
+                    if(res.data.result === 'success') {
+                        console.log(res);
                         setSearchMessage([
                         ...res.data.data,
                         searchKeyword]);
@@ -90,11 +134,16 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
                             index: 1,
                             lastIndex: res.data.data.length
                         });
-                    };
+                        setPrevSearchKeyword(searchKeyword)
+                    } else {
+                        console.log(res.data.message);         // TODO: 검색결과가 없습니다.
+                    }
                 });
+            } else {
+                console.log("검색어를 한글자 이상 입력해주세요"); // TODO: 뿌리기?
             }
         },
-        moveSearchResult: (e, direction) => { // TODO: 마지막요소이면  '마지막 요소입니다'
+        moveSearchResult: (e, direction) => {                  // TODO: 마지막요소이면  '마지막 요소입니다'
                 if(direction === "left") {
                     if(cursor.index - 1 >= cursor.firstIndex) {
                         setCursor({...cursor, index: cursor.index - 1 });
@@ -102,7 +151,6 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
                     }
                 } else {
                     if(cursor.index < cursor.lastIndex) {
-                        // FIXME: 처음값인경우 (length 초과로 들어오면 막기)
                         setCursor({...cursor, index: cursor.index + 1 });
                         return;
                     }
@@ -111,8 +159,9 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
         leaveRoom: (e) => {
             // socket.emit('leave', data); // roomName
             console.log('leaveRoom()호출 in ChatSection');
-            socket.emit('leave', roomObject.roomName); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
+            socket.emit('leave', roomObject.title); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
             history.push('/chat') // TODO: 참여자 조회하는것도 나가야함 Nav에서
+                                    // TODO: 참여자 삭제
         }
     }
 
@@ -163,14 +212,15 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} />
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage}/>
                 <Chatting2 socket={socket} 
                     messageFunction={messageFunction} 
                     participantObject={participantObject} 
                     roomObject={roomObject} 
                     chatRoomNo={chatRoomNo} 
                     searchMessage={searchMessage}
-                    setCurrentParticipants={setCurrentParticipants} 
+                    // setCurrentParticipants={setCurrentParticipants} 
+                    hiddenSearchInput={hiddenSearchInput}
                     cursor={cursor} />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
                 <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />

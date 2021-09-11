@@ -7,11 +7,8 @@ import moment from 'moment';
 import '../assets/sass/chat/ChatList.scss';
 import Thumbnail from '../components/Thumbnail';
 
-export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
+export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword}) {
     const classes = madeStyles();
-
-    console.log(searchKeyword);
-
     const getHighlightedText = ({text=message.message, highlight=searchKeyword}) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
         return  <p className={classes.receivedMessage} name={'chat-message'} no={message.no}> 
@@ -31,7 +28,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                 <Grid item xs={1} align="center">
                     {!nextMessage || nextMessage.participantNo !== message.participantNo ?
                         <div className="profile">
-                            <Thumbnail nickname={message.nickname} />
+                            {/* <Thumbnail nickname={message.nickname} /> */}
                         </div>
                         : ''}
                 </Grid>

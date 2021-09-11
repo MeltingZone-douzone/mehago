@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 import React from 'react';
 
-export default function SendMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
+export default function SendMessage({ nextMessage, previousMessage, message, no, searchKeyword, hiddenSearchInput }) {
     const classes = madeStyles();
 
     const getHighlightedText = ({text=message.message, highlight=searchKeyword}) => {

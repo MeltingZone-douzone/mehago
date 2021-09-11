@@ -20,8 +20,6 @@ export default function ChatList(){
             const url = `/api/chat/chatList`;
             axios.post(url, {headers:{'Context-Type': 'application/json'}})
                 .then(res => {
-                    console.log("asdasdad");
-                    console.log(res.data);
                     setRooms(res.data);
             });
 
@@ -40,12 +38,12 @@ export default function ChatList(){
                         setJoinRooms(res.data.data);
                         setIsSearched(true);
                         setNoResult(false);
-                        setSearchValue({keyword: ""})
+                        // setSearchValue({keyword: ""})
                     } else {
                         console.log(res.data.message); 
-                        setNoResult(res.data.message);
+                        setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
                         setIsSearched(false);
-                        setSearchValue({keyword: ""})
+                        // setSearchValue({keyword: ""})
                     }
             });
         } catch (e) {
