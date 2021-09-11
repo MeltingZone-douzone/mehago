@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.douzone.mehago.repository.ChatRoomRepository;
 import com.douzone.mehago.vo.ChatRoom;
+import com.douzone.mehago.vo.Participant;
 
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,7 @@ public class ChatRoomService {
     public boolean checkPassword(Long no, String password) {
         return chatRoomRepository.checkPassword(no,password);
     }
+
 
    
 

@@ -8,27 +8,21 @@ import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 import ReactModal from "react-modal";
 import '../assets/sass/chat/ChatProfile.scss';
 import '../assets/sass/chat/modal.scss';
-import {isExistsPasswords, checkPassword} from '../../api/ChatApi';
+import {isExistsPasswords, checkPassword, nicknameValidation} from '../../api/ChatApi';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import { faFileExcel } from '@fortawesome/free-solid-svg-icons';
 ReactModal.setAppElement('body'); 
 
 export default function ChattingRoom({
     key, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, ketword, participantCount, lastMessage, history}) {
     const classes = materialStyles();
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [nicknameModalOpen, setNicknameModalOpen] = useState(false);
     const [isExistsPassword, setIsExistsPassword] = useState(false);
-    const [password, setPassword] = useState({password:""});
+    const [password, setPassword] = useState("");
     const [account, setAccount] = useState(true);
     const [joinValidationRoom , setJoinValidationRoom] = useState("");
-
-    const tagNames = () => {
-        var tagNames = [];
-        for (var i = 0; i < tagName.length; i++) {
-            tagNames[i] = "#" + tagName[i];
-        }
-        return tagNames.join(' '); 
-    }
+    const [nickname, setNickname ] = useState({nickname:""})
+    const [validateNickname, setValidateNickname] = useState("");
 
     const check = (no) => {
         try {
@@ -56,6 +50,30 @@ export default function ChattingRoom({
             console.log(err);
         }
 
+    }
+    const checkNickname = (no) => {
+        console.log(nickname, no);
+        try {
+            nicknameValidation(no, nickname).then((res) => {
+                // console.log(res.data);
+                setValidateNickname(res.data);
+                setNickname({nickname:""});
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    function checkJoin(no){
+        if(account === false && joinValidationRoom === "비밀번호가 틀렸습니다."){
+            joinValidation(`${no}`)
+        } else if(account === false && joinValidationRoom === true){
+            joinValidation(`${no}`) ,setModalIsOpen(false), setNicknameModalOpen(true)
+        } else if(account === true && joinValidationRoom === true){
+            joinValidation(`${no}`) 
+        } else if(account === true && joinValidationRoom === "비밀번호가 틀렸습니다."){
+            joinValidation(`${no}`)
+        }
     }
 
     function timeForToday(lastMessage) {
@@ -132,6 +150,7 @@ export default function ChattingRoom({
                                     className={"isExistsPassword"}
                                     label="비공개 방입니다."
                                     value={password.password}
+                                    type="password"
                                     onChange = {(e) => { setPassword(e.target.value)}} >
                                 </TextField>
                             </ListItemText>
@@ -141,8 +160,49 @@ export default function ChattingRoom({
                         {
                             joinValidationRoom ? <p>{joinValidationRoom}</p> : null
                         }
-                        <Button className={"joinButton"} onClick ={() => {joinValidation(`${no}`)}} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                        {/* 비회원은 nickname 받는 modal 띄움 */}
+                        {/* { checkJoin() } */}
+                        
+                        <Button className={"joinButton"} onClick ={() => {checkJoin(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                        
                 </Modal>
+                <Modal
+                            className={"modal"}
+                            isOpen={nicknameModalOpen}
+                            onRequestClose={ () => setNicknameModalOpen(false) }
+                            shouldCloseOnOverlayClick={ true }
+                            contentLabel="채팅방">
+                            <div className={"top"}>
+                                <Button className={classes.closed} variant="contained" onClick={ () => setNicknameModalOpen(false) }><CancelPresentationIcon /></Button>
+                                <Avatar className={classes.large} alt="프로필 사진" src={thumbnailUrl} />
+                            </div>
+                            <ListItemText>
+                                <h1>사용할 닉네임을 설정해 주세요.</h1>
+                                <TextField 
+                                    label="닉네임"
+                                    value={nickname.nickname}
+                                    onChange = {(e) => { setNickname(e.target.value)}}
+                                >
+                                </TextField>
+                                {
+                                    validateNickname ? <p>{validateNickname}</p> : <p>{validateNickname}</p>
+                                }
+                               
+                            </ListItemText>
+                                {/* { checkJoin() } */}
+                                {
+                                    validateNickname ?
+                                    <Link to={`/chat/${no}`}>
+                                        <Button className={"joinButton"} onClick ={() => {checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                                    </Link>
+                                    :
+                                    <div>
+                                        <p>{validateNickname}</p>
+                                        <Button className={"joinButton"} onClick ={() => {checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                                    </div>
+                                }
+                            
+                        </Modal>
             </List>
         </div>
     )

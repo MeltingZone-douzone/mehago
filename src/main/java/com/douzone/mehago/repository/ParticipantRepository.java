@@ -48,4 +48,17 @@ public class ParticipantRepository {
         return sqlSession.selectList("participant.getParticipantsList", chatRoomNo);
     }
 
+    public boolean nicknameValidation(Participant participant) {
+        String result = sqlSession.selectOne("participant.nicknameValidation", participant);
+        return result != null ? true : false;
+    }
+
+    public void addNonMember(Participant participant) {
+        sqlSession.insert("participant.addNonMember", participant);
+    }
+
+    public Long getLastReadChatNo(Long chatRoomNo) {
+        return sqlSession.selectOne("participant.getLastReadChatNo", chatRoomNo);
+    }
+
 }

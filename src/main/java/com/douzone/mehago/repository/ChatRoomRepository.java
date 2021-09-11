@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.vo.ChatRoom;
+import com.douzone.mehago.vo.Participant;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import org.apache.ibatis.session.SqlSession;
@@ -56,4 +57,6 @@ public class ChatRoomRepository {
         String result = sqlSession.selectOne("chatroom.checkPassword", map);
         return result != null ? true : false ;
     }
+
+    
 }

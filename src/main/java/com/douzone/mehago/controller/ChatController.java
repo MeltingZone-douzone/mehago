@@ -91,7 +91,6 @@ public class ChatController {
     @Auth
     @GetMapping("/getMessageList/{chatRoomNo}")
     public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset) {
-        System.out.println(offset);
         List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset));
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
@@ -168,9 +167,7 @@ public class ChatController {
     @Auth
     @GetMapping("/getSearchMessage")
     public ResponseEntity<?> getSearchMessage(String searchKeyword) {
-        System.out.println(searchKeyword);
         List<Long> messageNo = messageService.getSearchMessage(searchKeyword);
-        System.out.println(messageNo);
         return ResponseEntity.ok().body(messageNo != null ? CommonResponse.success(messageNo) : "검색결과가 없습니다."); // 채팅방에
                                                                                                                 // 없음
     }
@@ -190,8 +187,18 @@ public class ChatController {
     }
 
     @PostMapping("checkPassword/{no}")
-    public ResponseEntity<?> chatRoomNondisclosure(@PathVariable Long no,  String password) {
-        boolean checkPassword = chatRoomService.checkPassword(no, password);
+    public ResponseEntity<?> checkPassword(@PathVariable Long no, @RequestBody Account account) {
+        boolean checkPassword = chatRoomService.checkPassword(no, account.getPassword());
         return ResponseEntity.ok().body(checkPassword == true ? (checkPassword) : "비밀번호가 틀렸습니다.");
+    }
+    @PostMapping("/nicknameValidation")
+    public ResponseEntity<?> nicknameValidation(@RequestBody Participant participant) {
+        boolean checkNicname = participantService.nicknameValidation(participant);
+        if(checkNicname == false){
+            Long lastReadChatno = participantService.getLastReadChatNo(participant.getChatRoomNo());
+            participant.setLastReadChatNo(lastReadChatno);
+            participantService.addNonMember(participant);
+        }
+        return ResponseEntity.ok().body(checkNicname ? "사용중인 닉네임 입니다." : true);
     }
 }

@@ -65,4 +65,17 @@ public class ParticipantService {
         return participantRepository.getParticipantsList(chatRoomNo);
     }
 
+    public boolean nicknameValidation(Participant participant) {
+        return participantRepository.nicknameValidation(participant);
+    }
+
+
+    public void addNonMember(Participant participant) {
+        participantRepository.addNonMember(participant);
+    }
+
+
+    public Long getLastReadChatNo(Long chatRoomNo) {
+        return participantRepository.getLastReadChatNo(chatRoomNo);
+    }
 }

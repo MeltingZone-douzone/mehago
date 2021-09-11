@@ -90,6 +90,15 @@ export function isExistsPasswords(no){
 }
 
 export function checkPassword(no, password) {
-    return axios.post(`/api/chat/checkPassword/${no}`, password , {headers:{'Context-Type': 'application/json'}})
+    const passwordObject = { password };
+    return axios.post(`/api/chat/checkPassword/${no}`, passwordObject , { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function nicknameValidation(chatRoomNo, chatNickname) {
+    console.log(chatRoomNo, chatNickname);
+    const nicknameObject = {chatRoomNo, chatNickname };
+    console.log(nicknameObject);
+    return axios.post(`/api/chat/nicknameValidation`, nicknameObject , { headers: AuthHeader })
         .then(res => res);
 }
