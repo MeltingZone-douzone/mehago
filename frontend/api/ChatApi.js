@@ -44,6 +44,13 @@ export function getMessageList(chatRoomNo, offset) {
         .then(res => res);
 }
 
+export function getParticipantsList(chatRoomNo) {
+    console.log(chatRoomNo);
+    setAuthHeader();
+    return axios.get(`/api/chat/participants/${chatRoomNo}`, { headers: AuthHeader })
+        .then(res => res);
+}
+
 export function getMyChatListApi() {
     setAuthHeader();
     return axios.get("/api/chat/participatingRoom", { headers: AuthHeader })
@@ -100,12 +107,18 @@ export function getSearchMessage(searchKeyword) {
         .then(res => res);
 }
 
+// 겹치는거 정리해야 해
 export function vaildatePassword(chatRoomNo, password) {
     const roomObject = {
         no: chatRoomNo,
         password: password
     }
     return axios.post(`/api/chat/vaildatePassword`, roomObject, { headers: AuthHeader }).then(res => res);
+}
+
+export function checkPassword(no, password) {
+    return axios.post(`/api/chat/checkPassword/${no}`, password, { headers: { 'Context-Type': 'application/json' } })
+        .then(res => res);
 }
 
 export function updateChatRoomInfo(roomObject) {
@@ -121,3 +134,10 @@ export function changePassword(chatRoomNo, password, owner) {
     }
     return axios.post('/api/chat/changePassword', roomObject, { headers: AuthHeader }).then(res => res);
 }
+export function isExistsPasswords(no) {
+    setAuthHeader();
+    return axios.get(`/api/chat/isExistsPassword/${no}`, { headers: AuthHeader })
+        .then(res => res);
+}
+
+

@@ -1,5 +1,6 @@
 package com.douzone.mehago.repository;
 
+import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.vo.Message;
@@ -43,8 +44,8 @@ public class ParticipantRepository {
         return sqlSession.update("participant.addNotReadCount", message) == 1 ? true : false;
     }
 
-    public Long getChatMember(Long chatRoomNo) {
-        return sqlSession.selectOne("participant.getChatMember", chatRoomNo);
+    public List<Participant> getParticipantsList(Long chatRoomNo) {
+        return sqlSession.selectList("participant.getParticipantsList", chatRoomNo);
     }
 
 }

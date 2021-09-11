@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -32,6 +30,7 @@ export default function ChatHeader({ messageFunction, roomObject, cursor }) {
       return;
     }
   }
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
@@ -42,6 +41,7 @@ export default function ChatHeader({ messageFunction, roomObject, cursor }) {
                 edge="start"
                 className={classes.backButton}
                 color="inherit"
+                onClick={() => messageFunction.leaveRoom()}
               >
                 <ArrowBackIcon />
               </IconButton>
@@ -58,7 +58,6 @@ export default function ChatHeader({ messageFunction, roomObject, cursor }) {
           <Typography className={classes.title} variant="h6" noWrap>
             {roomObject.title}
           </Typography>
-          <Link to={`/chat/setting/${roomObject.no}`}><button > 설정 버튼 </button></Link>
           {
             hiddenSearchInput ?
 

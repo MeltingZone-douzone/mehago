@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import '../assets/sass/chat/Chat.scss';
 import { colors } from '../assets/styles/properties/Colors';
@@ -11,7 +11,8 @@ import HomeIcon from '@material-ui/icons/Home';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar(){
+
+export default function ChatNavbar({currentParticipants}){
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
 
@@ -44,7 +45,7 @@ export default function ChatNavbar(){
             </div>
             <div className={"ChatList"}>
                 {chatList? <ParticipatingRoom />: null}
-                {chatMember? <ParticipatingMember />: null}
+                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} />: null}
             </div>
             
         </div>

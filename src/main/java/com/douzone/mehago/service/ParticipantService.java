@@ -1,6 +1,7 @@
 package com.douzone.mehago.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.repository.MessageRepository;
@@ -62,8 +63,8 @@ public class ParticipantService {
         return result;
     }
 
-    public Long getChatMember(Long chatRoomNo) {
-        return participantRepository.getChatMember(chatRoomNo);
+    public List<Participant> getParticipantsList(Long chatRoomNo) {
+        return participantRepository.getParticipantsList(chatRoomNo);
     }
 
 }
