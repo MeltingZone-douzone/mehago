@@ -3,19 +3,57 @@ import styled from 'styled-components';
 import '../assets/sass/chat/Chat.scss';
 import { colors } from '../assets/styles/properties/Colors';
 import { Link } from 'react-router-dom';
-
+import { getMyChatListApi, joinFavoriteRoom , favoriteRoomList} from '../../api/ChatApi';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import HomeIcon from '@material-ui/icons/Home';
 
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
+import { Avatar } from '@material-ui/core';
 
 
 export default function ChatNavbar({currentParticipants}){
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
+    const [participatingRoom, setParticipatingRoom] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
+    const [favoriteRoomThumbnail, setFavoriteRoomThumbnail] = useState([]);
+    
+    useEffect(()=> {
+        try {
+            getMyChatListApi().then(res => {
+                if(res.data.result == "fail"){
+                    return false;
+                }
+                // console.log(res.data.data);
+                setParticipatingRoom(res.data.data);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    },[]);
 
+    useEffect(()=> {
+        try {
+            favoriteRoomList().then(res => {
+                console.log(res.data.thumbnailUrl);
+                setFavoriteRoomThumbnail(res.data);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    },[favoriteRoom]);
+
+    const favoriteRoom = (no) => {
+        try {
+            joinFavoriteRoom(no).then((res) => {
+                console.log(res.data);
+            });
+        } catch (error) {
+            
+        }
+    } 
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
@@ -36,15 +74,17 @@ export default function ChatNavbar({currentParticipants}){
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>
                 <div className={"FavoriteNav"}>
-                    <NaviButton>즐겨찾기</NaviButton>
-                    <NaviButton>이미지</NaviButton>
-                    <NaviButton>버튼들</NaviButton>
-                    <NaviButton>넣으면</NaviButton>
-                    <NaviButton>될듯</NaviButton>
+                    {
+                        favoriteRoomThumbnail && favoriteRoomThumbnail.map((favorite) =>{
+                            return(
+                                <NaviButton><Avatar alt="프로필 사진" src = {favorite.thumbnailUrl} /></NaviButton>
+                            )
+                        })
+                    }
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom />: null}
+                {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} favoriteRoom={favoriteRoom}/>: null}
                 {chatMember? <ParticipatingMember currentParticipants={currentParticipants} />: null}
             </div>
             

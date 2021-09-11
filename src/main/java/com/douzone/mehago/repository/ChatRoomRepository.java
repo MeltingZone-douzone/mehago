@@ -58,5 +58,9 @@ public class ChatRoomRepository {
         return result != null ? true : false ;
     }
 
+    public List<ChatRoom> favoriteRoomList(Long no) {
+        return sqlSession.selectList("chatroom.favoriteRoomList", no);
+    }
+
     
 }

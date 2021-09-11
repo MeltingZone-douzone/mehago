@@ -18,9 +18,9 @@ export default function ChattingRoom({
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [nicknameModalOpen, setNicknameModalOpen] = useState(false);
     const [isExistsPassword, setIsExistsPassword] = useState(false);
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState({password:""});
     const [account, setAccount] = useState(true);
-    const [joinValidationRoom , setJoinValidationRoom] = useState("");
+    const [joinValidationRoom , setJoinValidationRoom] = useState(true);
     const [nickname, setNickname ] = useState({nickname:""})
     const [validateNickname, setValidateNickname] = useState("");
 
@@ -64,17 +64,17 @@ export default function ChattingRoom({
         }
     }
 
-    function checkJoin(no){
-        if(account === false && joinValidationRoom === "비밀번호가 틀렸습니다."){
-            joinValidation(`${no}`)
-        } else if(account === false && joinValidationRoom === true){
-            joinValidation(`${no}`) ,setModalIsOpen(false), setNicknameModalOpen(true)
-        } else if(account === true && joinValidationRoom === true){
-            joinValidation(`${no}`) 
-        } else if(account === true && joinValidationRoom === "비밀번호가 틀렸습니다."){
-            joinValidation(`${no}`)
-        }
-    }
+    // function checkJoin(){
+    //     if(account === false && joinValidationRoom === "비밀번호가 틀렸습니다."){
+    //         joinValidation(`${no}`)
+    //     } else if(account === false && joinValidationRoom === true){
+    //         joinValidation(`${no}`) ,setModalIsOpen(false), setNicknameModalOpen(true)
+    //     } else if(account === true && joinValidationRoom === true){
+    //         joinValidation(`${no}`) 
+    //     } else if(account === true && joinValidationRoom === "비밀번호가 틀렸습니다."){
+    //         joinValidation(`${no}`)
+    //     }
+    // }
 
     function timeForToday(lastMessage) {
         const today = new Date();
@@ -107,7 +107,7 @@ export default function ChattingRoom({
                     <ListItemText className={"item2"} primary={title}></ListItemText>
                     <ListItemText className={"item3"} primary={"참여중: " + participantCount}></ListItemText>
                     <ListItemText className={"item4"} primary={timeForToday(lastMessage)}></ListItemText>
-                    { tagName.map((tag, index)=> {
+                    {/* { tagName.map((tag, index)=> {
                                     return(
                                         <Chip
                                         icon={<LocalOfferIcon />}
@@ -115,7 +115,7 @@ export default function ChattingRoom({
                                         label={tag}
                                         />
                                     )}) 
-                                }
+                                } */}
                 </ListItem>
                 <Modal 
                     className={"modal"}
@@ -160,11 +160,15 @@ export default function ChattingRoom({
                         {
                             joinValidationRoom ? <p>{joinValidationRoom}</p> : null
                         }
-                        {/* 비회원은 nickname 받는 modal 띄움 */}
-                        {/* { checkJoin() } */}
-                        
-                        <Button className={"joinButton"} onClick ={() => {checkJoin(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
-                        
+                        {
+                        account ?
+                        <Link to={`/chat/${no}`}>
+                            <Button className={"joinButton"} onClick ={() => {joinValidation(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                        </Link>
+                            :
+                        <Button className={"joinButton"} onClick ={() => {joinValidation(`${no}`), setModalIsOpen(false), setNicknameModalOpen(true) }}  variant="contained" color="primary" disableElevation>방입장하기</Button>
+                         
+                        }
                 </Modal>
                 <Modal
                             className={"modal"}

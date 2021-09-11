@@ -3,41 +3,18 @@ import styled from 'styled-components';
 import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { getMyChatListApi, getParticipantsList } from '../../api/ChatApi';
 import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
 
-export default function ParticipatingRoom(){
+export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, favoriteRoom}){
     const classes = styles();
-
-    const [participatingRoom, setParticipatingRoom] = useState([]);
-    const [searchValue, setSearchValue] = useState('');
-    
-    useEffect(()=> {
-        try {
-            getMyChatListApi().then(res => {
-                if(res.data.result == "fail"){
-
-                    return false;
-                }
-                setParticipatingRoom(res.data.data);
-            });
-        } catch (e) {
-            // console.log(e);
-        }
-    },[]);
-
-    useEffect((e) => {
-        console.log(searchValue);
-    }, [searchValue])
-
     return (
         <MyChatRoomList>
             <SerachBarWarpper>
             <TextField
                 className={classes.textField}
-                onChange={ (e) => { setSearchValue(e.target.value)} }
+                onChange={(e) => { setSearchValue(e.target.value) } }
                 id="input-with-icon-textfield"
                 label="채팅방 검색"
                 InputProps={{
@@ -50,29 +27,13 @@ export default function ParticipatingRoom(){
             />
             </SerachBarWarpper>
             <ContentWrapper>
-                {participatingRoom && participatingRoom
-                    .filter(room =>room.title.indexOf(searchValue) != -1 || room.tagName.indexOf(searchValue) != -1)
-                    .map((room)=> {
-                        return(
-                            <div key={room.no}>
-                                <ParticipatingList 
-                                    key={room.no}
-                                    no = {room.no}
-                                    title={room.title}
-                                    limitedUserCount ={room.limitedUserCount}
-                                    onlyAuthorized ={room.onlyAuthorized}
-                                    owner =  {room.owner}
-                                    searchable={room.searchable} 
-                                    tagName = {room.tagName}
-                                    thumbnailUrl = {room.thumbnailUrl} 
-                                    titleAndTag = { room }
-                                    participantCount = { room.participantCount}
-                                    lastMessage = { room.lastMessage }
-
-                                    />
-                            </div>
-                            )
-                        })}
+                {
+                participatingRoom
+                .filter(rooms => rooms.title.indexOf(searchValue) != -1 || rooms.tagName.indexOf(searchValue) != -1)
+                .map(room => 
+                    <ParticipatingList room = {room} favoriteRoom={favoriteRoom}/>
+                    )
+                }
             </ContentWrapper>
         </MyChatRoomList>
     );

@@ -96,9 +96,19 @@ export function checkPassword(no, password) {
 }
 
 export function nicknameValidation(chatRoomNo, chatNickname) {
-    console.log(chatRoomNo, chatNickname);
     const nicknameObject = {chatRoomNo, chatNickname };
-    console.log(nicknameObject);
     return axios.post(`/api/chat/nicknameValidation`, nicknameObject , { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function joinFavoriteRoom(no){
+    setAuthHeader();
+    return axios.get(`/api/chat/joinFavoriteRoom/${no}`, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function favoriteRoomList(){
+    setAuthHeader();
+    return axios.get(`/api/chat/favoriteRoomList`, { headers: AuthHeader })
         .then(res => res);
 }

@@ -78,4 +78,9 @@ public class ParticipantService {
     public Long getLastReadChatNo(Long chatRoomNo) {
         return participantRepository.getLastReadChatNo(chatRoomNo);
     }
+
+
+    public void joinFavoriteRoom(Long no, Long accountNo) {
+        participantRepository.joinFavoriteRoom(no , accountNo);
+    }
 }

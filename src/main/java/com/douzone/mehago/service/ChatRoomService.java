@@ -48,6 +48,10 @@ public class ChatRoomService {
         return chatRoomRepository.checkPassword(no,password);
     }
 
+    public List<ChatRoom> favoriteRoomList(Long no) {
+        return chatRoomRepository.favoriteRoomList(no);
+    }
+
 
    
 

@@ -2,14 +2,15 @@ import { Avatar, List, ListItem, ListItemText, makeStyles, TextField } from '@ma
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
+import Button from '@material-ui/core/Button';
 import '../assets/sass/chat/ChatProfile.scss';
 import '../assets/sass/chat/modal.scss';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 
-export default function ChattingRoom({
-    key, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, ketword, participantCount, lastMessage}) {
+export default function ParticipatingList({room, favoriteRoom}) {
 
-    function timeForToday(lastMessage) {
+        function timeForToday(lastMessage) {
         const today = new Date();
         const timeValue = new Date(lastMessage);
 
@@ -34,14 +35,15 @@ export default function ChattingRoom({
 
     return (
         <div className={"chatProfile"}>
-            <Link to ={`/chat/${no}`}>
             <List className={"container"}>
-                <ListItem button key={`${no}`} className={"roombutton"} >
-                    <Avatar className={"item1"} alt="프로필 사진" src = {thumbnailUrl} />
-                    <ListItemText className={"item2"} primary={title}></ListItemText>
-                    <ListItemText className={"item3"} primary={"참여중: " + participantCount}></ListItemText>
-                    <ListItemText className={"item4"} primary={timeForToday(lastMessage)}></ListItemText>
-                    {/* { tagName.map((tag, index)=> {
+                <Button onClick={() => favoriteRoom(`${room.no}`)}><StarBorderIcon /></Button>
+                <Link to ={`/chat/${room.no}`}>
+                <ListItem button key={`${room.no}`} className={"roombutton"} >
+                    <Avatar className={"item1"} alt="프로필 사진" src = {room.thumbnailUrl} />
+                    <ListItemText className={"item2"} primary={room.title}></ListItemText>
+                    <ListItemText className={"item3"} primary={"참여중: " + room.participantCount}></ListItemText>
+                    <ListItemText className={"item4"} primary={timeForToday(room.lastMessage)}></ListItemText>
+                    {/* { room.tagName.map((tag, index)=> {
                                     return(
                                         <Chip
                                         icon={<LocalOfferIcon />}
@@ -51,8 +53,8 @@ export default function ChattingRoom({
                                     )}) 
                                 } */}
                 </ListItem>
+                </Link>
             </List>
-            </Link>
         </div>
     )
 }

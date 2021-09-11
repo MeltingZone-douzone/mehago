@@ -152,7 +152,7 @@ public class ChatController {
     @GetMapping("/keywordSearch")
     public ResponseEntity<?> keywordSearch(String searchValue) {
         List<Map<String, Object>> keywordSearch = chatRoomService.keywordSearch(searchValue);
-        getTagName(keywordSearch);   // 방 만들때 테그 없으면 제목도 검색이 안댐 수정 할 거임
+        getTagName(keywordSearch);   
         return ResponseEntity.ok().body(!keywordSearch.isEmpty() ? CommonResponse.success(keywordSearch) : CommonResponse.fail("검색결과가 없습니다."));
     }
 
@@ -200,5 +200,20 @@ public class ChatController {
             participantService.addNonMember(participant);
         }
         return ResponseEntity.ok().body(checkNicname ? "사용중인 닉네임 입니다." : true);
+    }
+
+    @Auth
+    @GetMapping("joinFavoriteRoom/{no}")
+    public ResponseEntity<?> joinFavoriteRoom(@PathVariable Long no , @AuthUser Account account) {
+        Long accountNo = account.getNo();
+        participantService.joinFavoriteRoom(no, accountNo);
+        return ResponseEntity.ok().body(true);
+    }
+
+    @Auth
+    @GetMapping("favoriteRoomList")
+    public ResponseEntity<?> favoriteRoomList(@AuthUser Account account) {
+        List<ChatRoom> favoriteRoomList = chatRoomService.favoriteRoomList(account.getNo());
+        return ResponseEntity.ok().body(favoriteRoomList);
     }
 }

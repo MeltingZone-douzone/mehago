@@ -1,5 +1,6 @@
 package com.douzone.mehago.repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,13 @@ public class ParticipantRepository {
 
     public Long getLastReadChatNo(Long chatRoomNo) {
         return sqlSession.selectOne("participant.getLastReadChatNo", chatRoomNo);
+    }
+
+    public void joinFavoriteRoom(Long no, Long accountNo) {
+        Map<String, Long> map = new HashMap();
+        map.put("chatRoomNo", no);
+        map.put("accountNo", accountNo);
+        sqlSession.update("participant.joinFavoriteRoom", map);
     }
 
 }

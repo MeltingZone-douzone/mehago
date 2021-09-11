@@ -63,7 +63,7 @@
                 WHERE
                   account_no = #{no})
       order by 
-        c.created_at desc
+        lastMessage desc
     ]]>
   </select>
 
@@ -126,6 +126,17 @@
       where no = #{no}
           and
           password = #{password}
+    ]]>
+  </select>
+
+  <select id="favoriteRoomList" parameterType="Long" resultType="chatroom">
+    <![CDATA[
+      SELECT 
+        no, thumbnail_url as thumbnailUrl
+      FROM 
+        chat_room 
+      where 
+        no in (select chat_room_no from participant where account_no=#{no} and favorite_room = "true")
     ]]>
   </select>
  
