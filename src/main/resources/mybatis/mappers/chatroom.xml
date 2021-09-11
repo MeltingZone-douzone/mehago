@@ -11,7 +11,7 @@
 		<![CDATA[
 			insert 
 				into chat_room 
-				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner})		
+				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner}, false)		
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -49,9 +49,14 @@
   <select id="participatingRoom" parameterType="Long" resultType="map">
     <![CDATA[
       	SELECT DISTINCT
-            c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner,
-        (select count(no) from participant where chat_room_no = c.no) as participantCount,
-        (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage
+        c.no, c.title, c.thumbnail_url as thumbnailUrl, p.not_read_count as notReadCount,
+			  (select count(no) from participant where chat_room_no = c.no) as participantCount,
+		    (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
+			    from message 
+          where chat_room_no = c.no) as leastMessageAt,  
+        (select message
+				  from message
+				  where no = (select ifnull(max(no),"0") from message where chat_room_no = c.no)) as leastMessage
      FROM
           chat_room c, participant p
       WHERE
@@ -63,7 +68,7 @@
                 WHERE
                   account_no = #{no})
       order by 
-        lastMessage desc
+        leastMessageAt desc
     ]]>
   </select>
 
@@ -107,6 +112,32 @@
     ]]>
   </select>
 
+  <update id="changePassword" parameterType="chatRoom">
+    <![CDATA[
+      update chat_room
+      set password= #{password }
+      where no = #{no }
+    ]]>
+  </update>
+
+  <update id="updateChatRoomInfo" parameterType="chatRoom">
+    <![CDATA[
+      update chat_room
+      set title= #{title }, limited_user_count= #{limitedUserCount }
+      , only_authorized= #{onlyAuthorized }, searchable = #{searchable} , thumbnail_url= #{thumbnailUrl }
+    ]]>
+    <choose>
+    <when test='("").equals(password) == false'>
+    <![CDATA[
+      , password = #{password}
+    ]]>
+    </when>
+    </choose>
+    <![CDATA[
+      where no = #{no }
+    ]]>
+  </update>
+  
   <select id="isExistsPassword" parameterType="Long" resultType="String">
     <![CDATA[
       select 
@@ -137,6 +168,22 @@
         chat_room 
       where 
         no in (select chat_room_no from participant where account_no=#{no} and favorite_room = "true")
+     ]]>
+  </select>
+  
+  <update id="deleteChatRoom" parameterType="Long">
+    <![CDATA[
+      update chat_room
+      set is_deleted = true
+      where no = #{no }
+     ]]>
+  </update>
+
+  <select id="checkIsDeleted" parameterType="Long" resultType="Boolean">
+    <![CDATA[
+      select is_deleted
+      from chat_room
+      where no = #{no }
     ]]>
   </select>
  

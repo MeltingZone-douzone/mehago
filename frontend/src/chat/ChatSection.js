@@ -6,17 +6,17 @@ import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
 import MsgInput2 from './MsgInput2';
-import Dialogs from './Dialogs';
+import Dialogs from './dialogs/Dialogs';
 
 const socket = io('http://localhost:8888');
-export default function ChatSection({history, match, setCurrentParticipants}) {
+export default function ChatSection({ history, match, setCurrentParticipants }) {
     const chatRoomNo = match.params.no;
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
     const [searchMessage, setSearchMessage] = useState([]);
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
-    const [cursor, setCursor] = useState({firstIndex: 0, index: 0, lastIndex: 0});
+    const [cursor, setCursor] = useState({ firstIndex: 0, index: 0, lastIndex: 0 });
 
     const [joinSuccess, setJoinSuccess] = useState(false);
 
@@ -40,7 +40,6 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
             if (res.statusText === 'OK') {
                 if (res.data.result == 'fail') {
                     // DB에 데이터가 없으면
-
                     return;
                 }
                 setParticipantObject(res.data.data);
@@ -81,10 +80,10 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
         onSearchKeyPress: (e) => {
             if (e.key == 'Enter') {
                 getSearchMessage(searchKeyword).then(res => {
-                    if(res.statusText === 'OK') {
+                    if (res.statusText === 'OK') {
                         setSearchMessage([
-                        ...res.data.data,
-                        searchKeyword]);
+                            ...res.data.data,
+                            searchKeyword]);
                         setCursor({
                             firstIndex: 1,
                             index: 1,
@@ -95,18 +94,26 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
             }
         },
         moveSearchResult: (e, direction) => { // TODO: 마지막요소이면  '마지막 요소입니다'
-                if(direction === "left") {
-                    if(cursor.index - 1 >= cursor.firstIndex) {
-                        setCursor({...cursor, index: cursor.index - 1 });
-                        return;
-                    }
-                } else {
-                    if(cursor.index < cursor.lastIndex) {
+            if (direction === "left") {
+                if (cursor.index - 1 >= cursor.firstIndex) {
+                    setCursor({ ...cursor, index: cursor.index - 1 });
+                    return;
+                }
+                else {
+                    if (cursor.index < cursor.lastIndex) {
                         // FIXME: 처음값인경우 (length 초과로 들어오면 막기)
-                        setCursor({...cursor, index: cursor.index + 1 });
+                        setCursor({ ...cursor, index: cursor.index + 1 });
                         return;
                     }
                 }
+            } else {
+                if (cursor.index < cursor.lastIndex) {
+                    // 처음값인경우 (length 초과로 들어오면 막기)
+                    setCursor({ ...cursor, index: cursor.index + 1 });
+                    console.log(`right ${cursor.index}`);
+                    return;
+                }
+            }
         },
         leaveRoom: (e) => {
             // socket.emit('leave', data); // roomName
@@ -141,7 +148,8 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
             };
             const date = e.target.date.value;
             const todo = e.target.todo.value;
-            addTodo(roomObject.no, participantObject.no, date, todo);
+
+            socket.emit("todo:send", date, todo);
             setTodoOpen(false);
         },
         handleNoticeSubmit: (e) => {
@@ -151,12 +159,13 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
                 //error 메시지 보내기
             };
             const notice = e.target.notice.value;
-            addNotice(roomObject.no, participantObject.no, notice);
+            socket.emit("notice:send", notice);
             setNoticeOpen(false);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
-            // addFileUpload(roomObject.no, participantObject.no, files);
+            // fileUpload(files);
+            // socket.emit("file:send", files);    
             setFileUploadOpen(false);
         }
     }
@@ -165,13 +174,13 @@ export default function ChatSection({history, match, setCurrentParticipants}) {
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
                 <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} />
-                <Chatting2 socket={socket} 
-                    messageFunction={messageFunction} 
-                    participantObject={participantObject} 
-                    roomObject={roomObject} 
-                    chatRoomNo={chatRoomNo} 
+                <Chatting2 socket={socket}
+                    messageFunction={messageFunction}
+                    participantObject={participantObject}
+                    roomObject={roomObject}
+                    chatRoomNo={chatRoomNo}
                     searchMessage={searchMessage}
-                    setCurrentParticipants={setCurrentParticipants} 
+                    setCurrentParticipants={setCurrentParticipants}
                     cursor={cursor} />
                 <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
                 <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />

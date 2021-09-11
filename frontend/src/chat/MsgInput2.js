@@ -10,11 +10,11 @@ export default function MsgInput2({ message, messageFunction, buttonFunction }) 
     return (
         <Fragment>
             <Grid container className={classes.gridContainer}>
-                <ButtonGroup variant="contained" color="primary" size="large" aria-label="outlined primary button group" className={classes.buttonGroup} styles={fadeIn}>
+                {/* <ButtonGroup variant="contained" color="primary" size="large" aria-label="outlined primary button group" className={classes.buttonGroup} styles={fadeIn}>
                     <Button onClick={buttonFunction.todo}><FontAwesomeIcon icon={faListAlt} /></Button>
                     <Button onClick={buttonFunction.notice}><FontAwesomeIcon icon={faBullhorn} /></Button>
                     <Button onClick={buttonFunction.fileupload}><FontAwesomeIcon icon={faPaperclip} /></Button>
-                </ButtonGroup>
+                </ButtonGroup> */}
                 <Grid item xs={12}>
                     <Fab color="primary" size="small" className={classes.uploads}>
                         <AddIcon />

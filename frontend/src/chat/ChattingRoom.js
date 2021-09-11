@@ -8,12 +8,12 @@ import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 import ReactModal from "react-modal";
 import '../assets/sass/chat/ChatProfile.scss';
 import '../assets/sass/chat/modal.scss';
-import {isExistsPasswords, checkPassword, nicknameValidation} from '../../api/ChatApi';
+import { isExistsPasswords, checkPassword, nicknameValidation } from '../../api/ChatApi';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-ReactModal.setAppElement('body'); 
+ReactModal.setAppElement('body');
 
 export default function ChattingRoom({
-    key, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, ketword, participantCount, lastMessage, history}) {
+    key, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, ketword, participantCount, lastMessage, history }) {
     const classes = materialStyles();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [nicknameModalOpen, setNicknameModalOpen] = useState(false);
@@ -39,10 +39,10 @@ export default function ChattingRoom({
     const joinValidation = (no) => {
         console.log(password);   // account 처리 해야함
         try {
-            if(password !== "")(
+            if (password !== "") (
                 checkPassword(no, password).then((res) => {
                     console.log(res.data);
-                    setPassword({password:""});
+                    setPassword({ password: "" });
                     setJoinValidationRoom(res.data);
                 })
             )
@@ -57,7 +57,7 @@ export default function ChattingRoom({
             nicknameValidation(no, nickname).then((res) => {
                 // console.log(res.data);
                 setValidateNickname(res.data);
-                setNickname({nickname:""});
+                setNickname({ nickname: "" });
             })
         } catch (err) {
             console.log(err);
@@ -97,13 +97,13 @@ export default function ChattingRoom({
         }
 
         return `${Math.floor(betweenTimeDay / 365)}년전`;
- }
+    }
 
     return (
         <div className={"chatProfile"}>
             <List className={"container"}>
-                <ListItem button key={`${no}`} className={"roombutton"}  onClick={ () => {setModalIsOpen(true) , check(`${no}`)} }>
-                    <Avatar className={"item1"} alt="프로필 사진" src = {thumbnailUrl} />
+                <ListItem button key={`${no}`} className={"roombutton"} onClick={() => { setModalIsOpen(true), check(`${no}`) }}>
+                    <Avatar className={"item1"} alt="프로필 사진" src={thumbnailUrl} />
                     <ListItemText className={"item2"} primary={title}></ListItemText>
                     <ListItemText className={"item3"} primary={"참여중: " + participantCount}></ListItemText>
                     <ListItemText className={"item4"} primary={timeForToday(lastMessage)}></ListItemText>
@@ -117,41 +117,42 @@ export default function ChattingRoom({
                                     )}) 
                                 } */}
                 </ListItem>
-                <Modal 
+                <Modal
                     className={"modal"}
                     isOpen={modalIsOpen}
-                    onRequestClose={ () => setModalIsOpen(false) }
-                    shouldCloseOnOverlayClick={ true }
+                    onRequestClose={() => setModalIsOpen(false)}
+                    shouldCloseOnOverlayClick={true}
                     contentLabel="채팅방">
-                        <div className={"top"}>
-                            <Button className={classes.closed} variant="contained" onClick={ () => setModalIsOpen(false) }><CancelPresentationIcon /></Button>
-                            <Avatar className={classes.large} alt="프로필 사진" src={thumbnailUrl} />
-                        </div>
-                        <ListItem className={"container"}>
-                            <ListItemText classes={{primary:classes.titleText}} primary={title}></ListItemText>
-                            <ListItemText classes={{primary:classes.particpant}} primary={"참여중: " + participantCount + "/" + limitedUserCount + "\t" + timeForToday(lastMessage)}></ListItemText>
-                            {tagName!=""?<ListItem className={"tag"}>
-                                { tagName.map((tag, index)=> {
-                                    return(
-                                        <Chip
+                    <div className={"top"}>
+                        <Button className={classes.closed} variant="contained" onClick={() => setModalIsOpen(false)}><CancelPresentationIcon /></Button>
+                        <Avatar className={classes.large} alt="프로필 사진" src={thumbnailUrl} />
+                    </div>
+                    <ListItem className={"container"}>
+                        <ListItemText classes={{ primary: classes.titleText }} primary={title}></ListItemText>
+                        <ListItemText classes={{ primary: classes.particpant }} primary={"참여중: " + participantCount + "/" + limitedUserCount + "\t" + timeForToday(lastMessage)}></ListItemText>
+                        {tagName != "" ? <ListItem className={"tag"}>
+                            {tagName.map((tag, index) => {
+                                return (
+                                    <Chip
                                         icon={<LocalOfferIcon />}
                                         variant="outlined"
                                         label={tag}
-                                        />
-                                    )}) 
-                                }
-                            </ListItem>:null}
-                            
-                        </ListItem>
-                        {
-                            isExistsPassword ? 
+                                    />
+                                )
+                            })
+                            }
+                        </ListItem> : null}
+
+                    </ListItem>
+                    {
+                        isExistsPassword ?
                             <ListItemText>
-                                <TextField 
+                                <TextField
                                     className={"isExistsPassword"}
                                     label="비공개 방입니다."
                                     value={password.password}
                                     type="password"
-                                    onChange = {(e) => { setPassword(e.target.value)}} >
+                                    onChange={(e) => { setPassword(e.target.value) }} >
                                 </TextField>
                             </ListItemText>
                             : null
@@ -171,42 +172,42 @@ export default function ChattingRoom({
                         }
                 </Modal>
                 <Modal
-                            className={"modal"}
-                            isOpen={nicknameModalOpen}
-                            onRequestClose={ () => setNicknameModalOpen(false) }
-                            shouldCloseOnOverlayClick={ true }
-                            contentLabel="채팅방">
-                            <div className={"top"}>
-                                <Button className={classes.closed} variant="contained" onClick={ () => setNicknameModalOpen(false) }><CancelPresentationIcon /></Button>
-                                <Avatar className={classes.large} alt="프로필 사진" src={thumbnailUrl} />
+                    className={"modal"}
+                    isOpen={nicknameModalOpen}
+                    onRequestClose={() => setNicknameModalOpen(false)}
+                    shouldCloseOnOverlayClick={true}
+                    contentLabel="채팅방">
+                    <div className={"top"}>
+                        <Button className={classes.closed} variant="contained" onClick={() => setNicknameModalOpen(false)}><CancelPresentationIcon /></Button>
+                        <Avatar className={classes.large} alt="프로필 사진" src={thumbnailUrl} />
+                    </div>
+                    <ListItemText>
+                        <h1>사용할 닉네임을 설정해 주세요.</h1>
+                        <TextField
+                            label="닉네임"
+                            value={nickname.nickname}
+                            onChange={(e) => { setNickname(e.target.value) }}
+                        >
+                        </TextField>
+                        {
+                            validateNickname ? <p>{validateNickname}</p> : <p>{validateNickname}</p>
+                        }
+
+                    </ListItemText>
+                    {/* { checkJoin() } */}
+                    {
+                        validateNickname ?
+                            <Link to={`/chat/${no}`}>
+                                <Button className={"joinButton"} onClick={() => { checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                            </Link>
+                            :
+                            <div>
+                                <p>{validateNickname}</p>
+                                <Button className={"joinButton"} onClick={() => { checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
                             </div>
-                            <ListItemText>
-                                <h1>사용할 닉네임을 설정해 주세요.</h1>
-                                <TextField 
-                                    label="닉네임"
-                                    value={nickname.nickname}
-                                    onChange = {(e) => { setNickname(e.target.value)}}
-                                >
-                                </TextField>
-                                {
-                                    validateNickname ? <p>{validateNickname}</p> : <p>{validateNickname}</p>
-                                }
-                               
-                            </ListItemText>
-                                {/* { checkJoin() } */}
-                                {
-                                    validateNickname ?
-                                    <Link to={`/chat/${no}`}>
-                                        <Button className={"joinButton"} onClick ={() => {checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
-                                    </Link>
-                                    :
-                                    <div>
-                                        <p>{validateNickname}</p>
-                                        <Button className={"joinButton"} onClick ={() => {checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
-                                    </div>
-                                }
-                            
-                        </Modal>
+                    }
+
+                </Modal>
             </List>
         </div>
     )
@@ -214,10 +215,10 @@ export default function ChattingRoom({
 
 const materialStyles = makeStyles((theme) => ({
 
-    titleText:{
-        fontSize:'2rem',
-        fontFamily:'Gill Sans, sans-serif'
-      },
+    titleText: {
+        fontSize: '2rem',
+        fontFamily: 'Gill Sans, sans-serif'
+    },
     large: {
         width: theme.spacing(10),
         height: theme.spacing(10),
@@ -225,18 +226,18 @@ const materialStyles = makeStyles((theme) => ({
         left: '50%',
         transform: 'translate(-50%, -50%)'
     },
-    closed : {
-        minWidth:"20px",
-        height:"20px",
+    closed: {
+        minWidth: "20px",
+        height: "20px",
         position: "absolute",
         right: "0.8rem",
-        top :  "0.8rem",
-        cursor : "pointer",
+        top: "0.8rem",
+        cursor: "pointer",
         background: "none",
-        padding:"0"
+        padding: "0"
     },
-    particpant :{
-        fontSize:'0.8rem'
+    particpant: {
+        fontSize: '0.8rem'
     }
-      
+
 }));

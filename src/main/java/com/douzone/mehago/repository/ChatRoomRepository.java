@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.vo.ChatRoom;
-import com.douzone.mehago.vo.Participant;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -45,17 +43,25 @@ public class ChatRoomRepository {
         return sqlSession.selectList("chatroom.getTagName", no);
     }
 
+    public boolean changePassword(ChatRoom chatRoom) {
+        return sqlSession.update("chatroom.changePassword", chatRoom) == 1 ? true : false;
+    }
+
+    public boolean updateChatRoomInfo(ChatRoom chatRoom) {
+        return sqlSession.update("chatroom.updateChatRoomInfo", chatRoom) == 1 ? true : false;
+    }
+
     public boolean isExistsPassword(Long no) {
         String result = sqlSession.selectOne("chatroom.isExistsPassword", no);
-        return !"".equals(result) ? true : false ;
+        return !"".equals(result) ? true : false;
     }
 
     public boolean checkPassword(Long no, String password) {
-        Map<String , String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("no", no.toString());
         map.put("password", password);
         String result = sqlSession.selectOne("chatroom.checkPassword", map);
-        return result != null ? true : false ;
+        return result != null ? true : false;
     }
 
     public List<ChatRoom> favoriteRoomList(Long no) {
@@ -63,4 +69,11 @@ public class ChatRoomRepository {
     }
 
     
+    public boolean checkIsDeleted(Long chatRoomNo) {
+        return sqlSession.selectOne("chatroom.checkIsDeleted", chatRoomNo);
+    }
+
+    public boolean deleteChatRoom(Long chatRoomNo) {
+        return sqlSession.update("chatroom.deleteChatRoom", chatRoomNo) == 1 ? true : false;
+    }
 }

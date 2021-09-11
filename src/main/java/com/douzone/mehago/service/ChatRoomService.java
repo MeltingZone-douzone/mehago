@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.douzone.mehago.repository.ChatRoomRepository;
 import com.douzone.mehago.vo.ChatRoom;
-import com.douzone.mehago.vo.Participant;
 
 import org.springframework.stereotype.Service;
 
@@ -24,6 +23,7 @@ public class ChatRoomService {
     public List<Map<String, Object>> getAllChatList() {
         return chatRoomRepository.getAllChatList();
     }
+
     public ChatRoom getRoomInfo(Long chatRoomNo) {
         return chatRoomRepository.getRoomInfo(chatRoomNo);
     }
@@ -40,19 +40,32 @@ public class ChatRoomService {
         return chatRoomRepository.getTagname(no);
     }
 
+    public boolean changePassword(ChatRoom chatRoom) {
+        return chatRoomRepository.changePassword(chatRoom);
+    }
+
+    public boolean updateChatRoomInfo(ChatRoom chatRoom) {
+        return chatRoomRepository.updateChatRoomInfo(chatRoom);
+    }
+
     public boolean isExistsPassword(Long no) {
         return chatRoomRepository.isExistsPassword(no);
     }
 
     public boolean checkPassword(Long no, String password) {
-        return chatRoomRepository.checkPassword(no,password);
+        return chatRoomRepository.checkPassword(no, password);
     }
 
     public List<ChatRoom> favoriteRoomList(Long no) {
         return chatRoomRepository.favoriteRoomList(no);
     }
 
+    public boolean checkIsDeleted(Long chatRoomNo) {
+        return chatRoomRepository.checkIsDeleted(chatRoomNo);
+    }
 
-   
+    public boolean deleteChatRoom(Long chatRoomNo) {
+        return chatRoomRepository.deleteChatRoom(chatRoomNo);
+    }
 
 }

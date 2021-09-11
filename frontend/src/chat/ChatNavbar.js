@@ -43,7 +43,7 @@ export default function ChatNavbar({currentParticipants}){
         } catch (e) {
             console.log(e);
         }
-    },[favoriteRoom]);
+    },[]);
 
     const favoriteRoom = (no) => {
         try {

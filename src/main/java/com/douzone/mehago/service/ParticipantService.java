@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.douzone.mehago.repository.MessageRepository;
 import com.douzone.mehago.repository.ParticipantRepository;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.Message;
@@ -18,25 +19,26 @@ import lombok.RequiredArgsConstructor;
 public class ParticipantService {
 
     private final ParticipantRepository participantRepository;
+    private final MessageRepository messageRepository;
 
     public Long createParticipant(Participant participant) {
         return participantRepository.createParticipant(participant);
     }
-    
-    
+
     public Participant getParticipantInfo(Account auth, Long chatRoomNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("accountNo", auth.getNo());
         map.put("chatRoomNo", chatRoomNo);
 
         Participant participant = participantRepository.getParticipantInfo(map);
-        
-        if(participant == null) { 
+
+        if (participant == null) {
             // 회원유저가 처음 들어왔다면
             participant = new Participant();
             participant.setAccountNo(auth.getNo());
             participant.setChatNickname(auth.getNickname());
             participant.setChatRoomNo(chatRoomNo);
+            participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
             participant.setNo(createParticipant(participant));
         }
 

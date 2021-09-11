@@ -14,102 +14,103 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 
-export default function ChatHeader({messageFunction, roomObject, cursor, }) {
+export default function ChatHeader({ messageFunction, roomObject, cursor }) {
   const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
   const [hiddenSearchResult, setHiddenSearchResult] = useState(true);
-//   const [searchKeyword, setSearchKeyword] = useState('');
+  //   const [searchKeyword, setSearchKeyword] = useState('');
 
   const classes = useStyles();
   const handleSetSearch = () => setHiddenSearchInput(!hiddenSearchInput)
   const handleKeyPress = () => setHiddenSearchResult(!hiddenSearchResult)
 
   const handleBlur = (e) => {
-      if(e.target.value === '') {
-        handleSetSearch();
-        setHiddenSearchResult(true);
-        return;
-      }
+    if (e.target.value === '') {
+      handleSetSearch();
+      setHiddenSearchResult(true);
+      return;
+    }
   }
-  
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
-            {
-            hiddenSearchInput?
-                <IconButton
-                    edge="start"
-                    className={classes.backButton}
-                    color="inherit"
-                    onClick={() => messageFunction.leaveRoom()}
-                >
-                    <ArrowBackIcon />
-                </IconButton>
-                :
-                <IconButton
-                    edge="start"
-                    className={classes.closeButton}
-                    color="inherit"
-                    onClick={() => handleSetSearch()}
-                >
-                    <CloseIcon />
-                </IconButton>
-            }
-            <Typography className={classes.title} variant="h6" noWrap>
-              {roomObject.title}
-            </Typography>
-            {
-                hiddenSearchInput ?
+          {
+            hiddenSearchInput ?
+              <IconButton
+                edge="start"
+                className={classes.backButton}
+                color="inherit"
+                onClick={() => messageFunction.leaveRoom()}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+              :
+              <IconButton
+                edge="start"
+                className={classes.closeButton}
+                color="inherit"
+                onClick={() => handleSetSearch()}
+              >
+                <CloseIcon />
+              </IconButton>
+          }
+          <Typography className={classes.title} variant="h6" noWrap>
+            {roomObject.title}
+          </Typography>
+          {
+            hiddenSearchInput ?
 
-                <IconButton
-                    edge="end"
-                    className={classes.menuButton}
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={() => handleSetSearch()}>
-                    <SearchIcon />
-                </IconButton>
-                :
-                <>
+              <IconButton
+                edge="end"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="open drawer"
+                onClick={() => handleSetSearch()}>
+                <SearchIcon />
+              </IconButton>
+              :
+              <>
                 <div className={classes.search}>
-                    <div className={classes.searchInputIcon}>
-                        <SearchIcon />
-                    </div>
-                    <InputBase
-                        placeholder="Search…"
-                        autoComplete="off"
-                        autoFocus={true}
-                        classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput,
-                        }}
-                        name={'searchKeyword'}
-                        onBlur={(e) => handleBlur(e)}
-                        onChange={messageFunction.onChangeSearchKeyword}
-                        onKeyPress={(e) => {
-                          if(e.target.value !== '') { 
-                            messageFunction.onSearchKeyPress(e); 
-                            hiddenSearchResult? handleKeyPress() : null
-                          }}
-                        }
-                        inputProps={{ 'aria-label': 'search' }}/>
-                </div> 
-                { hiddenSearchResult ?
+                  <div className={classes.searchInputIcon}>
+                    <SearchIcon />
+                  </div>
+                  <InputBase
+                    placeholder="Search…"
+                    autoComplete="off"
+                    autoFocus={true}
+                    classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                    }}
+                    name={'searchKeyword'}
+                    onBlur={(e) => handleBlur(e)}
+                    onChange={messageFunction.onChangeSearchKeyword}
+                    onKeyPress={(e) => {
+                      if (e.target.value !== '') {
+                        messageFunction.onSearchKeyPress(e);
+                        hiddenSearchResult ? handleKeyPress() : null
+                      }
+                    }
+                    }
+                    inputProps={{ 'aria-label': 'search' }} />
+                </div>
+                {hiddenSearchResult ?
 
-                null
-                 :
-                <ToggleTemplate>
-                  <SearchResult>
-                    {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'}
-                  </SearchResult>
-                  <ButtonGroup className={classes.buttonGroup} variant="text" color="primary" aria-label="text primary button group">
-                    <Button onClick={(e) => messageFunction.moveSearchResult(e, "left")}>{'<'}</Button>
-                    <Button onClick={(e) => messageFunction.moveSearchResult(e, "right")}>{'>'}</Button>
-                  </ButtonGroup>
-                </ToggleTemplate>
+                  null
+                  :
+                  <ToggleTemplate>
+                    <SearchResult>
+                      {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'}
+                    </SearchResult>
+                    <ButtonGroup className={classes.buttonGroup} variant="text" color="primary" aria-label="text primary button group">
+                      <Button onClick={(e) => messageFunction.moveSearchResult(e, "left")}>{'<'}</Button>
+                      <Button onClick={(e) => messageFunction.moveSearchResult(e, "right")}>{'>'}</Button>
+                    </ButtonGroup>
+                  </ToggleTemplate>
                 }
-                </>
-            }
+              </>
+          }
         </Toolbar>
       </AppBar>
     </div>
@@ -144,11 +145,11 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   appBar: {
-    background : '#2E3B55'
+    background: '#2E3B55'
   },
-//   backButton: {
-//     marginRight: theme.spacing(2),
-//   },
+  //   backButton: {
+  //     marginRight: theme.spacing(2),
+  //   },
   title: {
     flexGrow: 1,
     display: 'none',
@@ -200,7 +201,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttonGroup: {
-    display:'flex',
+    display: 'flex',
     justifyContent: 'flex-end',
     width: 'fit-content'
   }
