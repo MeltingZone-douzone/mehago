@@ -17,7 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
 export default function ChatHeader({messageFunction, roomObject, cursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
   // const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
   const [hiddenSearchResult, setHiddenSearchResult] = useState(true);
-//   const [searchKeyword, setSearchKeyword] = useState('');
+  //   const [searchKeyword, setSearchKeyword] = useState('');
 
   const classes = useStyles();
   const handleSetSearch = () => setHiddenSearchInput(!hiddenSearchInput)
@@ -61,16 +61,16 @@ export default function ChatHeader({messageFunction, roomObject, cursor, hiddenS
             {
                 hiddenSearchInput ?
 
-                <IconButton
-                    edge="end"
-                    className={classes.menuButton}
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={() => handleSetSearch()}>
-                    <SearchIcon />
-                </IconButton>
-                :
-                <>
+              <IconButton
+                edge="end"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="open drawer"
+                onClick={() => handleSetSearch()}>
+                <SearchIcon />
+              </IconButton>
+              :
+              <>
                 <div className={classes.search}>
                     <div className={classes.searchInputIcon}>
                         <SearchIcon />
@@ -96,20 +96,20 @@ export default function ChatHeader({messageFunction, roomObject, cursor, hiddenS
                 </div> 
                 { hiddenSearchResult ?
 
-                null
-                 :
-                <ToggleTemplate>
-                  <SearchResult>
-                    {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'}
-                  </SearchResult>
-                  <ButtonGroup className={classes.buttonGroup} variant="text" color="primary" aria-label="text primary button group">
-                    <Button onClick={(e) => messageFunction.moveSearchResult(e, "left")}>{'<'}</Button>
-                    <Button onClick={(e) => messageFunction.moveSearchResult(e, "right")}>{'>'}</Button>
-                  </ButtonGroup>
-                </ToggleTemplate>
+                  null
+                  :
+                  <ToggleTemplate>
+                    <SearchResult>
+                      {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'}
+                    </SearchResult>
+                    <ButtonGroup className={classes.buttonGroup} variant="text" color="primary" aria-label="text primary button group">
+                      <Button onClick={(e) => messageFunction.moveSearchResult(e, "left")}>{'<'}</Button>
+                      <Button onClick={(e) => messageFunction.moveSearchResult(e, "right")}>{'>'}</Button>
+                    </ButtonGroup>
+                  </ToggleTemplate>
                 }
-                </>
-            }
+              </>
+          }
         </Toolbar>
       </AppBar>
     </div>
@@ -144,11 +144,11 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   appBar: {
-    background : '#2E3B55'
+    background: '#2E3B55'
   },
-//   backButton: {
-//     marginRight: theme.spacing(2),
-//   },
+  //   backButton: {
+  //     marginRight: theme.spacing(2),
+  //   },
   title: {
     flexGrow: 1,
     display: 'none',
@@ -200,7 +200,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttonGroup: {
-    display:'flex',
+    display: 'flex',
     justifyContent: 'flex-end',
     width: 'fit-content'
   }

@@ -6,7 +6,7 @@ import '../assets/sass/chat/ChatList.scss';
 import ChatHeader from './ChatHeader';
 import Chatting2 from './Chatting2';
 import MsgInput2 from './MsgInput2';
-import Dialogs from './Dialogs';
+import Dialogs from './dialogs/Dialogs';
 
 const socket = io('http://localhost:8888');
 export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants}) {
@@ -127,8 +127,8 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
                     if(res.data.result === 'success') {
                         console.log(res);
                         setSearchMessage([
-                        ...res.data.data,
-                        searchKeyword]);
+                            ...res.data.data,
+                            searchKeyword]);
                         setCursor({
                             firstIndex: 1,
                             index: 1,
@@ -153,8 +153,8 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
                     if(cursor.index < cursor.lastIndex) {
                         setCursor({...cursor, index: cursor.index + 1 });
                         return;
-                    }
                 }
+            }
         },
         leaveRoom: (e) => {
             // socket.emit('leave', data); // roomName
@@ -190,21 +190,24 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             };
             const date = e.target.date.value;
             const todo = e.target.todo.value;
-            addTodo(roomObject.no, participantObject.no, date, todo);
+
+            socket.emit("todo:send", date, todo);
             setTodoOpen(false);
         },
         handleNoticeSubmit: (e) => {
             e.preventDefault();
+            console.log(e.target.notice.value);
             if (e.target.notice.value === '') {
                 //error 메시지 보내기
             };
             const notice = e.target.notice.value;
-            addNotice(roomObject.no, participantObject.no, notice);
+            socket.emit("notice:send", notice);
             setNoticeOpen(false);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
-            // addFileUpload(roomObject.no, participantObject.no, files);
+            // fileUpload(files);
+            // socket.emit("file:send", files);    
             setFileUploadOpen(false);
         }
     }

@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now())
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), "false")
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -81,5 +81,48 @@
 			p.chat_nickname
 	]]>
 	</select>
+	<select id="nicknameValidation" parameterType="participant" resultType="String">
+    <![CDATA[
+      select 
+        no
+      from 
+        participant
+      where chat_room_no = #{chatRoomNo}
+          and
+          chat_nickname = #{chatNickname}
+    ]]>
+  </select>
+  
+  <insert id="addNonMember" parameterType="participant">
+		<![CDATA[
+			insert 
+				into participant 
+				values(null,null,#{chatRoomNo},#{chatNickname}, 0,#{lastReadChatNo}, now())
+        ]]>
+        <selectKey keyProperty="no" order="AFTER" resultType="Long">
+            select last_insert_id()
+        </selectKey>
+	</insert>
+
+	<select id="getLastReadChatNo" parameterType="Long" resultType="Long">
+	<![CDATA[
+		select ifnull(max(no), 0)
+		from message
+		where chat_room_no = #{chatRoomNo}
+		]]>
+     </select>
+
+	 <update id="joinFavoriteRoom" parameterType="map">
+	<![CDATA[
+		update 
+			participant
+		set
+			favorite_room = "true"
+		where 
+			chat_room_no= #{chatRoomNo }
+				and
+			account_no = #{accountNo}
+			]]>			
+	</update>
 
 </mapper>

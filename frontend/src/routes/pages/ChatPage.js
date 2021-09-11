@@ -6,10 +6,11 @@ import ChatSection from '../../chat/ChatSection';
 import '../../assets/sass/chat/Chat.scss';
 import ChattingList from '../../chat/ChattingList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
-import { getParticipantsList } from '../../../api/ChatApi';
+import SettingChatRoom from '../../chat/SettingChatRoom';
+import { getParticipantsList } from '../../../api/ChatApi'
 
 
-export default function ChatPage({match, userInfo}){
+export default function ChatPage({ match, userInfo }) {
 
     const [participants, setParticipants] = useState([]);
     const [currentParticipants, setCurrentParticipants] = useState([]);

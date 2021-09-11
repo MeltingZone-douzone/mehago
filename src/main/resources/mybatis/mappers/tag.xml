@@ -41,4 +41,11 @@
 		]]>
 	</select>
 
+	<delete id="unlinkTag" parameterType="Long">
+	<![CDATA[
+		delete from chat_room_has_tag
+		where chat_room_no = #{chatRoomNo }
+	]]>
+	</delete>
+
 </mapper>

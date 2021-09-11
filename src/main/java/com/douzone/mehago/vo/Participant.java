@@ -11,4 +11,5 @@ public class Participant {
 
     private Long accountNo;
     private Long chatRoomNo;
+    private Boolean favoriteRoom;
 }

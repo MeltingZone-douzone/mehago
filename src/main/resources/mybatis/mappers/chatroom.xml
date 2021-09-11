@@ -5,22 +5,32 @@
 
 <mapper namespace="chatroom">
 
+
+
   <insert id="createRoom" parameterType="chatroom">
 		<![CDATA[
 			insert 
 				into chat_room 
-				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner})		
+				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner}, false)		
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
         </selectKey>
 	</insert>
 
-  <select id="getChatRoomList" resultType="chatroom">
+  <select id="getAllChatList" resultType="map">
     <![CDATA[
-		select no, title, password , thumbnail_url as thumbnailUrl ,  limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized , searchable, owner
-		   from chat_room 
-       order by created_at desc
+		select DISTINCT
+      c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner,
+        (select count(no) from participant where chat_room_no = c.no) as participantCount,
+        (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage
+
+    from 
+      chat_room c, participant p
+    where
+      c.no = p.chat_room_no
+    order by 
+        c.created_at desc
 		]]>
   </select>
 
@@ -36,32 +46,42 @@
       ]]>
   </select>
 
-  <select id="participatingRoom" parameterType="Long" resultType="chatroom">
+  <select id="participatingRoom" parameterType="Long" resultType="map">
     <![CDATA[
-      SELECT
-          no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized, searchable, owner
-      FROM
-          chat_room
+      	SELECT DISTINCT
+        c.no, c.title, c.thumbnail_url as thumbnailUrl, p.not_read_count as notReadCount,
+			  (select count(no) from participant where chat_room_no = c.no) as participantCount,
+		    (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
+			    from message 
+          where chat_room_no = c.no) as leastMessageAt,  
+        (select message
+				  from message
+				  where no = (select ifnull(max(no),"0") from message where chat_room_no = c.no)) as leastMessage
+     FROM
+          chat_room c, participant p
       WHERE
-          no IN (SELECT
-                  chat_room_no
+      c.no = p.chat_room_no and
+          c.no IN (SELECT
+               chat_room_no
                 FROM
                   participant
                 WHERE
                   account_no = #{no})
-      LIMIT
-          10
+      order by 
+        leastMessageAt desc
     ]]>
   </select>
 
-  <select id="keywordSearch" parameterType="String" resultType="chatroom">
+  <select id="keywordSearch" parameterType="String" resultType="map">
     <![CDATA[
-      SELECT
-          no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, created_at as createdAt, only_authorized as onlyAuthorized, searchable, owner
-      FROM
-        chat_room
-      where
-        no in (select
+     	SELECT DISTINCT
+            c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner,
+        (select count(no) from participant where chat_room_no = c.no) as participantCount,
+        (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage
+     FROM
+          chat_room c, participant p
+      WHERE
+      c.no in (select
                   chat_room_no
               FROM
                   chat_room_has_tag
@@ -73,7 +93,7 @@
                           where 
                               tag like CONCAT('%',#{searchValue},'%'))
         OR
-            title like CONCAT('%',#{searchValue},'%'))
+            c.title like CONCAT('%',#{searchValue},'%'))
     ]]>
   </select>
 
@@ -91,5 +111,81 @@
               chat_room_no = #{no})
     ]]>
   </select>
+
+  <update id="changePassword" parameterType="chatRoom">
+    <![CDATA[
+      update chat_room
+      set password= #{password }
+      where no = #{no }
+    ]]>
+  </update>
+
+  <update id="updateChatRoomInfo" parameterType="chatRoom">
+    <![CDATA[
+      update chat_room
+      set title= #{title }, limited_user_count= #{limitedUserCount }
+      , only_authorized= #{onlyAuthorized }, searchable = #{searchable} , thumbnail_url= #{thumbnailUrl }
+    ]]>
+    <choose>
+    <when test='("").equals(password) == false'>
+    <![CDATA[
+      , password = #{password}
+    ]]>
+    </when>
+    </choose>
+    <![CDATA[
+      where no = #{no }
+    ]]>
+  </update>
+  
+  <select id="isExistsPassword" parameterType="Long" resultType="String">
+    <![CDATA[
+      select 
+        password
+      from 
+        chat_room
+      where no = #{no}
+    ]]>
+  </select>
+
+  <select id="checkPassword" parameterType="map" resultType="String">
+    <![CDATA[
+      select 
+        password
+      from 
+        chat_room
+      where no = #{no}
+          and
+          password = #{password}
+    ]]>
+  </select>
+
+  <select id="favoriteRoomList" parameterType="Long" resultType="chatroom">
+    <![CDATA[
+      SELECT 
+        no, thumbnail_url as thumbnailUrl
+      FROM 
+        chat_room 
+      where 
+        no in (select chat_room_no from participant where account_no=#{no} and favorite_room = "true")
+     ]]>
+  </select>
+  
+  <update id="deleteChatRoom" parameterType="Long">
+    <![CDATA[
+      update chat_room
+      set is_deleted = true
+      where no = #{no }
+     ]]>
+  </update>
+
+  <select id="checkIsDeleted" parameterType="Long" resultType="Boolean">
+    <![CDATA[
+      select is_deleted
+      from chat_room
+      where no = #{no }
+    ]]>
+  </select>
+ 
 
 </mapper>

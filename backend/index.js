@@ -7,7 +7,7 @@ const argv = require('minimist')(process.argv.slice(2));
 // const elasticsearch = require('elasticsearch');
 // const client = new elasticsearch.Client({
 //     node:"localhost:9200"
-    
+
 // });
 
 // async function run () {
@@ -21,8 +21,8 @@ const argv = require('minimist')(process.argv.slice(2));
 //           console.log('All is well');
 //         }
 //       });
-    
-      
+
+
 //       // callback API
 //       const result = await client.search({
 //         index: 'my_index',
@@ -34,7 +34,7 @@ const argv = require('minimist')(process.argv.slice(2));
 //       }, (err, result) => {
 //         if (err) console.log(err)
 //       });
-      
+
 //       console.log(result);
 // }
 
@@ -46,14 +46,14 @@ const argv = require('minimist')(process.argv.slice(2));
 //     // Override the service name from package.json
 //     // Allowed characters: a-z, A-Z, 0-9, -, _, and space
 //     serviceName: 'message',
-    
+
 //     // Use if APM Server requires a secret token
 //     secretToken: '',
-    
+
 //     // Set the custom APM Server URL (default: http://localhost:8200)
 //     serverUrl: 'http://localhost:8200',
-    
-   
+
+
 //     })
 
 
@@ -66,6 +66,9 @@ const logger = require("./logging");
 
 // controllers
 const messageController = require('./controllers/message');
+const todoController = require('./controllers/todo');
+const noticeController = require('./controllers/notice');
+// const fileController = require('./controllers/file');
 
 // process Argument
 process.title = argv.name;
@@ -231,7 +234,7 @@ io.on("connection", (socket) => {
     } 
     // TODO: DB room에서 회원 관련 데이터 삭제
     socket.leave(data.roomName); */
-    
+
     // TODO: disconnect도 srem추가해서 chatMember보내야함
     socket.on("disconnect", async (reason) => {
         if (currentRoomName !== null) {
@@ -265,6 +268,31 @@ io.on("connection", (socket) => {
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
 
+    socket.on("todo:send", async (date, todo) => {
+        const todoObject = {
+            participantNo: participantObj.no,
+            chatRoomNo: roomObj.no,
+            todo: todo,
+            date: date,
+        }
+        todoController.addTodo(todoObject);
+
+    });
+    socket.on("notice:send", async (notice) => {
+        const noticeObject = {
+            participantNo: participantObj.no,
+            chatRoomNo: roomObj.no,
+            notice: notice,
+        }
+        noticeController.addNotice(noticeObject);
+    });
+
+    socket.on("file:send", async (files) => {
+        // console.log(files);
+        // fileController.addFile(participantObj.no, roomObj.no, files);
+    });
+
+
 
 
     /** leave
@@ -278,19 +306,19 @@ io.on("connection", (socket) => {
         
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
-        
+
         const leaveMessage = {
             "validation": "leave",
             "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.`,
             chatMember
         }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(leaveMessage));
-        
+
         // io.of('/').adapter.subClient.unsubscribe(currentRoomName) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
-        
+
         // io.of('/').adapter.subClient.end(); // 구독자 설정 해제
         // io.of('/').adapter.pubClient.end(); // 발행자 설정 해제
-        
+
         /* io.of('/').adapter.subClient.unsubscribe(data.roomName) // 구독하고 있는 방 해제
         io.of('/').adapter.pubClient.publish(data.roomName, JSON.stringify(leaveMsg));
         io.of('/').adapter.subClient.end(); // 구독자 설정 해제

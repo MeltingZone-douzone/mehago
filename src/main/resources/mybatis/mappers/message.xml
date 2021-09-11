@@ -118,4 +118,12 @@
             chat_room_no = #{chatRoomNo }
     ]]>
      </select>
+     
+     <select id="getLastReadChatNo" parameterType="Long" resultType="Long">
+        <![CDATA[
+            select ifnull(max(no), 0)
+            from message
+            where chat_room_no = #{no}
+         ]]>
+     </select>
 </mapper>

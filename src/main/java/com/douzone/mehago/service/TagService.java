@@ -27,4 +27,8 @@ public class TagService {
         return result;
     }
 
+    public boolean unlinkTags(Long chatRoomNo) {
+        return tagRepository.unlinkTag(chatRoomNo);
+    }
+
 }
