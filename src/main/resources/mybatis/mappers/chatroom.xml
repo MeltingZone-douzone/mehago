@@ -11,7 +11,7 @@
 		<![CDATA[
 			insert 
 				into chat_room 
-				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner}, false)		
+				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner})		
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -160,14 +160,14 @@
     ]]>
   </select>
 
-  <select id="favoriteRoomList" parameterType="Long" resultType="chatroom">
+  <select id="favoriteRoomList" parameterType="map" resultType="chatroom">
     <![CDATA[
       SELECT 
         no, thumbnail_url as thumbnailUrl
       FROM 
         chat_room 
       where 
-        no in (select chat_room_no from participant where account_no=#{no} and favorite_room = "true")
+        no in (select chat_room_no from participant where account_no=#{accountNo} and favorite_room = "true")
      ]]>
   </select>
   

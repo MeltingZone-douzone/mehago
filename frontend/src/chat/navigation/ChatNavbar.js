@@ -49,6 +49,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
         try {
             joinFavoriteRoom(no).then((res) => {
                 console.log(res.data);
+                setFavoriteRoomThumbnail(res.data);
             });
         } catch (error) {
             
