@@ -100,7 +100,7 @@ export function fileUpload(roomNo, participantNo, files) {
         }).then(res => res);
 }
 
-export function getSearchMessage(searchKeyword) {
+export function getSearchMessage(chatRoomNo, searchKeyword) {
     setAuthHeader();
     return axios.get("/api/chat/getSearchMessage?chatRoomNo="+ chatRoomNo +"&searchKeyword=" + searchKeyword, { headers: AuthHeader })
         .then(res => res);

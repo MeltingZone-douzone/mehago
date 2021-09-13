@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import '../assets/sass/chat/ChatProfile.scss';
 import '../assets/sass/chat/modal.scss';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 export default function ParticipatingList({room, favoriteRoom}) {
 
@@ -36,7 +36,7 @@ export default function ParticipatingList({room, favoriteRoom}) {
     return (
         <div className={"chatProfile"}>
             <List className={"container"}>
-                <Button onClick={() => favoriteRoom(`${room.no}`)}><StarBorderIcon /></Button>
+                <Button onClick={() => favoriteRoom(`${room.no}`)}><StarBorderIcon /></Button> // FIXME: 이름바꾸기
                 <Link to ={`/chat/${room.no}`}>
                 <ListItem button key={`${room.no}`} className={"roombutton"} >
                     <Avatar className={"item1"} alt="프로필 사진" src = {room.thumbnailUrl} />
