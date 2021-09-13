@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import '../assets/sass/chat/Chat.scss';
-import { colors } from '../assets/styles/properties/Colors';
+import '../../assets/sass/chat/ChatNav.scss';
+import { colors } from '../../assets/styles/properties/Colors';
 import { Link } from 'react-router-dom';
-import { getMyChatListApi, joinFavoriteRoom , favoriteRoomList} from '../../api/ChatApi';
+import { getMyChatListApi, joinFavoriteRoom , favoriteRoomList} from '../../../api/ChatApi';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import HomeIcon from '@material-ui/icons/Home';
@@ -57,7 +57,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
-
     }
 
     const handleChatMember = () => {
@@ -66,7 +65,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     }
 
     return (
-        <div className={"Chat"} onClick={(e)=>e.stopPropagation()}>
+        <div className={"ChatNav"} onClick={(e)=>e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
                     <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>

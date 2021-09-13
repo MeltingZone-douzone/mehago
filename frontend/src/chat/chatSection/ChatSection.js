@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../api/ChatApi";
-import '../assets/sass/chat/ChatList.scss';
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../../api/ChatApi";
+import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
-import Chatting2 from './Chatting2';
+import Chatting2 from './Chatting';
 import MsgInput2 from './MsgInput2';
-import Dialogs from './dialogs/Dialogs';
+import Dialogs from '../dialogs/Dialogs';
 
 const socket = io('http://localhost:8888');
 export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants}) {
