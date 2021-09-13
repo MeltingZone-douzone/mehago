@@ -258,8 +258,8 @@ public class ChatController {
     @GetMapping("joinFavoriteRoom/{no}")
     public ResponseEntity<?> joinFavoriteRoom(@PathVariable Long no , @AuthUser Account account) {
         Long accountNo = account.getNo();
-        participantService.joinFavoriteRoom(no, accountNo);
-        return ResponseEntity.ok().body(true);
+        List<ChatRoom> favoriteRoom = participantService.joinFavoriteRoom(no, accountNo);
+        return ResponseEntity.ok().body(favoriteRoom);
     }
 
     @Auth

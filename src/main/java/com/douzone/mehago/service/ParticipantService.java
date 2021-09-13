@@ -7,6 +7,7 @@ import java.util.Map;
 import com.douzone.mehago.repository.MessageRepository;
 import com.douzone.mehago.repository.ParticipantRepository;
 import com.douzone.mehago.vo.Account;
+import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.Participant;
 
@@ -82,7 +83,7 @@ public class ParticipantService {
     }
 
 
-    public void joinFavoriteRoom(Long no, Long accountNo) {
-        participantRepository.joinFavoriteRoom(no , accountNo);
+    public List<ChatRoom> joinFavoriteRoom(Long no, Long accountNo) {
+        return participantRepository.joinFavoriteRoom(no , accountNo);
     }
 }

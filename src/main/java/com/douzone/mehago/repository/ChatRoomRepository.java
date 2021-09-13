@@ -65,7 +65,9 @@ public class ChatRoomRepository {
     }
 
     public List<ChatRoom> favoriteRoomList(Long no) {
-        return sqlSession.selectList("chatroom.favoriteRoomList", no);
+        Map<String, Long> map = new HashMap();
+        map.put("accountNo", no);
+        return sqlSession.selectList("chatroom.favoriteRoomList", map);
     }
 
     
