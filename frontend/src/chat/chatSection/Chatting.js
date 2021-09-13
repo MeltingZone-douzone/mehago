@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { List } from '@material-ui/core';
-import '../assets/sass/chat/ChatList.scss';
+import '../../assets/sass/chat/ChatRoomSection.scss';
 import _ from 'underscore';
-import { getMessageList } from '../../api/ChatApi';
+import { getMessageList } from '../../../api/ChatApi';
 
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';

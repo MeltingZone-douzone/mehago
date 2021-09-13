@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
-import '../assets/sass/chat/ChatProfile.scss';
-import '../assets/sass/chat/modal.scss';
+import '../../assets/sass/chat/ChatProfile.scss';
+import '../../assets/sass/chat/modal.scss';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 

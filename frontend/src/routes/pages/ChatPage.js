@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import ChatNavbar from '../../chat/ChatNavbar';
-import ChatSection from '../../chat/ChatSection';
+import ChatNavbar from '../../chat/navigation/ChatNavbar';
+import ChatSection from '../../chat/chatSection/ChatSection';
 // import Chatting from '../../chat/Chatting';
 import '../../assets/sass/chat/Chat.scss';
-import ChattingList from '../../chat/ChattingList';
+import ChatList from '../../chat/ChatList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
 import SettingChatRoom from '../../chat/SettingChatRoom';
 import { getParticipantsList } from '../../../api/ChatApi'
@@ -38,9 +38,10 @@ export default function ChatPage({ match, userInfo }) {
             <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>
             <div className={"chattingRoom"}>
                 <Switch>
-                <Route exact path={match.path} component={ChattingList} />
-                <Route exact path={`${match.path}/:no`} render={(props)=> <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} />} /> 
-                <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
+                    <Route exact path={match.path} component={ChatList} />
+                    <Route exact path={`${match.path}/:no`} render={(props)=> <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} />} /> 
+                    <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
+                    <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>
             </div>
         </div>

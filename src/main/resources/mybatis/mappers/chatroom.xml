@@ -30,7 +30,7 @@
     where
       c.no = p.chat_room_no
     order by 
-        c.created_at desc
+        c.no desc
 		]]>
   </select>
 

@@ -4,8 +4,8 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import moment from 'moment';
-import '../assets/sass/chat/ChatList.scss';
-import Thumbnail from '../components/Thumbnail';
+import '../../assets/sass/chat/ChatRoomSection.scss';
+import Thumbnail from '../../components/Thumbnail';
 
 export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword}) {
     const classes = madeStyles();

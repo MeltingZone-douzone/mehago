@@ -10,7 +10,8 @@ import Avatar from '@material-ui/core/Avatar';
 import styled from 'styled-components';
 import ParticipantsStatus from '@material-ui/icons/FiberManualRecord';
 
-import '../assets/sass/chat/ChatList.scss';
+import { getParticipantsList } from '../../../api/ChatApi';
+import '../../assets/sass/chat/ChatNav.scss';
 
 export default function ParticipatingMember({currentParticipants, userInfo, participants}){
     const [searchNickname, setSearchNickname] = useState('');

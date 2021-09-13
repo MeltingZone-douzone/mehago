@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { getMyChatListApi } from '../../api/ChatApi';
+import { getMyChatListApi, getParticipantsList } from '../../../api/ChatApi';
 import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
@@ -62,7 +62,7 @@ const SerachBarWarpper = styled.div`
 const ContentWrapper = styled.div`
     display:flex;
     flex-direction:column;
-    height: 85%;
+    height: 84%;
 
     overflow-y: auto;
     overflow-x: hidden;
