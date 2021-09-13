@@ -15,13 +15,13 @@ export default function ChatPage({ match, userInfo }) {
     const [participants, setParticipants] = useState([]);
     const [currentParticipants, setCurrentParticipants] = useState([]);
 
-    const handleCurrentParticipants = (arrayOfNumbers) =>{
+    const handleCurrentParticipants = (arrayOfNumbers) => {
         setCurrentParticipants(arrayOfNumbers);
     }
     const handleParticipants = (chatRoomNo) => {
         try {
             getParticipantsList(chatRoomNo).then(res => {
-                if(res.data.result == "fail") {
+                if (res.data.result == "fail") {
                     console.log('fail');
                     return;
                 }
@@ -35,11 +35,11 @@ export default function ChatPage({ match, userInfo }) {
 
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>
+            <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} component={ChatList} />
-                    <Route exact path={`${match.path}/:no`} render={(props)=> <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} />} /> 
+                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} />} />
                     <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
                     <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>

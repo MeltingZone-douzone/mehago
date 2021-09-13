@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextField, FormControlLabel, Switch, FormControl, InputLabel, Select, Button } from '@material-ui/core';
 import ChipInput from 'material-ui-chip-input';
 
-export default function SettingChatForm({ classes, chatRoom, handleChange, handleAddTagName, handleDeleteTagName, passwordFunction }) {
+export default function SettingChatForm({ classes, chatRoom, isSecretRoom, handleChange, handleAddTagName, handleDeleteTagName, passwordFunction }) {
     return (
         <FormWrapper>
             <TextField
@@ -50,23 +50,23 @@ export default function SettingChatForm({ classes, chatRoom, handleChange, handl
                         name="searchable" color="primary" />}
                 label="검색 허용" />
             <div className={classes.password}>
-                {chatRoom.secretRoom === true ?
+                {isSecretRoom === true ?
                     <Button variant="contained" onClick={passwordFunction.open}>비밀번호 변경</Button>
                     :
                     <FormControlLabel
                         control={
-                            <Switch checked={chatRoom.isSecretRoom ? chatRoom.isSecretRoom : false} onChange={handleChange}
-                                name="isSecretRoom" color="primary" />
+                            <Switch checked={chatRoom.secretRoom ? chatRoom.secretRoom : false} onChange={handleChange}
+                                name="secretRoom" color="primary" />
                         }
                         label="password"
                     />
                 }
 
-                {chatRoom.isSecretRoom && chatRoom.isSecretRoom === true ?
+                {isSecretRoom && isSecretRoom == false && chatRoom.secretRoom === true ?
                     <TextField
                         className={classes.TextField, classes.passwordInput}
                         type="password" variant="outlined" size="small"
-                        name="password" value={chatRoom.newPassword} onChange={handleChange} />
+                        name="password" value={chatRoom.password} onChange={handleChange} />
                     : null}
             </div>
         </FormWrapper>

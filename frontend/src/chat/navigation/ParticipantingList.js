@@ -1,16 +1,23 @@
-import React from 'react';
 import { List, ListItem, makeStyles } from '@material-ui/core';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import '../../assets/sass/chat/ChatProfile.scss';
+import '../../assets/sass/chat/modal.scss';
+import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+
 import styled from 'styled-components';
+import defaultImage from "../../assets/images/black-mehago.png";
 
-import defaultImage from "../assets/images/black-mehago.png";
-
-export default function ParticipantingList({
-    no, title, thumbnailUrl, participantCount, leastMessageAt, leastMessage, notReadCount }) {
+export default function ParticipantingList({ key, room, favoriteRoom , exitRoom}) {
     const classes = madeStyles();
+
     function timeForToday(leastMessageAt) {
         const today = new Date();
         const timeValue = new Date(leastMessageAt);
+
+        if(leastMessageAt == null) return "대화 없음";
 
         const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
         if (betweenTime < 1) return '방금전';
@@ -35,25 +42,27 @@ export default function ParticipantingList({
 
     return (
         <div className={"chatProfile"}>
-            <Link to={`/chat/${no}`}>
                 <List className={"container"}>
-                    <ListItem button key={`${no}`} className={classes.roomContainer} >
+                    <Button onClick={() => favoriteRoom(`${room.no}`)}><StarBorderIcon /></Button>
+                    <Button onClick={() => exitRoom(`${room.no}`)}><ExitToAppRoundedIcon /></Button>
+                    <Link to={`/chat/${room.no}`}>
+                    <ListItem button key={`${room.no}`} className={classes.roomContainer} >
                         <ChattingRoomImage>
-                            <img className={thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={thumbnailUrl ? thumbnailUrl : defaultImage} alt={`${title}의 이미지`} />
+                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
                         </ChattingRoomImage>
                         <ChattingRoomContent>
                             <div className={classes.content}>
-                                <span className={classes.title} > {title} </span>
-                                <span className={classes.participantCount}>{participantCount === 1 ? ' ' : participantCount}</span>
-                                <span className={classes.leastMessageAt}>{timeForToday(leastMessageAt)}</span>
+                                <span className={classes.title} > {room.title} </span>
+                                <span className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</span>
+                                <span className={classes.leastMessageAt}>{timeForToday(room.leastMessageAt)}</span>
                             </div>
                             <div className={classes.content}>
-                                <span className={classes.leastMessage}>{leastMessage ? leastMessage : ' '}</span> <span>{notReadCount === 0 ? ' ' : notReadCount}</span>
+                                <span className={classes.leastMessage}>{room.leastMessage ? room.leastMessage : ' '}</span> <span>{room.notReadCount === 0 ? ' ' : room.notReadCount}</span>
                             </div>
                         </ChattingRoomContent>
                     </ListItem>
+                </Link>
                 </List>
-            </Link>
         </div >
     )
 }

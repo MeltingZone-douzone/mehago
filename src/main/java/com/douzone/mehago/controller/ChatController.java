@@ -54,6 +54,7 @@ public class ChatController {
 
         chatRoom.setOwner(auth.getNo());
         chatRoom.setThumbnailUrl(url);
+        chatRoom.setIsDeleted(false);
         Long roomNo = chatRoomService.createRoom(chatRoom);
 
         // 2. 참가자 생성
@@ -62,6 +63,7 @@ public class ChatController {
         participant.setChatNickname(auth.getNickname());
         participant.setNotReadCount(0);
         participant.setChatRoomNo(roomNo);
+        participant.setFavoriteRoom(false);
         Long participantNo = participantService.createParticipant(participant);
 
         // 3. 태그 생성
@@ -75,10 +77,8 @@ public class ChatController {
     @GetMapping("/roomInfo/{chatRoomNo}")
     public ResponseEntity<?> getRoomInfo(@PathVariable Long chatRoomNo) {
         ChatRoom result = chatRoomService.getRoomInfo(chatRoomNo);
-        if ("".equals(result.getPassword()) == false) {
-            result.setSecretRoom(true);
-            result.setPassword("");
-        }
+        result.setPassword("");
+
         List<String> tag = chatRoomService.getTagName(chatRoomNo);
         result.setTagName(tag);
         return ResponseEntity.ok()
@@ -158,8 +158,9 @@ public class ChatController {
     @GetMapping("/keywordSearch")
     public ResponseEntity<?> keywordSearch(String searchValue) {
         List<Map<String, Object>> keywordSearch = chatRoomService.keywordSearch(searchValue);
-        getTagName(keywordSearch);   
-        return ResponseEntity.ok().body(!keywordSearch.isEmpty() ? CommonResponse.success(keywordSearch) : CommonResponse.fail("검색결과가 없습니다."));
+        getTagName(keywordSearch);
+        return ResponseEntity.ok().body(
+                !keywordSearch.isEmpty() ? CommonResponse.success(keywordSearch) : CommonResponse.fail("검색결과가 없습니다."));
     }
 
     private void getTagName(List<Map<String, Object>> list) {
@@ -172,10 +173,11 @@ public class ChatController {
 
     @GetMapping("/getSearchMessage")
     public ResponseEntity<?> getSearchMessage(Long chatRoomNo, String searchKeyword) {
-        System.out.println(chatRoomNo +":"+ searchKeyword);
+        System.out.println(chatRoomNo + ":" + searchKeyword);
         List<Long> messageNo = messageService.getSearchMessage(chatRoomNo, searchKeyword);
         System.out.println(messageNo);
-        return ResponseEntity.ok().body(!messageNo.isEmpty() ? CommonResponse.success(messageNo) : CommonResponse.fail("검색결과가 없습니다.")); // 채팅방에
+        return ResponseEntity.ok()
+                .body(!messageNo.isEmpty() ? CommonResponse.success(messageNo) : CommonResponse.fail("검색결과가 없습니다.")); // 채팅방에
     }
 
     @PostMapping("/vaildatePassword")
@@ -218,6 +220,7 @@ public class ChatController {
             return ResponseEntity.ok().body(CommonResponse.fail("권한이 아닙니다."));
         }
         if (chatRoom.getPassword() == null) {
+            chatRoom.setSecretRoom(false);
             chatRoom.setPassword("");
         }
         boolean result = chatRoomService.changePassword(chatRoom);
@@ -257,10 +260,10 @@ public class ChatController {
 
     @Auth
     @GetMapping("joinFavoriteRoom/{no}")
-    public ResponseEntity<?> joinFavoriteRoom(@PathVariable Long no , @AuthUser Account account) {
+    public ResponseEntity<?> joinFavoriteRoom(@PathVariable Long no, @AuthUser Account account) {
         Long accountNo = account.getNo();
-        participantService.joinFavoriteRoom(no, accountNo);
-        return ResponseEntity.ok().body(true);
+        List<ChatRoom> favoriteRoom = participantService.joinFavoriteRoom(no, accountNo);
+        return ResponseEntity.ok().body(favoriteRoom);
     }
 
     @Auth

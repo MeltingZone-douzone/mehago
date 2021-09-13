@@ -18,5 +18,14 @@ public class ChatRoom {
 
     private List<String> tagName;
     private boolean secretRoom;
+    private boolean isDeleted;
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public boolean getIsDeleted() {
+        return this.isDeleted;
+    }
 
 }

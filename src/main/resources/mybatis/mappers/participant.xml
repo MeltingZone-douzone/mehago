@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), "false")
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom })
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -112,17 +112,17 @@
 		]]>
      </select>
 
-	 <update id="joinFavoriteRoom" parameterType="map">
+	 <update id="joinFavoriteRoom" parameterType="map" >
 	<![CDATA[
 		update 
 			participant
 		set
-			favorite_room = "true"
+			favorite_room = #{favoriteRoom }
 		where 
 			chat_room_no= #{chatRoomNo }
 				and
 			account_no = #{accountNo}
-			]]>			
+	]]>			
 	</update>
 
 </mapper>
