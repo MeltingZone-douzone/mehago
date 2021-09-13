@@ -134,6 +134,7 @@ export default function ChattingRoom({
                             {tagName.map((tag, index) => {
                                 return (
                                     <Chip
+                                        key={index}
                                         icon={<LocalOfferIcon />}
                                         variant="outlined"
                                         label={tag}

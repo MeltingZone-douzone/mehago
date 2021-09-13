@@ -1,17 +1,23 @@
+import { List, ListItem, makeStyles } from '@material-ui/core';
 import React from 'react';
-import { Button, List, ListItem, makeStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import '../../assets/sass/chat/ChatProfile.scss';
+import '../../assets/sass/chat/modal.scss';
+import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+
 import styled from 'styled-components';
-import StarRateRoundedIcon from '@material-ui/icons/StarRateRounded';
+import defaultImage from "../../assets/images/black-mehago.png";
 
-import defaultImage from "../assets/images/black-mehago.png";
-
-export default function ParticipantingList({room, favoriteRoom}) {
+export default function ParticipantingList({ key, room, favoriteRoom , exitRoom}) {
     const classes = madeStyles();
 
     function timeForToday(leastMessageAt) {
         const today = new Date();
         const timeValue = new Date(leastMessageAt);
+
+        if(leastMessageAt == null) return "대화 없음";
 
         const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
         if (betweenTime < 1) return '방금전';
@@ -37,9 +43,9 @@ export default function ParticipantingList({room, favoriteRoom}) {
     return (
         <div className={"chatProfile"}>
                 <List className={"container"}>
-                <Button onClick={() => favoriteRoom(`${room.no}`)}><StarRateRoundedIcon /></Button>
+                    <Button onClick={() => favoriteRoom(`${room.no}`)}><StarBorderIcon /></Button>
+                    <Button onClick={() => exitRoom(`${room.no}`)}><ExitToAppRoundedIcon /></Button>
                     <Link to={`/chat/${room.no}`}>
-
                     <ListItem button key={`${room.no}`} className={classes.roomContainer} >
                         <ChattingRoomImage>
                             <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
@@ -55,7 +61,7 @@ export default function ParticipantingList({room, favoriteRoom}) {
                             </div>
                         </ChattingRoomContent>
                     </ListItem>
-                    </Link>
+                </Link>
                 </List>
         </div >
     )

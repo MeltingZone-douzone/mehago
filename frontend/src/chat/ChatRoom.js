@@ -52,7 +52,10 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
         const today = new Date();
         const timeValue = new Date(lastMessage);
 
+        if(lastMessage == null) return "대화 없음";
+
         const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+ 
         if (betweenTime < 1) return '방금전';
         if (betweenTime < 60) {
             return `${betweenTime}분전`;

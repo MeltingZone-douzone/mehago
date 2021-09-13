@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { getMyChatListApi, getParticipantsList } from '../../../api/ChatApi';
 import { NavLink } from 'react-router-dom';
 import ParticipantingList from './ParticipantingList';
 
 
-export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, favoriteRoom}){
+export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, favoriteRoom, exitRoom}){
     const classes = styles();
     return (
         <MyChatRoomList>
@@ -21,7 +20,7 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                            <SearchIcon />
+                            <SearchIcon/>
                         </InputAdornment>
                     ),
                 }}
@@ -30,9 +29,13 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
             <ContentWrapper>
                 {
                 participatingRoom
-                .filter(rooms => rooms.title.indexOf(searchValue) != -1 || rooms.tagName.indexOf(searchValue) != -1)
-                .map(room => 
-                    <ParticipantingList room = {room} favoriteRoom={favoriteRoom}/>
+                .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
+                .map((room ,index)=> 
+                    <ParticipantingList
+                        key = {index} 
+                        room = {room} 
+                        favoriteRoom={favoriteRoom} 
+                        exitRoom={exitRoom}/>
                     )
                 }
             </ContentWrapper>

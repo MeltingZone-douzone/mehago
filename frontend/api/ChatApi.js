@@ -164,4 +164,11 @@ export function deleteChatRoom(roomObject) {
     return axios.post('/api/chat/deleteChatRoom', roomObject, { headers: AuthHeader }).then(res => res);
 }
 
+export function getChatRooms(){
+    return axios.post('/api/chat/chatList', { headers: AuthHeader }).then(res => res);
+}
 
+export function keyword(searchValue) {
+    return axios.get(`/api/chat/keywordSearch?searchValue=`+ searchValue , { headers: AuthHeader })
+        .then(res => res);
+}
