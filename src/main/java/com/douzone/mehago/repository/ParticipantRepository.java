@@ -66,6 +66,7 @@ public class ParticipantRepository {
         Map<String, Long> map = new HashMap();
         map.put("chatRoomNo", no);
         map.put("accountNo", accountNo);
+        map.put("favoriteRoom", 1L);
         sqlSession.update("participant.joinFavoriteRoom", map);
     }
 

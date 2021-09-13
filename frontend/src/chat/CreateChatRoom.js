@@ -38,7 +38,7 @@ const styles = makeStyles({
     }
 })
 
-export default function CreateChatRoom({history}) {
+export default function CreateChatRoom({ history }) {
 
     const [chatRoom, setChatRoom] = useState(
         {
@@ -51,36 +51,36 @@ export default function CreateChatRoom({history}) {
             tagName: []
         }
     );
-    
+
     const [image, setImage] = useState();
     const [imageName, setImageName] = useState();
     const [cropImage, setCropImage] = useState();
     const [cropper, setCropper] = useState();
 
-    useEffect(() =>{
-        if(!chatRoom.secretRoom) {
-            setChatRoom({ ...chatRoom, password: ""});
+    useEffect(() => {
+        if (!chatRoom.secretRoom) {
+            setChatRoom({ ...chatRoom, password: "" });
         }
-    },[chatRoom.secretRoom])
+    }, [chatRoom.secretRoom])
 
-    useEffect(()=>{
-        if(cropImage) {
+    useEffect(() => {
+        if (cropImage) {
             createChatRoom();
         }
-    },[cropImage])
-    
+    }, [cropImage])
+
     const handleImageChange = (e) => {
         e.preventDefault();
         let files;
         if (e.dataTransfer) {
-          files = e.dataTransfer.files;
+            files = e.dataTransfer.files;
         } else if (e.target) {
-          files = e.target.files;
+            files = e.target.files;
         }
         const reader = new FileReader();
         reader.onload = () => {
-          setImage(reader.result);
-          setImageName(files[0].name);
+            setImage(reader.result);
+            setImageName(files[0].name);
         };
         reader.readAsDataURL(files[0]);
     };
@@ -101,21 +101,22 @@ export default function CreateChatRoom({history}) {
     }
 
     const createChatRoom = () => {
-        const {title, password, limitedUserCount, onlyAuthorized, searchable, tagName} = chatRoom;
-     
+        const { title, password, secretRoom, limitedUserCount, onlyAuthorized, searchable, tagName } = chatRoom;
+
         let form = new FormData();
-        
+
         form.append("title", title);
         form.append("password", password);
-        form.append("limitedUserCount",limitedUserCount);
+        form.append("secretRoom", secretRoom);
+        form.append("limitedUserCount", limitedUserCount);
         form.append("onlyAuthorized", onlyAuthorized);
         form.append("searchable", searchable);
         form.append("tagName", tagName);
-        
-        if(cropImage) {
+
+        if (cropImage) {
             form.append("file", cropImage);
         }
-        
+
         try {
             CreateChattingRoom(form).then((res) => {
                 if (res.statusText === "OK") {
@@ -129,13 +130,13 @@ export default function CreateChatRoom({history}) {
     }
 
     const getCropData = () => {
-        if(typeof cropper !== "undefined") {
-            cropper.getCroppedCanvas().toBlob(blob =>{
+        if (typeof cropper !== "undefined") {
+            cropper.getCroppedCanvas().toBlob(blob => {
                 setCropImage(blob);
             });
         }
     };
-    
+
 
     const classes = styles();
     return (
@@ -143,13 +144,13 @@ export default function CreateChatRoom({history}) {
             <Container>
                 <h1>오픈 채팅방을 만들어 보세요</h1>
                 <CreateTemplate>
-                    <FormTemplate onSubmit={(e) => {e.preventDefault(); image ? getCropData() : createChatRoom()}}>
+                    <FormTemplate onSubmit={(e) => { e.preventDefault(); image ? getCropData() : createChatRoom() }}>
                         <FormWrapper>
                             <InfoFormWrapper>
-                                <CreateChatForm classes={classes} chatRoom={chatRoom} handleChange={handleChange} handleAddTagName={handleAddTagName} handleDeleteTagName={handleDeleteTagName}/>
+                                <CreateChatForm classes={classes} chatRoom={chatRoom} handleChange={handleChange} handleAddTagName={handleAddTagName} handleDeleteTagName={handleDeleteTagName} />
                             </InfoFormWrapper>
                             <CropperWrapper>
-                                <CreateChatImage image={image} imageName={imageName} setCropper={setCropper} onChange={handleImageChange}/>
+                                <CreateChatImage image={image} imageName={imageName} setCropper={setCropper} onChange={handleImageChange} />
                             </CropperWrapper>
                         </FormWrapper>
                         <ButtonWrapper>

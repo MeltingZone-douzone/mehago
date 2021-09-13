@@ -11,7 +11,7 @@
 		<![CDATA[
 			insert 
 				into chat_room 
-				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner}, false)		
+				values(null,#{title},#{password},#{thumbnailUrl},#{limitedUserCount},now(),#{onlyAuthorized},#{searchable},#{owner},#{secretRoom}, #{isDeleted})		
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -23,12 +23,13 @@
 		select DISTINCT
       c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner,
         (select count(no) from participant where chat_room_no = c.no) as participantCount,
-        (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage
-
+        (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage,
+        c.secret_room as secretRoom
     from 
       chat_room c, participant p
     where
-      c.no = p.chat_room_no
+          c.no = p.chat_room_no
+      and c.is_deleted = false
     order by 
         c.no desc
 		]]>
@@ -38,7 +39,8 @@
     <![CDATA[
       SELECT
           no, title, password, thumbnail_url as thumbnailUrl, limited_user_count as limitedUserCount, 
-          created_at as createdAt, only_authorized as onlyAuthorized, searchable as searchable, owner
+          created_at as createdAt, only_authorized as onlyAuthorized, searchable as searchable, owner,
+          secret_room as secretRoom
       FROM
           chat_room
       WHERE
@@ -115,8 +117,7 @@
   <update id="changePassword" parameterType="chatRoom">
     <![CDATA[
       update chat_room
-      set password= #{password }
-      where no = #{no }
+      set password= #{password }, secret_room= #{secretRoom }
     ]]>
   </update>
 
@@ -129,7 +130,7 @@
     <choose>
     <when test='("").equals(password) == false'>
     <![CDATA[
-      , password = #{password}
+      , password = #{password}, secret_room = #{secretRoom }
     ]]>
     </when>
     </choose>
@@ -167,7 +168,7 @@
       FROM 
         chat_room 
       where 
-        no in (select chat_room_no from participant where account_no=#{no} and favorite_room = "true")
+        no in (select chat_room_no from participant where account_no=#{no} and favorite_room = 1)
      ]]>
   </select>
   
