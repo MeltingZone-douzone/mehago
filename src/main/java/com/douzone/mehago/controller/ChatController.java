@@ -107,7 +107,7 @@ public class ChatController {
     // public ResponseEntity<?> getParticipantInfo(String chatNickname,
     // @PathVariable Long chatRoomNo)
 
-    @PostMapping("/chatList")
+    @GetMapping("/chatList")
     public ResponseEntity<?> getAllChatList() {
         List<Map<String, Object>> list = chatRoomService.getAllChatList();
         getTagName(list);

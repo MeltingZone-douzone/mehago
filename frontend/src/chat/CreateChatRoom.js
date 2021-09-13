@@ -43,12 +43,13 @@ export default function CreateChatRoom({history}) {
     const [chatRoom, setChatRoom] = useState(
         {
             title: "",
-            secretRoom: false, // TODO: 시간이 있다면 이 변수는 사람들이 들어오지 못하게 막는 변수.
+            secretRoom: false, 
             password: "",
             limitedUserCount: 10,
             onlyAuthorized: false,
             searchable: false,
             tagName: []
+            // TODO: 시간이 있다면 이 변수는 사람들이 들어오지 못하게 막는 변수.
         }
     );
     
