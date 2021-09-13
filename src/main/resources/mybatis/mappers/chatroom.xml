@@ -161,7 +161,7 @@
     ]]>
   </select>
 
-  <select id="favoriteRoomList" parameterType="Long" resultType="chatroom">
+  <select id="favoriteRoomList" parameterType="map" resultType="chatroom">
     <![CDATA[
       SELECT 
         no, thumbnail_url as thumbnailUrl

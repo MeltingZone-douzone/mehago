@@ -62,7 +62,7 @@ export default function SettingChatForm({ classes, chatRoom, isSecretRoom, handl
                     />
                 }
 
-                {isSecretRoom == false && chatRoom.secretRoom === true ?
+                {isSecretRoom && isSecretRoom == false && chatRoom.secretRoom === true ?
                     <TextField
                         className={classes.TextField, classes.passwordInput}
                         type="password" variant="outlined" size="small"

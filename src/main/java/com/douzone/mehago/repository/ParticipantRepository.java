@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.Participant;
 
@@ -62,12 +63,13 @@ public class ParticipantRepository {
         return sqlSession.selectOne("participant.getLastReadChatNo", chatRoomNo);
     }
 
-    public void joinFavoriteRoom(Long no, Long accountNo) {
+    public List<ChatRoom> joinFavoriteRoom(Long no, Long accountNo) {
         Map<String, Long> map = new HashMap();
         map.put("chatRoomNo", no);
         map.put("accountNo", accountNo);
         map.put("favoriteRoom", 1L);
         sqlSession.update("participant.joinFavoriteRoom", map);
+        return sqlSession.selectList("chatroom.favoriteRoomList", map);
     }
 
 }

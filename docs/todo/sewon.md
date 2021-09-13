@@ -11,3 +11,10 @@ chatRoomNav.js
 엘라스틱 서치 설정 elastcisearch.yml
 https://needjarvis.tistory.com/680
 
+
+elasticsearch 실행
+``` bash
+$ bin/elasticsearch
+```
+
+logstash 실행

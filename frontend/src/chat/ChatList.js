@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import '../assets/sass/chat/ChatList.scss';
 import { List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import moment from 'moment';
+import {getChatRooms, keyword} from '../../api/ChatApi';
 
 import ChatRoom from './ChatRoom';
 import axios from 'axios';
@@ -12,19 +12,15 @@ export default function ChatList({ socket }) {
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
     const [joinRooms, setJoinRooms] = useState([]);
-    const [searchValue, setSearchValue] = useState({ keyword: "" });
+    const [searchValue, setSearchValue] = useState("");
     const [isSearched, setIsSearched] = useState(false);
     const [noResult, setNoResult] = useState(false);
 
     useEffect(() => {
         try {
-
-            const url = `/api/chat/chatList`;
-            axios.post(url, { headers: { 'Context-Type': 'application/json' } })
-                .then(res => {
-                    setRooms(res.data);
-                });
-
+            getChatRooms().then(res => {
+                setRooms(res.data);
+            })
         } catch (e) {
             console.log(e);
         }
@@ -37,21 +33,24 @@ export default function ChatList({ socket }) {
     const keywordSearch = (e) => {
         console.log(searchValue);
         try {
-            const url = `/api/chat/keywordSearch?searchValue=` + searchValue;
-            axios.get(url, { headers: { 'Context-Type': 'application/json' } })
-                .then(res => {
+            if(searchValue === ""){
+                getChatRooms().then(res => {
+                    setRooms(res.data);
+                })
+            } 
+                keyword(searchValue).then(res => {
                     if (res.data.result === "success") {
                         setJoinRooms(res.data.data);
                         setIsSearched(true);
                         setNoResult(false);
-                        // setSearchValue({keyword: ""})
                     } else {
                         console.log(res.data.message); 
                         setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
                         setIsSearched(false);
-                        // setSearchValue({keyword: ""})
                     }
                 });
+            
+            
         } catch (e) {
             console.log(e);
         }
@@ -81,13 +80,14 @@ export default function ChatList({ socket }) {
                     id="input-with-icon-textfield"
                     label="채팅방 검색"
                     name="keyword"
-                    value={searchValue.keyword}
+                    value={searchValue}
                     onChange={(e) => { setSearchValue(e.target.value) }}
                     InputProps={{
                         endAdornment: (
-                            <InputAdornment>
+                            <InputAdornment >
                                 <button
-                                    onClick={searchValue === "" ? null : keywordSearch}>
+                                    className={classes.searchIcon}
+                                    onClick={keywordSearch}>
                                     <SearchIcon />
                                 </button>
                             </InputAdornment>
@@ -98,15 +98,15 @@ export default function ChatList({ socket }) {
             </SearchWrapper>
             {
                 noResult ? (
-                    <p>{noResult}</p>
+                    <p className={"noResult"}>{noResult}</p>
                 ) : (
                     <div className={"ChatListContainer"} >
                         <List className={"ChatRoom"} >
-                            { rooms ? getChatrooms().map((room)=> {
+                            { rooms ? getChatrooms().map((room, index)=> {
                                 return(
                                     
                                     <ChatRoom 
-                                        key={room.no}
+                                        key={index}
                                         no = {room.no}
                                         title={room.title}
                                         limitedUserCount ={room.limitedUserCount}
@@ -133,7 +133,12 @@ export default function ChatList({ socket }) {
 const materialStyles = makeStyles({
     textField: {
         marginTop: "20px",
-        width:"50%"
+        width:"70%"
+    },
+    searchIcon: {
+        backgroundColor: "glay",
+        border:"none",
+        borderRadius:"3px",
     }
 })
 
