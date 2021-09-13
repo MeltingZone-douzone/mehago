@@ -7,6 +7,7 @@ import {getChatRooms, keyword} from '../../api/ChatApi';
 
 import ChatRoom from './ChatRoom';
 import axios from 'axios';
+import { getChatListApi } from '../../api/ChatApi';
 
 export default function ChatList({ socket }) {
     const classes = materialStyles();
@@ -18,13 +19,18 @@ export default function ChatList({ socket }) {
 
     useEffect(() => {
         try {
-            getChatRooms().then(res => {
+            getChatListApi().then(res => {
                 setRooms(res.data);
             })
+
         } catch (e) {
             console.log(e);
         }
     }, [])
+
+    useEffect(() =>{
+        console.log(rooms);
+    },[rooms])
 
     useEffect(() => {
         console.log("socket", socket);
@@ -77,19 +83,17 @@ export default function ChatList({ socket }) {
             <SearchWrapper>
                 <TextField
                     className={classes.textField}
-                    id="input-with-icon-textfield"
                     label="채팅방 검색"
                     name="keyword"
                     value={searchValue}
                     onChange={(e) => { setSearchValue(e.target.value) }}
                     InputProps={{
                         endAdornment: (
-                            <InputAdornment >
-                                <button
-                                    className={classes.searchIcon}
-                                    onClick={keywordSearch}>
+                            <InputAdornment>
+                                {/* <button             !!!!!!!!!!!!!!!!!고쳐!!!!!!!
+                                    onClick={searchValue === "" ? null : keywordSearch}>
                                     <SearchIcon />
-                                </button>
+                                </button> */}
                             </InputAdornment>
                         )
                     }}
@@ -104,7 +108,6 @@ export default function ChatList({ socket }) {
                         <List className={"ChatRoom"} >
                             { rooms ? getChatrooms().map((room, index)=> {
                                 return(
-                                    
                                     <ChatRoom 
                                         key={index}
                                         no = {room.no}
@@ -114,13 +117,15 @@ export default function ChatList({ socket }) {
                                         owner =  {room.owner}
                                         searchable={room.searchable} 
                                         tagName = {room.tagName}
+                                        secretRoom = {room.secretRoom}
                                         thumbnailUrl = {room.thumbnailUrl} 
                                         titleAndTag = { room }
                                         participantCount = { room.participantCount}
                                         lastMessage = { room.lastMessage }
+                                        ownerNickname = {room.nickname}
+                                        ownerThumbnailUrl = {room.accountThumbnailUrl}
                                     />
-                                    
-                                    )
+                                )
                                 }) : null }
                         </List>
                     </div>

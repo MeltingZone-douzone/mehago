@@ -11,15 +11,15 @@ import ReactModal from "react-modal";
 ReactModal.setAppElement('body');
 
 import {isExistsPasswords, checkPassword, nicknameValidation} from '../../api/ChatApi';
-import ChatRoomModalContent from './ChatRoomModalContent';
+import ChatRoomModalTemplate from './ChatRoomModalTemplate';
 
-export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, lastMessage }) {
+export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl}) {
     
     const [modalIsOpen, setModalIsOpen] = useState(false);
-
+    const [account, setAccount] = useState(true);
+    
 
     const getTags = () => {
-        
         if(tagName.length > 6) {
             return tagName.slice(0,6).map((tag, index)=> {
                 return(
@@ -107,14 +107,19 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
                 shouldCloseOnOverlayClick={true}
                 shouldCloseOnEsc={true}
                 contentLabel="채팅방">
-                    <ChatRoomModalContent 
+                    <ChatRoomModalTemplate
+                        no = {no}
                         title={title}
                         thumbnailUrl={thumbnailUrl}
                         participantCount={participantCount}
                         limitedUserCount={limitedUserCount}
                         lastMessage={lastMessage}
                         tagName={tagName}
-                        timeForToday={timeForToday}/>
+                        timeForToday={timeForToday}
+                        secretRoom = {secretRoom}
+                        account = {true} //todo
+                        ownerThumbnailUrl={ownerThumbnailUrl}
+                        ownerNickname={ownerNickname}/>
             </ReactModal>
         </div>
     )

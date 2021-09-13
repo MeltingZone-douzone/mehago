@@ -15,7 +15,6 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
             <TextField
                 className={classes.textField}
                 onChange={(e) => { setSearchValue(e.target.value) } }
-                id="input-with-icon-textfield"
                 label="채팅방 검색"
                 InputProps={{
                     startAdornment: (

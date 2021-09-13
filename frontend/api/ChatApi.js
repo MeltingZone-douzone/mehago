@@ -1,4 +1,3 @@
-import { formatMs } from "@material-ui/core";
 import axios from "axios";
 import localStorage from "local-storage";
 
@@ -115,7 +114,7 @@ export function vaildatePassword(chatRoomNo, password) {
     return axios.post(`/api/chat/vaildatePassword`, roomObject, { headers: AuthHeader }).then(res => res);
 }
 
-export function checkPassword(no, password) {
+export function checkPasswordApi(no, password) {
     const passwordObject = { password };
     return axios.post(`/api/chat/checkPassword/${no}`, passwordObject, { headers: AuthHeader })
         .then(res => res);
@@ -164,8 +163,10 @@ export function deleteChatRoom(roomObject) {
     return axios.post('/api/chat/deleteChatRoom', roomObject, { headers: AuthHeader }).then(res => res);
 }
 
-export function getChatRooms(){
-    return axios.post('/api/chat/chatList', { headers: AuthHeader }).then(res => res);
+export function getChatListApi() {
+    setAuthHeader();
+    return axios.get('/api/chat/chatList', {headers: AuthHeader})
+                .then(res => res);
 }
 
 export function keyword(searchValue) {
