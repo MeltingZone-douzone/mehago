@@ -106,7 +106,7 @@
           ]]>
      </update>
 
-     <select id="getSearchMessage" parameterType="String" resultType="Long">
+     <select id="getSearchMessage" parameterType="map" resultType="Object">
     <![CDATA[
         SELECT
             no
@@ -114,6 +114,8 @@
             message
         WHERE
             message LIKE CONCAT('%', #{searchKeyword },'%')
+            AND
+            chat_room_no = #{chatRoomNo }
     ]]>
      </select>
      

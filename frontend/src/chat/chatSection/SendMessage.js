@@ -1,18 +1,16 @@
-import React from 'react';
 import { Grid, makeStyles } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
-import '../assets/sass/chat/ChatList.scss';
-import Thumbnail from '../components/Thumbnail';
+import React from 'react';
 
-export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword }) {
+export default function SendMessage({ nextMessage, previousMessage, message, no, searchKeyword, hiddenSearchInput }) {
     const classes = madeStyles();
 
     const getHighlightedText = ({ text = message.message, highlight = searchKeyword }) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
-        return <p className={classes.receivedMessage} name={'chat-message'} no={message.no}>
+        return <p className={classes.myChatMessage} name={'chat-message'} no={message.no}>
             {parts.map((part, index) =>
                 part.toLowerCase() === highlight.toLowerCase() ?
                     (<mark key={index}>{part}</mark>)
@@ -22,37 +20,18 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
             }
         </p>;
     }
-
     return (
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
-                <Grid item xs={1} align="center">
-                    {!nextMessage || nextMessage.participantNo !== message.participantNo ?
-                        <div className="profile">
-                            <Thumbnail nickname={message.nickname} />
-                        </div>
-                        : ''}
-                </Grid>
-                <Grid item xs={11}>
-                    <Grid item xs={12}>
-                        {!nextMessage || nextMessage.participantNo !== message.participantNo ?
-                            <ListItemText align="left" secondary={
-                                <Typography className={classes.nickname}>
-                                    {message.nickname}
-                                </Typography>
-                            }>
-                            </ListItemText>
-                            : ''}
-                    </Grid>
-
+                <Grid item xs={12}>
 
                     {no ?
-                        <ListItemText align="left" className={classes.chatContainer, classes.left}
+                        <ListItemText align="right" className={classes.chatContainer, classes.right}
                             primary={
                                 getHighlightedText(message.message, searchKeyword)
                             }
                             secondary={
-                                <Typography className={classes.notReadCountLeft}>
+                                <Typography className={classes.notReadCountRight}>
                                     <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
                                     {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
                                         <span className={classes.createdAt}>
@@ -63,14 +42,14 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                             }>
                         </ListItemText>
                         :
-                        <ListItemText align="left" className={classes.chatContainer, classes.left}
+                        <ListItemText align="right" className={classes.chatContainer, classes.right}
                             primary={
-                                <p className={classes.receivedMessage} no={message.no}>
+                                <p className={classes.myChatMessage} no={message.no}>
                                     {message.message}
                                 </p>
                             }
                             secondary={
-                                <Typography className={classes.notReadCountLeft}>
+                                <Typography className={classes.notReadCountRight}>
                                     <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
                                     {!previousMessage || previousMessage.participantNo !== message.participantNo || moment(previousMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
                                         <span className={classes.createdAt}>
@@ -83,7 +62,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                     }
                 </Grid>
             </Grid>
-        </ListItem >
+        </ListItem>
     );
 };
 
@@ -92,24 +71,22 @@ const madeStyles = makeStyles({
         paddingTop: 0,
         paddingBottom: 0,
     },
-    nickname: {
-        fontWeight: "bolder",
-    },
-    receivedMessage: {
-        boxShadow: "2px 3px rgb(0 0 0 / 20%)",
+    myChatMessage: {
+        boxShadow: "3px 3px rgb(0 0 0 / 20%)",
         borderRadius: "5px",
         width: "fit-content",
         padding: "10px",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#A1F1FF",
     },
-    left: {
-        marginRight: "30%",
-        display: "flex"
+    right: {
+        marginLeft: "30%",
+        display: "flex",
+        flexDirection: "row-reverse",
     },
-    notReadCountLeft: {
+    notReadCountRight: {
         display: "flex",
         flexDirection: "column",
-        margin: "auto 0 0 10px",
+        margin: "auto 10px 0 0 ",
         fontSize: "0.8em"
     },
     createdAt: {

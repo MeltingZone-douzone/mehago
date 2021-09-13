@@ -11,7 +11,7 @@ export default function Links() {
         </li>
         <li>
           <NavLink to="/account/passwordsearch" >비밀번호 찾기</NavLink>
-        </li>
+        </li> 
       </ul>
       <NavLink className={"MemberJoin"} to="/account/signup" >회원가입</NavLink>
     </div>

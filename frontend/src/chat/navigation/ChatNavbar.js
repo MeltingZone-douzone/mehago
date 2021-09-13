@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import '../assets/sass/chat/Chat.scss';
-import { colors } from '../assets/styles/properties/Colors';
+import '../../assets/sass/chat/ChatNav.scss';
+import { colors } from '../../assets/styles/properties/Colors';
 import { Link } from 'react-router-dom';
-import { getMyChatListApi, joinFavoriteRoom , favoriteRoomList} from '../../api/ChatApi';
+import { getMyChatListApi, joinFavoriteRoom , favoriteRoomList} from '../../../api/ChatApi';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import HomeIcon from '@material-ui/icons/Home';
@@ -13,7 +13,7 @@ import ParticipatingMember from './ParticipatingMember';
 import { Avatar } from '@material-ui/core';
 
 
-export default function ChatNavbar({currentParticipants}){
+export default function ChatNavbar({currentParticipants, userInfo, participants}){
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
     const [participatingRoom, setParticipatingRoom] = useState([]);
@@ -58,7 +58,6 @@ export default function ChatNavbar({currentParticipants}){
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
-
     }
 
     const handleChatMember = () => {
@@ -67,7 +66,7 @@ export default function ChatNavbar({currentParticipants}){
     }
 
     return (
-        <div className={"Chat"} onClick={(e)=>e.stopPropagation()}>
+        <div className={"ChatNav"} onClick={(e)=>e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
                     <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
@@ -86,7 +85,7 @@ export default function ChatNavbar({currentParticipants}){
             </div>
             <div className={"ChatList"}>
                 {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} favoriteRoom={favoriteRoom}/>: null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} />: null}
+                {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
             </div>
             
         </div>

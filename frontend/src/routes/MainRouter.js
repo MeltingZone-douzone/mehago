@@ -58,8 +58,9 @@ export default function MainRouter() {
                         <PublicRouter authentication={authentication} setAuthentication={handleAuthentication} restricted={true} path="/account" component={AccountPage} />
                             {/* 로그인(토큰이 존재)을 해야 들어올 수 있는 라우터 => <privateRouter */}
                         <PrivateRouter reloadUser={getUserInfo} authentication={authentication} userInfo={userInfo} path="/profile" component={ProfileSettingsPage} />
-                        <Route authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} />
-                        {/* <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} /> */}
+                        {/* <Route authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} /> */}
+                        <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} />
+                        {/* <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" render={(props) => <ChatPage {...props} userInfo={userInfo} />}/> */}
                     </Switch>
                 </WebPage>
             </Fragment>

@@ -146,6 +146,7 @@ httpServer
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
     console.log("msgToJson", msgToJson.validation, msgToJson);
+    // console.log("msgToJson", msgToJson.validation);
 
     switch (msgToJson.validation) {
         case "join": io.to(roomname).emit('join', msgToJson);
@@ -156,7 +157,9 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "update": io.to(roomname).emit('message:update:readCount', msgToJson);
             break;
-        case "leave": io.to(roomname).emit('leave', msgToJson)
+        case "leave": io.to(roomname).emit('leave', msgToJson);
+            break;
+        case "disconnected": io.to(roomname).emit('disconnected', msgToJson);
     }
 
 });
@@ -185,7 +188,7 @@ io.on("connection", (socket) => {
 
         const joinMessage = {
             validation: "join",
-            message: `notice::${socket.id}님이 방을 입장하셨습니다.`,
+            message: `notice::${socket.id}님이 ${roomObj.no}방을 입장하셨습니다.`,
             chatMember
         }
 
@@ -233,17 +236,31 @@ io.on("connection", (socket) => {
     socket.leave(data.roomName); */
 
     // TODO: disconnect도 srem추가해서 chatMember보내야함
-    socket.on("disconnect", (reason) => {
+    socket.on("disconnect", async (reason) => {
         if (currentRoomName !== null) {
+            console.log('브라우저끔');
             redisClient.srem(currentRoomName, participantObj.no);
+            socket.leave(currentRoomName, (result) => { });
+            
+            let chatMember;
+            await getChatMember(currentRoomName).then(res => chatMember = res);
+            
+            const disconnectMessage = {
+                "validation": "disconnected",
+                "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.(disconnected)`,
+                chatMember
+            }
+            io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(disconnectMessage));
         }
+
+
         console.log("node disconnected", reason);
     })
 
+    // TODO: 진짜 방 나가기
 
     socket.on('chat message', async (message) => {
         // TODO: DB 저장
-        console.log('socket.on(chat message)');
         let chatMember = await getChatCount(currentRoomName);
         // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
         const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
@@ -283,18 +300,16 @@ io.on("connection", (socket) => {
      * 회원 / 비회원 상관없이 나가면 
      */
     socket.on('leave', async (data) => { // data는 의미없음 지금. roomname받아와야하는데 이미 currentRoomname에 "room 1" ㅣㅇ런식으로 나와잇어서 받아와서 앞에 "room "을 더해야하니까 굳이할필요있나업나몰라안함그래서
-        console.log('user left', currentRoomName);
         // socket.leave(data.roomName, (result) => { });
         redisClient.srem(currentRoomName, participantObj.no);
         socket.leave(currentRoomName, (result) => { });
-
-
+        
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
 
         const leaveMessage = {
             "validation": "leave",
-            "message": `notice:${socket.id}님이 방을 나가셨습니다.`,
+            "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.`,
             chatMember
         }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(leaveMessage));

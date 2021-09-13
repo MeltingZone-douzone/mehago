@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { List } from '@material-ui/core';
-import '../assets/sass/chat/ChatList.scss';
+import '../../assets/sass/chat/ChatRoomSection.scss';
 import _ from 'underscore';
-import { getMessageList } from '../../api/ChatApi';
+import { getMessageList } from '../../../api/ChatApi';
 
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
 
-export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, setCurrentParticipants }) {
+export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput }) {
     const messageAreaRef = useRef();
 
     const [offsetNo, setOffsetNo] = useState(0);
@@ -21,11 +21,6 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     const [searchMessageOffset, setSearchMessageOffset] = useState([]);
 
     useEffect(() => {
-        socket.on('join', (msgToJson) => {
-            const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            setCurrentParticipants(arrayOfNumbers);
-        });
-
         socket.on('chat message', (msg) => {
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
@@ -33,11 +28,6 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
         socket.on('message:update:readCount', (msgToJson) => {
             setChangedRows(msgToJson.changedRows);
-        });
-
-        socket.on('leave', (msgToJson) => {
-            const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            setCurrentParticipants(arrayOfNumbers); // user on/off
         });
         fetchItems();
     }, []);
@@ -121,25 +111,28 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
         }
     }
 
-
+    // console.log('chatRoomNo: ', chatRoomNo);
+    // console.log('participantObject.no: ', participantObject.no);
     return (
         <List className={"messageArea"} onScroll={onScroll} ref={messageAreaRef} >
             {messageList ? messageList
                 .map((message, index) =>
                     message.participantNo !== participantObject.no ?
-                        <ReceivedMessage key={index}
-                            nextMessage={messageList[index + 1]}
-                            previousMessage={messageList[index - 1]}
-                            message={message}
-                            searchKeyword={searchMessage[searchMessage.length - 1]}
+                        <ReceivedMessage key={index} 
+                            nextMessage={messageList[index + 1]} 
+                            previousMessage={messageList[index - 1]} 
+                            message={message} 
+                            searchKeyword={searchMessage[searchMessage.length-1]} 
                             searchMessage={searchMessage}
+                            hiddenSearchInput={hiddenSearchInput}
                             no={searchMessage.includes(message.no) ? message.no : null} />
                         :
-                        <SendMessage
-                            key={index}
-                            nextMessage={messageList[index + 1]}
-                            message={message}
-                            searchKeyword={searchMessage[searchMessage.length - 1]}
+                        <SendMessage 
+                            key={index} 
+                            nextMessage={messageList[index + 1]} 
+                            message={message} 
+                            searchKeyword={searchMessage[searchMessage.length-1]} 
+                            hiddenSearchInput={hiddenSearchInput}
                             no={searchMessage.includes(message.no) ? message.no : null} />
                 )
                 : null

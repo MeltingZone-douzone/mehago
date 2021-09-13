@@ -45,7 +45,6 @@ export function getMessageList(chatRoomNo, offset) {
 }
 
 export function getParticipantsList(chatRoomNo) {
-    console.log(chatRoomNo);
     setAuthHeader();
     return axios.get(`/api/chat/participants/${chatRoomNo}`, { headers: AuthHeader })
         .then(res => res);
@@ -103,7 +102,7 @@ export function fileUpload(roomNo, participantNo, files) {
 
 export function getSearchMessage(searchKeyword) {
     setAuthHeader();
-    return axios.get("/api/chat/getSearchMessage?searchKeyword=" + searchKeyword, { headers: AuthHeader })
+    return axios.get("/api/chat/getSearchMessage?chatRoomNo="+ chatRoomNo +"&searchKeyword=" + searchKeyword, { headers: AuthHeader })
         .then(res => res);
 }
 

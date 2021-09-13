@@ -24,8 +24,8 @@ public class MessageRepository {
         return sqlSession.selectList("message.getMessageList", map);
     }
 
-    public List<Long> getSearchMessage(String searchKeyword) {
-        return sqlSession.selectList("message.getSearchMessage", searchKeyword);
+    public List<Long> getSearchMessage(Map<String, Object> map) {
+        return sqlSession.selectList("message.getSearchMessage", map);
     }
 
     public Long getLastReadChatNo(Long roomNo) {

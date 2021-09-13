@@ -171,10 +171,11 @@ public class ChatController {
     }
 
     @GetMapping("/getSearchMessage")
-    public ResponseEntity<?> getSearchMessage(String searchKeyword) {
-        List<Long> messageNo = messageService.getSearchMessage(searchKeyword);
-        return ResponseEntity.ok().body(messageNo != null ? CommonResponse.success(messageNo) : "검색결과가 없습니다."); // 채팅방에
-                                                                                                                // // 없음
+    public ResponseEntity<?> getSearchMessage(Long chatRoomNo, String searchKeyword) {
+        System.out.println(chatRoomNo +":"+ searchKeyword);
+        List<Long> messageNo = messageService.getSearchMessage(chatRoomNo, searchKeyword);
+        System.out.println(messageNo);
+        return ResponseEntity.ok().body(!messageNo.isEmpty() ? CommonResponse.success(messageNo) : CommonResponse.fail("검색결과가 없습니다.")); // 채팅방에
     }
 
     @PostMapping("/vaildatePassword")

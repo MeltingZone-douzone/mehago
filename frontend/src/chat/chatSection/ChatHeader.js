@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppBar from '@material-ui/core/AppBar';
@@ -14,8 +14,8 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 
-export default function ChatHeader({ messageFunction, roomObject, cursor }) {
-  const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
+export default function ChatHeader({messageFunction, roomObject, cursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
+  // const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
   const [hiddenSearchResult, setHiddenSearchResult] = useState(true);
   //   const [searchKeyword, setSearchKeyword] = useState('');
 
@@ -24,42 +24,42 @@ export default function ChatHeader({ messageFunction, roomObject, cursor }) {
   const handleKeyPress = () => setHiddenSearchResult(!hiddenSearchResult)
 
   const handleBlur = (e) => {
-    if (e.target.value === '') {
-      handleSetSearch();
-      setHiddenSearchResult(true);
-      return;
-    }
+      if(e.target.value === '') {
+        handleSetSearch();
+        setHiddenSearchResult(true);
+        setSearchMessage(''); // SearchInput을 끄고 message를 ''초기화해서 ReceivedMessage, SendMessage에서 뿌릴때 no ? 삼항연산식에서 searchMessage가 존재하면 하이라이트, 없으면 일반문자로 출력
+        return;
+      }
   }
-
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
-          {
-            hiddenSearchInput ?
-              <IconButton
-                edge="start"
-                className={classes.backButton}
-                color="inherit"
-                onClick={() => messageFunction.leaveRoom()}
-              >
-                <ArrowBackIcon />
-              </IconButton>
-              :
-              <IconButton
-                edge="start"
-                className={classes.closeButton}
-                color="inherit"
-                onClick={() => handleSetSearch()}
-              >
-                <CloseIcon />
-              </IconButton>
-          }
-          <Typography className={classes.title} variant="h6" noWrap>
+            {
+            hiddenSearchInput?
+                <IconButton
+                    edge="start"
+                    className={classes.backButton}
+                    color="inherit"
+                    onClick={() => messageFunction.leaveRoom()}
+                >
+                    <ArrowBackIcon />
+                </IconButton>
+                :
+                <IconButton
+                    edge="start"
+                    className={classes.closeButton}
+                    color="inherit"
+                    onClick={() => handleSetSearch()}
+                >
+                    <CloseIcon />
+                </IconButton>
+            }
+            <Typography className={classes.title} variant="h6" noWrap>
             {roomObject.title}
-          </Typography>
-          {
-            hiddenSearchInput ?
+            </Typography>
+            {
+                hiddenSearchInput ?
 
               <IconButton
                 edge="end"
@@ -72,30 +72,29 @@ export default function ChatHeader({ messageFunction, roomObject, cursor }) {
               :
               <>
                 <div className={classes.search}>
-                  <div className={classes.searchInputIcon}>
-                    <SearchIcon />
-                  </div>
-                  <InputBase
-                    placeholder="Search…"
-                    autoComplete="off"
-                    autoFocus={true}
-                    classes={{
-                      root: classes.inputRoot,
-                      input: classes.inputInput,
-                    }}
-                    name={'searchKeyword'}
-                    onBlur={(e) => handleBlur(e)}
-                    onChange={messageFunction.onChangeSearchKeyword}
-                    onKeyPress={(e) => {
-                      if (e.target.value !== '') {
-                        messageFunction.onSearchKeyPress(e);
-                        hiddenSearchResult ? handleKeyPress() : null
-                      }
-                    }
-                    }
-                    inputProps={{ 'aria-label': 'search' }} />
-                </div>
-                {hiddenSearchResult ?
+                    <div className={classes.searchInputIcon}>
+                        <SearchIcon />
+                    </div>
+                    <InputBase
+                        placeholder="내용 검색"
+                        autoComplete="off"
+                        autoFocus={true}
+                        classes={{
+                            root: classes.inputRoot,
+                            input: classes.inputInput,
+                        }}
+                        name={'searchKeyword'}
+                        onBlur={(e) => handleBlur(e)}
+                        onChange={messageFunction.onChangeSearchKeyword}
+                        onKeyPress={(e) => {
+                          if(e.key == 'Enter') { 
+                            messageFunction.onSearchKeyPress(e); 
+                            hiddenSearchResult? handleKeyPress() : null
+                          }}
+                        }
+                        inputProps={{ 'aria-label': 'search' }}/>
+                </div> 
+                { hiddenSearchResult ?
 
                   null
                   :

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Grid, List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
+import '../assets/sass/chat/ChatList.scss';
+import { List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import moment from 'moment';
 
-import '../assets/sass/chat/ChattingList.scss';
-import ChattingRoom from './ChattingRoom';
+import ChatRoom from './ChatRoom';
 import axios from 'axios';
 
 export default function ChatList({ socket }) {
@@ -22,7 +22,6 @@ export default function ChatList({ socket }) {
             const url = `/api/chat/chatList`;
             axios.post(url, { headers: { 'Context-Type': 'application/json' } })
                 .then(res => {
-                    //  console.log(res.data);
                     setRooms(res.data);
                 });
 
@@ -45,12 +44,12 @@ export default function ChatList({ socket }) {
                         setJoinRooms(res.data.data);
                         setIsSearched(true);
                         setNoResult(false);
-                        setSearchValue({ keyword: "" })
+                        // setSearchValue({keyword: ""})
                     } else {
-                        console.log(res.data.message);
-                        setNoResult(res.data.message);
+                        console.log(res.data.message); 
+                        setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
                         setIsSearched(false);
-                        setSearchValue({ keyword: "" })
+                        // setSearchValue({keyword: ""})
                     }
                 });
         } catch (e) {
@@ -75,7 +74,7 @@ export default function ChatList({ socket }) {
     //TODO: Grid 틀 변경, search 구현
 
     return (
-        <ChattingListContainer>
+        <ChatListContainer>
             <SearchWrapper>
                 <TextField
                     className={classes.textField}
@@ -101,48 +100,50 @@ export default function ChatList({ socket }) {
                 noResult ? (
                     <p>{noResult}</p>
                 ) : (
-                    <Grid className={"ChatList"} >
+                    <div className={"ChatListContainer"} >
                         <List className={"ChatRoom"} >
-                            {rooms ? getChatrooms().map((room) => {
-                                return (
-                                    <div key={room.no}>
-                                        <ChattingRoom
-                                            key={room.no}
-                                            no={room.no}
-                                            title={room.title}
-                                            limitedUserCount={room.limitedUserCount}
-                                            onlyAuthorized={room.onlyAuthorized}
-                                            owner={room.owner}
-                                            searchable={room.searchable}
-                                            tagName={room.tagName}
-                                            thumbnailUrl={room.thumbnailUrl}
-                                            titleAndTag={room}
-                                            participantCount={room.participantCount}
-                                            lastMessage={room.lastMessage}
-                                        />
-                                    </div>
-                                )
-                            }) : null}
+                            { rooms ? getChatrooms().map((room)=> {
+                                return(
+                                    
+                                    <ChatRoom 
+                                        key={room.no}
+                                        no = {room.no}
+                                        title={room.title}
+                                        limitedUserCount ={room.limitedUserCount}
+                                        onlyAuthorized ={room.onlyAuthorized}
+                                        owner =  {room.owner}
+                                        searchable={room.searchable} 
+                                        tagName = {room.tagName}
+                                        thumbnailUrl = {room.thumbnailUrl} 
+                                        titleAndTag = { room }
+                                        participantCount = { room.participantCount}
+                                        lastMessage = { room.lastMessage }
+                                    />
+                                    
+                                    )
+                                }) : null }
                         </List>
-                    </Grid>
+                    </div>
                 )
             }
-        </ChattingListContainer>
+        </ChatListContainer>    
     );
 }
 
 const materialStyles = makeStyles({
     textField: {
-        width: "50%"
+        marginTop: "20px",
+        width:"50%"
     }
 })
 
-const ChattingListContainer = styled.div`
+const ChatListContainer = styled.div`
     width:100%;
-    height:100%;
+    height:85%;
 `
 
 const SearchWrapper = styled.div`
-    padding:2em;
+    width:100%;
+    height:15%;
     text-align:center;
 `
