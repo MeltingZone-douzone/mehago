@@ -47,7 +47,7 @@ export default function CreateChatRoom({ history }) {
             password: "",
             limitedUserCount: 10,
             onlyAuthorized: false,
-            searchable: false,
+            searchable: true,
             tagName: []
         }
     );

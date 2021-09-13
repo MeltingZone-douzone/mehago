@@ -30,6 +30,7 @@
     where
           c.no = p.chat_room_no
       and c.is_deleted = false
+      and c.searchable = true
     order by 
         c.no desc
 		]]>
