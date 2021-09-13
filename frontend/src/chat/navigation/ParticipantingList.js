@@ -10,7 +10,7 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import styled from 'styled-components';
 import defaultImage from "../../assets/images/black-mehago.png";
 
-export default function ParticipantingList({ key, room, favoriteRoom , exitRoom}) {
+export default function ParticipantingList({ room, favoriteRoom , exitRoom}) {
     const classes = madeStyles();
 
     function timeForToday(leastMessageAt) {
@@ -43,8 +43,10 @@ export default function ParticipantingList({ key, room, favoriteRoom , exitRoom}
     return (
         <div className={"chatProfile"}>
                 <List className={"container"}>
-                    <Button onClick={() => favoriteRoom(`${room.no}`)}><StarBorderIcon /></Button>
-                    <Button onClick={() => exitRoom(`${room.no}`)}><ExitToAppRoundedIcon /></Button>
+                    <div className={"participantHeader"}>
+                        <Button className={classes.favorite} onClick={() => favoriteRoom(`${room.no}`)}><StarBorderIcon /></Button>
+                        <Button className={classes.exit} onClick={() => exitRoom(`${room.no}`)}><ExitToAppRoundedIcon /></Button>
+                    </div>
                     <Link to={`/chat/${room.no}`}>
                     <ListItem button key={`${room.no}`} className={classes.roomContainer} >
                         <ChattingRoomImage>
@@ -117,5 +119,18 @@ const madeStyles = makeStyles({
     },
     leastMessage: {
         fontSize: "0.9em",
+    },favorite : {
+        float : "left",
+        minWidth:"20px",
+        height:"20px",
+        cursor : "pointer",
+        paddingLeft:"10px"
+    },exit : {
+        float : "right",
+        minWidth:"20px",
+        height:"20px",
+        cursor : "pointer",
+        paddingRight : "10px"
+
     }
 })

@@ -32,7 +32,6 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
                 .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
                 .map((room ,index)=> 
                     <ParticipantingList
-                        key = {index} 
                         room = {room} 
                         favoriteRoom={favoriteRoom} 
                         exitRoom={exitRoom}/>
@@ -47,7 +46,8 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
 const styles = makeStyles({
     textField: {
         padding: "10px",
-        marginTop: "20px"
+        marginTop: "20px",
+        width:"90%"
     }
 })
 
