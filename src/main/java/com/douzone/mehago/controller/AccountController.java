@@ -10,6 +10,7 @@ import com.douzone.mehago.utils.JwtTokenUtil;
 import com.douzone.mehago.utils.RandomPassword;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.Mail;
+import com.douzone.mehago.vo.NonMember;
 import com.douzone.mehago.vo.PasswordVo;
 
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,14 @@ public class AccountController {
     public ResponseEntity<?> getUser(@AuthUser Account auth) {
         Account account = accountService.getAccountByToken(auth);
         return ResponseEntity.ok().body(CommonResponse.success(account));
+    }
+
+    @GetMapping("/createNonMember")
+    public ResponseEntity<?> createNonMember() {
+        NonMember nonMember = new NonMember();
+        String token = jwtTokenUtil.generateAccessToken(nonMember);
+        System.out.println(token);
+        return ResponseEntity.ok().body(token);
     }
 
     @Auth

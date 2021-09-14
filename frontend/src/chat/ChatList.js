@@ -3,11 +3,9 @@ import styled from 'styled-components';
 import '../assets/sass/chat/ChatList.scss';
 import { List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import {getChatRooms, keyword} from '../../api/ChatApi';
+import {getChatListApi, keyword} from '../../api/ChatApi';
 
 import ChatRoom from './ChatRoom';
-import axios from 'axios';
-import { getChatListApi } from '../../api/ChatApi';
 
 export default function ChatList({ socket }) {
     const classes = materialStyles();
@@ -40,7 +38,7 @@ export default function ChatList({ socket }) {
         console.log(searchValue);
         try {
             if(searchValue === ""){
-                getChatRooms().then(res => {
+                getChatListApi().then(res => {
                     setRooms(res.data);
                 })
             } 

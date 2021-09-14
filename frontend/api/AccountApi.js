@@ -74,3 +74,9 @@ export function updateThumbnailApi( form ) {
     return axios.post("/api/account/update/thumbnail", form,{headers:formDataHeader()})
                 .then(res => res);
 }
+
+export function createNonMember() {
+    console.log("nonMemberApi");
+    return axios.get("/api/account/createNonMember", {headers:header})
+                .then(res => res);
+}

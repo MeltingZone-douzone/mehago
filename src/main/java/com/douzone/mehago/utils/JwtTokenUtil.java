@@ -10,6 +10,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.douzone.mehago.vo.Account;
+import com.douzone.mehago.vo.NonMember;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +34,42 @@ public class JwtTokenUtil{
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String generateAccessToken(Account account){
-        String token = null;    
+    public String generateAccessToken(Account account) {
+        String token = null;
         try {
-            token = JWT.create()
-                        .withIssuer(issuer)
-                        .withClaim("userNo", account.getNo())
-                        .withClaim("userNickname", account.getNickname())
+            token = JWT.create().withIssuer(issuer).withClaim("role", "MEMBER").withClaim("userNo", account.getNo())
+                    .withClaim("userNickname", account.getNickname())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+                    .sign(generateAlgorithm());
+
+        } catch (JWTCreationException exception) {
+            // Invalid Signing configuration / Couldn't convert Claims.
+
+            // TODO: Exception
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return token;
+    }
+
+    public String generateAccessToken(NonMember nonMember) {
+        String token = null;
+        try {
+            if (nonMember != null) {
+                token = JWT.create().withIssuer(issuer).withClaim("role", "NONMEMBER")
+                        .withClaim("userNo", nonMember.getParticipantNo())
+                        .withClaim("userNickname", nonMember.getNickname())
                         .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                         .sign(generateAlgorithm());
+            } else {
+                token = JWT.create().withIssuer(issuer).withClaim("role", "NONMEMBER")
+                        .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+                        .sign(generateAlgorithm());
+            }
+        } catch (JWTCreationException exception) {
+            // Invalid Signing configuration / Couldn't convert Claims.
 
-        } catch (JWTCreationException exception){
-            //Invalid Signing configuration / Couldn't convert Claims.
-            
             // TODO: Exception
         } catch (Exception e) {
             e.printStackTrace();

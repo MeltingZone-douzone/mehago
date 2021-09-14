@@ -266,9 +266,11 @@ public class ChatController {
         return ResponseEntity.ok().body(favoriteRoom);
     }
 
-    @Auth
     @GetMapping("favoriteRoomList")
     public ResponseEntity<?> favoriteRoomList(@AuthUser Account account) {
+        if(account == null){
+            return null;
+        }
         List<ChatRoom> favoriteRoomList = chatRoomService.favoriteRoomList(account.getNo());
         return ResponseEntity.ok().body(favoriteRoomList);
     }

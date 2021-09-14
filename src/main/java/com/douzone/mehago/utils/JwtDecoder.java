@@ -14,39 +14,48 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.douzone.mehago.exceptions.InvalidJwtException;
 import com.douzone.mehago.vo.Account;
+import com.douzone.mehago.vo.NonMember;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class JwtDecoder {
-    
+
     private static final Logger log = LoggerFactory.getLogger(JwtDecoder.class);
-    
+
     @Value("${spring.jwt.secret}")
     private String secretKey;
 
     @PostConstruct
-    protected void init(){
+    protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public Account decodeJwt(String token){
-        DecodedJWT decodedJWT = isValidToken(token).orElseThrow(()-> new InvalidJwtException("유효한 토큰이 아닙니다."));
+    public Object decodeJwt(String token) {
+        DecodedJWT decodedJWT = isValidToken(token).orElseThrow(() -> new InvalidJwtException("유효한 토큰이 아닙니다."));
+        if (("MEMBER").equals(decodedJWT.getClaim("role").asString())) {
+            Long userNo = decodedJWT.getClaim("userNo").asLong();
+            String userNickname = decodedJWT.getClaim("userNickname").asString();
 
-        Long userNo = decodedJWT.getClaim("userNo").asLong();
-        String userNickname = decodedJWT.getClaim("userNickname").asString();
+            Account account = new Account();
+            account.setNo(userNo);
+            account.setNickname(userNickname);
+            return account;
+        } else {
+            Long participantNo = decodedJWT.getClaim("participantNo").asLong();
+            String chatNickname = decodedJWT.getClaim("nickname").asString();
 
-        Account account = new Account();
-        account.setNo(userNo);
-        account.setNickname(userNickname);
-        return account;
+            NonMember nonMember = new NonMember();
+            nonMember.setParticipantNo(participantNo);
+            nonMember.setNickname(chatNickname);
+            return nonMember;
+        }
     }
 
-    private Optional<DecodedJWT> isValidToken(String token){
+    private Optional<DecodedJWT> isValidToken(String token) {
         DecodedJWT jwt = null;
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
@@ -61,13 +70,15 @@ public class JwtDecoder {
 
         } catch (JWTDecodeException e) {
             // TODO: Exception
-            //If the token has an invalid syntax or the header or payload are not JSONs, a JWTDecodeException will raise.
+            // If the token has an invalid syntax or the header or payload are not JSONs, a
+            // JWTDecodeException will raise.
             e.printStackTrace();
         } catch (JWTVerificationException e) {
             // TODO: Exception
-            //If the token has an invalid signature or the Claim requirement is not met, a JWTVerificationException will raise.
+            // If the token has an invalid signature or the Claim requirement is not met, a
+            // JWTVerificationException will raise.
             e.printStackTrace();
-        } 
+        }
 
         return Optional.ofNullable(jwt);
     }

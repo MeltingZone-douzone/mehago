@@ -32,18 +32,18 @@ public class LoginInterceptor implements HandlerInterceptor {
 		Account account = new Account();
 		account.setEmail(body.split("\"")[3]);
 		account.setPassword(body.split("\"")[7]);
-		Account result = accountService.getAccount(account);
+		Account member = accountService.getAccount(account);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 
-		if (result == null) {
+		if (member == null) {
 			response.getWriter().write("cant find Account");
 			return false;
 		}
 
-		String token = jwtTokenUtil.generateAccessToken(result);
-		result.setToken(token);
-		accountService.updateToken(result);
+		String token = jwtTokenUtil.generateAccessToken(member);
+		member.setToken(token);
+		accountService.updateToken(member);
  		response.getWriter().write(token);
 		return false;
 	}

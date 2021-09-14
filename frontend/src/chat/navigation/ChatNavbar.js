@@ -93,8 +93,8 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} favoriteRoom={favoriteRoom} exitRoom={exitRoom}/>: null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
+                {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} favoriteRoom={favoriteRoom} exitRoom={exitRoom} />: null}
+                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
             </div>
             
         </div>
