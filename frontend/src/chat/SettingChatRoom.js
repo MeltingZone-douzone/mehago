@@ -14,24 +14,28 @@ import DeleteDialog from "./dialogs/DeleteDialog";
 export default function SettingChatRoom({ match, history }) {
     const chatRoomNo = match.params.no;
     const [chatRoom, setChatRoom] = useState({});
+    const [isSecretRoom, setIsSecretRoom] = useState(false);
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
-            console.log(res);
+            console.log(res.data.data.secretRoom);
+            if (res.data.data.secretRoom) {
+                setIsSecretRoom(true);
+            }
             setChatRoom(res.data.data);
         });
     }, [chatRoomNo]);
 
     useEffect(() => {
-        if (!chatRoom.isSecretRoom) {
+        if (!chatRoom.secretRoom) {
             setChatRoom({ ...chatRoom, newPassword: "" });
         }
-    }, [chatRoom.isSecretRoom])
+    }, [chatRoom.secretRoom])
 
 
     const handleChange = (e) => {
         const { name, value, checked } = e.target;
-        setChatRoom({ ...chatRoom, [name]: (name === "isSecretRoom" || name === "onlyAuthorized" || name === "searchable" ? checked : value) });
+        setChatRoom({ ...chatRoom, [name]: (name === "secretRoom" || name === "onlyAuthorized" || name === "searchable" ? checked : value) });
     };
 
     const handleAddTagName = (name) => {
@@ -130,7 +134,7 @@ export default function SettingChatRoom({ match, history }) {
     }
 
     const updateChatRoom = () => {
-        const { title, password, limitedUserCount, onlyAuthorized, searchable, tagName, owner } = chatRoom;
+        const { title, password, limitedUserCount, onlyAuthorized, searchable, tagName, owner, secretRoom } = chatRoom;
 
         let form = new FormData();
 
@@ -142,6 +146,7 @@ export default function SettingChatRoom({ match, history }) {
         form.append("searchable", searchable);
         form.append("tagName", tagName);
         form.append("owner", owner);
+        form.append("secretRoom", secretRoom);
 
         if (chatRoom.thumbnailUrl) {
             form.append("thumbnailUrl", chatRoom.thumbnailUrl);
@@ -196,7 +201,7 @@ export default function SettingChatRoom({ match, history }) {
                     <FormTemplate onSubmit={(e) => { e.preventDefault(); { image ? getCropData() : null } updateChatRoom() }} >
                         <FormWrapper>
                             <InfoFormWrapper>
-                                <SettingChatForm classes={classes} chatRoom={chatRoom} handleChange={handleChange} handleAddTagName={handleAddTagName} handleDeleteTagName={handleDeleteTagName} passwordFunction={passwordFunction} />
+                                <SettingChatForm classes={classes} chatRoom={chatRoom} handleChange={handleChange} handleAddTagName={handleAddTagName} handleDeleteTagName={handleDeleteTagName} passwordFunction={passwordFunction} isSecretRoom={isSecretRoom} />
                             </InfoFormWrapper>
 
                             {chatRoom.thumbnailUrl ?

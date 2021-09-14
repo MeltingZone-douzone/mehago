@@ -10,11 +10,12 @@ import HomeIcon from '@material-ui/icons/Home';
 
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
-import { Avatar } from '@material-ui/core';
-import _ from 'underscore';
+import { Avatar, makeStyles } from '@material-ui/core';
 
 
 export default function ChatNavbar({currentParticipants, userInfo, participants}){
+    const classes = madeStyles();
+
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
     const [participatingRoom, setParticipatingRoom] = useState([]);
@@ -100,7 +101,9 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                     {
                         favoriteRoom && favoriteRoom.map((favorite) =>{
                             return(
-                                <NaviButton><Avatar alt="프로필 사진" src = {favorite.thumbnailUrl} /></NaviButton>
+                                <Link to={`/chat/${favorite.no}`}> 
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src = {favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
+                                </Link>
                             )
                         })
                     }
@@ -126,3 +129,10 @@ const NaviButton = styled.button`
     background-color:#fff;
     color: ${ props => props.active ? colors.mainThemeColor : "gray" };
 `
+
+const madeStyles = makeStyles({
+    favoriteRoom: {
+        width:"30px",
+        height:"30px"
+    }
+})

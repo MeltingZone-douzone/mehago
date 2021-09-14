@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), "false")
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom })
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()

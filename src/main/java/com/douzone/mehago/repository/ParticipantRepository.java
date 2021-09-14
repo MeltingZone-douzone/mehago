@@ -67,9 +67,10 @@ public class ParticipantRepository {
         Map<String, Object> map = new HashMap();
         map.put("chatRoomNo", chatRoomNo);
         map.put("accountNo", accountNo);
+        // map.put("favoriteRoom", 1L); 일단 주석~~~~~~~ㄱㄷ~~~~~~
         map.put("favoriteRoom", favoriteRoom);
         sqlSession.update("participant.updateFavoriteRoom", map);
-        return sqlSession.selectList("chatroom.getFavoriteRoomList", map);
+        return sqlSession.selectList("chatroom.getFavoriteRoomList", map); // 지금 list안씀 나중에 처리함 ㄱㄷ
     }
 
 }

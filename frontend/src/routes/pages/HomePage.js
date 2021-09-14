@@ -1,11 +1,21 @@
-import React from 'react';
-export default function HomePage() {
+import React, { useEffect } from 'react';
+import Logo from '../../assets/images/black-mehago.png';
+import "../../assets/sass/account/AccountPage.scss";
+
+export default function HomePage({history}) {
+    
+    useEffect(()=>{
+         setTimeout(function(){
+            history.replace("/account/login");
+        },1000);    
+    },[]);
+    
 
     return(
-        <div>
-            <h1 style={{fontWeight:"bold", fontSize:"2em"}}>Home Page 입니다</h1>
-            <br></br>
-            <p>어떤 기능 혹은 뷰를 넣을지 생각을 해봐야 합니다.</p>
+        <div className={"PageContainer"}>
+            <div className={"Page"}>
+                <p>이미지 넣자 이쁘게 만들어서</p>
+            </div>
         </div>
     )
 }

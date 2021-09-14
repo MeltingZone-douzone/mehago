@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { getMyChatListApi, getParticipantsList } from '../../../api/ChatApi';
 import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
@@ -19,12 +18,11 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
             <TextField
                 className={classes.textField}
                 onChange={(e) => { setSearchValue(e.target.value) } }
-                id="input-with-icon-textfield"
                 label="채팅방 검색"
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                            <SearchIcon />
+                            <SearchIcon/>
                         </InputAdornment>
                     ),
                 }}
@@ -32,10 +30,14 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
             </SerachBarWarpper>
             <ContentWrapper>
                 {
-                participatingRoom 
-                .filter(rooms => rooms.title.indexOf(searchValue) != -1)
-                .map(room => 
-                    <ParticipatingList room={room} updateFavoriteRoom={updateFavoriteRoom} exitRoom ={exitRoom} setFavoriteCheck={setFavoriteCheck}/>
+                participatingRoom
+                .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
+                .map((room ,index)=> 
+                    <ParticipatingList
+                        room = {room} 
+                        updateFavoriteRoom={updateFavoriteRoom} 
+                        exitRoom={exitRoom}
+                        setFavoriteCheck={setFavoriteCheck}/>
                     )
                 }
             </ContentWrapper>
@@ -47,7 +49,8 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
 const styles = makeStyles({
     textField: {
         padding: "10px",
-        marginTop: "20px"
+        marginTop: "20px",
+        width:"90%"
     }
 })
 
