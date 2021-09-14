@@ -18,23 +18,50 @@
         </selectKey>
 	</insert>
 
-  <select id="getAllChatList" resultType="map">
-    <![CDATA[
-		select DISTINCT
-      c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner, c.secret_room as secretRoom,
-        (select count(no) from participant where chat_room_no = c.no) as participantCount,
-        (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage,
-      a.nickname, a.thumbnail_url as accountThumbnailUrl
-    from 
-      chat_room c, participant p, account a
-    where
-      c.no = p.chat_room_no
-      and c.owner = a.no
-      and c.is_deleted = false
-      and c.searchable = true
-    order by 
-        c.no desc
-		]]>
+  <select id="getAllChatList" parameterType="Long" resultType="map">
+    <choose>
+      <when test="value == 0">
+        <![CDATA[
+          select DISTINCT
+            c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner, c.secret_room as secretRoom,
+              (select count(no) from participant where chat_room_no = c.no) as participantCount,
+              (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage,
+            a.nickname, a.thumbnail_url as accountThumbnailUrl
+          from 
+            chat_room c, participant p, account a
+          where
+            c.no = p.chat_room_no
+            and c.owner = a.no
+            and c.is_deleted = false
+            and c.searchable = true
+          order by 
+              c.no desc
+          limit
+            #{value}, 15
+        ]]>
+      </when>
+      <otherwise>
+        <![CDATA[
+        select DISTINCT
+          c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner, c.secret_room as secretRoom,
+            (select count(no) from participant where chat_room_no = c.no) as participantCount,
+            (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage,
+          a.nickname, a.thumbnail_url as accountThumbnailUrl
+        from 
+          chat_room c, participant p, account a
+        where
+          c.no = p.chat_room_no
+          and c.owner = a.no
+          and c.is_deleted = false
+          and c.searchable = true
+          and c.no < #{value}
+        order by 
+            c.no desc
+        limit
+          15
+        ]]>
+      </otherwise>
+      </choose>
   </select>
 
   <select id="getRoomInfo" parameterType="Long" resultType="chatroom">

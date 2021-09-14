@@ -109,11 +109,11 @@ public class ChatController {
     // public ResponseEntity<?> getParticipantInfo(String chatNickname,
     // @PathVariable Long chatRoomNo)
 
-    @GetMapping("/chatList")
-    public ResponseEntity<?> getAllChatList() {
-        List<Map<String, Object>> list = chatRoomService.getAllChatList();
+    @GetMapping("/getAllChatList")
+    public ResponseEntity<?> getAllChatList(String offset) {
+        List<Map<String, Object>> list = chatRoomService.getAllChatList(offset);
         getTagName(list);
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(list != null ? CommonResponse.success(list) : CommonResponse.fail("채팅방이 없습니다. 채팅방을 개설해주세요."));
     }
 
     @Auth

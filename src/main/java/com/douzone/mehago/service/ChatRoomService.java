@@ -21,8 +21,8 @@ public class ChatRoomService {
         return chatRoomRepository.createRoom(chatRoom);
     }
 
-    public List<Map<String, Object>> getAllChatList() {
-        return chatRoomRepository.getAllChatList();
+    public List<Map<String, Object>> getAllChatList(String offset) {
+        return chatRoomRepository.getAllChatList(Long.parseLong(offset));
     }
 
     public ChatRoom getRoomInfo(Long chatRoomNo) {

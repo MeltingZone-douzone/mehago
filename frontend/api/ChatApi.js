@@ -171,9 +171,9 @@ export function deleteChatRoom(roomObject) {
     return axios.post('/api/chat/deleteChatRoom', roomObject, { headers: AuthHeader }).then(res => res);
 }
 
-export function getChatListApi() {
+export function getAllChatListApi(offset) {
     setAuthHeader();
-    return axios.get('/api/chat/chatList', {headers: AuthHeader})
+    return axios.get('/api/chat/getAllChatList', { params : { offset }, headers: AuthHeader})
                 .then(res => res);
 }
 

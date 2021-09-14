@@ -22,9 +22,8 @@ public class ChatRoomRepository {
         return chatRoom.getNo();
     }
 
-    public List<Map<String, Object>> getAllChatList() {
-        // 추후에 offset 줘서 리스트 뽑아야댐
-        return sqlSession.selectList("chatroom.getAllChatList");
+    public List<Map<String, Object>> getAllChatList(Long offset) {
+        return sqlSession.selectList("chatroom.getAllChatList", offset);
     }
 
     public ChatRoom getRoomInfo(Long chatRoomNo) {

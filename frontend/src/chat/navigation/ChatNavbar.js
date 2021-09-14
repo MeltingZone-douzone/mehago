@@ -23,6 +23,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
     
+    
     useEffect(()=> {
         console.log(`fetchRooms() fetchFavoriteRooms(); useEffect`);
         fetchRooms();
@@ -73,7 +74,8 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
             exitRoomApi(chatRoomNo).then((res) => {
                 console.log(res);
             })
-            fetchRooms();
+            fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
+            fetchFavoriteRooms();
         } catch (error) {
             console.log();
         }
@@ -102,7 +104,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                         favoriteRoom && favoriteRoom.map((favorite) =>{
                             return(
                                 <Link to={`/chat/${favorite.no}`}> 
-                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src = {favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
                                 </Link>
                             )
                         })
@@ -113,6 +115,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck}/>: null}
                 {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
             </div>
+            
             
         </div>
     );

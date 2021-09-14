@@ -75,12 +75,10 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("disconnect socket : "); // FIXME: 이건왜안찍힘 
             handleCurrentParticipants(arrayOfNumbers);
         });
         socket.on('disconnected', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("disconnect socket : "); // FIXME: 이건왜안찍힘 
             handleCurrentParticipants(arrayOfNumbers);
         });
     },[chatRoomNo])

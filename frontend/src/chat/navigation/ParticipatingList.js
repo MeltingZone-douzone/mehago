@@ -1,18 +1,22 @@
-import { List, ListItem, makeStyles } from '@material-ui/core';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import '../../assets/sass/chat/ChatProfile.scss';
-import '../../assets/sass/chat/modal.scss';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import StarRateRoundedIcon from '@material-ui/icons/StarRateRounded';
-
+import React, { useState } from 'react';
+import Modal from "react-modal";
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import defaultImage from "../../assets/images/black-mehago.png";
+import '../../assets/sass/chat/ChatProfile.scss';
+import '../../assets/sass/chat/modal.scss';
+
+
+Modal.setAppElement('body');
 
 export default function ParticipantingList({ room, updateFavoriteRoom, exitRoom, setFavoriteCheck}) {
     const classes = madeStyles();
 
+    const [modalIsOpen, setModalIsOpen] = useState(false);
     // console.log(room);
 
     function timeForToday(leastMessageAt) {
@@ -40,11 +44,6 @@ export default function ParticipantingList({ room, updateFavoriteRoom, exitRoom,
         return result;
     }
     
-    const updateFavoriteCheck = () => {
-
-    }
-    // console.log(typeof(room.favoriteRoom)); // fa fa tr tr        string
-    // console.log(room.favoriteRoom === "true");
     return (
         <div className={"chatProfile"}>
             <List className={"container"}>
@@ -60,7 +59,7 @@ export default function ParticipantingList({ room, updateFavoriteRoom, exitRoom,
                         <StarRateRoundedIcon style={{color: '#c0c0c0'}}/>
                     }
                 </Button>
-                <Button onClick={() => exitRoom(room.no)}><ExitToAppRoundedIcon /></Button>
+                <Button onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 <Link to={`/chat/${room.no}`}>
                 <ListItem button key={`${room.no}`} className={classes.roomContainer} >
                     <ChattingRoomImage>
@@ -79,6 +78,19 @@ export default function ParticipantingList({ room, updateFavoriteRoom, exitRoom,
                 </ListItem>
                 </Link>
             </List>
+            <Modal
+                className={"modal"}
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+                shouldCloseOnOverlayClick={true}
+                contentLabel="채팅방 나가기">
+                <div className={"top"}>
+                    <Button variant="contained" onClick={() => setModalIsOpen(false)}>x</Button>
+                </div>
+                <ListItemText align="center" primary={`[${room.title}] 채팅방에서 나가시겠습니까?`} secondary={'나가면 바보'} />
+                <Button onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
+                <Button onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+            </Modal>
         </div >
     )
 }
