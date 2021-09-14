@@ -16,6 +16,8 @@ export default function ChatList({ socket }) {
     const [isSearched, setIsSearched] = useState(false);
     const [noResult, setNoResult] = useState(false);
 
+    
+
     useEffect(() => {
         try {
 
@@ -23,6 +25,7 @@ export default function ChatList({ socket }) {
             axios.post(url, { headers: { 'Context-Type': 'application/json' } })
                 .then(res => {
                     setRooms(res.data);
+                    console.log(res.data);
                 });
 
         } catch (e) {

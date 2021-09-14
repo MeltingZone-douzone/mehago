@@ -24,7 +24,6 @@
       c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner,
         (select count(no) from participant where chat_room_no = c.no) as participantCount,
         (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage
-
     from 
       chat_room c, participant p
     where
@@ -49,7 +48,7 @@
   <select id="participatingRoom" parameterType="Long" resultType="map">
     <![CDATA[
       	SELECT DISTINCT
-        c.no, c.title, c.thumbnail_url as thumbnailUrl, p.not_read_count as notReadCount,
+        c.no, c.title, c.thumbnail_url as thumbnailUrl, p.not_read_count as notReadCount, p.favorite_room as favoriteRoom,
 			  (select count(no) from participant where chat_room_no = c.no) as participantCount,
 		    (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
 			    from message 
@@ -160,7 +159,7 @@
     ]]>
   </select>
 
-  <select id="favoriteRoomList" parameterType="map" resultType="chatroom">
+  <select id="getFavoriteRoomList" parameterType="map" resultType="chatroom">
     <![CDATA[
       SELECT 
         no, thumbnail_url as thumbnailUrl
@@ -186,6 +185,16 @@
       where no = #{no }
     ]]>
   </select>
+  
+
+  <delete id="exitRoom" parameterType="map">
+    DELETE from 
+	    participant 
+    WHERE
+	    account_no = #{accountNo } 
+    AND
+      chat_room_no = #{chatRoomNo };
+  </delete>
  
 
 </mapper>

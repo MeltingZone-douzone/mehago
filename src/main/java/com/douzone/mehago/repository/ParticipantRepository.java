@@ -63,12 +63,13 @@ public class ParticipantRepository {
         return sqlSession.selectOne("participant.getLastReadChatNo", chatRoomNo);
     }
 
-    public List<ChatRoom> joinFavoriteRoom(Long no, Long accountNo) {
-        Map<String, Long> map = new HashMap();
-        map.put("chatRoomNo", no);
+    public List<ChatRoom> updateFavoriteRoom(Long chatRoomNo, Long accountNo, String favoriteRoom) {
+        Map<String, Object> map = new HashMap();
+        map.put("chatRoomNo", chatRoomNo);
         map.put("accountNo", accountNo);
-        sqlSession.update("participant.joinFavoriteRoom", map);
-        return sqlSession.selectList("chatroom.favoriteRoomList", map);
+        map.put("favoriteRoom", favoriteRoom);
+        sqlSession.update("participant.updateFavoriteRoom", map);
+        return sqlSession.selectList("chatroom.getFavoriteRoomList", map);
     }
 
 }

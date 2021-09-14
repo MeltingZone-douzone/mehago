@@ -1,5 +1,6 @@
 package com.douzone.mehago.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +57,8 @@ public class ChatRoomService {
         return chatRoomRepository.checkPassword(no, password);
     }
 
-    public List<ChatRoom> favoriteRoomList(Long no) {
-        return chatRoomRepository.favoriteRoomList(no);
+    public List<ChatRoom> getFavoriteRoomList(Long no) {
+        return chatRoomRepository.getFavoriteRoomList(no);
     }
 
     public boolean checkIsDeleted(Long chatRoomNo) {
@@ -66,6 +67,13 @@ public class ChatRoomService {
 
     public boolean deleteChatRoom(Long chatRoomNo) {
         return chatRoomRepository.deleteChatRoom(chatRoomNo);
+    }
+
+    public boolean exitRoom(Long chatRoomNo, Long accountNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("chatRoomNo", chatRoomNo);
+        map.put("accountNo", accountNo);
+        return chatRoomRepository.exitRoom(map);
     }
 
 }

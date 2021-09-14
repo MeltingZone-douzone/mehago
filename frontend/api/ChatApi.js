@@ -127,18 +127,26 @@ export function nicknameValidation(chatRoomNo, chatNickname) {
         .then(res => res);
 }
 
-export function joinFavoriteRoom(no){
+export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus){
     setAuthHeader();
-    return axios.get(`/api/chat/joinFavoriteRoom/${no}`, { headers: AuthHeader })
+    const favoriteStatusObject = { "favoriteRoom": favoriteStatus };
+    // console.log(favoriteStatusObject);
+    return axios.post(`/api/chat/updateFavoriteRoom/${chatRoomNo}`, favoriteStatusObject, { headers: AuthHeader })
         .then(res => res);
 }
 
-export function favoriteRoomList(){
+export function getFavoriteRoomList(){
     setAuthHeader();
-    return axios.get(`/api/chat/favoriteRoomList`, { headers: AuthHeader })
+    return axios.get(`/api/chat/getFavoriteRoomList`, { headers: AuthHeader })
         .then(res => res);
 }
-    
+
+export function exitRoomApi(chatRoomNo) {
+    console.log(`exitRoomApi(${chatRoomNo})`);
+    setAuthHeader();
+    return axios.delete(`/api/chat/exitRoom/${chatRoomNo}`, { headers: AuthHeader })
+        .then(res => res);
+}
 
 export function updateChatRoomInfo(roomObject) {
     return axios.post('/api/chat/updateChatRoomInfo', roomObject, { headers: formDataHeader() }).then(res => res);
@@ -163,5 +171,3 @@ export function deleteChatRoom(roomObject) {
     setAuthHeader();
     return axios.post('/api/chat/deleteChatRoom', roomObject, { headers: AuthHeader }).then(res => res);
 }
-
-

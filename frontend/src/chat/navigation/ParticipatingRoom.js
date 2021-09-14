@@ -5,11 +5,14 @@ import SearchIcon from '@material-ui/icons/Search';
 
 import { getMyChatListApi, getParticipantsList } from '../../../api/ChatApi';
 import { NavLink } from 'react-router-dom';
-import ParticipantingList from './ParticipantingList';
+import ParticipatingList from './ParticipatingList';
 
 
-export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, favoriteRoom}){
+export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck}){
     const classes = styles();
+
+    // console.log(participatingRoom);
+
     return (
         <MyChatRoomList>
             <SerachBarWarpper>
@@ -29,10 +32,10 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
             </SerachBarWarpper>
             <ContentWrapper>
                 {
-                participatingRoom
-                .filter(rooms => rooms.title.indexOf(searchValue) != -1 || rooms.tagName.indexOf(searchValue) != -1)
+                participatingRoom 
+                .filter(rooms => rooms.title.indexOf(searchValue) != -1)
                 .map(room => 
-                    <ParticipantingList room = {room} favoriteRoom={favoriteRoom}/>
+                    <ParticipatingList room={room} updateFavoriteRoom={updateFavoriteRoom} exitRoom ={exitRoom} setFavoriteCheck={setFavoriteCheck}/>
                     )
                 }
             </ContentWrapper>
