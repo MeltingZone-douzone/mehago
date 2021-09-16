@@ -60,13 +60,10 @@ public class AuthInterceptor implements HandlerInterceptor {
       String token = request.getHeader("Authorization");
       // Account decodedAccount = jwtDecoder.decodeJwt(token.split("Bearer ")[1]);
       Object decodedToken = jwtDecoder.decodeJwt(token.split("Bearer ")[1]);
-      System.out.println(decodedToken);
       if (decodedToken.getClass() == Account.class) {
          request.setAttribute("account", decodedToken);
-         System.out.println("setAttribute(account");
       } else {
          request.setAttribute("nonMember", decodedToken);
-         System.out.println("setAttribute(nonMember");
       }
 
       // 여기서 accout값을 가져오면 controller에 갈때 그때는 어떻게 가져 갈것인가..?

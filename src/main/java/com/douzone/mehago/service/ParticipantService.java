@@ -83,7 +83,7 @@ public class ParticipantService {
     }
 
 
-    public List<ChatRoom> joinFavoriteRoom(Long no, Long accountNo) {
-        return participantRepository.joinFavoriteRoom(no , accountNo);
+    public List<ChatRoom> updateFavoriteRoom(Long chatRoomNo, Long accountNo, Boolean favoriteRoom) {
+        return participantRepository.updateFavoriteRoom(chatRoomNo , accountNo, favoriteRoom);
     }
 }

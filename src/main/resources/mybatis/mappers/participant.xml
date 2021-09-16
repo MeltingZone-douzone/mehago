@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom }, null)
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), false , null, false)
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -76,9 +76,15 @@
 		WHERE
 				p.account_no = a.no
 			AND
-				chat_room_no = #{chatRoomNo }
+				p.chat_room_no = #{chatRoomNo }
+			AND 
+        		a.is_deleted = false
+			AND 
+				p.is_deleted = false
+
 		ORDER BY
 			p.chat_nickname
+			
 	]]>
 	</select>
 	<select id="nicknameValidation" parameterType="participant" resultType="String">
@@ -112,17 +118,44 @@
 		]]>
      </select>
 
-	 <update id="joinFavoriteRoom" parameterType="map" >
+	 <update id="updateFavoriteRoom" parameterType="map" >
+	<choose>
+		<when test='favoriteRoom == true'>
+			<![CDATA[
+				update 
+					participant
+				set
+					favorite_room = false
+				where 
+					chat_room_no= #{chatRoomNo }
+						and
+					account_no = #{accountNo}
+			]]>		
+		</when>
+		<otherwise>
+			<![CDATA[
+				update 
+					participant
+				set
+					favorite_room = "true"
+				where 
+					chat_room_no= #{chatRoomNo }
+						and
+					account_no = #{accountNo}
+			]]>	
+		</otherwise>
+	</choose>	
+	</update>
+
+	<update id="updateParticipantLeaveMember" parameterType="Long" >
 	<![CDATA[
 		update 
-			participant
-		set
-			favorite_room = #{favoriteRoom }
+			participant 
+		set 
+			is_deleted = 1 
 		where 
-			chat_room_no= #{chatRoomNo }
-				and
-			account_no = #{accountNo}
-	]]>			
+			account_no = #{accountNo} 
+	]]>	
 	</update>
 
 </mapper>

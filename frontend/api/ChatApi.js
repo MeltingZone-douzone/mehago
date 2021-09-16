@@ -99,7 +99,7 @@ export function fileUpload(roomNo, participantNo, files) {
         }).then(res => res);
 }
 
-export function getSearchMessage(searchKeyword) {
+export function getSearchMessage(chatRoomNo, searchKeyword) {
     setAuthHeader();
     return axios.get("/api/chat/getSearchMessage?chatRoomNo="+ chatRoomNo +"&searchKeyword=" + searchKeyword, { headers: AuthHeader })
         .then(res => res);
@@ -126,18 +126,26 @@ export function nicknameValidation(chatRoomNo, chatNickname) {
         .then(res => res);
 }
 
-export function joinFavoriteRoom(no){
+export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus){
     setAuthHeader();
-    return axios.get(`/api/chat/joinFavoriteRoom/${no}`, { headers: AuthHeader })
+    const favoriteStatusObject = { "favoriteRoom": favoriteStatus };
+    // console.log(favoriteStatusObject);
+    return axios.post(`/api/chat/updateFavoriteRoom/${chatRoomNo}`, favoriteStatusObject, { headers: AuthHeader })
         .then(res => res);
 }
 
-export function favoriteRoomList(){
+export function getFavoriteRoomList(){
     setAuthHeader();
-    return axios.get(`/api/chat/favoriteRoomList`, { headers: AuthHeader })
+    return axios.get(`/api/chat/getFavoriteRoomList`, { headers: AuthHeader })
         .then(res => res);
 }
-    
+
+export function exitRoomApi(chatRoomNo) {
+    console.log(`exitRoomApi(${chatRoomNo})`);
+    setAuthHeader();
+    return axios.delete(`/api/chat/exitRoom/${chatRoomNo}`, { headers: AuthHeader })
+        .then(res => res);
+}
 
 export function updateChatRoomInfo(roomObject) {
     return axios.post('/api/chat/updateChatRoomInfo', roomObject, { headers: formDataHeader() }).then(res => res);
@@ -163,9 +171,9 @@ export function deleteChatRoom(roomObject) {
     return axios.post('/api/chat/deleteChatRoom', roomObject, { headers: AuthHeader }).then(res => res);
 }
 
-export function getChatListApi() {
+export function getAllChatListApi(offset) {
     setAuthHeader();
-    return axios.get('/api/chat/chatList', {headers: AuthHeader})
+    return axios.get('/api/chat/getAllChatList', { params : { offset }, headers: AuthHeader})
                 .then(res => res);
 }
 

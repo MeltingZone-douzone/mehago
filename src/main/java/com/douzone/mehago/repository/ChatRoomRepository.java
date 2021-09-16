@@ -22,9 +22,8 @@ public class ChatRoomRepository {
         return chatRoom.getNo();
     }
 
-    public List<Map<String, Object>> getAllChatList() {
-        // 추후에 offset 줘서 리스트 뽑아야댐
-        return sqlSession.selectList("chatroom.getAllChatList");
+    public List<Map<String, Object>> getAllChatList(Long offset) {
+        return sqlSession.selectList("chatroom.getAllChatList", offset);
     }
 
     public ChatRoom getRoomInfo(Long chatRoomNo) {
@@ -64,10 +63,10 @@ public class ChatRoomRepository {
         return result != null ? true : false;
     }
 
-    public List<ChatRoom> favoriteRoomList(Long no) {
+    public List<ChatRoom> getFavoriteRoomList(Long no) {
         Map<String, Long> map = new HashMap();
         map.put("accountNo", no);
-        return sqlSession.selectList("chatroom.favoriteRoomList", map);
+        return sqlSession.selectList("chatroom.getFavoriteRoomList", map);
     }
 
     
@@ -77,5 +76,9 @@ public class ChatRoomRepository {
 
     public boolean deleteChatRoom(Long chatRoomNo) {
         return sqlSession.update("chatroom.deleteChatRoom", chatRoomNo) == 1 ? true : false;
+    }
+
+    public boolean exitRoom(Map<String, Long> map) {
+        return sqlSession.delete("chatroom.exitRoom", map) == 1 ? true : false;
     }
 }

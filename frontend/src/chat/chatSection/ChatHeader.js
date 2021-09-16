@@ -14,7 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 
-export default function ChatHeader({messageFunction, roomObject, cursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
+export default function ChatHeader({messageFunction, roomObject, cursor, setCursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
   // const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
   const [hiddenSearchResult, setHiddenSearchResult] = useState(true);
   //   const [searchKeyword, setSearchKeyword] = useState('');
@@ -27,6 +27,7 @@ export default function ChatHeader({messageFunction, roomObject, cursor, hiddenS
       if(e.target.value === '') {
         handleSetSearch();
         setHiddenSearchResult(true);
+        // setCursor()
         setSearchMessage(''); // SearchInput을 끄고 message를 ''초기화해서 ReceivedMessage, SendMessage에서 뿌릴때 no ? 삼항연산식에서 searchMessage가 존재하면 하이라이트, 없으면 일반문자로 출력
         return;
       }
@@ -94,8 +95,8 @@ export default function ChatHeader({messageFunction, roomObject, cursor, hiddenS
                         }
                         inputProps={{ 'aria-label': 'search' }}/>
                 </div> 
-                { hiddenSearchResult ?
-
+                { 
+                  hiddenSearchResult ?
                   null
                   :
                   <ToggleTemplate>

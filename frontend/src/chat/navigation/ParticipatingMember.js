@@ -13,7 +13,7 @@ import ParticipantsStatus from '@material-ui/icons/FiberManualRecord';
 import { getParticipantsList } from '../../../api/ChatApi';
 import '../../assets/sass/chat/ChatNav.scss';
 
-export default function ParticipatingMember({currentParticipants, userInfo, participants}){
+export default function ParticipatingMember({currentParticipants, userInfo, participants}) {
     const [searchNickname, setSearchNickname] = useState('');
 
     console.log(currentParticipants);
@@ -45,8 +45,8 @@ export default function ParticipatingMember({currentParticipants, userInfo, part
         )
         
     }
-
-    return (
+    
+    return Object.keys(participants).length !== 0 ?
         <ParticipatingMemberList>
             <Grid className={"borderRight500"}>
                     <List>
@@ -73,7 +73,8 @@ export default function ParticipatingMember({currentParticipants, userInfo, part
                     </List>
                 </Grid>
             </ParticipatingMemberList>
-    );
+        :
+        <p className={'notYetEntered'}>채팅방에 입장하면 해당 채팅방의 유저가 보입니다.</p>
 }
 
 

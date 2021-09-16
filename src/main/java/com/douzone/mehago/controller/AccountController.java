@@ -150,4 +150,12 @@ public class AccountController {
         }
         return ResponseEntity.ok().body(accountVo.getEmail());
     }
+
+    @Auth
+    @GetMapping("/leaveMember/{accountNo}")
+    public ResponseEntity<?> leaveMember(@PathVariable Long accountNo) {
+        System.out.println(accountNo);
+        accountService.leaveMember(accountNo);
+        return ResponseEntity.ok().body(null);
+    }
 }

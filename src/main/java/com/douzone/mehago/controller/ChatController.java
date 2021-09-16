@@ -19,6 +19,7 @@ import com.douzone.mehago.vo.Participant;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,6 +65,7 @@ public class ChatController {
         participant.setNotReadCount(0);
         participant.setChatRoomNo(roomNo);
         participant.setFavoriteRoom(false);
+        // participant.setFavoriteRoom("false");
         Long participantNo = participantService.createParticipant(participant);
 
         // 3. 태그 생성
@@ -107,11 +109,11 @@ public class ChatController {
     // public ResponseEntity<?> getParticipantInfo(String chatNickname,
     // @PathVariable Long chatRoomNo)
 
-    @GetMapping("/chatList")
-    public ResponseEntity<?> getAllChatList() {
-        List<Map<String, Object>> list = chatRoomService.getAllChatList();
+    @GetMapping("/getAllChatList")
+    public ResponseEntity<?> getAllChatList(String offset) {
+        List<Map<String, Object>> list = chatRoomService.getAllChatList(offset);
         getTagName(list);
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(list != null ? CommonResponse.success(list) : CommonResponse.fail("채팅방이 없습니다. 채팅방을 개설해주세요."));
     }
 
     @Auth
@@ -134,9 +136,7 @@ public class ChatController {
 
     @GetMapping("/participants/{chatRoomNo}")
     public ResponseEntity<?> getParticipantsList(@PathVariable Long chatRoomNo) {
-        System.out.println(chatRoomNo);
         List<Participant> list = participantService.getParticipantsList(chatRoomNo);
-        System.out.println(list);
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 참여자가 존재하지 않습니다"));
     }
@@ -259,19 +259,17 @@ public class ChatController {
     }
 
     @Auth
-    @GetMapping("joinFavoriteRoom/{no}")
-    public ResponseEntity<?> joinFavoriteRoom(@PathVariable Long no, @AuthUser Account account) {
-        Long accountNo = account.getNo();
-        List<ChatRoom> favoriteRoom = participantService.joinFavoriteRoom(no, accountNo);
+    @PostMapping("/updateFavoriteRoom/{chatRoomNo}")
+    public ResponseEntity<?> updateFavoriteRoom(@PathVariable Long chatRoomNo , @AuthUser Account account, @RequestBody Participant participant) {
+        List<ChatRoom> favoriteRoom = participantService.updateFavoriteRoom(chatRoomNo, account.getNo(), participant.getFavoriteRoom());
+        System.out.println(favoriteRoom);
         return ResponseEntity.ok().body(favoriteRoom);
     }
 
-    @GetMapping("favoriteRoomList")
-    public ResponseEntity<?> favoriteRoomList(@AuthUser Account account) {
-        if(account == null){
-            return null;
-        }
-        List<ChatRoom> favoriteRoomList = chatRoomService.favoriteRoomList(account.getNo());
+    @Auth
+    @GetMapping("/getFavoriteRoomList")
+    public ResponseEntity<?> getFavoriteRoomList(@AuthUser Account account) {
+        List<ChatRoom> favoriteRoomList = chatRoomService.getFavoriteRoomList(account.getNo());
         return ResponseEntity.ok().body(favoriteRoomList);
     }
 
@@ -287,7 +285,14 @@ public class ChatController {
 
     @GetMapping("/checkIsDeleted")
     public ResponseEntity<?> checkIsDeleted(String chatRoomNo) {
-        boolean result = chatRoomService.checkIsDeleted(Long.valueOf(chatRoomNo));
+        boolean result = chatRoomService.checkIsDeleted(Long.parseLong(chatRoomNo));
+        return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+
+    @Auth
+    @DeleteMapping("/exitRoom/{chatRoomNo}")
+    public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser Account account) {
+        boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), account.getNo());
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 }

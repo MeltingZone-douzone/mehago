@@ -20,23 +20,23 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
     
 
     const getTags = () => {
-        if(tagName.length > 6) {
+        if(tagName && tagName.length > 6) {
             return tagName.slice(0,6).map((tag, index)=> {
                 return(
                     index < 5 ?
                     <Chip
-                    key={index}
-                    variant="outlined"
-                    icon={<LocalOfferIcon />}
-                    label={tag}/>
+                        key={index}
+                        variant="outlined"
+                        icon={<LocalOfferIcon />}
+                        label={tag}/>
                     :
                     <Chip
-                    key={index}
-                    label={`외 ${tagName.length - 5}`}/>
+                        key={index}
+                        label={`외 ${tagName.length - 5}`}/>
                 )
         })} else {
 
-        return tagName.map((tag, index)=> {
+        return tagName && tagName.map((tag, index)=> {
                 return(
                     <Chip
                     key={index}

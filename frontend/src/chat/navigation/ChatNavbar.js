@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
 import { Link } from 'react-router-dom';
-import { getMyChatListApi, joinFavoriteRoom , favoriteRoomList} from '../../../api/ChatApi';
+import { getMyChatListApi, updateFavoriteRoomApi , getFavoriteRoomList, exitRoomApi} from '../../../api/ChatApi';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import HomeIcon from '@material-ui/icons/Home';
@@ -20,9 +20,18 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const [chatMember, setChatMember] = useState(false);
     const [participatingRoom, setParticipatingRoom] = useState([]);
     const [searchValue, setSearchValue] = useState('');
-    const [favoriteRoomThumbnail, setFavoriteRoomThumbnail] = useState([]);
+    const [favoriteRoom, setFavoriteRoom] = useState([]);
+    const [favoriteCheck, setFavoriteCheck] = useState(false);
+    
     
     useEffect(()=> {
+        console.log(`fetchRooms() fetchFavoriteRooms(); useEffect`);
+        fetchRooms();
+        fetchFavoriteRooms();
+    },[favoriteCheck]);
+
+
+    const fetchRooms = () => {
         try {
             getMyChatListApi().then(res => {
                 if(res.data.result == "fail"){
@@ -34,32 +43,42 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
         } catch (e) {
             console.log(e);
         }
-    },[]);
+    }
 
-    useEffect(()=> {
+    const fetchFavoriteRooms = () => {
         try {
-            favoriteRoomList().then(res => {
-                console.log(res.data.thumbnailUrl);
-                setFavoriteRoomThumbnail(res.data);
+            getFavoriteRoomList().then(res => {
+                console.log(res.data);
+                setFavoriteRoom(res.data);
             });
         } catch (e) {
             console.log(e);
         }
-    },[]);
+    }
 
-    const favoriteRoom = (no) => {
+
+    const updateFavoriteRoom = (chatRoomNo, favoriteStatus) => {
+        console.log(favoriteStatus);
         try {
-            joinFavoriteRoom(no).then((res) => {
-                console.log(res.data);
-                setFavoriteRoomThumbnail(res.data);
+            updateFavoriteRoomApi(chatRoomNo, favoriteStatus).then((res) => {
+                // setFavoriteCheck(false);
+                setFavoriteCheck(''); // 이전에 다른방 즐겨찾기 체크한 값들 초기화
             });
-        } catch (error) {
-            
+        } catch (e) {
+            console.log(e);
         }
     } 
 
-    const exitRoom = (no) =>{
-        console.log("나감");
+    const exitRoom = (chatRoomNo) => {
+        try {
+            exitRoomApi(chatRoomNo).then((res) => {
+                console.log(res);
+            })
+            fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
+            fetchFavoriteRooms();
+        } catch (error) {
+            console.log();
+        }
     }
 
     const handleChatList = () => {
@@ -82,10 +101,10 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 </div>
                 <div className={"FavoriteNav"}>
                     {
-                        favoriteRoomThumbnail && favoriteRoomThumbnail.map((favorite) =>{
+                        favoriteRoom && favoriteRoom.map((favorite) =>{
                             return(
                                 <Link to={`/chat/${favorite.no}`}> 
-                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src = {favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
                                 </Link>
                             )
                         })
@@ -93,9 +112,10 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} favoriteRoom={favoriteRoom} exitRoom={exitRoom} />: null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
+                {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck}/>: null}
+                {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
             </div>
+            
             
         </div>
     );
