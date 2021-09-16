@@ -14,4 +14,6 @@ public class Participant {
     private Boolean favoriteRoom;
     private Boolean isDeleted;
     // private String favoriteRoom; // 잠시 string으로 고침
+
+    private Boolean hasData;
 }

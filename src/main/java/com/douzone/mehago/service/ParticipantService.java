@@ -41,6 +41,10 @@ public class ParticipantService {
             participant.setChatRoomNo(chatRoomNo);
             participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
             participant.setNo(createParticipant(participant));
+            participant.setFavoriteRoom(false);
+            participant.setHasData(false);
+        } else {
+            participant.setHasData(true);
         }
 
         return participant;

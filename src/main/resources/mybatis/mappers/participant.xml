@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), false , null, false)
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom }, null, 0)
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -76,12 +76,9 @@
 		WHERE
 				p.account_no = a.no
 			AND
-				p.chat_room_no = #{chatRoomNo }
-			AND 
-        		a.is_deleted = false
-			AND 
-				p.is_deleted = false
-
+				chat_room_no = #{chatRoomNo }
+			AND
+				p.is_deleted = 0
 		ORDER BY
 			p.chat_nickname
 			
@@ -137,7 +134,7 @@
 				update 
 					participant
 				set
-					favorite_room = "true"
+					favorite_room = true
 				where 
 					chat_room_no= #{chatRoomNo }
 						and

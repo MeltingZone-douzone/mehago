@@ -65,7 +65,6 @@ public class ChatController {
         participant.setNotReadCount(0);
         participant.setChatRoomNo(roomNo);
         participant.setFavoriteRoom(false);
-        // participant.setFavoriteRoom("false");
         Long participantNo = participantService.createParticipant(participant);
 
         // 3. 태그 생성
@@ -262,7 +261,6 @@ public class ChatController {
     @PostMapping("/updateFavoriteRoom/{chatRoomNo}")
     public ResponseEntity<?> updateFavoriteRoom(@PathVariable Long chatRoomNo , @AuthUser Account account, @RequestBody Participant participant) {
         List<ChatRoom> favoriteRoom = participantService.updateFavoriteRoom(chatRoomNo, account.getNo(), participant.getFavoriteRoom());
-        System.out.println(favoriteRoom);
         return ResponseEntity.ok().body(favoriteRoom);
     }
 
