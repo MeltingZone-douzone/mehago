@@ -13,11 +13,10 @@ import '../../assets/sass/chat/modal.scss';
 
 Modal.setAppElement('body');
 
-export default function ParticipantingList({ room, updateFavoriteRoom, exitRoom, setFavoriteCheck}) {
+export default function ParticipatingList({ room, updateFavoriteRoom, exitRoom, setFavoriteCheck}) {
     const classes = madeStyles();
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    // console.log(room);
 
     function timeForToday(leastMessageAt) {
         const today = new Date();
@@ -49,11 +48,11 @@ export default function ParticipantingList({ room, updateFavoriteRoom, exitRoom,
             <List className={"container"}>
                 {/* <Button onClick={() => updateFavoriteRoom(room.no)}> */}
                 <Button onClick={() => {
-                        setFavoriteCheck(room.favoriteRoom === "true" ? "false" : "true")
+                        setFavoriteCheck(room.favoriteRoom ? false : true)
                         updateFavoriteRoom(room.no, room.favoriteRoom)
                     }}>
                     {
-                        room.favoriteRoom === "true" ? 
+                        room.favoriteRoom ? 
                         <StarRateRoundedIcon style={{color: '#f4e02d'}}/>
                         :
                         <StarRateRoundedIcon style={{color: '#c0c0c0'}}/>
@@ -72,7 +71,7 @@ export default function ParticipantingList({ room, updateFavoriteRoom, exitRoom,
                             <span className={classes.leastMessageAt}>{timeForToday(room.leastMessageAt)}</span>
                         </div>
                         <div className={classes.content}>
-                            <span className={classes.leastMessage}>{room.leastMessage ? room.leastMessage : ' '}</span> <span>{room.notReadCount === 0 ? ' ' : room.notReadCount}</span>
+                            <span className={classes.leastMessage}>{room.leastMessage ? room.leastMessage : '새로운 채팅방입니다.'}</span> <span>{room.notReadCount === 0 ? ' ' : room.notReadCount}</span>
                         </div>
                     </ChattingRoomContent>
                 </ListItem>

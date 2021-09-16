@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
-import Chatting2 from './Chatting';
+import Chatting from './Chatting';
 import MsgInput2 from './MsgInput2';
 import Dialogs from '../dialogs/Dialogs';
 
@@ -162,7 +162,15 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             socket.emit('leave', roomObject.title); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
             history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
                                     // TODO: 참여자 삭제
+        },
+        joinRoom: (e) => {
+            if(prevChatRoomNo != chatRoomNo){
+                console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
+                socket.emit('leave', roomObject.title);
+                setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
+            }
         }
+
     }
 
     const buttonFunction = {
@@ -216,7 +224,7 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
                 <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage}/>
-                <Chatting2 socket={socket} 
+                <Chatting socket={socket} 
                     messageFunction={messageFunction} 
                     participantObject={participantObject} 
                     roomObject={roomObject} 

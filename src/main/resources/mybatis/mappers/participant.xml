@@ -9,7 +9,7 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom })
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom }, null, 0)
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -77,6 +77,8 @@
 				p.account_no = a.no
 			AND
 				chat_room_no = #{chatRoomNo }
+			AND
+				p.is_deleted = 0
 		ORDER BY
 			p.chat_nickname
 	]]>
@@ -114,12 +116,12 @@
 
 	 <update id="updateFavoriteRoom" parameterType="map" >
 	<choose>
-		<when test='favoriteRoom == "true"'>
+		<when test='favoriteRoom == true'>
 			<![CDATA[
 				update 
 					participant
 				set
-					favorite_room = "false"
+					favorite_room = false
 				where 
 					chat_room_no= #{chatRoomNo }
 						and
@@ -131,7 +133,7 @@
 				update 
 					participant
 				set
-					favorite_room = "true"
+					favorite_room = true
 				where 
 					chat_room_no= #{chatRoomNo }
 						and

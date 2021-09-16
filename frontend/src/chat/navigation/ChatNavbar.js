@@ -23,13 +23,11 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
     
-    
     useEffect(()=> {
         console.log(`fetchRooms() fetchFavoriteRooms(); useEffect`);
         fetchRooms();
         fetchFavoriteRooms();
     },[favoriteCheck]);
-
 
     const fetchRooms = () => {
         try {
@@ -55,7 +53,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
             console.log(e);
         }
     }
-
 
     const updateFavoriteRoom = (chatRoomNo, favoriteStatus) => {
         console.log(favoriteStatus);

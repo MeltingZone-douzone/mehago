@@ -41,6 +41,10 @@ public class ParticipantService {
             participant.setChatRoomNo(chatRoomNo);
             participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
             participant.setNo(createParticipant(participant));
+            participant.setFavoriteRoom(false);
+            participant.setHasData(false);
+        } else {
+            participant.setHasData(true);
         }
 
         return participant;
@@ -83,7 +87,7 @@ public class ParticipantService {
     }
 
 
-    public List<ChatRoom> updateFavoriteRoom(Long chatRoomNo, Long accountNo, String favoriteRoom) {
+    public List<ChatRoom> updateFavoriteRoom(Long chatRoomNo, Long accountNo, Boolean favoriteRoom) {
         return participantRepository.updateFavoriteRoom(chatRoomNo , accountNo, favoriteRoom);
     }
 }

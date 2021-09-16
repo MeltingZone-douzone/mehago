@@ -79,25 +79,26 @@
 
   <select id="participatingRoom" parameterType="Long" resultType="map">
     <![CDATA[
-      	SELECT DISTINCT
-        c.no, c.title, c.thumbnail_url as thumbnailUrl, p.not_read_count as notReadCount, p.favorite_room as favoriteRoom,
-			  (select count(no) from participant where chat_room_no = c.no) as participantCount,
-		    (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
-			    from message 
-          where chat_room_no = c.no) as leastMessageAt,  
-        (select message
-				  from message
-				  where no = (select ifnull(max(no),"0") from message where chat_room_no = c.no)) as leastMessage
-     FROM
-          chat_room c, participant p
-      WHERE
-      c.no = p.chat_room_no and
+      	SELECT 
+            c.no, c.title, c.thumbnail_url as thumbnailUrl, p.favorite_room as favoriteRoom, p.not_read_count as notReadCount,
+              (select count(no) from participant where chat_room_no = c.no) as participantCount,
+                  (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
+                    from message 
+                    where chat_room_no = c.no) as leastMessageAt,  
+                  (select message
+                    from message
+                    where no = (select ifnull(max(no),"0") from message where chat_room_no = c.no)) as leastMessage
+        FROM
+            chat_room c, (select chat_room_no, not_read_count, favorite_room from participant where account_no = #{accountNo }) p
+        WHERE
+          c.no = p.chat_room_no
+          AND
           c.no IN (SELECT
-               chat_room_no
-                FROM
+                chat_room_no
+              FROM
                   participant
-                WHERE
-                  account_no = #{no})
+              WHERE
+                  account_no = #{accountNo })
       order by 
         leastMessageAt desc
     ]]>
@@ -109,22 +110,22 @@
             c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner,
         (select count(no) from participant where chat_room_no = c.no) as participantCount,
         (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage
-     FROM
+      FROM
           chat_room c, participant p
       WHERE
-      c.no in (select
-                  chat_room_no
-              FROM
-                  chat_room_has_tag
-              where
-                  tag_no in (select
-                              no
-                          from
-                              tag
-                          where 
-                              tag like CONCAT('%',#{searchValue},'%'))
-        OR
-            c.title like CONCAT('%',#{searchValue},'%'))
+          c.no in (select
+                      chat_room_no
+                  FROM
+                      chat_room_has_tag
+                  where
+                      tag_no in (select
+                                  no
+                                from
+                                    tag
+                                where 
+                                    tag like CONCAT('%',#{searchValue},'%')))
+      OR
+          c.title like CONCAT('%',#{searchValue},'%')
     ]]>
   </select>
 

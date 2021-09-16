@@ -45,15 +45,14 @@ export default function ChatList({ socket }) {
     }
 
     const onScroll = (e) => {
-        const scrollHeight = e.target.scrollHeight; // chatRoomAreaRef 의 총 크기
+        const scrollHeight = e.target.scrollHeight;     // chatRoomAreaRef 의 총 크기
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
-        const clientHeight = e.target.clientHeight; // 사용자 화면 크기
+        const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
         if(scrollTop + clientHeight >= scrollHeight && !isFetching && !isEnd) {
             fetchChatRooms();
             setIsFetching(true);
         }
     }
-
 
 
     useEffect(() => {
@@ -83,7 +82,7 @@ export default function ChatList({ socket }) {
                     if (res.data.result === "success") {
                         setJoinRooms(res.data.data);
                         setIsSearched(true);
-                        setNoResult(false);
+                        setNoResult(false); // TODO: ~ 와 관련된 채팅방이 ' '개 있습니다.
                     } else {
                         console.log(res.data.message); 
                         setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.

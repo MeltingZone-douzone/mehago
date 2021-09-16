@@ -10,9 +10,7 @@ import ParticipatingList from './ParticipatingList';
 export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck}){
     const classes = styles();
 
-    // console.log(participatingRoom);
-
-    return (
+    return Object.keys(participatingRoom).length !== 0 ?
         <MyChatRoomList>
             <SerachBarWarpper>
             <TextField
@@ -42,7 +40,8 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
                 }
             </ContentWrapper>
         </MyChatRoomList>
-    );
+    :
+    <p className={'notYetEntered'}>채팅방에 입장해주세요.</p>
 
 }
 
@@ -51,6 +50,12 @@ const styles = makeStyles({
         padding: "10px",
         marginTop: "20px",
         width:"90%"
+    },
+    notYetEntered: {
+        height: "100%",
+        display: "flex",
+        justifyContent:"center",
+        alignItems: "center"
     }
 })
 
