@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { NavLink } from 'react-router-dom';
 import '../assets/sass/chat/ChatRoomButton.scss';
 import '../assets/sass/chat/modal.scss'
 import { Chip, makeStyles } from '@material-ui/core';
@@ -10,7 +9,6 @@ import FaceIcon from '@material-ui/icons/Face';
 import ReactModal from "react-modal";
 ReactModal.setAppElement('body');
 
-import {isExistsPasswords, checkPassword, nicknameValidation} from '../../api/ChatApi';
 import ChatRoomModalTemplate from './ChatRoomModalTemplate';
 
 export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl}) {

@@ -33,6 +33,7 @@ export default function ChatPage({ match, userInfo }) {
     }
 
 
+
     return (
         <div className={"ChattingContainer"} >
             <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} />
