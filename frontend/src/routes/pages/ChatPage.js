@@ -10,7 +10,7 @@ import SettingChatRoom from '../../chat/SettingChatRoom';
 import { getParticipantsList } from '../../../api/ChatApi'
 
 
-export default function ChatPage({ match, userInfo }) {
+export default function ChatPage({ history, match, userInfo }) {
 
     const [participants, setParticipants] = useState([]);
     const [currentParticipants, setCurrentParticipants] = useState([]);
@@ -38,7 +38,7 @@ export default function ChatPage({ match, userInfo }) {
             <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} />
             <div className={"chattingRoom"}>
                 <Switch>
-                    <Route exact path={match.path} component={ChatList} />
+                    <Route exact path={match.path} component={ChatList} userInfo={userInfo} />
                     <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} />} />
                     <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
                     <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />

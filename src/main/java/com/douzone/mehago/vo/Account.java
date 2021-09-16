@@ -1,9 +1,11 @@
 package com.douzone.mehago.vo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class Account {
+@EqualsAndHashCode(callSuper = false)
+public class Account extends TokenInfo {
 
     private Long no;
     private String email;
@@ -13,5 +15,13 @@ public class Account {
     private String phoneNumber;
     private String thumbnailUrl;
     private String token;
+    private Boolean isDeleted;
 
+    public Account() {
+    }
+
+    public Account(TokenInfo tokenInfo) {
+        this.no = tokenInfo.getNo();
+        this.nickname = tokenInfo.getNickname();
+    }
 }

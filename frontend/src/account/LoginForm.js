@@ -4,16 +4,22 @@ import { theme } from "../assets/styles/material/MaterialTheme";
 import "../assets/sass/account/Form.scss";
 import localStorage from "local-storage";
 
-import { loginApi } from '../../api/AccountApi'
+import { loginApi, createNonMember } from '../../api/AccountApi'
 import NonMembers from "../components/NonMember";
 
-export default function LoginForm({history, setAuthentication}) {
+export default function LoginForm({ history, isExistToken, setAuthentication }) {
   const classes = madeStyles();
   const [memberVo, setMemberVo] = useState({ email: "", password: "" });
   const [loginFail, setLoginFail] = useState(false);
 
+
+
   const submitLogin = (e) => {
     e.preventDefault();
+    if (localStorage.get("token")) {
+      localStorage.remove("token");
+      setAuthentication(false);
+    }
     try {
       loginApi(memberVo).then((res) => {
         if (res.statusText === "OK") {
@@ -39,6 +45,14 @@ export default function LoginForm({history, setAuthentication}) {
     setMemberVo({ ...memberVo, [name]: value });
   };
 
+  const getNonMemberToken = () => {
+    createNonMember().then((res) => {
+      localStorage.set("token", res.data);
+      setAuthentication(true);
+      history.replace('/chat');
+    })
+  }
+
   return (
     <div className={"ContentContainer"}>
       <div className={"TitleWrapper"}>
@@ -49,62 +63,62 @@ export default function LoginForm({history, setAuthentication}) {
       </div>
       <form>
         <ThemeProvider theme={theme}>
-        <div>
-          <TextField
-            className={classes.root}
-            type="text"
-            label="이메일"
-            variant="outlined"
-            size="medium"
-            autoComplete="off"
-            name="email"
-            value={memberVo.email}
-            onChange={(e) => handleChange(e)}
-          />
-        
-          <TextField
-            className={classes.root}
-            type="password"
-            label="패스워드"
-            variant="outlined"
-            size="medium"
-            name="password"
-            value={memberVo.password}
-            onChange={(e) => handleChange(e)}
-          />
-      
-        {loginFail === false ? (
-          ""
-        ) : (
-          <div className={"ErrorMessage"}>
-            <span>가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.</span>
+          <div>
+            <TextField
+              className={classes.root}
+              type="text"
+              label="이메일"
+              variant="outlined"
+              size="medium"
+              autoComplete="off"
+              name="email"
+              value={memberVo.email}
+              onChange={(e) => handleChange(e)}
+            />
+
+            <TextField
+              className={classes.root}
+              type="password"
+              label="패스워드"
+              variant="outlined"
+              size="medium"
+              name="password"
+              value={memberVo.password}
+              onChange={(e) => handleChange(e)}
+            />
+
+            {loginFail === false ? (
+              ""
+            ) : (
+              <div className={"ErrorMessage"}>
+                <span>가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.</span>
+              </div>
+            )}
           </div>
-        )}
-        </div>
-        <div className={"ButtonWrapper"}>
-          <Button
-            className={classes.root}
-            variant="contained"
-            color="primary"
-            size="large"
-            type="submit"
-            onClick={e => submitLogin(e)}
+          <div className={"ButtonWrapper"}>
+            <Button
+              className={classes.root}
+              variant="contained"
+              color="primary"
+              size="large"
+              type="submit"
+              onClick={e => submitLogin(e)}
             >
-            로그인
-          </Button>
-        </div>
+              로그인
+            </Button>
+          </div>
         </ThemeProvider>
       </form>
-      <NonMembers />
+      <NonMembers isExistToken={isExistToken} getNonMemberToken={getNonMemberToken} />
     </div>
   );
 }
 
 const madeStyles = makeStyles({
-  root:{
-      fontSize:"1rem",
-      marginTop: "10px",
-      width: "80%",
-      maxWidth: "320px"
+  root: {
+    fontSize: "1rem",
+    marginTop: "10px",
+    width: "80%",
+    maxWidth: "320px"
   }
 })

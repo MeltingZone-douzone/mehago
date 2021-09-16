@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
 import { Link } from 'react-router-dom';
-import { getMyChatListApi, joinFavoriteRoom , favoriteRoomList} from '../../../api/ChatApi';
+import { getMyChatListApi, joinFavoriteRoom, favoriteRoomList } from '../../../api/ChatApi';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import HomeIcon from '@material-ui/icons/Home';
@@ -13,7 +13,7 @@ import ParticipatingMember from './ParticipatingMember';
 import { Avatar, makeStyles } from '@material-ui/core';
 
 
-export default function ChatNavbar({currentParticipants, userInfo, participants}){
+export default function ChatNavbar({ currentParticipants, userInfo, participants }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -21,31 +21,36 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const [participatingRoom, setParticipatingRoom] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoomThumbnail, setFavoriteRoomThumbnail] = useState([]);
-    
-    useEffect(()=> {
+
+    useEffect(() => {
         try {
             getMyChatListApi().then(res => {
-                if(res.data.result == "fail"){
+                if (res.data.result == "fail") {
+                    console.log("참여한 방이 없음");
                     return false;
                 }
-                // console.log(res.data.data);
                 setParticipatingRoom(res.data.data);
             });
         } catch (e) {
             console.log(e);
         }
-    },[]);
+    }, []);
 
-    useEffect(()=> {
+    useEffect(() => {
         try {
             favoriteRoomList().then(res => {
-                console.log(res.data.thumbnailUrl);
-                setFavoriteRoomThumbnail(res.data);
+                if (res.data.result === "success") {
+                    setFavoriteRoomThumbnail(res.data);
+                    return;
+                }
+                else {
+                    console.log("즐겨찾기를 등록 한 방이 없음.")
+                }
             });
         } catch (e) {
             console.log(e);
         }
-    },[]);
+    }, []);
 
     const favoriteRoom = (no) => {
         try {
@@ -54,11 +59,11 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 setFavoriteRoomThumbnail(res.data);
             });
         } catch (error) {
-            
-        }
-    } 
 
-    const exitRoom = (no) =>{
+        }
+    }
+
+    const exitRoom = (no) => {
         console.log("나감");
     }
 
@@ -73,7 +78,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     }
 
     return (
-        <div className={"ChatNav"} onClick={(e)=>e.stopPropagation()}>
+        <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
                     <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
@@ -82,10 +87,10 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 </div>
                 <div className={"FavoriteNav"}>
                     {
-                        favoriteRoomThumbnail && favoriteRoomThumbnail.map((favorite) =>{
-                            return(
-                                <Link to={`/chat/${favorite.no}`}> 
-                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src = {favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
+                        favoriteRoomThumbnail && favoriteRoomThumbnail.map((favorite) => {
+                            return (
+                                <Link to={`/chat/${favorite.no}`}>
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl} key={favorite.no} /></NaviButton>
                                 </Link>
                             )
                         })
@@ -93,10 +98,10 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} favoriteRoom={favoriteRoom} exitRoom={exitRoom}/>: null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
+                {chatList ? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} favoriteRoom={favoriteRoom} exitRoom={exitRoom} /> : null}
+                {chatMember ? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </div>
-            
+
         </div>
     );
 }
@@ -110,12 +115,12 @@ const NaviButton = styled.button`
     border-radius: 8px;
 
     background-color:#fff;
-    color: ${ props => props.active ? colors.mainThemeColor : "gray" };
+    color: ${props => props.active ? colors.mainThemeColor : "gray"};
 `
 
 const madeStyles = makeStyles({
     favoriteRoom: {
-        width:"30px",
-        height:"30px"
+        width: "30px",
+        height: "30px"
     }
 })

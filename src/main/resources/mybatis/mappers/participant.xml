@@ -9,12 +9,21 @@
 		<![CDATA[
 			insert 
 				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom })
+				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom }, null, false)
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
         </selectKey>
 	</insert>
+
+	<update id="updateExpirationDate" parameterType="map">
+	<![CDATA[
+		update participant 
+		set expiration_date = #{expirationDate }
+		where no = #{no } 
+	]]>
+	</update>
+
 <select id="getParticipantInfo" parameterType="Map" resultType="participant">
 	<![CDATA[
 		select 
@@ -92,17 +101,7 @@
           chat_nickname = #{chatNickname}
     ]]>
   </select>
-  
-  <insert id="addNonMember" parameterType="participant">
-		<![CDATA[
-			insert 
-				into participant 
-				values(null,null,#{chatRoomNo},#{chatNickname}, 0,#{lastReadChatNo}, now())
-        ]]>
-        <selectKey keyProperty="no" order="AFTER" resultType="Long">
-            select last_insert_id()
-        </selectKey>
-	</insert>
+
 
 	<select id="getLastReadChatNo" parameterType="Long" resultType="Long">
 	<![CDATA[
@@ -120,9 +119,36 @@
 			favorite_room = #{favoriteRoom }
 		where 
 			chat_room_no= #{chatRoomNo }
-				and
-			account_no = #{accountNo}
-	]]>			
+			and
+				]]>	
+		<choose>
+			<when test="(0L).equals(accountNo)==false">
+			 	<![CDATA[ account_no = #{accountNo} ]]>
+			</when>
+			<otherwise>
+				<![CDATA[ participant_no = #{nonMemberNo } ]]>
+			</otherwise>
+		</choose>
 	</update>
 
+	<update id="updateIsDeleted" parameterType="Long">
+	<![CDATA[
+		update participant
+		set is_deleted = 1
+		where no = #{participantNo }
+	]]>
+	</update>
+
+<select id="getNonMemberInfo" parameterType="map" resultType="participant">
+		<![CDATA[
+		select 
+			no, chat_nickname as chatNickname, chat_room_no as chatRoomNo, not_read_count as notReadCount, last_read_chat_no as lastReadChatNo, account_no as accountNo
+		from
+			participant
+		where
+			no = #{no }
+		AND
+			chat_room_no = #{chatRoomNo }
+	]]>
+</select>
 </mapper>

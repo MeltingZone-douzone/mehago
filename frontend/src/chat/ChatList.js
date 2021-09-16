@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import '../assets/sass/chat/ChatList.scss';
 import { List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import {getChatRooms, keyword} from '../../api/ChatApi';
+import { getChatListApi, keyword } from '../../api/ChatApi';
 
 import ChatRoom from './ChatRoom';
-import axios from 'axios';
-import { getChatListApi } from '../../api/ChatApi';
 
-export default function ChatList({ socket }) {
+export default function ChatList({ socket, userInfo }) {
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
     const [joinRooms, setJoinRooms] = useState([]);
@@ -28,9 +25,9 @@ export default function ChatList({ socket }) {
         }
     }, [])
 
-    useEffect(() =>{
+    useEffect(() => {
         console.log(rooms);
-    },[rooms])
+    }, [rooms])
 
     useEffect(() => {
         console.log("socket", socket);
@@ -39,24 +36,24 @@ export default function ChatList({ socket }) {
     const keywordSearch = (e) => {
         console.log(searchValue);
         try {
-            if(searchValue === ""){
+            if (searchValue === "") {
                 getChatRooms().then(res => {
                     setRooms(res.data);
                 })
-            } 
-                keyword(searchValue).then(res => {
-                    if (res.data.result === "success") {
-                        setJoinRooms(res.data.data);
-                        setIsSearched(true);
-                        setNoResult(false);
-                    } else {
-                        console.log(res.data.message); 
-                        setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
-                        setIsSearched(false);
-                    }
-                });
-            
-            
+            }
+            keyword(searchValue).then(res => {
+                if (res.data.result === "success") {
+                    setJoinRooms(res.data.data);
+                    setIsSearched(true);
+                    setNoResult(false);
+                } else {
+                    console.log(res.data.message);
+                    setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
+                    setIsSearched(false);
+                }
+            });
+
+
         } catch (e) {
             console.log(e);
         }
@@ -106,44 +103,45 @@ export default function ChatList({ socket }) {
                 ) : (
                     <div className={"ChatListContainer"} >
                         <List className={"ChatRoom"} >
-                            { rooms ? getChatrooms().map((room, index)=> {
-                                return(
-                                    <ChatRoom 
+                            {rooms ? getChatrooms().map((room, index) => {
+                                return (
+                                    <ChatRoom
                                         key={index}
-                                        no = {room.no}
+                                        no={room.no}
                                         title={room.title}
-                                        limitedUserCount ={room.limitedUserCount}
-                                        onlyAuthorized ={room.onlyAuthorized}
-                                        owner =  {room.owner}
-                                        searchable={room.searchable} 
-                                        tagName = {room.tagName}
-                                        secretRoom = {room.secretRoom}
-                                        thumbnailUrl = {room.thumbnailUrl} 
-                                        titleAndTag = { room }
-                                        participantCount = { room.participantCount}
-                                        lastMessage = { room.lastMessage }
-                                        ownerNickname = {room.nickname}
-                                        ownerThumbnailUrl = {room.accountThumbnailUrl}
+                                        limitedUserCount={room.limitedUserCount}
+                                        onlyAuthorized={room.onlyAuthorized}
+                                        owner={room.owner}
+                                        searchable={room.searchable}
+                                        tagName={room.tagName}
+                                        secretRoom={room.secretRoom}
+                                        thumbnailUrl={room.thumbnailUrl}
+                                        titleAndTag={room}
+                                        participantCount={room.participantCount}
+                                        lastMessage={room.lastMessage}
+                                        ownerNickname={room.nickname}
+                                        ownerThumbnailUrl={room.accountThumbnailUrl}
+                                        userInfo={userInfo}
                                     />
                                 )
-                                }) : null }
+                            }) : null}
                         </List>
                     </div>
                 )
             }
-        </ChatListContainer>    
+        </ChatListContainer>
     );
 }
 
 const materialStyles = makeStyles({
     textField: {
         marginTop: "20px",
-        width:"70%"
+        width: "70%"
     },
     searchIcon: {
         backgroundColor: "glay",
-        border:"none",
-        borderRadius:"3px",
+        border: "none",
+        borderRadius: "3px",
     }
 })
 

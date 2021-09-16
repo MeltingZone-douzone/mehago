@@ -7,13 +7,13 @@ import { colors } from '../assets/styles/properties/Colors';
 import HeaderAuthenticationButtons from './HeaderAuthenticationButtons';
 
 
-export default function Header({handleAuthentication, authentication, userInfo}) {
+export default function Header({ handleAuthentication, authentication, userInfo }) {
 
-    return(
+    return (
         <HeaderContainer>
             <NavLink to="/"><LogoImg src={Logo} alt="LogoImage"></LogoImg></NavLink>
             {/* <div style={{marginLeft:"5rem"}}>navi</div> */}
-            { authentication? 
+            {authentication && userInfo ?
                 <HeaderAuthenticationButtons handleAuthentication={handleAuthentication} userInfo={userInfo} />
                 :
                 <AuthenticationWrapper>
@@ -50,7 +50,7 @@ const AuthenticationWrapper = styled.div`
     margin-right: 20px;
 `
 
-const NavLinkButton = styled(NavLink) `
+const NavLinkButton = styled(NavLink)`
 
     padding: .5rem;
     color: #fff;

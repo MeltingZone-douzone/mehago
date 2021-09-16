@@ -22,7 +22,7 @@ public class MessageService {
     }
 
     public List<Long> getSearchMessage(Long chatRoomNo, String searchKeyword) {
-        Map<String, Object> map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("chatRoomNo", chatRoomNo);
         map.put("searchKeyword", searchKeyword);
         return messageRepository.getSearchMessage(map);

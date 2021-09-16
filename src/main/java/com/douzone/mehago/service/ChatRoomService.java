@@ -28,8 +28,8 @@ public class ChatRoomService {
         return chatRoomRepository.getRoomInfo(chatRoomNo);
     }
 
-    public List<Map<String, Object>> participatingRoom(Long no) {
-        return chatRoomRepository.participatingRoom(no);
+    public List<Map<String, Object>> participatingRoom(Long AccountNo, Long nonMemberNo) {
+        return chatRoomRepository.participatingRoom(AccountNo, nonMemberNo);
     }
 
     public List<Map<String, Object>> keywordSearch(String searchValue) {
@@ -56,8 +56,8 @@ public class ChatRoomService {
         return chatRoomRepository.checkPassword(no, password);
     }
 
-    public List<ChatRoom> favoriteRoomList(Long no) {
-        return chatRoomRepository.favoriteRoomList(no);
+    public List<ChatRoom> favoriteRoomList(Long accountNo, Long nonMemberNo) {
+        return chatRoomRepository.favoriteRoomList(accountNo, nonMemberNo);
     }
 
     public boolean checkIsDeleted(Long chatRoomNo) {

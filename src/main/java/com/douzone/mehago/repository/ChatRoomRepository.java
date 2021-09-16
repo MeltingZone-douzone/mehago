@@ -31,8 +31,11 @@ public class ChatRoomRepository {
         return sqlSession.selectOne("chatroom.getRoomInfo", chatRoomNo);
     }
 
-    public List<Map<String, Object>> participatingRoom(Long no) {
-        return sqlSession.selectList("chatroom.participatingRoom", no);
+    public List<Map<String, Object>> participatingRoom(Long accountNo, Long nonMemberNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("accountNo", accountNo);
+        map.put("nonMemberNo", nonMemberNo);
+        return sqlSession.selectList("chatroom.participatingRoom", map);
     }
 
     public List<Map<String, Object>> keywordSearch(String searchValue) {
@@ -64,13 +67,13 @@ public class ChatRoomRepository {
         return result != null ? true : false;
     }
 
-    public List<ChatRoom> favoriteRoomList(Long no) {
-        Map<String, Long> map = new HashMap();
-        map.put("accountNo", no);
+    public List<ChatRoom> favoriteRoomList(Long accountNo, Long nonMemberNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("accountNo", accountNo);
+        map.put("nonMemberNo", nonMemberNo);
         return sqlSession.selectList("chatroom.favoriteRoomList", map);
     }
 
-    
     public boolean checkIsDeleted(Long chatRoomNo) {
         return sqlSession.selectOne("chatroom.checkIsDeleted", chatRoomNo);
     }

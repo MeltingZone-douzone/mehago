@@ -1,11 +1,13 @@
 package com.douzone.mehago.repository;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
+import com.douzone.mehago.vo.NonMember;
 import com.douzone.mehago.vo.Participant;
 
 import org.apache.ibatis.session.SqlSession;
@@ -55,21 +57,36 @@ public class ParticipantRepository {
         return result != null ? true : false;
     }
 
-    public void addNonMember(Participant participant) {
-        sqlSession.insert("participant.addNonMember", participant);
-    }
-
     public Long getLastReadChatNo(Long chatRoomNo) {
         return sqlSession.selectOne("participant.getLastReadChatNo", chatRoomNo);
     }
 
-    public List<ChatRoom> joinFavoriteRoom(Long no, Long accountNo) {
-        Map<String, Long> map = new HashMap();
+    public Boolean joinFavoriteRoom(Long no, Long accountNo, Long nonMemberNo) {
+        Map<String, Long> map = new HashMap<>();
         map.put("chatRoomNo", no);
         map.put("accountNo", accountNo);
+        map.put("nonMemberNo", nonMemberNo);
         map.put("favoriteRoom", 1L);
-        sqlSession.update("participant.joinFavoriteRoom", map);
-        return sqlSession.selectList("chatroom.favoriteRoomList", map);
+        return sqlSession.update("participant.joinFavoriteRoom", map) == 1 ? true : false;
+
+    }
+
+    public boolean setExpirationDate(NonMember nonMember, Date expirationDate) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("no", nonMember.getParticipantNo());
+        map.put("expirationDate", expirationDate);
+        return sqlSession.update("participant.updateExpirationDate", map) == 1 ? true : false;
+    }
+
+    public boolean updateIsDeleted(Long participantNo) {
+        return sqlSession.update("participant.updateIsDeleted", participantNo) == 1 ? true : false;
+    }
+
+    public Participant getnonMemberInfo(Long nonMemberNo, Long chatRoomNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("no", nonMemberNo);
+        map.put("chatRoomNo", chatRoomNo);
+        return sqlSession.selectOne("participant.getNonMemberInfo", map);
     }
 
 }

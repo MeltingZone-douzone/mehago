@@ -118,20 +118,21 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
             {messageList ? messageList
                 .map((message, index) =>
                     message.participantNo !== participantObject.no ?
-                        <ReceivedMessage key={index} 
-                            nextMessage={messageList[index + 1]} 
-                            previousMessage={messageList[index - 1]} 
-                            message={message} 
-                            searchKeyword={searchMessage[searchMessage.length-1]} 
+                        <ReceivedMessage key={index}
+                            nextMessage={messageList[index + 1]}
+                            previousMessage={messageList[index - 1]}
+                            message={message}
+                            searchKeyword={searchMessage[searchMessage.length - 1]}
                             searchMessage={searchMessage}
                             hiddenSearchInput={hiddenSearchInput}
                             no={searchMessage.includes(message.no) ? message.no : null} />
                         :
-                        <SendMessage 
-                            key={index} 
-                            nextMessage={messageList[index + 1]} 
-                            message={message} 
-                            searchKeyword={searchMessage[searchMessage.length-1]} 
+                        <SendMessage
+                            key={index}
+                            nextMessage={messageList[index + 1]}
+                            previousMessage={messageList[index - 1]}
+                            message={message}
+                            searchKeyword={searchMessage[searchMessage.length - 1]}
                             hiddenSearchInput={hiddenSearchInput}
                             no={searchMessage.includes(message.no) ? message.no : null} />
                 )

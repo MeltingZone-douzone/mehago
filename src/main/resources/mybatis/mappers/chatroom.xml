@@ -50,7 +50,7 @@
       ]]>
   </select>
 
-  <select id="participatingRoom" parameterType="Long" resultType="map">
+  <select id="participatingRoom" parameterType="map" resultType="map">
     <![CDATA[
       	SELECT DISTINCT
         c.no, c.title, c.thumbnail_url as thumbnailUrl, p.not_read_count as notReadCount,
@@ -70,7 +70,20 @@
                 FROM
                   participant
                 WHERE
-                  account_no = #{no})
+                      ]]>
+                      <choose> 
+                  <when test="(0L).equals(accountNo)==false">
+                      <![CDATA[
+                  account_no = #{accountNo }
+                      ]]>
+                     </when><otherwise>
+                       <![CDATA[
+                  no = #{nonMemberNo }
+                      ]]>
+                      </otherwise>
+                      </choose>
+                      <![CDATA[
+                  )
       order by 
         leastMessageAt desc
     ]]>
@@ -170,7 +183,22 @@
       FROM 
         chat_room 
       where 
-        no in (select chat_room_no from participant where account_no=#{no} and favorite_room = 1)
+        no in (select chat_room_no from participant where 
+           ]]> 
+      <choose>
+      <when test="(0L).equals(accountNo)==false">
+           <![CDATA[
+            account_no=#{no} 
+           ]]>
+       </when>
+       <otherwise>
+            <![CDATA[
+              no=#{no} 
+           ]]>
+        </otherwise>
+        </choose>
+           <![CDATA[
+        and favorite_room = 1)
      ]]>
   </select>
   

@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
 import '../assets/sass/chat/ChatRoomButton.scss';
 import '../assets/sass/chat/modal.scss'
-import { Chip, makeStyles } from '@material-ui/core';
+import { Chip } from '@material-ui/core';
 import Logo from '../assets/images/black-mehago.png';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import FaceIcon from '@material-ui/icons/Face';
@@ -10,39 +9,39 @@ import FaceIcon from '@material-ui/icons/Face';
 import ReactModal from "react-modal";
 ReactModal.setAppElement('body');
 
-import {isExistsPasswords, checkPassword, nicknameValidation} from '../../api/ChatApi';
 import ChatRoomModalTemplate from './ChatRoomModalTemplate';
 
-export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl}) {
-    
+export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl, userInfo }) {
+
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [account, setAccount] = useState(true);
-    
+
+
 
     const getTags = () => {
-        if(tagName.length > 6) {
-            return tagName.slice(0,6).map((tag, index)=> {
-                return(
+        if (tagName.length > 6) {
+            return tagName.slice(0, 6).map((tag, index) => {
+                return (
                     index < 5 ?
-                    <Chip
-                    key={index}
-                    variant="outlined"
-                    icon={<LocalOfferIcon />}
-                    label={tag}/>
-                    :
-                    <Chip
-                    key={index}
-                    label={`외 ${tagName.length - 5}`}/>
+                        <Chip
+                            key={index}
+                            variant="outlined"
+                            icon={<LocalOfferIcon />}
+                            label={tag} />
+                        :
+                        <Chip
+                            key={index}
+                            label={`외 ${tagName.length - 5}`} />
                 )
-        })} else {
+            })
+        } else {
 
-        return tagName.map((tag, index)=> {
-                return(
+            return tagName.map((tag, index) => {
+                return (
                     <Chip
-                    key={index}
-                    variant="outlined"
-                    icon={<LocalOfferIcon />}
-                    label={tag}/>
+                        key={index}
+                        variant="outlined"
+                        icon={<LocalOfferIcon />}
+                        label={tag} />
                 );
             })
         }
@@ -52,10 +51,10 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
         const today = new Date();
         const timeValue = new Date(lastMessage);
 
-        if(lastMessage == null) return "대화 없음";
+        if (lastMessage == null) return "대화 없음";
 
         const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
- 
+
         if (betweenTime < 1) return '방금전';
         if (betweenTime < 60) {
             return `${betweenTime}분전`;
@@ -76,50 +75,51 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
 
 
     return (
-        <div className={"ChatRoomButtonContainer"} onClick={ () => { setModalIsOpen(true) /*, check(`${no}`)*/} }>
+        <div className={"ChatRoomButtonContainer"} onClick={() => { setModalIsOpen(true) /*, check(`${no}`)*/ }}>
             {/* <NavLink to={`/chat/${no}`}> */}
-                <div className={"header"}>
-                    <div className={"imageDiv"}>
-                        {
-                        thumbnailUrl?
-                            <img className={"Img"} src={thumbnailUrl} alt="채팅방 섬네일"/>
-                        :
-                            <img className={"LogoImg"} src={Logo} alt="기본 채팅방 섬네일"/>
-                        }
-                    </div>
-                    <span>{title}</span>
+            <div className={"header"}>
+                <div className={"imageDiv"}>
+                    {
+                        thumbnailUrl ?
+                            <img className={"Img"} src={thumbnailUrl} alt="채팅방 섬네일" />
+                            :
+                            <img className={"LogoImg"} src={Logo} alt="기본 채팅방 섬네일" />
+                    }
                 </div>
-                <div className={"RoomInfo"}>
-                        <div className={"ParticipantCount"}>
-                            <FaceIcon/><span>{participantCount}명</span>
-                        </div>
-                        <div>{timeForToday(lastMessage)}</div>
-                        
+                <span>{title}</span>
+            </div>
+            <div className={"RoomInfo"}>
+                <div className={"ParticipantCount"}>
+                    <FaceIcon /><span>{participantCount}명</span>
                 </div>
-                <div className={"TagZone"}>
-                    {getTags()}
-                </div>
+                <div>{timeForToday(lastMessage)}</div>
+
+            </div>
+            <div className={"TagZone"}>
+                {getTags()}
+            </div>
             <ReactModal
                 className={"modal"}
                 overlayClassName={"overlay"}
                 isOpen={modalIsOpen}
-                onRequestClose={ (e) => {e.stopPropagation();setModalIsOpen(false)}}
+                onRequestClose={(e) => { e.stopPropagation(); setModalIsOpen(false) }}
                 shouldCloseOnOverlayClick={true}
                 shouldCloseOnEsc={true}
                 contentLabel="채팅방">
-                    <ChatRoomModalTemplate
-                        no = {no}
-                        title={title}
-                        thumbnailUrl={thumbnailUrl}
-                        participantCount={participantCount}
-                        limitedUserCount={limitedUserCount}
-                        lastMessage={lastMessage}
-                        tagName={tagName}
-                        timeForToday={timeForToday}
-                        secretRoom = {secretRoom}
-                        account = {true} //todo
-                        ownerThumbnailUrl={ownerThumbnailUrl}
-                        ownerNickname={ownerNickname}/>
+                <ChatRoomModalTemplate
+                    no={no}
+                    title={title}
+                    thumbnailUrl={thumbnailUrl}
+                    participantCount={participantCount}
+                    limitedUserCount={limitedUserCount}
+                    lastMessage={lastMessage}
+                    tagName={tagName}
+                    timeForToday={timeForToday}
+                    secretRoom={secretRoom}
+                    onlyAuthorized={onlyAuthorized}
+                    account={userInfo ? true : false} //todo
+                    ownerThumbnailUrl={ownerThumbnailUrl}
+                    ownerNickname={ownerNickname} />
             </ReactModal>
         </div>
     )

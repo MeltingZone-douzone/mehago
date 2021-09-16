@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.douzone.mehago.utils.JwtDecoder;
-import com.douzone.mehago.vo.Account;
+import com.douzone.mehago.vo.TokenInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
@@ -52,38 +52,27 @@ public class AuthInterceptor implements HandlerInterceptor {
 		if (request.getHeader("Authorization") == null) {
 			response.getWriter().write("cant find Account");
 			return false;
-		} else if (request.getHeader("Authorization") == "nonmember") {
-			return true;
 		}
 
 		// token이 존재
 		String token = request.getHeader("Authorization");
-		Account decodedAccount = jwtDecoder.decodeJwt(token.split("Bearer ")[1]);
-		request.setAttribute("account", decodedAccount);
-
-		// 여기서 accout값을 가져오면 controller에 갈때 그때는 어떻게 가져 갈것인가..?
-		// TODO: @authUser을 이용해야 한다면?
-
-		/////////////// 지금은
-		/////////////// 무시무시무시무시무시////////////////////////////////////////////////////
+		TokenInfo decodedToken = (TokenInfo) jwtDecoder.decodeJwt(token.split("Bearer ")[1]);
+		request.setAttribute("tokenInfo", decodedToken);
 
 		// 7. 권한(Authorization) 체크를 위해서 @Auth의 role 가져오기 ("ADMIN", "USER")
+		String role = auth.role();
+		System.out.println(decodedToken.getIsNonMember());
+		String authRole = decodedToken.getIsNonMember() == false ? "ACCOUNT" : "NONMEMBER";
+		System.out.println(role + " " + authRole);
 
-		// String role = auth.user().toString();
+		if ("NONMEMBER".equals(role)) {
+			return true;
+		}
 
-		// TODO role 대신 회원/비회원 구분할 거 찾기
-
-		// String authRole = authUser.getRole();
-		// System.out.println(role + " " + authRole);
-
-		/*
-		 * if("ADMIN".equals(role)) { if(!"ADMIN".equals(authRole)) {
-		 * if("USER".equals(authRole)) {
-		 * response.sendRedirect(request.getContextPath());
-		 * request.getRequestDispatcher("/WEB-INF/views/admin/main.jsp").forward(
-		 * request, response); return false; } }
-		 * 
-		 */
+		if (!"ACCOUNT".equals(authRole)) {
+			response.getWriter().write("nonMember");
+			return false;
+		}
 
 		return true;
 	}
