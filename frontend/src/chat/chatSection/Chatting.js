@@ -35,6 +35,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
+        
     }, [receivedMsg]);
 
     useEffect(() => {

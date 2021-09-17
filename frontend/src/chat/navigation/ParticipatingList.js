@@ -47,18 +47,22 @@ export default function ParticipatingList({ room, updateFavoriteRoom, exitRoom, 
         <div className={"chatProfile"}>
             <List className={"container"}>
                 {/* <Button onClick={() => updateFavoriteRoom(room.no)}> */}
-                <Button onClick={() => {
-                        setFavoriteCheck(room.favoriteRoom ? false : true)
-                        updateFavoriteRoom(room.no, room.favoriteRoom)
-                    }}>
-                    {
-                        room.favoriteRoom ? 
-                        <StarRateRoundedIcon style={{color: '#f4e02d'}}/>
-                        :
-                        <StarRateRoundedIcon style={{color: '#c0c0c0'}}/>
-                    }
-                </Button>
-                <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
+                <div className={"profileHeader"}>
+                    <Button 
+                        className={classes.favoriteButton}
+                        onClick={() => {
+                            setFavoriteCheck(room.favoriteRoom ? false : true)
+                            updateFavoriteRoom(room.no, room.favoriteRoom)
+                        }}>
+                        {
+                            room.favoriteRoom ? 
+                            <StarRateRoundedIcon style={{color: '#f4e02d'}}/>
+                            :
+                            <StarRateRoundedIcon style={{color: '#c0c0c0'}}/>
+                        }
+                    </Button>
+                    <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
+                </div>
                 <Link to={`/chat/${room.no}`}>
                 <ListItem button key={`${room.no}`} className={classes.roomContainer} >
                     <ChattingRoomImage>
@@ -145,7 +149,17 @@ const madeStyles = makeStyles({
     leastMessage: {
         fontSize: "0.9em",
     },
-    exitRoom : {
-        float: "right"
+    favoriteButton:{
+        minHeight:"2px",
+        minWidth:"2px",
+        padding:0,
+        paddingLeft:"2px"
+    },
+    exitRoom:{
+        minHeight:"0.5px",
+        float:"right",
+        minWidth:"1px",
+        padding:0,
+        paddingRight:"5px"
     }
 })
