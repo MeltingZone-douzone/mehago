@@ -6,14 +6,13 @@ import '../assets/sass/chat/ChatList.scss';
 
 import ChatRoom from './ChatRoom';
 
-export default function ChatList({ socket }) {
+export default function ChatList() {
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
     const [joinRooms, setJoinRooms] = useState([]);
     const [searchValue, setSearchValue] = useState("");
     const [isSearched, setIsSearched] = useState(false);
     const [noResult, setNoResult] = useState(false);
-
 
     const chatRoomAreaRef = useRef();
     const [offsetNo, setOffsetNo] = useState(0);
@@ -66,10 +65,6 @@ export default function ChatList({ socket }) {
         console.log(rooms);
     },[rooms])
 
-    useEffect(() => {
-        console.log("socket", socket);
-    }, [socket]);
-
     const keywordSearch = (e) => {
         console.log(searchValue);
         try {
@@ -110,8 +105,6 @@ export default function ChatList({ socket }) {
         }
     }
 
-    //TODO: Grid 틀 변경, search 구현
-
     return (
         <ChatListContainer>
             <SearchWrapper>
@@ -121,16 +114,16 @@ export default function ChatList({ socket }) {
                     name="keyword"
                     value={searchValue}
                     onChange={(e) => { setSearchValue(e.target.value) }}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment>
-                                {/* <button             !!!!!!!!!!!!!!!!!고쳐!!!!!!!
-                                    onClick={searchValue === "" ? null : keywordSearch}>
-                                    <SearchIcon />
-                                </button> */}
-                            </InputAdornment>
-                        )
-                    }}
+                    // InputProps={{
+                    //     endAdornment: (
+                    //         <InputAdornment>
+                    //             {/* <button             !!!!!!!!!!!!!!!!!고쳐!!!!!!!
+                    //                 onClick={searchValue === "" ? null : keywordSearch}>
+                    //                 <SearchIcon />
+                    //             </button> */}
+                    //         </InputAdornment>
+                    //     )
+                    // }}
                     onKeyPress={(e) => handleKeyPress(e)}
                 />
             </SearchWrapper>
@@ -142,8 +135,8 @@ export default function ChatList({ socket }) {
                         <List className={"ChatRoom"} ref={chatRoomAreaRef}>
                             { rooms ? getChatrooms().map((room, index)=> {
                                 return(
+                                    <div key={index}>
                                     <ChatRoom 
-                                        key={index}
                                         no = {room.no}
                                         title={room.title}
                                         limitedUserCount ={room.limitedUserCount}
@@ -159,6 +152,7 @@ export default function ChatList({ socket }) {
                                         ownerNickname = {room.nickname}
                                         ownerThumbnailUrl = {room.accountThumbnailUrl}
                                     />
+                                    </div>
                                 )
                                 }) : null }
                         </List>
