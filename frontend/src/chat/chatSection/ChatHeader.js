@@ -14,7 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 
-export default function ChatHeader({messageFunction, roomObject, cursor, setCursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
+export default function ChatHeader({handleSeperate,messageFunction, roomObject, cursor, setCursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
   // const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
   const [hiddenSearchResult, setHiddenSearchResult] = useState(true);
   //   const [searchKeyword, setSearchKeyword] = useState('');
@@ -111,6 +111,7 @@ export default function ChatHeader({messageFunction, roomObject, cursor, setCurs
                 }
               </>
           }
+          <button onClick={() => handleSeperate()}>분할</button>
         </Toolbar>
       </AppBar>
     </div>

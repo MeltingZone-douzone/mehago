@@ -30,8 +30,9 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
                 {
                 participatingRoom
                 .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
-                .map((room ,index)=> 
+                .map((room ,index)=>
                     <ParticipatingList
+                        key={index}
                         room = {room} 
                         updateFavoriteRoom={updateFavoriteRoom} 
                         exitRoom={exitRoom}
