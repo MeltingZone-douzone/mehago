@@ -53,21 +53,20 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         setJoinSuccess(true);
         
         if(prevChatRoomNo != chatRoomNo){
-            console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
+            console.log("여기서 방나가기 함.",prevChatRoomNo, chatRoomNo, roomObject.no);
             socket.emit('leave', roomObject.title);
             setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
         }
     }, [chatRoomNo]);
 
     useEffect(()=>{
-        console.log('## chatRoomNo: ', chatRoomNo);
-        socket.on('join', (msgToJson) => {
+        socket.on('join message', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("join socket : ", chatRoomNo, arrayOfNumbers);
+            // console.log("join socket : ", chatRoomNo, arrayOfNumbers);
             handleCurrentParticipants(arrayOfNumbers);
         });
 
-        socket.on('leave', (msgToJson) => {
+        socket.on('leave message', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             console.log("leave socket : "); // FIXME: 이건왜안찍힘 
             handleCurrentParticipants(arrayOfNumbers);
@@ -77,22 +76,23 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
-        socket.on('disconnected', (msgToJson) => {
+        socket.on('disconnect message', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
     },[chatRoomNo])
 
-    console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
+    // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
         return() =>{
-            console.log("unmount");
+            console.log("unmount. logout할 때");
+            socket.emit('leave', roomObject.title)
         }
     }, []);
 
     useEffect(async () => {
         if (joinSuccess) {
-            console.log('joinSuccess');
+            console.log('join함');
             await socket.emit('join', roomObject, participantObject);
             await socket.emit('participant:join:updateRead');
             setJoinSuccess(false);
@@ -163,13 +163,13 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
                                     // TODO: 참여자 삭제
         },
-        joinRoom: (e) => {
+        /* joinRoom: (e) => {
             if(prevChatRoomNo != chatRoomNo){
                 console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
                 socket.emit('leave', roomObject.title);
                 setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
             }
-        }
+        } */
 
     }
 

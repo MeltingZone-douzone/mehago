@@ -35,7 +35,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 if(res.data.result == "fail"){
                     return false;
                 }
-                // console.log(res.data.data);
                 setParticipatingRoom(res.data.data);
             });
         } catch (e) {
@@ -46,7 +45,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const fetchFavoriteRooms = () => {
         try {
             getFavoriteRoomList().then(res => {
-                console.log(res.data);
                 setFavoriteRoom(res.data);
             });
         } catch (e) {
@@ -58,7 +56,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
         console.log(favoriteStatus);
         try {
             updateFavoriteRoomApi(chatRoomNo, favoriteStatus).then((res) => {
-                // setFavoriteCheck(false);
                 setFavoriteCheck(''); // 이전에 다른방 즐겨찾기 체크한 값들 초기화
             });
         } catch (e) {
@@ -110,7 +107,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
             </div>
             <div className={"ChatList"}>
                 {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck}/>: null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
+                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
             </div>
             
             
