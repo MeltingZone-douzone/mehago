@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getMyChatListApi, updateFavoriteRoomApi , getFavoriteRoomList, exitRoomApi} from '../../../api/ChatApi';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
@@ -13,13 +13,11 @@ import ParticipatingMember from './ParticipatingMember';
 import { Avatar, makeStyles } from '@material-ui/core';
 
 
-export default function ChatNavbar({currentParticipants, userInfo, participants}){
+export default function ChatNavbar({currentParticipants, userInfo, participants, fetchRooms, participatingRoom}){
     const classes = madeStyles();
-    const history = useHistory();
 
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
-    const [participatingRoom, setParticipatingRoom] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
@@ -30,24 +28,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
         fetchFavoriteRooms();
     },[favoriteCheck]);
 
-    const goHome = (e) => {
-        console.log("asdasd");
-        history.replace('/chat');
-    }
 
-    const fetchRooms = () => {
-        try {
-            getMyChatListApi().then(res => {
-                if(res.data.result == "fail"){
-                    return false;
-                }
-                // console.log(res.data.data);
-                setParticipatingRoom(res.data.data);
-            });
-        } catch (e) {
-            console.log(e);
-        }
-    }
 
     const fetchFavoriteRooms = () => {
         try {
@@ -98,7 +79,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
         <div className={"ChatNav"} onClick={(e)=>e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
-                    <NaviButton onClick={(e) => goHome(e)}><HomeIcon /></NaviButton>
+                    <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>
