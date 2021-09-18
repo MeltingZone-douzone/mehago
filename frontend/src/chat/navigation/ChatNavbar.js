@@ -85,10 +85,10 @@ export default function ChatNavbar({currentParticipants, userInfo, participants,
                 </div>
                 <div className={"FavoriteNav"}>
                     {
-                        favoriteRoom && favoriteRoom.map((favorite) =>{
+                        favoriteRoom && favoriteRoom.map((favorite,index) =>{
                             return(
-                                <Link to={`/chat/${favorite.no}`}> 
-                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="좋아요" src={favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
+                                <Link to={`/chat/${favorite.no}`} key={index}> 
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
                                 </Link>
                             )
                         })
