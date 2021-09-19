@@ -23,6 +23,7 @@ export default function MainRouter() {
         setAuthentication(result);
     }
 
+
     useEffect(()=>{
         if(localStorage.getItem("token")) {
             setAuthentication(true);
@@ -32,16 +33,20 @@ export default function MainRouter() {
     useEffect(()=>{
         if(authentication) {
             getUserInfo();
-        }
+        } 
     },[authentication])
 
     const getUserInfo = () => {
         getUserInfoApi().then(res =>{
+            console.log(res);
+            if(res.data.data != null){
+              setUserInfo(res.data.data);
+            } 
+
             if(res.data.result === "fail") {
                 alert(res.data.message);
                 history.replace("/account/login");
             }
-            setUserInfo(res.data.data);
         });
     }
 
@@ -57,7 +62,7 @@ export default function MainRouter() {
                             {/* 로그인(토큰이 존재)을 하면 들어올 수 없는 공용 라우터 => <PublicRouter restricted={true} */}
                         <PublicRouter authentication={authentication} setAuthentication={handleAuthentication} restricted={true} path="/account" component={AccountPage} />
                             {/* 로그인(토큰이 존재)을 해야 들어올 수 있는 라우터 => <privateRouter */}
-                        <PrivateRouter reloadUser={getUserInfo} authentication={authentication} userInfo={userInfo} path="/profile" component={ProfileSettingsPage} />
+                        <PrivateRouter handleAuthentication={handleAuthentication} reloadUser={getUserInfo} authentication={authentication} userInfo={userInfo} path="/profile" component={ProfileSettingsPage} />
                         {/* <Route authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} /> */}
                         <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} />
                         {/* <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" render={(props) => <ChatPage {...props} userInfo={userInfo} />}/> */}

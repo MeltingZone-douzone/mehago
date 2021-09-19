@@ -81,6 +81,7 @@
 				p.is_deleted = 0
 		ORDER BY
 			p.chat_nickname
+			
 	]]>
 	</select>
 	<select id="nicknameValidation" parameterType="participant" resultType="String">
@@ -141,6 +142,17 @@
 			]]>	
 		</otherwise>
 	</choose>	
+	</update>
+
+	<update id="updateParticipantLeaveMember" parameterType="Long" >
+	<![CDATA[
+		update 
+			participant 
+		set 
+			is_deleted = 1 
+		where 
+			account_no = #{accountNo} 
+	]]>	
 	</update>
 
 </mapper>

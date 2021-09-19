@@ -3,6 +3,7 @@ import { Button, ThemeProvider, TextField, makeStyles } from '@material-ui/core'
 import { theme } from "../assets/styles/material/MaterialTheme";
 import "../assets/sass/account/Form.scss";
 import localStorage from "local-storage";
+import {createNonMember} from '../../api/AccountApi';
 
 import { loginApi } from '../../api/AccountApi'
 import NonMembers from "../components/NonMember";
@@ -11,6 +12,21 @@ export default function LoginForm({history, setAuthentication}) {
   const classes = madeStyles();
   const [memberVo, setMemberVo] = useState({ email: "", password: "" });
   const [loginFail, setLoginFail] = useState(false);
+
+  const nonMemberStart = (e) => {
+    e.preventDefault();
+    try {
+      createNonMember().then((res) => {
+        console.log(res);
+        localStorage.set("token", res.data);
+        //setAuthentication(true);
+        history.replace('/chat');
+      })
+    } catch (err) {
+      console.log(err);
+    }
+    
+  }
 
   const submitLogin = (e) => {
     e.preventDefault();
@@ -95,7 +111,7 @@ export default function LoginForm({history, setAuthentication}) {
         </div>
         </ThemeProvider>
       </form>
-      <NonMembers />
+      <NonMembers nonMemberStart ={nonMemberStart}/>
     </div>
   );
 }

@@ -16,7 +16,7 @@ export default function SettingChatForm({ classes, chatRoom, isSecretRoom, handl
                 label='태그를 입력하세요' placeholder='태그를 입력 후 엔터를 누르세요'
                 value={chatRoom.tagName ? chatRoom.tagName : ''}
                 onAdd={(name) => handleAddTagName(name)} onDelete={(name) => handleDeleteTagName(name)} />
-            <FormControl variant="outlined" className={classes.TextField}>
+            <FormControl className={classes.TextField}>
                 <InputLabel htmlFor="limitedUserCount">최대 인원 수</InputLabel>
                 <Select
                     native

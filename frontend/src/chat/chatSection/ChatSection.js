@@ -4,9 +4,7 @@ import { io } from 'socket.io-client';
 import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
-import Chatting from './Chatting';
-import MsgInput2 from './MsgInput2';
-import Dialogs from '../dialogs/Dialogs';
+import ChatSeperatedContainer from './ChatSeperatedContainer';
 
 const socket = io('http://localhost:8888');
 export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants}) {
@@ -23,6 +21,8 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
     const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
 
     const [joinSuccess, setJoinSuccess] = useState(false);
+
+    const [seperate, setSeperate] = useState(false);
 
     const [todoOpen, setTodoOpen] = useState(false);
     const [noticeOpen, setNoticeOpen] = useState(false);
@@ -220,11 +220,17 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         }
     }
 
+    const handleSeperate = () => {
+        console.log(seperate);
+        setSeperate(!seperate);
+    }
+
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage}/>
-                <Chatting socket={socket} 
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate}/>
+                <ChatSeperatedContainer
+                    socket={socket} 
                     messageFunction={messageFunction} 
                     participantObject={participantObject} 
                     roomObject={roomObject} 
@@ -232,9 +238,12 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
                     searchMessage={searchMessage}
                     // setCurrentParticipants={setCurrentParticipants} 
                     hiddenSearchInput={hiddenSearchInput}
-                    cursor={cursor} />
-                <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
-                <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
+                    cursor={cursor}
+                    
+                    message={message} buttonFunction={buttonFunction}
+                    todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
+                    isSeperated={seperate}
+                />
             </div>
         </div>
     );

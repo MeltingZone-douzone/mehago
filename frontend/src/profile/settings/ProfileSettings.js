@@ -5,12 +5,12 @@ import UserSettingsTitle from './ProfileSettingsTitle';
 import UserSettingsTemplate from './ProfileSettingsTemplate';
 
 
-export default function UserSettingsContainer({user, settingsApi}) {
+export default function UserSettingsContainer({handleAuthentication, user, settingsApi}) {
 
     return(
         <SettingsContainer>            
             <UserSettingsTitle />
-            <UserSettingsTemplate user={user} settingsApi={settingsApi}/>
+            <UserSettingsTemplate handleAuthentication={handleAuthentication} user={user} settingsApi={settingsApi}/>
         </SettingsContainer>
     );
 }

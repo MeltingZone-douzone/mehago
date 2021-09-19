@@ -108,8 +108,6 @@ export default function SignUpForm() {
       emailCheck: function() {
       },
       SignUp: function(user) {
-          console.log(validation.email, "/", validation.password, "/", validation.name, "/", validation.nickname, "/", validation.phoneNumber, "/",);
-  
           if(validation.email && validation.password && validation.name && validation.nickname && validation.phoneNumber) {
             
            

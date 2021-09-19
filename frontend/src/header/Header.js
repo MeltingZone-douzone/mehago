@@ -8,12 +8,12 @@ import HeaderAuthenticationButtons from './HeaderAuthenticationButtons';
 
 
 export default function Header({handleAuthentication, authentication, userInfo}) {
-
+    console.log(userInfo);
     return(
         <HeaderContainer>
             <NavLink to="/"><LogoImg src={Logo} alt="LogoImage"></LogoImg></NavLink>
             {/* <div style={{marginLeft:"5rem"}}>navi</div> */}
-            { authentication? 
+            { authentication ? 
                 <HeaderAuthenticationButtons handleAuthentication={handleAuthentication} userInfo={userInfo} />
                 :
                 <AuthenticationWrapper>

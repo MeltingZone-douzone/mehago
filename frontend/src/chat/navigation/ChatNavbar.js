@@ -13,12 +13,11 @@ import ParticipatingMember from './ParticipatingMember';
 import { Avatar, makeStyles } from '@material-ui/core';
 
 
-export default function ChatNavbar({currentParticipants, userInfo, participants}){
+export default function ChatNavbar({currentParticipants, userInfo, participants, fetchRooms, participatingRoom}){
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
-    const [participatingRoom, setParticipatingRoom] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
@@ -29,18 +28,18 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
         fetchFavoriteRooms();
     },[favoriteCheck]);
 
-    const fetchRooms = () => {
-        try {
-            getMyChatListApi().then(res => {
-                if(res.data.result == "fail"){
-                    return false;
-                }
-                setParticipatingRoom(res.data.data);
-            });
-        } catch (e) {
-            console.log(e);
-        }
-    }
+    // const fetchRooms = () => {
+    //     try {
+    //         getMyChatListApi().then(res => {
+    //             if(res.data.result == "fail"){
+    //                 return false;
+    //             }
+    //             setParticipatingRoom(res.data.data);
+    //         });
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // }
 
     const fetchFavoriteRooms = () => {
         try {
@@ -95,9 +94,9 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 </div>
                 <div className={"FavoriteNav"}>
                     {
-                        favoriteRoom && favoriteRoom.map((favorite) =>{
+                        favoriteRoom && favoriteRoom.map((favorite,index) =>{
                             return(
-                                <Link to={`/chat/${favorite.no}`}> 
+                                <Link to={`/chat/${favorite.no}`} key={index}> 
                                     <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
                                 </Link>
                             )
@@ -130,6 +129,6 @@ const NaviButton = styled.button`
 const madeStyles = makeStyles({
     favoriteRoom: {
         width:"30px",
-        height:"30px"
+        height:"30px"                      
     }
 })

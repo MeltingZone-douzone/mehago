@@ -84,4 +84,10 @@ public class AccountRepository {
     public boolean updateThumbnailUrl(Account account) {
         return sqlSession.update("account.updateThumbnailUrl",account) == 1 ? true : false;
     }
+
+    public void leaveMember(Long accountNo) {
+        sqlSession.update("account.updateLeaveMember",accountNo);
+        sqlSession.update("participant.updateParticipantLeaveMember", accountNo);
+        sqlSession.update("chatroom.updateOwnerLeaved", accountNo);
+    }
 }
