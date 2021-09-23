@@ -12,6 +12,7 @@
 		<typeAlias type="com.douzone.mehago.vo.Tag" alias="tag"/>
 		<typeAlias type="com.douzone.mehago.vo.Todo" alias="todo"/>
 		<typeAlias type="com.douzone.mehago.vo.Notice" alias="notice"/>
+		<typeAlias type="com.douzone.mehago.vo.FileUpload" alias="fileupload"/>
 		<typeAlias type="com.douzone.mehago.vo.Message" alias="message"/>
 		<typeAlias type="com.douzone.mehago.vo.PasswordVo" alias="passwordvo"/>
 	</typeAliases>
@@ -23,5 +24,6 @@
 		<mapper resource="mybatis/mappers/tag.xml" />
 		<mapper resource="mybatis/mappers/todo.xml" />
 		<mapper resource="mybatis/mappers/notice.xml" />
+		<mapper resource="mybatis/mappers/fileupload.xml" />
 	</mappers>
 </configuration>

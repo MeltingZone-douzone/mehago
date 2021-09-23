@@ -280,6 +280,7 @@
         </choose>
            <![CDATA[
         and favorite_room = 1)
+        and is_deleted=false
      ]]>
   </select>
   

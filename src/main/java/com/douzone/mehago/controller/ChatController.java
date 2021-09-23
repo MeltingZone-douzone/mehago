@@ -18,6 +18,7 @@ import com.douzone.mehago.service.TodoService;
 import com.douzone.mehago.utils.JwtTokenUtil;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.ChatRoom;
+import com.douzone.mehago.vo.FileUpload;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.NonMember;
 import com.douzone.mehago.vo.Participant;
@@ -152,16 +153,26 @@ public class ChatController {
                 : CommonResponse.fail("not exist participantingRoom"));
     }
 
-    // // @RequestBody FileUpload fileUpload,
-    // @PostMapping("/fileUpload")
-    // public ResponseEntity<?> fileUpload(String chatRoomNo, String participantNo,
-    // List<MultipartFile> files) {
-    // for (int i = 0; i < files.size(); i++) {
-    // FileUpload file = new FileUpload();
-    // // file.setUrl(fileUploadService.restore(files.get(i)));
-    // } boolean result = false;
-    // return ResponseEntity.ok().body(CommonResponse.success(result));
-    // }
+    @Auth(role = "ACCOUNT")
+    @PostMapping("/fileUpload")
+    public ResponseEntity<?> fileUpload(String chatRoomNo, String participantNo, List<MultipartFile> files) {
+        FileUpload file = new FileUpload();
+        file.setChatRoomNo(Long.valueOf(chatRoomNo));
+        file.setParticipantNo(Long.valueOf(participantNo));
+        boolean result = false;
+        for (int i = 0; i < files.size(); i++) {
+            file.setUrl(fileUploadService.restore("chatroom", files.get(i)));
+            result = fileUploadService.addFile(file);
+        }
+        return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+
+    @GetMapping("/getFileList/{chatRoomNo}")
+    public ResponseEntity<?> getFileList(@PathVariable String chatRoomNo) {
+        List<FileUpload> list = fileUploadService.getFileList(Long.valueOf(chatRoomNo));
+        return ResponseEntity.ok()
+                .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 올린 파일이 없습니다."));
+    }
 
     @GetMapping("/participants/{chatRoomNo}")
     public ResponseEntity<?> getParticipantsList(@PathVariable Long chatRoomNo) {
@@ -321,7 +332,7 @@ public class ChatController {
                 .body(checkNicname ? CommonResponse.fail("사용중인 닉네임 입니다.") : CommonResponse.success(token));
     }
 
-    @GetMapping("/updateFavoriteRoom/{chatRoomNo}")
+    @PostMapping("/updateFavoriteRoom/{chatRoomNo}")
     public ResponseEntity<?> updateFavoriteRoom(@PathVariable Long chatRoomNo, @AuthUser TokenInfo auth,
             @RequestBody Participant participant) {
         List<ChatRoom> favoriteRoomList = null;

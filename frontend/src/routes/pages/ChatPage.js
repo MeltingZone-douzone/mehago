@@ -35,6 +35,10 @@ export default function ChatPage({ match, userInfo }) {
         }
     }
 
+    const updateParticipatingRoom = (updatedParticipatingRoom) => {
+        setParticipatingRoom(updatedParticipatingRoom);
+    }
+
     const fetchRooms = () => {
         try {
             getMyChatListApi().then(res => {
@@ -51,7 +55,7 @@ export default function ChatPage({ match, userInfo }) {
 
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />
+            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} userInfo={userInfo} />} />

@@ -89,23 +89,18 @@ export function fileUpload(roomNo, participantNo, files) {
 
     const formData = new FormData();
 
-    files.forEach((file, index) => {
+    files.forEach((file) => {
         formData.append(`files`, file);
     })
     formData.append('chatRoomNo', roomNo);
     formData.append('participantNo', participantNo);
-    const filesObject = {
-        chatRoomNo: roomNo,
-        participantNo: participantNo,
-    }
-    // filesObject,
     return axios.post("/api/chat/fileUpload", formData,
-        {
-            header: {
-                "content-type": "multipart/form-data",
-                "Accept": "application/json",
-            },
-        }).then(res => res);
+        { headers: formDataHeader() }).then(res => res);
+}
+
+export function getFileList(roomNo) {
+    setAuthHeader();
+    return axios.get(`/api/chat/getFileList/${roomNo}`, { headers: AuthHeader }).then(res => res);
 }
 
 export function getSearchMessage(chatRoomNo, searchKeyword) {

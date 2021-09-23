@@ -13,7 +13,7 @@ import ParticipatingMember from './ParticipatingMember';
 import { Avatar, makeStyles } from '@material-ui/core';
 
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -75,14 +75,18 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     }
 
     const handleReceivedMsg = (msg) => {
+        let updated = {};
         let newArr = participatingRoom.map((room) => {
             if (room.no == msg.chatRoomNo) {
-                return { ...room, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now() };
+                updated = { ...room, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now() };
             } else {
                 return room;
             }
         })
-        setParticipatingRoom(newArr);
+        newArr = newArr.filter(arr => typeof arr === 'object');
+
+        const updatedParticipatingRoom = [].concat(updated, newArr);
+        updateParticipatingRoom(updatedParticipatingRoom);
     }
 
     const handleChatList = () => {

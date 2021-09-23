@@ -57,6 +57,7 @@ export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUplo
                 submitButtonText={"등록하기"}
                 maxFileSize={50000000} /**변경하기???? */
                 open={fileUploadOpen}
+                acceptedFiles={['image/jpeg', 'image/png', 'image/jpg']}
                 onClose={buttonFunction.handleClose}
                 onSave={(files) => { buttonFunction.handleFileUploadSubmit(files) }}
                 showPreviews={true}
