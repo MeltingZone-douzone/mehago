@@ -33,7 +33,7 @@ export default function ChatUtilNotice({ handleDeleteNotice , notice, userInfo})
         <div style={{lineHeight:"1.5rem"}} className={"box"}>
                 { notice.map((notice, index)=> {
                     return(
-                        <div className={"notification"}>  
+                        <div className={"notification"} key={index}>  
                             <Avatar src={notice.thumbnailUrl} />
                             <div className={"text"}>  
                                 <p><span className={"notice"}>{notice.notice}</span></p><br/>  

@@ -23,7 +23,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     // console.log('hasData: ', participantObject.hasData); // true면 기존입장, false 첫입장
     useEffect(() => {
-        socket.on('chat message', (msg) => {
+        socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
@@ -34,10 +34,10 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         fetchItems();
     }, []);
 
-    
+
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
-        
+
     }, [receivedMsg]);
 
     useEffect(() => {
@@ -102,7 +102,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         messageAreaRef.current.scrollTo({ top: searchMessageOffset[cursor.index - 1] - 300, behavior: 'auto' });
     }, [cursor.index, searchMessageOffset])
 
-    
+
 
     const onScroll = e => {
         const scrollHeight = e.target.scrollHeight; // messageArea div 총 크기
@@ -114,41 +114,40 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setIsFetching(true);
         }
     }
-    // console.log(messageList)
 
     return (
         <List className={"messageArea"} onScroll={onScroll} ref={messageAreaRef} >
             {messageList ? messageList
-                .map((message, index) =>
-                    {
-                        // TODO: +1로 바꾸고 닉네임은 위에꺼랑 비교 날짜는 아래꺼랑 비교
-                        return (
-                            message.participantNo !== participantObject.no ?
+                .map((message, index) => {
+                    // TODO: +1로 바꾸고 닉네임은 위에꺼랑 비교 날짜는 아래꺼랑 비교
+                    return (
+                        message.participantNo !== participantObject.no ?
                             <>
-                            <ReceivedMessage 
-                                key={index} 
-                                nextMessage={messageList[index - 1]} 
-                                previousMessage={messageList[index + 1]} 
-                                message={message} 
-                                searchKeyword={searchMessage[searchMessage.length-1]} 
-                                searchMessage={searchMessage}
-                                hiddenSearchInput={hiddenSearchInput}
-                                no={searchMessage.includes(message.no) ? message.no : null} />
+                                <ReceivedMessage
+                                    key={index}
+                                    nextMessage={messageList[index - 1]}
+                                    previousMessage={messageList[index + 1]}
+                                    message={message}
+                                    searchKeyword={searchMessage[searchMessage.length - 1]}
+                                    searchMessage={searchMessage}
+                                    hiddenSearchInput={hiddenSearchInput}
+                                    no={searchMessage.includes(message.no) ? message.no : null} />
                                 {dateDivider(messageList, index, message)}
                             </>
                             :
                             <>
-                            <SendMessage 
-                                key={index} 
-                                nextMessage={messageList[index - 1]} 
-                                previousMessage={messageList[index + 1]} 
-                                message={message} 
-                                searchKeyword={searchMessage[searchMessage.length-1]} 
-                                hiddenSearchInput={hiddenSearchInput}
-                                no={searchMessage.includes(message.no) ? message.no : null} />
+                                <SendMessage
+                                    key={index}
+                                    nextMessage={messageList[index - 1]}
+                                    previousMessage={messageList[index + 1]}
+                                    message={message}
+                                    searchKeyword={searchMessage[searchMessage.length - 1]}
+                                    hiddenSearchInput={hiddenSearchInput}
+                                    no={searchMessage.includes(message.no) ? message.no : null} />
                                 {dateDivider(messageList, index, message)}
                             </>
-                        )}
+                    )
+                }
                 )
                 : null
             }
@@ -161,16 +160,16 @@ function dateDivider(messageList, index, message) {
     if (prevMessage && moment(prevMessage.createdAt).format('YY/MM/DD') !== moment(message.createdAt).format('YY/MM/DD')) {
         const msgDate = moment(message.createdAt).format('YY/MM/DD');
         let day;
-        switch(moment(message.createdAt).day()){
-            case 0: day='일요일'; break;
-            case 1: day='월요일'; break;
-            case 2: day='화요일'; break;
-            case 3: day='수요일'; break;
-            case 4: day='목요일'; break;
-            case 5: day='금요일'; break;
-            case 6: day='토요일'; break;
+        switch (moment(message.createdAt).day()) {
+            case 0: day = '일요일'; break;
+            case 1: day = '월요일'; break;
+            case 2: day = '화요일'; break;
+            case 3: day = '수요일'; break;
+            case 4: day = '목요일'; break;
+            case 5: day = '금요일'; break;
+            case 6: day = '토요일'; break;
         }
-        return <p style={{ padding:'0.1rem', textAlign: 'center', backgroundColor:'#bdc7db'}}>{msgDate} {day}</p>;
+        return <p style={{ padding: '0.1rem', textAlign: 'center', backgroundColor: '#bdc7db' }}>{msgDate} {day}</p>;
     }
 }
 

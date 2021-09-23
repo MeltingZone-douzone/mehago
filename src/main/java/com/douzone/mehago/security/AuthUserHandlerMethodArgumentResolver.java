@@ -2,8 +2,7 @@ package com.douzone.mehago.security;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.douzone.mehago.vo.Account;
-import com.douzone.mehago.vo.NonMember;
+import com.douzone.mehago.vo.TokenInfo;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebArgumentResolver;
@@ -23,17 +22,9 @@ public class AuthUserHandlerMethodArgumentResolver implements HandlerMethodArgum
       }
 
       HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-      Account account = (Account) request.getAttribute("account");
-      NonMember nonMember = (NonMember) request.getAttribute("nonMember");
+      TokenInfo tokenInfo = (TokenInfo) request.getAttribute("tokenInfo");
 
-      if (account == null) {
-         if (nonMember == null) {
-            return null;
-         }
-         return nonMember;
-      }
-
-      return account; // return해주는 타입이 argument로 박힘 authUser
+      return tokenInfo; // return해주는 타입이 argument로 박힘 authUser
    }
 
    // 지원해주는 타입인가 판단함. ex) 어노테이션이 붙어있는 파라미터인지, type이 UserVO인가
@@ -45,8 +36,7 @@ public class AuthUserHandlerMethodArgumentResolver implements HandlerMethodArgum
       }
 
       // @authUser가 선언되어있는데 타입이 UserVO가 아니면
-      if (parameter.getParameterType().equals(Account.class) == false
-            && parameter.getParameterType().equals(NonMember.class) == false) {
+      if (parameter.getParameterType().equals(TokenInfo.class) == false) {
          return false;
       }
 

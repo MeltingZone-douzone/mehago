@@ -1,5 +1,6 @@
 package com.douzone.mehago.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +8,8 @@ import java.util.Map;
 import com.douzone.mehago.repository.MessageRepository;
 import com.douzone.mehago.repository.ParticipantRepository;
 import com.douzone.mehago.vo.Account;
-import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
+import com.douzone.mehago.vo.NonMember;
 import com.douzone.mehago.vo.Participant;
 
 import org.springframework.stereotype.Service;
@@ -40,8 +41,8 @@ public class ParticipantService {
             participant.setChatNickname(auth.getNickname());
             participant.setChatRoomNo(chatRoomNo);
             participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
-            participant.setNo(createParticipant(participant));
             participant.setFavoriteRoom(false);
+            participant.setNo(createParticipant(participant));
             participant.setHasData(false);
         } else {
             participant.setHasData(true);
@@ -76,18 +77,29 @@ public class ParticipantService {
         return participantRepository.nicknameValidation(participant);
     }
 
-
-    public void addNonMember(Participant participant) {
-        participantRepository.addNonMember(participant);
+    public Long addNonMember(Participant participant) {
+        participant.setAccountNo(null);
+        participant.setFavoriteRoom(false);
+        return participantRepository.createParticipant(participant);
     }
-
 
     public Long getLastReadChatNo(Long chatRoomNo) {
         return participantRepository.getLastReadChatNo(chatRoomNo);
     }
 
+    public boolean setExpirationDate(NonMember nonMember, Date expirationDate) {
+        return participantRepository.setExpirationDate(nonMember, expirationDate);
+    }
 
-    public List<ChatRoom> updateFavoriteRoom(Long chatRoomNo, Long accountNo, Boolean favoriteRoom) {
-        return participantRepository.updateFavoriteRoom(chatRoomNo , accountNo, favoriteRoom);
+    public boolean updateIsDeleted(Long participantNo) {
+        return participantRepository.updateIsDeleted(participantNo);
+    }
+
+    public Participant getnonMemberInfo(Long nonMemberNo, Long chatRoomNo) {
+        return participantRepository.getnonMemberInfo(nonMemberNo, chatRoomNo);
+    }
+
+    public Boolean updateFavoriteRoom(Long chatRoomNo, Long accountNo, Long nonMemberNo, Boolean favoriteRoom) {
+        return participantRepository.updateFavoriteRoom(chatRoomNo, accountNo, nonMemberNo, favoriteRoom);
     }
 }

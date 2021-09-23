@@ -22,7 +22,7 @@ export default function ChattingRoom({
     const [account, setAccount] = useState(true);
     const [joinValidationRoom , setJoinValidationRoom] = useState(true);
     const [nickname, setNickname ] = useState({nickname:""})
-    const [validateNickname, setValidateNickname] = useState("");
+    const [validateNickname, setValidateNickname] = useState(""); // 비회원 닉네임 validation  validateNicknameMsg 같이 이름 고치기
 
     const check = (no) => {
         try {
@@ -36,7 +36,7 @@ export default function ChattingRoom({
         }
     }
 
-    const joinValidation = (no) => {
+    const joinValidation = (no) => { // password check
         console.log(password);   // account 처리 해야함
         try {
             if (password !== "") (
@@ -156,22 +156,22 @@ export default function ChattingRoom({
                                     onChange={(e) => { setPassword(e.target.value) }} >
                                 </TextField>
                             </ListItemText>
-                            : null
-                            
-                        }
-                        {
-                            joinValidationRoom ? <p>{joinValidationRoom}</p> : null
-                        }
-                        {
+                            : 
+                            null
+                    }
+                    {
+                        joinValidationRoom ? <p>{joinValidationRoom}</p> : null
+                    }
+                    {
                         account ?
                         <Link to={`/chat/${no}`}>
                             <Button className={"joinButton"} onClick ={() => {joinValidation(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
                         </Link>
-                            :
+                        :
                         <Button className={"joinButton"} onClick ={() => {joinValidation(`${no}`), setModalIsOpen(false), setNicknameModalOpen(true) }}  variant="contained" color="primary" disableElevation>방입장하기</Button>
-                         
-                        }
+                    }
                 </Modal>
+                {/* 비회원 입장시 */}
                 <Modal
                     className={"modal"}
                     isOpen={nicknameModalOpen}

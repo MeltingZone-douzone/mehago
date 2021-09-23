@@ -102,6 +102,7 @@ const madeStyles = makeStyles({
         width: "fit-content",
         padding: "10px",
         backgroundColor: "#ffffff",
+        textAlign: "left"
     },
     left: {
         marginRight: "30%",

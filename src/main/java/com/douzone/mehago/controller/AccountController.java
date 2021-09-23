@@ -1,5 +1,7 @@
 package com.douzone.mehago.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
@@ -12,6 +14,7 @@ import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.Mail;
 import com.douzone.mehago.vo.NonMember;
 import com.douzone.mehago.vo.PasswordVo;
+import com.douzone.mehago.vo.TokenInfo;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,7 +36,6 @@ public class AccountController {
     private final MailService mailService;
     private final JwtTokenUtil jwtTokenUtil;
     private final FileUploadService fileUploadService;
-    
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody Account account) {
@@ -49,22 +51,18 @@ public class AccountController {
 
     @Auth
     @GetMapping("/get-user")
-    public ResponseEntity<?> getUser(@AuthUser Account auth) {
-        Account account = accountService.getAccountByToken(auth);
-        return ResponseEntity.ok().body(CommonResponse.success(account));
+    public ResponseEntity<?> getUser(@AuthUser TokenInfo auth, HttpServletRequest request) {
+        if (auth.getIsNonMember() == true) {
+            return ResponseEntity.ok().body(CommonResponse.success("nonMember"));
+        }
+        Account account = new Account(auth);
+        Account result = accountService.getAccountByToken(account);
+        return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 
-    @GetMapping("/createNonMember")
-    public ResponseEntity<?> createNonMember() {
-        NonMember nonMember = new NonMember();
-        String token = jwtTokenUtil.generateAccessToken(nonMember);
-        System.out.println(token);
-        return ResponseEntity.ok().body(token);
-    }
-
-    @Auth
+    @Auth(role = "ACCOUNT")
     @PostMapping(value = "/update/nickname")
-    public ResponseEntity<?> updateNickname(@AuthUser Account auth, @RequestBody Account account) {
+    public ResponseEntity<?> updateNickname(@AuthUser TokenInfo auth, @RequestBody Account account) {
         account.setNo(auth.getNo());
         String token = "";
         boolean result = accountService.updateNickname(account);
@@ -76,9 +74,9 @@ public class AccountController {
                 .body(result ? CommonResponse.success(token) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
     }
 
-    @Auth
+    @Auth(role = "ACCOUNT")
     @PostMapping(value = "/update/password")
-    public ResponseEntity<?> updatePassword(@AuthUser Account auth, @RequestBody PasswordVo passwordDto) {
+    public ResponseEntity<?> updatePassword(@AuthUser TokenInfo auth, @RequestBody PasswordVo passwordDto) {
         passwordDto.setNo(auth.getNo());
         boolean result = accountService.updatePassword(passwordDto);
 
@@ -86,9 +84,9 @@ public class AccountController {
                 .body(result ? CommonResponse.success(result) : CommonResponse.fail("비밀번호 변경을 실패 했습니다."));
     }
 
-    @Auth
+    @Auth(role = "ACCOUNT")
     @PostMapping(value = "/update/userInfo")
-    public ResponseEntity<?> updateUserInfo(@AuthUser Account auth, @RequestBody Account account) {
+    public ResponseEntity<?> updateUserInfo(@AuthUser TokenInfo auth, @RequestBody Account account) {
         account.setNo(auth.getNo());
         boolean result = accountService.updateUserInfo(account);
 
@@ -96,18 +94,20 @@ public class AccountController {
                 .body(result ? CommonResponse.success(result) : CommonResponse.fail("개인 정보 변경을 실패 했습니다."));
     }
 
-    @Auth
+    @Auth(role = "ACCOUNT")
     @PostMapping("/update/thumbnail")
-    public ResponseEntity<?> updateThumbnail(@AuthUser Account account, MultipartFile file) {
+    public ResponseEntity<?> updateThumbnail(@AuthUser TokenInfo auth, MultipartFile file) {
+        Account account = new Account(auth);
         account.setThumbnailUrl(fileUploadService.restore("account", file));
         boolean result = accountService.updateThumbnailUrl(account);
-        
-        return ResponseEntity.ok().body(result? CommonResponse.success(result) : CommonResponse.fail("섬네일 변경을 실패 했습니다."));
+
+        return ResponseEntity.ok()
+                .body(result ? CommonResponse.success(result) : CommonResponse.fail("섬네일 변경을 실패 했습니다."));
     }
 
-
     @PostMapping("/findByNameAndEmail")
-    public ResponseEntity<?> findByNameAndEmail(@RequestBody Account account, Mail mailDto) {
+    public ResponseEntity<?> findByNameAndEmail(@RequestBody TokenInfo auth, Mail mailDto) {
+        Account account = new Account(auth);
         Account accountVo = null;
         try {
             String name = account.getName();
@@ -151,7 +151,14 @@ public class AccountController {
         return ResponseEntity.ok().body(accountVo.getEmail());
     }
 
-    @Auth
+    @GetMapping("/createNonMember")
+    public ResponseEntity<?> createNonMember() {
+        NonMember nonMember = new NonMember();
+        String token = jwtTokenUtil.generateAccessToken(nonMember);
+        return ResponseEntity.ok().body(token);
+    }
+
+    @Auth(role = "ACCOUNT")
     @GetMapping("/leaveMember/{accountNo}")
     public ResponseEntity<?> leaveMember(@PathVariable Long accountNo) {
         System.out.println(accountNo);

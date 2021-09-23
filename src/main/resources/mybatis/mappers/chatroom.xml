@@ -18,9 +18,10 @@
         </selectKey>
 	</insert>
 
+<!-- 이거 안돼서 가려놨음... -->
   <select id="getAllChatList" parameterType="Long" resultType="map">
-    <choose>
-      <when test="value == 0">
+    <!-- <choose>
+      <when test="value == 0"> -->
         <![CDATA[
           select DISTINCT
             c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner, c.secret_room as secretRoom,
@@ -37,9 +38,9 @@
           order by 
               c.no desc
           limit
-            #{value}, 15
+            0, 15
         ]]>
-      </when>
+      <!-- </when>
       <otherwise>
         <![CDATA[
         select DISTINCT
@@ -61,7 +62,7 @@
           15
         ]]>
       </otherwise>
-      </choose>
+      </choose> -->
   </select>
 
   <select id="getRoomInfo" parameterType="Long" resultType="chatroom">
@@ -119,7 +120,8 @@
                     from message
                     where no = (select ifnull(max(no),"0") from message where chat_room_no = c.no)) as leastMessage
         FROM
-            chat_room c, (select is_deleted, chat_room_no, not_read_count, favorite_room from participant where account_no = #{accountNo }) p
+            chat_room c, 
+           (select is_deleted, chat_room_no, not_read_count, favorite_room from participant where account_no = #{accountNo }) p
         WHERE
           c.no = p.chat_room_no
           AND
@@ -131,9 +133,37 @@
                   account_no = #{accountNo })
           AND 
 				    c.is_deleted = false
-      order by 
-        leastMessageAt desc
+        ORDER BY 
+          leastMessageAt desc
     ]]>
+  </select>
+
+  <select id="getRoomInfoNonMember" parameterType="Long" resultType="map">
+   <![CDATA[
+  SELECT 
+            c.no, c.title, c.thumbnail_url as thumbnailUrl, p.favorite_room as favoriteRoom, p.not_read_count as notReadCount,
+              (select count(no) from participant where chat_room_no = c.no and is_deleted = false) as participantCount,
+                  (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
+                    from message 
+                    where chat_room_no = c.no) as leastMessageAt,  
+                  (select message
+                    from message
+                    where no = (select ifnull(max(no),"0") from message where chat_room_no = c.no)) as leastMessage
+        FROM
+            chat_room c, 
+           (select is_deleted, chat_room_no, not_read_count, favorite_room from participant where no = #{value }) p
+        WHERE
+          c.no = p.chat_room_no
+          AND
+          c.no IN (SELECT
+                chat_room_no
+              FROM
+                  participant
+              WHERE
+                  no= #{value })
+          AND 
+				    c.is_deleted = false
+           ]]>
   </select>
 
   <select id="keywordSearch" parameterType="String" resultType="map">
@@ -234,7 +264,23 @@
       FROM 
         chat_room 
       where 
-        no in (select chat_room_no from participant where account_no=#{accountNo} and favorite_room = 1)
+        no in (select chat_room_no from participant where 
+           ]]> 
+      <choose>
+      <when test="(0L).equals(accountNo)==false">
+           <![CDATA[
+            account_no=#{accountNo } 
+           ]]>
+       </when>
+       <otherwise>
+            <![CDATA[
+              no= #{nonMemberNo } 
+           ]]>
+        </otherwise>
+        </choose>
+           <![CDATA[
+        and favorite_room = 1)
+        and is_deleted=false
      ]]>
   </select>
   

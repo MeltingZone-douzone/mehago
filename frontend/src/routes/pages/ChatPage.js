@@ -9,7 +9,9 @@ import CreateChatRoom from '../../chat/CreateChatRoom';
 import SettingChatRoom from '../../chat/SettingChatRoom';
 import { getParticipantsList, getMyChatListApi } from '../../../api/ChatApi'
 
+import { io } from 'socket.io-client';
 
+const socket = io('http://localhost:8888');
 export default function ChatPage({ match, userInfo }) {
 
     const [participants, setParticipants] = useState([]);
@@ -33,10 +35,14 @@ export default function ChatPage({ match, userInfo }) {
         }
     }
 
+    const updateParticipatingRoom = (updatedParticipatingRoom) => {
+        setParticipatingRoom(updatedParticipatingRoom);
+    }
+
     const fetchRooms = () => {
         try {
             getMyChatListApi().then(res => {
-                if(res.data.result == "fail"){
+                if (res.data.result == "fail") {
                     return false;
                 }
                 // console.log(res.data.data);
@@ -49,12 +55,12 @@ export default function ChatPage({ match, userInfo }) {
 
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />
+            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
-                    <Route exact path={match.path} component={ChatList} />
-                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo}/>} />
-                    <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props}  fetchRooms={fetchRooms} participatingRoom={participatingRoom} />}/>
+                    <Route exact path={match.path} render={(props) => <ChatList {...props} userInfo={userInfo} />} />
+                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} />} />
+                    <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />} />
                     <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>
             </div>

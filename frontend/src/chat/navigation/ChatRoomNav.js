@@ -3,7 +3,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import '../assets/sass/chat/ChatProfile.scss';
 
-export default function ChattingRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, ketword }) {
+export default function ChatRoomNav({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, ketword }) {
 
     const tagNames = () => {
         var tagNames = [];

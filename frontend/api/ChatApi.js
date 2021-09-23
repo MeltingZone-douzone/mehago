@@ -89,53 +89,41 @@ export function fileUpload(roomNo, participantNo, files) {
 
     const formData = new FormData();
 
-    files.forEach((file, index) => {
+    files.forEach((file) => {
         formData.append(`files`, file);
     })
     formData.append('chatRoomNo', roomNo);
     formData.append('participantNo', participantNo);
-    const filesObject = {
-        chatRoomNo: roomNo,
-        participantNo: participantNo,
-    }
-    // filesObject,
     return axios.post("/api/chat/fileUpload", formData,
-        {
-            header: {
-                "content-type": "multipart/form-data",
-                "Accept": "application/json",
-            },
-        }).then(res => res);
+        { headers: formDataHeader() }).then(res => res);
+}
+
+export function getFileList(roomNo) {
+    setAuthHeader();
+    return axios.get(`/api/chat/getFileList/${roomNo}`, { headers: AuthHeader }).then(res => res);
 }
 
 export function getSearchMessage(chatRoomNo, searchKeyword) {
     setAuthHeader();
-    return axios.get("/api/chat/getSearchMessage?chatRoomNo="+ chatRoomNo +"&searchKeyword=" + searchKeyword, { headers: AuthHeader })
+    return axios.get("/api/chat/getSearchMessage?chatRoomNo=" + chatRoomNo + "&searchKeyword=" + searchKeyword, { headers: AuthHeader })
         .then(res => res);
 }
 
-// 겹치는거 정리해야 해
+
 export function vaildatePassword(chatRoomNo, password) {
-    const roomObject = {
-        no: chatRoomNo,
-        password: password
-    }
+    const roomObject = { no: chatRoomNo, password: password };
     return axios.post(`/api/chat/vaildatePassword`, roomObject, { headers: AuthHeader }).then(res => res);
 }
 
-export function checkPasswordApi(no, password) {
-    const passwordObject = { password };
-    return axios.post(`/api/chat/checkPassword/${no}`, passwordObject, { headers: AuthHeader })
+
+
+export function vaildateNickname(chatRoomNo, chatNickname) {
+    const participantObject = { chatRoomNo, chatNickname };
+    return axios.post(`/api/chat/vaildateNickname`, participantObject, { headers: AuthHeader })
         .then(res => res);
 }
 
-export function nicknameValidation(chatRoomNo, chatNickname) {
-    const nicknameObject = {chatRoomNo, chatNickname };
-    return axios.post(`/api/chat/nicknameValidation`, nicknameObject , { headers: AuthHeader })
-        .then(res => res);
-}
-
-export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus){
+export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus) {
     setAuthHeader();
     const favoriteStatusObject = { "favoriteRoom": favoriteStatus };
     // console.log(favoriteStatusObject);
@@ -143,7 +131,7 @@ export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus){
         .then(res => res);
 }
 
-export function getFavoriteRoomList(){
+export function getFavoriteRoomList() {
     setAuthHeader();
     return axios.get(`/api/chat/getFavoriteRoomList`, { headers: AuthHeader })
         .then(res => res);
@@ -182,15 +170,20 @@ export function deleteChatRoom(roomObject) {
 
 export function getAllChatListApi(offset) {
     setAuthHeader();
-    return axios.get('/api/chat/getAllChatList', { params : { offset }, headers: AuthHeader})
-                .then(res => res);
-}
-
-export function keyword(searchValue) {
-    return axios.get(`/api/chat/keywordSearch?searchValue=`+ searchValue , { headers: AuthHeader })
+    return axios.get('/api/chat/getAllChatList', { params: { offset }, headers: AuthHeader })
         .then(res => res);
 }
 
+export function keyword(searchValue) {
+
+    return axios.get(`/api/chat/keywordSearch?searchValue=` + searchValue, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function getNonMemberInfo() {
+    setAuthHeader();
+    return axios.get('/api/chat/getNonMemberInfo', { headers: AuthHeader }).then(res => res);
+}
 export function getNotice(chatRoomNo) {
     setAuthHeader();
     return axios.get(`/api/chat/getNotice/${chatRoomNo}`, { headers: AuthHeader })

@@ -13,8 +13,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.douzone.mehago.exceptions.InvalidJwtException;
-import com.douzone.mehago.vo.Account;
-import com.douzone.mehago.vo.NonMember;
+
+import com.douzone.mehago.vo.TokenInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,23 +36,15 @@ public class JwtDecoder {
 
     public Object decodeJwt(String token) {
         DecodedJWT decodedJWT = isValidToken(token).orElseThrow(() -> new InvalidJwtException("유효한 토큰이 아닙니다."));
-        if (("MEMBER").equals(decodedJWT.getClaim("role").asString())) {
-            Long userNo = decodedJWT.getClaim("userNo").asLong();
-            String userNickname = decodedJWT.getClaim("userNickname").asString();
+        boolean isNonMember = ("NONMEMBER").equals(decodedJWT.getClaim("role").asString()) ? true : false;
+        Long no = decodedJWT.getClaim("no").asLong();
+        String nickname = decodedJWT.getClaim("nickname").asString();
+        TokenInfo tokenInfo = new TokenInfo();
 
-            Account account = new Account();
-            account.setNo(userNo);
-            account.setNickname(userNickname);
-            return account;
-        } else {
-            Long participantNo = decodedJWT.getClaim("participantNo").asLong();
-            String chatNickname = decodedJWT.getClaim("nickname").asString();
-
-            NonMember nonMember = new NonMember();
-            nonMember.setParticipantNo(participantNo);
-            nonMember.setNickname(chatNickname);
-            return nonMember;
-        }
+        tokenInfo.setNo(no);
+        tokenInfo.setNickname(nickname);
+        tokenInfo.setIsNonMember(isNonMember);
+        return tokenInfo;
     }
 
     private Optional<DecodedJWT> isValidToken(String token) {
