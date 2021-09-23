@@ -136,12 +136,7 @@ const madeStyles = makeStyles({
         marginTop: "20px",
     },
     title: {
-        fontWeight: "bolder",
-        // textOverflow: "ellipsis",
-        // backgroundColor:"red",
-        // width:"50px",
-        // overflow: "hidden",
-        // whiteSpace: "nowrap"
+        fontWeight: "bolder"
     },
     participantCount: {
         fontSize: "0.7em",
@@ -153,9 +148,9 @@ const madeStyles = makeStyles({
     },
     leastMessage: {
         fontSize: "0.9em",
-        // textOverflow: "ellipsis",
-        // overflow: "hidden",
-        // whiteSpace: "nowrap"
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        whiteSpace: "nowrap"
     },
     favoriteButton:{
         minHeight:"2px",

@@ -181,3 +181,16 @@ export function keyword(searchValue) {
     return axios.get(`/api/chat/keywordSearch?searchValue=`+ searchValue , { headers: AuthHeader })
         .then(res => res);
 }
+
+export function getNotice(chatRoomNo) {
+    setAuthHeader();
+    return axios.get(`/api/chat/getNotice/${chatRoomNo}`, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function deleteNotice(noticeNo) {
+    setAuthHeader();
+    return axios.delete(`/api/chat/deleteNotice/${noticeNo}`, { headers: AuthHeader })
+        .then(res => res);
+}
+

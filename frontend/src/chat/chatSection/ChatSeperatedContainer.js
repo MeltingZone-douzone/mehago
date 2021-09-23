@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import ChattingTemplate from './ChattingTemplate';
 import UtilsTemplate from './UtilsTemplate';
 
-export default function ChatSeperatedContainer({socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen , isSeperated}) {
+export default function ChatSeperatedContainer({socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen , isSeperated, handleDeleteNotice, notice, userInfo}) {
 
     return(
         <Container>
@@ -27,7 +27,11 @@ export default function ChatSeperatedContainer({socket, messageFunction, partici
 
             <UtilsWrapper isSeperated={isSeperated}>
                 <UtilsTemplate 
-                    isOnChatSection={true} /* 네비랑 같이 쓰는데 css를 위함 */
+                    isOnChatSection={true} 
+                    chatRoomNo={chatRoomNo}/* 네비랑 같이 쓰는데 css를 위함 */
+                    handleDeleteNotice={handleDeleteNotice}
+                    notice={notice}
+                    userInfo={userInfo}
                 />
             </UtilsWrapper>
         </Container>

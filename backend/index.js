@@ -280,10 +280,12 @@ io.on("connection", (socket) => {
         todoController.addTodo(todoObject);
 
     });
-    socket.on("notice:send", async (notice) => {
+    socket.on("notice:send", async (notice, accountNo) => {
+        console.log(notice, accountNo);
         const noticeObject = {
             participantNo: participantObj.no,
             chatRoomNo: roomObj.no,
+            accountNo: accountNo,
             notice: notice,
         }
         noticeController.addNotice(noticeObject);

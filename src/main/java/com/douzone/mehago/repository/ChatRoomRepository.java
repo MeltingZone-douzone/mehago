@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.douzone.mehago.vo.ChatRoom;
+import com.douzone.mehago.vo.Notice;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;

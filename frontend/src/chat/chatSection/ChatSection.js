@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, deleteNotice , getNotice} from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
 const socket = io('http://localhost:8888');
-export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants}) {
+export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants, userInfo}) {
     const chatRoomNo = match.params.no;
     const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
     const [participantObject, setParticipantObject] = useState({});
@@ -27,6 +27,29 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
     const [todoOpen, setTodoOpen] = useState(false);
     const [noticeOpen, setNoticeOpen] = useState(false);
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
+    const [notice, setNotice] = useState([]);
+    
+    const noticeList = (chatRoomNo)=> {
+        try {
+            getNotice(chatRoomNo).then(res => {
+                console.log(res.data.data);
+                setNotice(res.data.data);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const handleDeleteNotice = (noticeNo) =>{
+        deleteNotice(noticeNo).then(res=>{
+            // console.log(res.data);
+            if(res.data.result === "success"){
+                setNotice(
+                    notice.filter((notice) => notice.no !== noticeNo)
+                )
+            }
+        })
+    }
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
@@ -95,6 +118,8 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             await socket.emit('join', roomObject, participantObject);
             await socket.emit('participant:join:updateRead');
             setJoinSuccess(false);
+            console.log(roomObject);
+            noticeList(roomObject.no);
         }
     }, [joinSuccess]);
 
@@ -203,13 +228,15 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         },
         handleNoticeSubmit: (e) => {
             e.preventDefault();
-            console.log(e.target.notice.value);
+            console.log(userInfo.no);
             if (e.target.notice.value === '') {
                 //error 메시지 보내기
             };
             const notice = e.target.notice.value;
-            socket.emit("notice:send", notice);
+            const accountNo = userInfo.no;
+            socket.emit("notice:send", notice, accountNo);
             setNoticeOpen(false);
+            noticeList(roomObject.no);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
@@ -242,6 +269,9 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
                     message={message} buttonFunction={buttonFunction}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                     isSeperated={seperate}
+                    handleDeleteNotice={handleDeleteNotice}
+                    notice={notice}
+                    userInfo={userInfo}
                 />
             </div>
         </div>
