@@ -4,12 +4,13 @@ import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
 import { NavLink } from 'react-router-dom';
-import ParticipantingList from './ParticipantingList';
+import ParticipatingList from './ParticipatingList';
 
 
-export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, favoriteRoom, exitRoom}){
+export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck}){
     const classes = styles();
-    return (
+
+    return Object.keys(participatingRoom).length !== 0 ?
         <MyChatRoomList>
             <SerachBarWarpper>
             <TextField
@@ -30,23 +31,31 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
                 participatingRoom
                 .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
                 .map((room ,index)=> 
-                    <ParticipantingList
-                        key = {index} 
+                    <ParticipatingList
                         room = {room} 
-                        favoriteRoom={favoriteRoom} 
-                        exitRoom={exitRoom}/>
+                        updateFavoriteRoom={updateFavoriteRoom} 
+                        exitRoom={exitRoom}
+                        setFavoriteCheck={setFavoriteCheck}/>
                     )
                 }
             </ContentWrapper>
         </MyChatRoomList>
-    );
+    :
+    <p className={'notYetEntered'}>채팅방에 입장해주세요.</p>
 
 }
 
 const styles = makeStyles({
     textField: {
         padding: "10px",
-        marginTop: "20px"
+        marginTop: "20px",
+        width:"90%"
+    },
+    notYetEntered: {
+        height: "100%",
+        display: "flex",
+        justifyContent:"center",
+        alignItems: "center"
     }
 })
 

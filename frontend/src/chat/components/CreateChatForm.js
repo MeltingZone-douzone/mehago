@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextField, FormControlLabel, Switch, FormControl, InputLabel, Select } from '@material-ui/core';
+import { TextField, FormControlLabel, Switch, FormControl, InputLabel, Select, makeStyles } from '@material-ui/core';
 import ChipInput from 'material-ui-chip-input';
 
 export default function CreateChatForm({classes, chatRoom, handleChange, handleAddTagName, handleDeleteTagName}) {
@@ -34,7 +34,7 @@ export default function CreateChatForm({classes, chatRoom, handleChange, handleA
                     : ""}
             </div>
 
-            <FormControl variant="outlined" className={classes.TextField}>
+            <FormControl color="primary" className={classes.TextField}>
                 <InputLabel htmlFor="limitedUserCount">최대 인원 수</InputLabel>
                 <Select
                     native

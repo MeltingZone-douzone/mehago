@@ -1,7 +1,7 @@
 .ChatNav{
     display: flex;
     height:100%;
-    width:20%;
+    width:23%;
     position: relative;
     overflow-x: hidden;
 
@@ -36,4 +36,11 @@
 .borderRight500 {
     border-right: 1px solid #e0e0e0;
     margin-left: 0;
+}
+
+.notYetEntered{
+    height: 100%;
+    display: flex;
+    justify-content:center ;
+    align-items: center;
 }

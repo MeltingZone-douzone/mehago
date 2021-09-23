@@ -61,9 +61,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 		// 7. 권한(Authorization) 체크를 위해서 @Auth의 role 가져오기 ("ADMIN", "USER")
 		String role = auth.role();
-		System.out.println(decodedToken.getIsNonMember());
 		String authRole = decodedToken.getIsNonMember() == false ? "ACCOUNT" : "NONMEMBER";
-		System.out.println(role + " " + authRole);
 
 		if ("NONMEMBER".equals(role)) {
 			return true;

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
+import { getAllChatListApi, keyword } from '../../api/ChatApi';
 import '../assets/sass/chat/ChatList.scss';
-import { List, TextField, makeStyles, InputAdornment } from '@material-ui/core';
-import { getChatListApi, keyword } from '../../api/ChatApi';
 
 import ChatRoom from './ChatRoom';
 
@@ -14,16 +14,53 @@ export default function ChatList({ socket, userInfo }) {
     const [isSearched, setIsSearched] = useState(false);
     const [noResult, setNoResult] = useState(false);
 
-    useEffect(() => {
-        try {
-            getChatListApi().then(res => {
-                setRooms(res.data);
-            })
 
+    const chatRoomAreaRef = useRef();
+    const [offsetNo, setOffsetNo] = useState(0);
+    const [isFetching, setIsFetching] = useState(false);
+    const [isEnd, setIsEnd] = useState(false);
+
+
+    useEffect(() => {
+        fetchChatRooms();
+    }, [])
+
+    const fetchChatRooms = () => {
+        try {
+            getAllChatListApi(offsetNo).then(res => {
+                if (res.statusText === "OK") {
+                    if (res.data.result === "success") {
+                        if (res.data.data.length === 0) {
+                            setIsEnd(!isEnd);
+                        }
+                        console.log(res);
+                        setRooms(prevState => prevState.concat(res.data.data));
+                        setIsFetching(false);
+                    }
+                }
+            })
         } catch (e) {
             console.log(e);
         }
-    }, [])
+    }
+
+    const onScroll = (e) => {
+        const scrollHeight = e.target.scrollHeight;     // chatRoomAreaRef 의 총 크기
+        const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
+        const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
+        if (scrollTop + clientHeight >= scrollHeight && !isFetching && !isEnd) {
+            fetchChatRooms();
+            setIsFetching(true);
+        }
+    }
+
+
+    useEffect(() => {
+        if (rooms && rooms.length > 1) {
+            setOffsetNo(rooms[rooms.length - 1].no);
+        }
+    }, [rooms]);
+
 
     useEffect(() => {
         console.log(rooms);
@@ -37,7 +74,7 @@ export default function ChatList({ socket, userInfo }) {
         console.log(searchValue);
         try {
             if (searchValue === "") {
-                getChatRooms().then(res => {
+                getChatListApi().then(res => {
                     setRooms(res.data);
                 })
             }
@@ -45,7 +82,7 @@ export default function ChatList({ socket, userInfo }) {
                 if (res.data.result === "success") {
                     setJoinRooms(res.data.data);
                     setIsSearched(true);
-                    setNoResult(false);
+                    setNoResult(false); // TODO: ~ 와 관련된 채팅방이 ' '개 있습니다.
                 } else {
                     console.log(res.data.message);
                     setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
@@ -101,8 +138,8 @@ export default function ChatList({ socket, userInfo }) {
                 noResult ? (
                     <p className={"noResult"}>{noResult}</p>
                 ) : (
-                    <div className={"ChatListContainer"} >
-                        <List className={"ChatRoom"} >
+                    <div className={"ChatListContainer"} onScroll={onScroll} ref={chatRoomAreaRef}>
+                        <List className={"ChatRoom"} ref={chatRoomAreaRef}>
                             {rooms ? getChatrooms().map((room, index) => {
                                 return (
                                     <ChatRoom

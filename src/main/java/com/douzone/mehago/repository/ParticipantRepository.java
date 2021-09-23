@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.NonMember;
 import com.douzone.mehago.vo.Participant;
@@ -61,16 +60,6 @@ public class ParticipantRepository {
         return sqlSession.selectOne("participant.getLastReadChatNo", chatRoomNo);
     }
 
-    public Boolean joinFavoriteRoom(Long no, Long accountNo, Long nonMemberNo) {
-        Map<String, Long> map = new HashMap<>();
-        map.put("chatRoomNo", no);
-        map.put("accountNo", accountNo);
-        map.put("nonMemberNo", nonMemberNo);
-        map.put("favoriteRoom", 1L);
-        return sqlSession.update("participant.joinFavoriteRoom", map) == 1 ? true : false;
-
-    }
-
     public boolean setExpirationDate(NonMember nonMember, Date expirationDate) {
         Map<String, Object> map = new HashMap<>();
         map.put("no", nonMember.getParticipantNo());
@@ -87,6 +76,17 @@ public class ParticipantRepository {
         map.put("no", nonMemberNo);
         map.put("chatRoomNo", chatRoomNo);
         return sqlSession.selectOne("participant.getNonMemberInfo", map);
+    }
+
+    public Boolean updateFavoriteRoom(Long chatRoomNo, Long accountNo, long nonMemberNo, Boolean favoriteRoom) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("chatRoomNo", chatRoomNo);
+        map.put("accountNo", accountNo);
+        map.put("nonMemberNo", nonMemberNo);
+        map.put("favoriteRoom", favoriteRoom);
+        return sqlSession.update("participant.updateFavoriteRoom", map) == 1 ? true : false;
+        // return sqlSession.selectList("chatroom.getFavoriteRoomList", map);
+        // TODO: 지금 받은 list안씀 나중에 처리함 ㄱㄷ
     }
 
 }

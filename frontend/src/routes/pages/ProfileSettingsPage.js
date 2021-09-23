@@ -8,7 +8,7 @@ import { updateNicknameApi, updatePasswordApi, updateThumbnailApi, updateUserInf
 
 import 'regenerator-runtime';
 
-export default function ProfileSettingsPage({ userInfo, reloadUser }) {
+export default function ProfileSettingsPage({ handleAuthentication,userInfo, reloadUser }) {
 
     const settingsApi = {
         
@@ -79,7 +79,7 @@ export default function ProfileSettingsPage({ userInfo, reloadUser }) {
         <Template>
             <Fragment>
                 <UserProfile user={userInfo} />
-                <UserSettingsContainer user={userInfo} settingsApi={settingsApi} />
+                <UserSettingsContainer handleAuthentication={handleAuthentication} user={userInfo} settingsApi={settingsApi} />
             </Fragment>
         </Template>
     );

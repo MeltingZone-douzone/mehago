@@ -189,6 +189,7 @@ const CreateTemplate = styled(BoxShapeDiv)`
     width:70%;
     height:70%;
     padding: 3em;
+    opacity: .99;
 `
 
 const FormTemplate = styled.form`

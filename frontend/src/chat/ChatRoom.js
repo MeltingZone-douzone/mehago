@@ -18,7 +18,7 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
 
 
     const getTags = () => {
-        if (tagName.length > 6) {
+        if (tagName && tagName.length > 6) {
             return tagName.slice(0, 6).map((tag, index) => {
                 return (
                     index < 5 ?
@@ -35,7 +35,7 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
             })
         } else {
 
-            return tagName.map((tag, index) => {
+            return tagName && tagName.map((tag, index) => {
                 return (
                     <Chip
                         key={index}

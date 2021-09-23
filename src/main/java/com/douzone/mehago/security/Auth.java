@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 // RetentionPolicy는 RetentionPolicy의 값을 넘겨주는 것으로 어노테이션의 메모리 보유 범위가 결정됨
 public @interface Auth {
 
-	public String role() default "NONMEMBER";
+   public String role() default "NONMEMBER";
 }

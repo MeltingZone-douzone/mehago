@@ -23,6 +23,7 @@ import com.douzone.mehago.vo.TokenInfo;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,25 +120,29 @@ public class ChatController {
     // public ResponseEntity<?> getParticipantInfo(String chatNickname,
     // @PathVariable Long chatRoomNo)
 
-    @GetMapping("/chatList")
-    public ResponseEntity<?> getAllChatList() {
-        List<Map<String, Object>> list = chatRoomService.getAllChatList();
+    @GetMapping("/getAllChatList")
+    public ResponseEntity<?> getAllChatList(String offset) {
+        List<Map<String, Object>> list = chatRoomService.getAllChatList(offset);
         getTagName(list);
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok()
+                .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("채팅방이 없습니다. 채팅방을 개설해주세요."));
     }
 
     @GetMapping("/participatingRoom")
     public ResponseEntity<?> participatingRoom(@AuthUser TokenInfo auth) {
+        List<Map<String, Object>> participatingRoom;
         if (auth.getIsNonMember() == true && auth.getNo() == null) {
             return ResponseEntity.ok().body(CommonResponse.fail("not exist participantingRoom"));
         }
-        List<Map<String, Object>> participatingRoom = chatRoomService.participatingRoom(
-                (auth.getIsNonMember() == false ? auth.getNo() : 0L),
-                (auth.getIsNonMember() == false ? 0L : auth.getNo()));
-        System.out.println("participatingRoom" + (participatingRoom.size() == 0));
+
+        if (auth.getIsNonMember() == false) {
+            participatingRoom = chatRoomService.participatingRoom(auth.getNo());
+        } else {
+            participatingRoom = chatRoomService.getRoomInfoNonMember(auth.getNo());
+        }
+
         return ResponseEntity.ok().body(participatingRoom.size() != 0 ? CommonResponse.success(participatingRoom)
                 : CommonResponse.fail("not exist participantingRoom"));
-
     }
 
     // // @RequestBody FileUpload fileUpload,
@@ -153,9 +158,7 @@ public class ChatController {
 
     @GetMapping("/participants/{chatRoomNo}")
     public ResponseEntity<?> getParticipantsList(@PathVariable Long chatRoomNo) {
-
         List<Participant> list = participantService.getParticipantsList(chatRoomNo);
-        System.out.println(list);
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("참여중인 채팅방이 없습니다."));
     }
@@ -294,26 +297,27 @@ public class ChatController {
                 .body(checkNicname ? CommonResponse.fail("사용중인 닉네임 입니다.") : CommonResponse.success(token));
     }
 
-    @GetMapping("joinFavoriteRoom/{no}")
-    public ResponseEntity<?> joinFavoriteRoom(@PathVariable Long no, @AuthUser TokenInfo auth) {
+    @GetMapping("/updateFavoriteRoom/{chatRoomNo}")
+    public ResponseEntity<?> updateFavoriteRoom(@PathVariable Long chatRoomNo, @AuthUser TokenInfo auth,
+            @RequestBody Participant participant) {
         List<ChatRoom> favoriteRoomList = null;
         boolean result = false;
-        result = participantService.joinFavoriteRoom(no, (auth.getIsNonMember() == true ? 0L : auth.getNo()),
-                (auth.getIsNonMember() == true ? auth.getNo() : 0L));
+        result = participantService.updateFavoriteRoom(chatRoomNo, (auth.getIsNonMember() == true ? 0L : auth.getNo()),
+                (auth.getIsNonMember() == true ? auth.getNo() : 0L), participant.getFavoriteRoom());
         if (result) {
-            favoriteRoomList = chatRoomService.favoriteRoomList((auth.getIsNonMember() == true ? 0L : auth.getNo()),
+            favoriteRoomList = chatRoomService.getFavoriteRoomList((auth.getIsNonMember() == true ? 0L : auth.getNo()),
                     (auth.getIsNonMember() == true ? auth.getNo() : 0L));
         }
         return ResponseEntity.ok().body(favoriteRoomList.size() == 0 ? CommonResponse.success(favoriteRoomList)
                 : CommonResponse.fail("not exist participantingRoom"));
     }
 
-    @GetMapping("favoriteRoomList")
-    public ResponseEntity<?> favoriteRoomList(@AuthUser TokenInfo auth) {
+    @GetMapping("/getFavoriteRoomList")
+    public ResponseEntity<?> getFavoriteRoomList(@AuthUser TokenInfo auth) {
         if (auth.getIsNonMember() == true && auth.getNo() == null) {
             return ResponseEntity.ok().body(CommonResponse.fail("not exist favoriteRoomList"));
         }
-        List<ChatRoom> favoriteRoomList = chatRoomService.favoriteRoomList(
+        List<ChatRoom> favoriteRoomList = chatRoomService.getFavoriteRoomList(
                 (auth.getIsNonMember() == true ? 0L : auth.getNo()),
                 (auth.getIsNonMember() == true ? auth.getNo() : 0L));
         System.out.println("favoriteRoomList" + favoriteRoomList.size());
@@ -336,7 +340,14 @@ public class ChatController {
 
     @GetMapping("/checkIsDeleted")
     public ResponseEntity<?> checkIsDeleted(String chatRoomNo) {
-        boolean result = chatRoomService.checkIsDeleted(Long.valueOf(chatRoomNo));
+        boolean result = chatRoomService.checkIsDeleted(Long.parseLong(chatRoomNo));
+        return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+
+    @Auth
+    @DeleteMapping("/exitRoom/{chatRoomNo}")
+    public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser Account account) {
+        boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), account.getNo());
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 

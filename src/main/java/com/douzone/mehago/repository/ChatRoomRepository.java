@@ -22,20 +22,16 @@ public class ChatRoomRepository {
         return chatRoom.getNo();
     }
 
-    public List<Map<String, Object>> getAllChatList() {
-        // 추후에 offset 줘서 리스트 뽑아야댐
-        return sqlSession.selectList("chatroom.getAllChatList");
+    public List<Map<String, Object>> getAllChatList(Long offset) {
+        return sqlSession.selectList("chatroom.getAllChatList", offset);
     }
 
     public ChatRoom getRoomInfo(Long chatRoomNo) {
         return sqlSession.selectOne("chatroom.getRoomInfo", chatRoomNo);
     }
 
-    public List<Map<String, Object>> participatingRoom(Long accountNo, Long nonMemberNo) {
-        Map<String, Long> map = new HashMap<>();
-        map.put("accountNo", accountNo);
-        map.put("nonMemberNo", nonMemberNo);
-        return sqlSession.selectList("chatroom.participatingRoom", map);
+    public List<Map<String, Object>> participatingRoom(Long accountNo) {
+        return sqlSession.selectList("chatroom.participatingRoom", accountNo);
     }
 
     public List<Map<String, Object>> keywordSearch(String searchValue) {
@@ -67,11 +63,11 @@ public class ChatRoomRepository {
         return result != null ? true : false;
     }
 
-    public List<ChatRoom> favoriteRoomList(Long accountNo, Long nonMemberNo) {
+    public List<ChatRoom> getFavoriteRoomList(Long accountNo, Long nonMemberNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("accountNo", accountNo);
         map.put("nonMemberNo", nonMemberNo);
-        return sqlSession.selectList("chatroom.favoriteRoomList", map);
+        return sqlSession.selectList("chatroom.getFavoriteRoomList", map);
     }
 
     public boolean checkIsDeleted(Long chatRoomNo) {
@@ -80,5 +76,13 @@ public class ChatRoomRepository {
 
     public boolean deleteChatRoom(Long chatRoomNo) {
         return sqlSession.update("chatroom.deleteChatRoom", chatRoomNo) == 1 ? true : false;
+    }
+
+    public boolean exitRoom(Map<String, Long> map) {
+        return sqlSession.delete("chatroom.exitRoom", map) == 1 ? true : false;
+    }
+
+    public List<Map<String, Object>> getRoomInfoNonMember(Long nonMemberNo) {
+        return sqlSession.selectList("chatroom.getRoomInfoNonMember", nonMemberNo);
     }
 }

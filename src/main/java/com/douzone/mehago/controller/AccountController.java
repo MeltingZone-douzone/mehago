@@ -156,6 +156,13 @@ public class AccountController {
         NonMember nonMember = new NonMember();
         String token = jwtTokenUtil.generateAccessToken(nonMember);
         return ResponseEntity.ok().body(token);
+    }
 
+    @Auth(role = "ACCOUNT")
+    @GetMapping("/leaveMember/{accountNo}")
+    public ResponseEntity<?> leaveMember(@PathVariable Long accountNo) {
+        System.out.println(accountNo);
+        accountService.leaveMember(accountNo);
+        return ResponseEntity.ok().body(null);
     }
 }

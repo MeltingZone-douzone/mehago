@@ -86,8 +86,11 @@
 				p.account_no = a.no
 			AND
 				chat_room_no = #{chatRoomNo }
+			AND
+				p.is_deleted = 0
 		ORDER BY
 			p.chat_nickname
+			
 	]]>
 	</select>
 	<select id="nicknameValidation" parameterType="participant" resultType="String">
@@ -111,30 +114,50 @@
 		]]>
      </select>
 
-	 <update id="joinFavoriteRoom" parameterType="map" >
+	 <update id="updateFavoriteRoom" parameterType="map" >
+	<choose>
+		<when test='favoriteRoom == true'>
+			<![CDATA[
+				update 
+					participant
+				set
+					favorite_room = false
+				where 
+					chat_room_no= #{chatRoomNo }
+						and
+					account_no = #{accountNo}
+			]]>		
+		</when>
+		<otherwise>
+			<![CDATA[
+				update 
+					participant
+				set
+					favorite_room = true
+				where 
+					chat_room_no= #{chatRoomNo }
+						and
+					account_no = #{accountNo}
+			]]>	
+		</otherwise>
+	</choose>	
+	</update>
+
+	<update id="updateParticipantLeaveMember" parameterType="Long" >
 	<![CDATA[
 		update 
-			participant
-		set
-			favorite_room = #{favoriteRoom }
+			participant 
+		set 
+			is_deleted = 1 
 		where 
-			chat_room_no= #{chatRoomNo }
-			and
-				]]>	
-		<choose>
-			<when test="(0L).equals(accountNo)==false">
-			 	<![CDATA[ account_no = #{accountNo} ]]>
-			</when>
-			<otherwise>
-				<![CDATA[ participant_no = #{nonMemberNo } ]]>
-			</otherwise>
-		</choose>
+			account_no = #{accountNo} 
+	]]>	
 	</update>
 
 	<update id="updateIsDeleted" parameterType="Long">
 	<![CDATA[
 		update participant
-		set is_deleted = 1
+		set is_deleted = 1, chat_nickname="(알수없음)"
 		where no = #{participantNo }
 	]]>
 	</update>
@@ -142,7 +165,7 @@
 <select id="getNonMemberInfo" parameterType="map" resultType="participant">
 		<![CDATA[
 		select 
-			no, chat_nickname as chatNickname, chat_room_no as chatRoomNo, not_read_count as notReadCount, last_read_chat_no as lastReadChatNo, account_no as accountNo
+			no, chat_nickname as chatNickname, chat_room_no as chatRoomNo, not_read_count as notReadCount, last_read_chat_no as lastReadChatNo
 		from
 			participant
 		where

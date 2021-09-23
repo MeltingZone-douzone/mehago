@@ -53,7 +53,7 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
 
     }
 
-    return (
+    return Object.keys(participants).length !== 0 ?
         <ParticipatingMemberList>
             <Grid className={"borderRight500"}>
                 <List>
@@ -73,14 +73,10 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
                         onChange={(e) => setSearchNickname(e.target.value)}
                     />
                 </Grid>
-                <Divider />
-                {/* 접속자 리스트 */}
-                <List>
-                    {showParticipantsList(participants, currentParticipants)}
-                </List>
             </Grid>
         </ParticipatingMemberList>
-    );
+        :
+        <p className={'notYetEntered'}>채팅방에 입장하면 해당 채팅방의 유저가 보입니다.</p>
 }
 
 

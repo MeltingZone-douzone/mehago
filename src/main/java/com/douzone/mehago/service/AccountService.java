@@ -99,4 +99,8 @@ public class AccountService {
         return accountRepository.updateThumbnailUrl(account);
         
     }
+
+    public void leaveMember(Long accountNo) {
+        accountRepository.leaveMember(accountNo);
+    }
 }

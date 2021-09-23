@@ -1,5 +1,6 @@
 package com.douzone.mehago.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,16 +21,16 @@ public class ChatRoomService {
         return chatRoomRepository.createRoom(chatRoom);
     }
 
-    public List<Map<String, Object>> getAllChatList() {
-        return chatRoomRepository.getAllChatList();
+    public List<Map<String, Object>> getAllChatList(String offset) {
+        return chatRoomRepository.getAllChatList(Long.parseLong(offset));
     }
 
     public ChatRoom getRoomInfo(Long chatRoomNo) {
         return chatRoomRepository.getRoomInfo(chatRoomNo);
     }
 
-    public List<Map<String, Object>> participatingRoom(Long AccountNo, Long nonMemberNo) {
-        return chatRoomRepository.participatingRoom(AccountNo, nonMemberNo);
+    public List<Map<String, Object>> participatingRoom(Long AccountNo) {
+        return chatRoomRepository.participatingRoom(AccountNo);
     }
 
     public List<Map<String, Object>> keywordSearch(String searchValue) {
@@ -56,8 +57,8 @@ public class ChatRoomService {
         return chatRoomRepository.checkPassword(no, password);
     }
 
-    public List<ChatRoom> favoriteRoomList(Long accountNo, Long nonMemberNo) {
-        return chatRoomRepository.favoriteRoomList(accountNo, nonMemberNo);
+    public List<ChatRoom> getFavoriteRoomList(Long accountNo, Long nonMemberNo) {
+        return chatRoomRepository.getFavoriteRoomList(accountNo, nonMemberNo);
     }
 
     public boolean checkIsDeleted(Long chatRoomNo) {
@@ -66,6 +67,17 @@ public class ChatRoomService {
 
     public boolean deleteChatRoom(Long chatRoomNo) {
         return chatRoomRepository.deleteChatRoom(chatRoomNo);
+    }
+
+    public boolean exitRoom(Long chatRoomNo, Long accountNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("chatRoomNo", chatRoomNo);
+        map.put("accountNo", accountNo);
+        return chatRoomRepository.exitRoom(map);
+    }
+
+    public List<Map<String, Object>> getRoomInfoNonMember(Long nonMemberNo) {
+        return chatRoomRepository.getRoomInfoNonMember(nonMemberNo);
     }
 
 }

@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
-import Chatting2 from './Chatting';
+import Chatting from './Chatting';
 import MsgInput2 from './MsgInput2';
 import Dialogs from '../dialogs/Dialogs';
 
@@ -75,12 +75,10 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("disconnect socket : "); // FIXME: 이건왜안찍힘 
             handleCurrentParticipants(arrayOfNumbers);
         });
         socket.on('disconnected', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("disconnect socket : "); // FIXME: 이건왜안찍힘 
             handleCurrentParticipants(arrayOfNumbers);
         });
     },[chatRoomNo])
@@ -137,32 +135,42 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
                         setPrevSearchKeyword(searchKeyword)
                     } else {
                         console.log(res.data.message);         // TODO: 검색결과가 없습니다.
+                        setCursor({});
                     }
                 });
             } else {
                 console.log("검색어를 한글자 이상 입력해주세요"); // TODO: 뿌리기?
             }
         },
-        moveSearchResult: (e, direction) => {                  // TODO: 마지막요소이면  '마지막 요소입니다'
-                if(direction === "left") {
-                    if(cursor.index - 1 >= cursor.firstIndex) {
-                        setCursor({...cursor, index: cursor.index - 1 });
-                        return;
-                    }
-                } else {
-                    if(cursor.index < cursor.lastIndex) {
-                        setCursor({...cursor, index: cursor.index + 1 });
-                        return;
+        moveSearchResult: (e, direction) => {                  
+            if(direction === "left") {
+                if(cursor.index - 1 >= cursor.firstIndex) {
+                    setCursor({...cursor, index: cursor.index - 1 });
+                    return;
                 }
+            } else {
+                if(cursor.index < cursor.lastIndex) {
+                    setCursor({...cursor, index: cursor.index + 1 });
+                    return;
+                }
+                console.log("마지막 검색결과입니다. ");
             }
         },
         leaveRoom: (e) => {
             // socket.emit('leave', data); // roomName
             console.log('leaveRoom()호출 in ChatSection');
             socket.emit('leave', roomObject.title); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
-            history.push('/chat') // TODO: 참여자 조회하는것도 나가야함 Nav에서
+            history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
                                     // TODO: 참여자 삭제
+        },
+        joinRoom: (e) => {
+            if(prevChatRoomNo != chatRoomNo){
+                console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
+                socket.emit('leave', roomObject.title);
+                setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
+            }
         }
+
     }
 
     const buttonFunction = {
@@ -215,8 +223,8 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage}/>
-                <Chatting2 socket={socket} 
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage}/>
+                <Chatting socket={socket} 
                     messageFunction={messageFunction} 
                     participantObject={participantObject} 
                     roomObject={roomObject} 

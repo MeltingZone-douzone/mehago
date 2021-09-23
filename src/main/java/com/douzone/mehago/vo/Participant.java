@@ -23,4 +23,7 @@ public class Participant extends TokenInfo {
         this.no = tokenInfo.getNo();
         this.chatNickname = tokenInfo.getNickname();
     }
+    // private String favoriteRoom; // 잠시 string으로 고침
+
+    private Boolean hasData;
 }

@@ -44,6 +44,10 @@ public class ParticipantService {
             participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
             participant.setFavoriteRoom(false);
             participant.setNo(createParticipant(participant));
+            participant.setFavoriteRoom(false);
+            participant.setHasData(false);
+        } else {
+            participant.setHasData(true);
         }
 
         return participant;
@@ -85,10 +89,6 @@ public class ParticipantService {
         return participantRepository.getLastReadChatNo(chatRoomNo);
     }
 
-    public Boolean joinFavoriteRoom(Long no, Long accountNo, Long nonMemberNo) {
-        return participantRepository.joinFavoriteRoom(no, accountNo, nonMemberNo);
-    }
-
     public boolean setExpirationDate(NonMember nonMember, Date expirationDate) {
         return participantRepository.setExpirationDate(nonMember, expirationDate);
     }
@@ -99,5 +99,9 @@ public class ParticipantService {
 
     public Participant getnonMemberInfo(Long nonMemberNo, Long chatRoomNo) {
         return participantRepository.getnonMemberInfo(nonMemberNo, chatRoomNo);
+    }
+
+    public Boolean updateFavoriteRoom(Long chatRoomNo, Long accountNo, Long nonMemberNo, Boolean favoriteRoom) {
+        return participantRepository.updateFavoriteRoom(chatRoomNo, accountNo, nonMemberNo, favoriteRoom);
     }
 }

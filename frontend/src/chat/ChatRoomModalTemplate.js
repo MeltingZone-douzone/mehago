@@ -13,6 +13,7 @@ import localStorage from "local-storage";
 import ChatRoomModalBasic from './ChatRoomModalBasic';
 import ChatRoomModalPassword from './ChatRoomModalPassword';
 import ChatRoomModalNickname from './ChatRoomModalNickname';
+import ChatRoomModalIsFull from './ChatRoomModalIsFull';
 import { vaildatePassword, vaildateNickname } from '../../api/ChatApi';
 import { ValidationExp } from '../utils/ValidationExp';
 
@@ -21,7 +22,7 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
     const history = useHistory();
 
     // 비밀방, 비회원, 회원을 식별하여 컴포넌트를 뿌려주기 위한 변수
-    const [status, setStatus] = useState(() => secretRoom ? "secret" : onlyAuthorized ? "basic" : "nickname");
+    const [status, setStatus] = useState(() => participantCount > limitedUserCount ? "isFull" : secretRoom ? "secret" : account || onlyAuthorized ? "basic" : "nickname");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
     const [wrongPassword, setWrongPassword] = useState(false);
@@ -29,11 +30,13 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
 
     const getContent = () => {
         switch (status) {
-            case "secret": return <ChatRoomModalPassword password={password} handleChange={handleChange} passwordValidation={passwordValidation} wrongPassword={wrongPassword} />
+            case "secret": return <ChatRoomModalPassword password={password} handleChange={handleChange} passwordValidation={passwordValidation} wrongPassword={wrongPassword} account={account} />
                 break;
             case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} />
                 break;
             case "basic": return <ChatRoomModalBasic enterRoom={enterRoom} />
+                break;
+            case "isFull": return <ChatRoomModalIsFull />
                 break;
         }
     }

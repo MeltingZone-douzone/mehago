@@ -7,7 +7,7 @@ import { getMessageList } from '../../../api/ChatApi';
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
 
-export default function Chatting2({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput }) {
+export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput }) {
     const messageAreaRef = useRef();
 
     const [offsetNo, setOffsetNo] = useState(0);
@@ -20,6 +20,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
     const [noData, setNoData] = useState(false);
     const [searchMessageOffset, setSearchMessageOffset] = useState([]);
 
+    // console.log('participantObject.hasData: ', participantObject.hasData); // true면 기존입장, false 첫입장
     useEffect(() => {
         socket.on('chat message', (msg) => {
             setReceivedMsg(msg);
@@ -34,6 +35,7 @@ export default function Chatting2({ socket, participantObject, roomObject, chatR
 
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
+        
     }, [receivedMsg]);
 
     useEffect(() => {

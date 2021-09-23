@@ -173,6 +173,8 @@ io.on("connection", (socket) => {
 
 
     socket.on('join', async (roomObject, participantObject) => {
+        console.log(socket.adapter.rooms); 
+
         roomObj = roomObject;
         participantObj = participantObject;
         currentRoomName = "room" + roomObject.no;
