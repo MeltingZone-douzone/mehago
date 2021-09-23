@@ -27,19 +27,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants,
         fetchFavoriteRooms();
     },[favoriteCheck]);
 
-    // const fetchRooms = () => {
-    //     try {
-    //         getMyChatListApi().then(res => {
-    //             if(res.data.result == "fail"){
-    //                 return false;
-    //             }
-    //             setParticipatingRoom(res.data.data);
-    //         });
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // }
-
     const fetchFavoriteRooms = () => {
         try {
             getFavoriteRoomList().then(res => {

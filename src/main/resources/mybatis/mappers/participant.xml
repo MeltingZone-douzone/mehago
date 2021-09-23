@@ -7,9 +7,10 @@
 
  <insert id="createParticipant" parameterType="participant">
 		<![CDATA[
-			insert 
-				into participant 
-				values(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom }, null, 0)
+			INSERT INTO
+				participant 
+			VALUES
+				(null,#{accountNo},#{chatRoomNo},#{chatNickname},#{notReadCount}, 0, now(), #{favoriteRoom }, null, 0)
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -69,7 +70,7 @@
 	<select id="getParticipantsList" parameterType="Long" resultType="participant">
 	<![CDATA[
 		SELECT
-			p.no, p.account_no as accountNo, p.chat_room_no as chatRoomNo, p.chat_nickname as chatNickname, p.not_read_count as notReadCount, p.last_read_chat_no as lastReadChatNo, p.created_at as createdAt,
+			p.no, p.account_no as accountNo, p.chat_room_no as chatRoomNo, p.chat_nickname as chatNickname, p.not_read_count as notReadCount, p.last_read_chat_no as lastReadChatNo,
 			a.thumbnail_url as thumbnailUrl
 		FROM
 			participant p, account a

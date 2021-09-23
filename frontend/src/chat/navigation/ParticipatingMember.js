@@ -16,8 +16,10 @@ import '../../assets/sass/chat/ChatNav.scss';
 export default function ParticipatingMember({currentParticipants, userInfo, participants}) {
     const [searchNickname, setSearchNickname] = useState('');
 
-    console.log(currentParticipants);
+    // console.log(currentParticipants);
     console.log(participants); 
+    console.log(userInfo); 
+    
 
     const showParticipantsList = (participants, currentParticipants) => {
         let onlineParticipants;
@@ -32,9 +34,14 @@ export default function ParticipatingMember({currentParticipants, userInfo, part
         .map(participant => 
             <ListItem>
                 <ListItemIcon>
-                    <Avatar alt={participant.chatNickname} src={participant.chatNickname} />
+                    <Avatar alt={participant.thumbnailUrl} src={participant.thumbnailUrl} />
                 </ListItemIcon>
-                <ListItemText primary={participant.chatNickname}>{participant.chatNickname}</ListItemText>
+                {
+                    participant.accountNo === userInfo.no ?
+                    <ListItemText primary={`${participant.chatNickname} (나)`}></ListItemText>
+                    :
+                    <ListItemText primary={participant.chatNickname}></ListItemText>
+                }   
                 {
                     onlineParticipants.includes(participant.no)?
                     <ParticipantsStatus style={{fontSize:'12px', color: '#34d12c'}}/>
@@ -52,7 +59,7 @@ export default function ParticipatingMember({currentParticipants, userInfo, part
                     <List>
                         <ListItem key={userInfo.nickname}>
                             <ListItemIcon>
-                            <Avatar alt={userInfo.nickname} src={userInfo.nickname} />
+                            <Avatar alt={userInfo.thumbnailUrl} src={userInfo.thumbnailUrl} />
                             </ListItemIcon>
                             <ListItemText primary={userInfo.nickname}></ListItemText>
                         </ListItem>

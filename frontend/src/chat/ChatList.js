@@ -72,7 +72,7 @@ export default function ChatList() {
                     if (res.data.result === "success") {
                         setJoinRooms(res.data.data);
                         setIsSearched(true);
-                        setNoResult(false); // TODO: ~ 와 관련된 채팅방이 ' '개 있습니다.
+                        setNoResult(false);                                         // TODO: ~ 와 관련된 채팅방이 ' '개 있습니다.
                     } else {
                         console.log(res.data.message); 
                         setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
