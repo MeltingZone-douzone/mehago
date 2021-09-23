@@ -93,7 +93,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
     // console.log("msgToJson", msgToJson.validation);
 
     switch (msgToJson.validation) {
-        case "join": io.to(roomname).emit('join', msgToJson);
+        case "join": io.to(roomname).emit('join message', msgToJson);
             break;
         case "object": io.to(roomname).emit(`chat:message:${roomname}`, msgToJson);
             break;
@@ -101,9 +101,9 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "update": io.to(roomname).emit('message:update:readCount', msgToJson);
             break;
-        case "leave": io.to(roomname).emit('leave', msgToJson);
+        case "leave": io.to(roomname).emit('leave message', msgToJson);
             break;
-        case "disconnected": io.to(roomname).emit('disconnected', msgToJson);
+        case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
     }
 
 });
@@ -213,7 +213,6 @@ io.on("connection", (socket) => {
     })
 
     socket.on('chat message', async (message) => {
-        // TODO: DB 저장
         let chatMember = await getChatCount(currentRoomName);
         // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
         const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
@@ -231,10 +230,12 @@ io.on("connection", (socket) => {
         todoController.addTodo(todoObject);
 
     });
-    socket.on("notice:send", async (notice) => {
+    socket.on("notice:send", async (notice, accountNo) => {
+        console.log(notice, accountNo);
         const noticeObject = {
             participantNo: participantObj.no,
             chatRoomNo: roomObj.no,
+            accountNo: accountNo,
             notice: notice,
         }
         noticeController.addNotice(noticeObject);

@@ -4,19 +4,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.douzone.mehago.repository.NoticeRepository;
 import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.ChatRoomService;
 import com.douzone.mehago.service.FileUploadService;
 import com.douzone.mehago.service.MessageService;
+import com.douzone.mehago.service.NoticeService;
 import com.douzone.mehago.service.ParticipantService;
 import com.douzone.mehago.service.TagService;
+import com.douzone.mehago.service.TodoService;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
+import com.douzone.mehago.vo.Notice;
 import com.douzone.mehago.vo.Participant;
+import com.douzone.mehago.vo.Todo;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +47,8 @@ public class ChatController {
     private final ParticipantService participantService;
     private final TagService tagService;
     private final MessageService messageService;
+    private final NoticeService noticeService;
+    private final TodoService todoService;
 
     @Auth
     @PostMapping("/createRoom")
@@ -140,12 +149,34 @@ public class ChatController {
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 참여자가 존재하지 않습니다"));
     }
 
-    // @PostMapping("/addTodo")
-    // public ResponseEntity<?> addTodo(@RequestBody Todo todo) {
-    // boolean result = false;
-    // result = todoService.addTodo(todo);
-    // return ResponseEntity.ok().body(CommonResponse.success(result));
-    // }
+    @Auth
+    @GetMapping("/todo/{chatRoomNo}")
+    public ResponseEntity<?> getTodoList(@PathVariable Long chatRoomNo) {
+        List<Todo> list = todoService.getTodoList(chatRoomNo);
+        return ResponseEntity.ok()
+                .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 To-Do가 존재하지 않습니다"));
+    }
+
+    @Auth
+    @PostMapping("/todo")
+    public ResponseEntity<?> addTodo(@RequestBody Todo todo) {
+        Long tagNo = todoService.addTodo(todo);
+        return ResponseEntity.ok().body(tagNo != null? CommonResponse.success(tagNo) : CommonResponse.fail("To-Do 리스트 추가를 실패했습니다"));
+    }
+
+    @Auth
+    @PutMapping("/todo/{todoNo}")
+    public ResponseEntity<?> updateCheckTodo(@PathVariable Long todoNo) {
+        Boolean result = todoService.updateCheckTodo(todoNo);
+        return ResponseEntity.ok().body(result ? CommonResponse.success(result) : CommonResponse.fail("To-Do check 수정을 실패했습니다."));
+    }
+
+    @Auth
+    @DeleteMapping("/todo/{todoNo}")
+    public ResponseEntity<?> removeTodo(@PathVariable Long todoNo) {
+        Boolean result = todoService.removeTodo(todoNo);
+        return ResponseEntity.ok().body(result ? CommonResponse.success(result) : CommonResponse.fail("To-Do 삭제를 실패했습니다."));
+    }
 
     // @PostMapping("/addNotice")
     // public ResponseEntity<?> addNotice(@RequestBody Notice notice) {
@@ -291,6 +322,20 @@ public class ChatController {
     @DeleteMapping("/exitRoom/{chatRoomNo}")
     public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser Account account) {
         boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), account.getNo());
+        return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+
+    @Auth
+    @GetMapping("/getNotice/{chatRoomNo}")
+    public ResponseEntity<?> getNotice(@PathVariable Long chatRoomNo, @AuthUser Account account) {
+        List<Map<String, Object>> noticeList = noticeService.getNotice(chatRoomNo, account.getNo());
+        return ResponseEntity.ok().body(CommonResponse.success(noticeList));
+    }
+
+    @Auth
+    @DeleteMapping("/deleteNotice/{noticeNo}")
+    public ResponseEntity<?> deleteNotice(@PathVariable Long noticeNo) {
+        boolean result = noticeService.deleteNotice(noticeNo);
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 }

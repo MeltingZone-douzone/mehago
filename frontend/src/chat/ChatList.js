@@ -38,7 +38,6 @@ export default function ChatList() {
                         if(res.data.data.length === 0){
                             setIsEnd(!isEnd);
                         }
-                        console.log(res);
                         setRooms(prevState => prevState.concat(res.data.data));
                         setIsFetching(false);
                     }
@@ -50,10 +49,11 @@ export default function ChatList() {
     }
 
     const onScroll = (e) => {
-        const scrollHeight = e.target.scrollHeight;     
+        const scrollHeight = e.target.scrollHeight;
+        const fetchPointHeight = scrollHeight * 3 / 4;
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
         const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
-        if(scrollTop + clientHeight >= scrollHeight && !isFetching && !isEnd) {
+        if(scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
             fetchChatRooms();
             setIsFetching(true);
         }

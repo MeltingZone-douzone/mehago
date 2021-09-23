@@ -9,16 +9,17 @@ import Thumbnail from '../../components/Thumbnail';
 
 export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword}) {
     const classes = madeStyles();
-
+    
     const getHighlightedText = ({ text = message.message, highlight = searchKeyword }) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
         return <p className={classes.receivedMessage} name={'chat-message'} no={message.no}>
-            {parts.map((part, index) =>
-                part.toLowerCase() === highlight.toLowerCase() ?
-                    (<mark key={index}>{part}</mark>)
-                    :
-                    (part)
-            )
+            {
+                parts.map((part, index) =>
+                    part.toLowerCase() === highlight.toLowerCase() ?
+                        (<mark key={index}>{part}</mark>)
+                        :
+                        (part)
+                )
             }
         </p>;
     }
@@ -27,15 +28,15 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
                 <Grid item xs={1} align="center">
-                    {!nextMessage || nextMessage.participantNo !== message.participantNo ?
+                    {!previousMessage || previousMessage.participantNo !== message.participantNo ?
                         <div className="profile">
-                            {/* <Thumbnail nickname={message.nickname} /> */}
+                            <Thumbnail nickname={message.nickname} />
                         </div>
                         : ''}
                 </Grid>
                 <Grid item xs={11}>
                     <Grid item xs={12}>
-                        {!nextMessage || nextMessage.participantNo !== message.participantNo ?
+                        {!previousMessage || previousMessage.participantNo !== message.participantNo ?
                             <ListItemText align="left" secondary={
                                 <Typography className={classes.nickname}>
                                     {message.nickname}
@@ -72,7 +73,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                             secondary={
                                 <Typography className={classes.notReadCountLeft}>
                                     <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
-                                    {!previousMessage || previousMessage.participantNo !== message.participantNo || moment(previousMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
+                                    {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
                                         <span className={classes.createdAt}>
                                             {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
                                         </span>

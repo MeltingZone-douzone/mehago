@@ -55,15 +55,24 @@ export function getMyChatListApi() {
         .then(res => res);
 }
 
-export function addTodo(roomNo, participantNo, date, todo) {
-    const todoObject = {
-        chatRoomNo: roomNo,
-        participantNo: participantNo,
-        date: date,
-        todo: todo,
-    }
-    return axios.post("/api/chat/addTodo", todoObject, { headers: AuthHeader })
+export function getTodoList(chatRoomNo) { // offsetNo
+    return axios.get(`/api/chat/todo/${chatRoomNo}`, { headers: AuthHeader })
         .then(res => res);
+}
+
+export function addTodo(todoObject) {
+    return axios.post("/api/chat/todo", todoObject, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function updateCheckTodo(todoNo) {
+    return axios.put(`/api/chat/todo/${todoNo}`, {}, { headers: AuthHeader })
+        .then(res => res)
+}
+
+export function removeTodo(todoNo) {
+    return axios.delete(`/api/chat/todo/${todoNo}`, { headers: AuthHeader })
+        .then(res => res)
 }
 
 export function addNotice(roomNo, participantNo, notice) {
@@ -181,3 +190,16 @@ export function keyword(searchValue) {
     return axios.get(`/api/chat/keywordSearch?searchValue=`+ searchValue , { headers: AuthHeader })
         .then(res => res);
 }
+
+export function getNotice(chatRoomNo) {
+    setAuthHeader();
+    return axios.get(`/api/chat/getNotice/${chatRoomNo}`, { headers: AuthHeader })
+        .then(res => res);
+}
+
+export function deleteNotice(noticeNo) {
+    setAuthHeader();
+    return axios.delete(`/api/chat/deleteNotice/${noticeNo}`, { headers: AuthHeader })
+        .then(res => res);
+}
+
