@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
 
-export default function ParticipatingRoom({participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck}){
+export default function ParticipatingRoom({socket, participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck, handleReceivedMsg}){
     const classes = styles();
 
     return Object.keys(participatingRoom).length !== 0 ?
@@ -30,12 +30,15 @@ export default function ParticipatingRoom({participatingRoom, setSearchValue, se
                 {
                 participatingRoom
                 .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
-                .map((room ,index)=> 
+                .map((room ,index)=>
                     <ParticipatingList
+                        key={index}
+                        socket={socket}
                         room = {room} 
                         updateFavoriteRoom={updateFavoriteRoom} 
                         exitRoom={exitRoom}
-                        setFavoriteCheck={setFavoriteCheck}/>
+                        setFavoriteCheck={setFavoriteCheck}
+                        handleReceivedMsg={handleReceivedMsg}/>
                     )
                 }
             </ContentWrapper>

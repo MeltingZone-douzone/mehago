@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
-import { Link, useHistory } from 'react-router-dom';
-import { getMyChatListApi, updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
+import { Link } from 'react-router-dom';
+import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import HomeIcon from '@material-ui/icons/Home';
@@ -13,41 +13,30 @@ import ParticipatingMember from './ParticipatingMember';
 import { Avatar, makeStyles } from '@material-ui/core';
 
 
-export default function ChatNavbar({ currentParticipants, userInfo, participants }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom }) {
     const classes = madeStyles();
-    const history = useHistory();
 
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
-    const [participatingRoom, setParticipatingRoom] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
 
     useEffect(() => {
-        console.log(`fetchRooms() fetchFavoriteRooms(); useEffect`);
         fetchRooms();
         fetchFavoriteRooms();
     }, [favoriteCheck]);
 
-    const goHome = (e) => {
-        console.log("asdasd");
-        history.replace('/chat');
-    }
-
-    const fetchRooms = () => {
-        try {
-            getMyChatListApi().then(res => {
-                if (res.data.result == "fail") {
-                    console.log("참여한 방이 없음");
-                    return false;
-                }
-                setParticipatingRoom(res.data.data);
-            });
-        } catch (e) {
-            console.log(e);
+    useEffect(() => {
+        // DB에 저장 된 채팅 방 모두 입장
+        if (participatingRoom.length >= 1) {
+            let rooms = [];
+            participatingRoom.map((room) =>
+                rooms.push(`room${room.no}`)
+            )
+            socket.emit("join", rooms)
         }
-    }
+    }, [participatingRoom]);
 
     const fetchFavoriteRooms = () => {
         try {
@@ -64,10 +53,8 @@ export default function ChatNavbar({ currentParticipants, userInfo, participants
     }
 
     const updateFavoriteRoom = (chatRoomNo, favoriteStatus) => {
-        console.log(favoriteStatus);
         try {
             updateFavoriteRoomApi(chatRoomNo, favoriteStatus).then((res) => {
-                // setFavoriteCheck(false);
                 setFavoriteCheck(''); // 이전에 다른방 즐겨찾기 체크한 값들 초기화
             });
         } catch (e) {
@@ -87,6 +74,17 @@ export default function ChatNavbar({ currentParticipants, userInfo, participants
         }
     }
 
+    const handleReceivedMsg = (msg) => {
+        let newArr = participatingRoom.map((room) => {
+            if (room.no == msg.chatRoomNo) {
+                return { ...room, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now() };
+            } else {
+                return room;
+            }
+        })
+        setParticipatingRoom(newArr);
+    }
+
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
@@ -97,20 +95,24 @@ export default function ChatNavbar({ currentParticipants, userInfo, participants
         setChatMember(true);
     }
 
+    const goHome = () => {
+        history.replace('/chat');
+    }
+
     return (
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
-                    <NaviButton onClick={(e) => goHome(e)}><HomeIcon /></NaviButton>
+                    <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>
                 <div className={"FavoriteNav"}>
                     {
-                        favoriteRoom && favoriteRoom.map((favorite) => {
+                        favoriteRoom && favoriteRoom.map((favorite, index) => {
                             return (
-                                <Link to={`/chat/${favorite.no}`}>
-                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="좋아요" src={favorite.thumbnailUrl} key={favorite.no} /></NaviButton>
+                                <Link to={`/chat/${favorite.no}`} key={index}>
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl} key={favorite.no} /></NaviButton>
                                 </Link>
                             )
                         })
@@ -118,7 +120,7 @@ export default function ChatNavbar({ currentParticipants, userInfo, participants
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList ? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} /> : null}
+                {chatList ? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} handleReceivedMsg={handleReceivedMsg} /> : null}
                 {chatMember ? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </div>
 

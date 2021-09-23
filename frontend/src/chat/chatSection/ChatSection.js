@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, deleteNotice , getNotice} from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
-import Chatting from './Chatting';
-import MsgInput2 from './MsgInput2';
-import Dialogs from '../dialogs/Dialogs';
+import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-const socket = io('http://localhost:8888');
-export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants}) {
+export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants, socket, userInfo}) {
     const chatRoomNo = match.params.no;
     const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
     const [participantObject, setParticipantObject] = useState({});
@@ -24,9 +20,37 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
 
     const [joinSuccess, setJoinSuccess] = useState(false);
 
+    const [seperate, setSeperate] = useState(false);
+
     const [todoOpen, setTodoOpen] = useState(false);
     const [noticeOpen, setNoticeOpen] = useState(false);
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
+    const [notice, setNotice] = useState([]);
+    
+    const noticeList = (chatRoomNo)=> {
+        try {
+            getNotice(chatRoomNo).then(res => {
+                if(!res.data.data) {
+                    // notice에 아무것도 없을 경우
+                    return;
+                }
+                setNotice(res.data.data);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const handleDeleteNotice = (noticeNo) =>{
+        deleteNotice(noticeNo).then(res=>{
+            // console.log(res.data);
+            if(res.data.result === "success"){
+                setNotice(
+                    notice.filter((notice) => notice.no !== noticeNo)
+                )
+            }
+        })
+    }
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
@@ -53,49 +77,50 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         setJoinSuccess(true);
         
         if(prevChatRoomNo != chatRoomNo){
-            console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
-            socket.emit('leave', roomObject.title);
-            setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
+        // console.log("여기서 방나가기 함.",prevChatRoomNo, chatRoomNo, roomObject.no);
+        //     socket.emit('leave', roomObject.title);
+        //     setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
         }
     }, [chatRoomNo]);
 
     useEffect(()=>{
-        console.log('## chatRoomNo: ', chatRoomNo);
-        socket.on('join', (msgToJson) => {
+        socket.on('join message', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("join socket : ", chatRoomNo, arrayOfNumbers);
+            // console.log("join socket : ", chatRoomNo, arrayOfNumbers);
             handleCurrentParticipants(arrayOfNumbers);
         });
 
-        socket.on('leave', (msgToJson) => {
-            const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("leave socket : "); // FIXME: 이건왜안찍힘 
-            handleCurrentParticipants(arrayOfNumbers);
-        });
+        // socket.on('leave', (msgToJson) => {
+        //     const arrayOfNumbers = msgToJson.chatMember.map(Number);
+        //     console.log("leave socket : "); // FIXME: 이건왜안찍힘 
+        //     handleCurrentParticipants(arrayOfNumbers);
+        // });
         
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
-        socket.on('disconnected', (msgToJson) => {
+        socket.on('disconnect message', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
     },[chatRoomNo])
 
-    console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
+    // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
         return() =>{
-            console.log("unmount");
+            console.log("unmount. logout할 때");
+            socket.emit('leave', roomObject.title)
         }
     }, []);
 
     useEffect(async () => {
         if (joinSuccess) {
-            console.log('joinSuccess');
-            await socket.emit('join', roomObject, participantObject);
-            await socket.emit('participant:join:updateRead');
+            await socket.emit('join:chat', roomObject, participantObject);
+            await socket.emit('participant:updateRead');
             setJoinSuccess(false);
+            console.log(roomObject);
+            noticeList(roomObject.no);
         }
     }, [joinSuccess]);
 
@@ -163,13 +188,13 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
                                     // TODO: 참여자 삭제
         },
-        joinRoom: (e) => {
+        /* joinRoom: (e) => {
             if(prevChatRoomNo != chatRoomNo){
                 console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
                 socket.emit('leave', roomObject.title);
                 setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
             }
-        }
+        } */
 
     }
 
@@ -204,13 +229,15 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         },
         handleNoticeSubmit: (e) => {
             e.preventDefault();
-            console.log(e.target.notice.value);
+            console.log(userInfo.no);
             if (e.target.notice.value === '') {
                 //error 메시지 보내기
             };
             const notice = e.target.notice.value;
-            socket.emit("notice:send", notice);
+            const accountNo = userInfo.no;
+            socket.emit("notice:send", notice, accountNo);
             setNoticeOpen(false);
+            noticeList(roomObject.no);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
@@ -220,11 +247,16 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         }
     }
 
+    const handleSeperate = () => {
+        setSeperate(!seperate);
+    }
+
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage}/>
-                <Chatting socket={socket} 
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate}/>
+                <ChatSeperatedContainer
+                    socket={socket} 
                     messageFunction={messageFunction} 
                     participantObject={participantObject} 
                     roomObject={roomObject} 
@@ -232,9 +264,15 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
                     searchMessage={searchMessage}
                     // setCurrentParticipants={setCurrentParticipants} 
                     hiddenSearchInput={hiddenSearchInput}
-                    cursor={cursor} />
-                <MsgInput2 socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
-                <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
+                    cursor={cursor}
+                    
+                    message={message} buttonFunction={buttonFunction}
+                    todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
+                    isSeperated={seperate}
+                    handleDeleteNotice={handleDeleteNotice}
+                    notice={notice}
+                    userInfo={userInfo}
+                />
             </div>
         </div>
     );

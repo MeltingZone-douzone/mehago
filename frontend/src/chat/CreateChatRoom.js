@@ -38,7 +38,7 @@ const styles = makeStyles({
     }
 })
 
-export default function CreateChatRoom({ history }) {
+export default function CreateChatRoom({ history, fetchRooms}) {
 
     const [chatRoom, setChatRoom] = useState(
         {
@@ -123,6 +123,7 @@ export default function CreateChatRoom({ history }) {
                 if (res.statusText === "OK") {
                     // history.push('/chat');
                 }
+                fetchRooms();
                 history.replace('/chat');
             });
         } catch (err) {

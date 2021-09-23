@@ -6,7 +6,7 @@ export default function PublicRouter({ component: Component, authentication, set
     return (
         <Route {...rest} render={props => (
             authentication && restricted ?
-                <Redirect to="/profile" />
+                <Redirect to="/" />
                 : <Component isExistToken={isExistToken} setAuthentication={setAuthentication} {...props} />)} />
     );
 }

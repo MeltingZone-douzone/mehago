@@ -37,7 +37,7 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
         return participants && participants
             .filter(participants => participants.chatNickname.indexOf(searchNickname) != -1)
             .map(participant =>
-                <ListItem button key={participant.no}>
+                <ListItem>
                     <ListItemIcon>
                         <Avatar alt={participant.chatNickname} src={participant.chatNickname} />
                     </ListItemIcon>

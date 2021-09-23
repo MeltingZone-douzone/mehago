@@ -8,7 +8,6 @@ import java.util.Map;
 import com.douzone.mehago.repository.MessageRepository;
 import com.douzone.mehago.repository.ParticipantRepository;
 import com.douzone.mehago.vo.Account;
-import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.NonMember;
 import com.douzone.mehago.vo.Participant;
@@ -44,7 +43,6 @@ public class ParticipantService {
             participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
             participant.setFavoriteRoom(false);
             participant.setNo(createParticipant(participant));
-            participant.setFavoriteRoom(false);
             participant.setHasData(false);
         } else {
             participant.setHasData(true);

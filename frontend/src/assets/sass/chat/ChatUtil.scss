@@ -1,0 +1,40 @@
+
+.box {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+    color: #34495e;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6em;
+    width: 94%;
+    height: 90%;
+    overflow-y: auto;
+    margin-top: 20px;
+    margin-right: 10px;
+  }
+  
+  .notification {
+    position: relative;
+    padding: 1em 1em 1em 1em;
+    border-left: 4px solid #DDD;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.125);
+    display: flex;
+    place-items: center;
+    border-left-style: dotted;
+  }
+
+  .text {
+    padding-left: 10px;
+    font-size: 10px;
+    width: 70%;
+    margin-right: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .notice{
+      float: left;
+      font-weight: bold;
+      font-size: 13px;
+  }
+  
+
+  
+ 

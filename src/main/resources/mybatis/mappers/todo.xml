@@ -6,8 +6,49 @@
 <mapper namespace="todo">
     <insert id="addTodo" parameterType="todo">
         <![CDATA[
-        insert into todo values(null, #{participantNo}, #{chatRoomNo}, #{todo}, #{date}, false)
+            INSERT INTO
+                todo
+            VALUES
+                (null, #{participantNo}, #{chatRoomNo}, #{todo}, false, now())
         ]]>
+        <selectKey keyProperty="no" order="AFTER" resultType="Long">
+            select last_insert_id()
+        </selectKey>
     </insert>
+
+    <select id="getTodoList" parameterType="Long" resultType="todo">
+        <![CDATA[
+            SELECT
+                t.no, t.participant_no as participantNo, t.chat_room_no as chatRoomNo, t.todo, t.checked, t.created_At as createdAt,
+                p.chat_nickname as chatNickname
+            FROM
+                todo t, participant p
+            WHERE
+                t.chat_room_no = #{chatRoomNo}
+                AND
+                t.participant_no = p.no
+        ]]>
+    </select>
+
+    <update id="updateCheckTodo" parameterType="Long">
+        <![CDATA[
+            UPDATE
+                todo 
+            SET 
+                checked = (IF(checked=true, false, true)) 
+            WHERE 
+                no = #{todoNo}
+        ]]>
+    </update>
+
+    <delete id="removeTodo" parameterType="Long">
+        <![CDATA[
+            DELETE FROM
+                todo
+            WHERE
+                no = #{todoNo}
+        ]]>
+    </delete>
+
 
 </mapper>

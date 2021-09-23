@@ -4,59 +4,6 @@ const path = require('path');
 const dotenv = require("dotenv");
 const argv = require('minimist')(process.argv.slice(2));
 
-// const elasticsearch = require('elasticsearch');
-// const client = new elasticsearch.Client({
-//     node:"localhost:9200"
-
-// });
-
-// async function run () {
-//     client.ping({
-//         // ping usually has a 3000ms timeout
-//         requestTimeout: 1000
-//       }, function (error) {
-//         if (error) {
-//           console.trace('elasticsearch cluster is down!');
-//         } else {
-//           console.log('All is well');
-//         }
-//       });
-
-
-//       // callback API
-//       const result = await client.search({
-//         index: 'my_index',
-//         body: {
-//           query: {
-//             match: { hello: 'world' }
-//           }
-//         }
-//       }, (err, result) => {
-//         if (err) console.log(err)
-//       });
-
-//       console.log(result);
-// }
-
-// run().catch(console.log)
-
-// // Add this to the VERY top of the first file loaded in your app
-// var apm = require('elastic-apm-node').start({
-
-//     // Override the service name from package.json
-//     // Allowed characters: a-z, A-Z, 0-9, -, _, and space
-//     serviceName: 'message',
-
-//     // Use if APM Server requires a secret token
-//     secretToken: '',
-
-//     // Set the custom APM Server URL (default: http://localhost:8200)
-//     serverUrl: 'http://localhost:8200',
-
-
-//     })
-
-
 // Environment Variables(환경 변수)
 dotenv.config({ path: path.join(__dirname, 'app.config.env') });
 
@@ -98,9 +45,7 @@ const io = require("socket.io")(httpServer, {
 })
 
 const { applicationRouter } = require("./routes");
-const { default: axios } = require('axios');
-const { notice } = require('./logging');
-const { resolve } = require('path');
+
 applicationRouter.setup(application);
 
 application.use(express.urlencoded({ extended: true }))
@@ -108,7 +53,6 @@ application.use(express.urlencoded({ extended: true }))
     .use(express.static(path.join(__dirname, process.env.STATIC_RESOURCES_DIRECTORY)))
     .set("views", path.join(__dirname, "views"))
     .all("*", function (req, res, next) {
-        console.log(req);
         res.locals.req = req;
         res.locals.resp = res;
         next();
@@ -145,21 +89,21 @@ httpServer
 
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
-    console.log("msgToJson", msgToJson.validation, msgToJson);
+    // console.log("msgToJson", msgToJson.validation, msgToJson);
     // console.log("msgToJson", msgToJson.validation);
 
     switch (msgToJson.validation) {
-        case "join": io.to(roomname).emit('join', msgToJson);
+        case "join": io.to(roomname).emit('join message', msgToJson);
             break;
-        case "object": io.to(roomname).emit('chat message', msgToJson);
+        case "object": io.to(roomname).emit(`chat:message:${roomname}`, msgToJson);
             break;
         case "notice": io.to(roomname).emit('notice', message);
             break;
         case "update": io.to(roomname).emit('message:update:readCount', msgToJson);
             break;
-        case "leave": io.to(roomname).emit('leave', msgToJson);
+        case "leave": io.to(roomname).emit('leave message', msgToJson);
             break;
-        case "disconnected": io.to(roomname).emit('disconnected', msgToJson);
+        case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
     }
 
 });
@@ -167,34 +111,44 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
 io.on("connection", (socket) => {
     console.log("node connected");
     let messageObj = {};
+    // 레디스에 방들을 담아서 따로 할 필요 없이 해야함 
+    // --> notReadChatCount 실시간으로 업데이트하기 위해선 처음 메세지를 저장할 때 총 인원수를 넣어야하는데
+    // --> DB나 React에서 처리하게 되면 사람마다 다르게 업데이트 될 수 있음. 아니면 노드에서..?
     let roomObj = {};
     let participantObj = {};
     let currentRoomName = null;
 
 
-    socket.on('join', async (roomObject, participantObject) => {
-        console.log(socket.adapter.rooms); 
+    // DB에 저장 된 채팅 방 모두 입장
+    socket.on('join', (rooms) => {
+        console.log(rooms);
+        socket.join(rooms);
+    })
 
+
+    socket.on('join:chat', async (roomObject, participantObject) => {
         roomObj = roomObject;
         participantObj = participantObject;
+        // hasData는 뭔지 사용처가 없다면 false일때 ( 000님 입장했습니다.)메세지 보내기
         currentRoomName = "room" + roomObject.no;
-        // console.log("participantObj", participantObj.no);
-
-
+ 
         redisClient.sadd(currentRoomName, participantObj.no);
         socket.join(currentRoomName);
         io.of('/').adapter.subClient.subscribe(currentRoomName);
-
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
 
-        const joinMessage = {
-            validation: "join",
-            message: `notice::${socket.id}님이 ${roomObj.no}방을 입장하셨습니다.`,
-            chatMember
+        if(!participantObj.hasData) {
+
+            const joinMessage = {
+                validation: "join",
+                message: `notice::${socket.id}님이 ${roomObj.no}방을 입장하셨습니다.`,
+                chatMember
+            }
+
+            io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(joinMessage));
         }
 
-        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(joinMessage));
         messageObj = {
             participantNo: participantObject.no,
             chatRoomNo: roomObject.no,
@@ -210,7 +164,6 @@ io.on("connection", (socket) => {
         if (receivedMsg) {
             participantObj.lastReadChatNo = receivedMsg.no;
         }
-        // console.log(changedRows);
 
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
@@ -245,7 +198,7 @@ io.on("connection", (socket) => {
             socket.leave(currentRoomName, (result) => { });
             
             let chatMember;
-            await getChatMember(currentRoomName).then(res => chatMember = res);
+            await getChatMsember(currentRoomName).then(res => chatMember = res);
             
             const disconnectMessage = {
                 "validation": "disconnected",
@@ -259,10 +212,7 @@ io.on("connection", (socket) => {
         console.log("node disconnected", reason);
     })
 
-    // TODO: 진짜 방 나가기
-
     socket.on('chat message', async (message) => {
-        // TODO: DB 저장
         let chatMember = await getChatCount(currentRoomName);
         // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
         const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
@@ -280,10 +230,12 @@ io.on("connection", (socket) => {
         todoController.addTodo(todoObject);
 
     });
-    socket.on("notice:send", async (notice) => {
+    socket.on("notice:send", async (notice, accountNo) => {
+        console.log(notice, accountNo);
         const noticeObject = {
             participantNo: participantObj.no,
             chatRoomNo: roomObj.no,
+            accountNo: accountNo,
             notice: notice,
         }
         noticeController.addNotice(noticeObject);
@@ -301,13 +253,23 @@ io.on("connection", (socket) => {
      * 방 퇴장
      * 회원 / 비회원 상관없이 나가면 
      */
-    socket.on('leave', async (data) => { // data는 의미없음 지금. roomname받아와야하는데 이미 currentRoomname에 "room 1" ㅣㅇ런식으로 나와잇어서 받아와서 앞에 "room "을 더해야하니까 굳이할필요있나업나몰라안함그래서
-        // socket.leave(data.roomName, (result) => { });
+
+    // leave:chat-section -> chatsection에서 나가게 되면 redis에 담긴 유저 지워야함( 온라인, 오프라인 용도)
+    // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함.
+
+    socket.on('leave:chat-section', async () => { 
         redisClient.srem(currentRoomName, participantObj.no);
-        socket.leave(currentRoomName, (result) => { });
-        
+
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
+
+        
+    });
+
+    // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 채팅방 is_deleted = true 일때)
+    socket.on('leave:chat-room', ()=>{
+
+        // socket.leave(data.roomName, (result) => { });
 
         const leaveMessage = {
             "validation": "leave",
@@ -315,6 +277,7 @@ io.on("connection", (socket) => {
             chatMember
         }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(leaveMessage));
+
 
         // io.of('/').adapter.subClient.unsubscribe(currentRoomName) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
@@ -327,8 +290,8 @@ io.on("connection", (socket) => {
         io.of('/').adapter.pubClient.end(); // 발행자 설정 해제 */
 
         // TODO: DB room에서 회원 / 비회원 관련 데이터 삭제
-    });
 
+    });
 
 });
 
