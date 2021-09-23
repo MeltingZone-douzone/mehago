@@ -1,16 +1,22 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { fadeIn, fadeOut } from '../../assets/styles/properties/Fade';
 
 import ChattingTemplate from './ChattingTemplate';
 import UtilsTemplate from './UtilsTemplate';
 
-export default function ChatSeperatedContainer({socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen , isSeperated}) {
+export default function ChatSeperatedContainer({socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen , isSeperated, handleDeleteNotice, notice, userInfo}) {
+
+    useEffect(()=>{
+        console.log(isSeperated);
+    }, [isSeperated])
+
 
     return(
         <Container>
             <ChatWrapper isSeperated={isSeperated}>
                 <ChattingTemplate 
-                     socket={socket} 
+                     socket={socket}
                      messageFunction={messageFunction} 
                      participantObject={participantObject} 
                      roomObject={roomObject} 
@@ -27,9 +33,12 @@ export default function ChatSeperatedContainer({socket, messageFunction, partici
 
             <UtilsWrapper isSeperated={isSeperated}>
                 <UtilsTemplate 
-                    isOnChatSection={true} /* 네비랑 같이 쓰는데 css를 위함 */
+                    isOnChatSection={true} 
                     participantObject={participantObject}
-                    chatRoomNo={chatRoomNo}
+                    chatRoomNo={chatRoomNo}/* 네비랑 같이 쓰는데 css를 위함 */
+                    handleDeleteNotice={handleDeleteNotice}
+                    notice={notice}
+                    userInfo={userInfo}
                 />
             </UtilsWrapper>
         </Container>
@@ -46,18 +55,22 @@ const Container = styled.div`
 `
 
 const ChatWrapper = styled.div`
-    // width: ${({isSeperted}) => isSeperted? "45%" : "100%"};
-    // height: ${({isSeperted}) => isSeperted? "90%" : "100%"};
-    
-    width: 45%;
-    height: 90%;
+    width: ${({isSeperated}) => isSeperated? "45%" : "100%"};
+    height: ${({isSeperated}) => isSeperated? "90%" : "100%"};
+
+    transition: all .5s ease-in-out;
+
     background-color: #F5F5F5;
     border:1px soild #eee;
     border-radius: 8px;
     margin: auto;
+
+    
 `
 
 const UtilsWrapper = styled.div`
+    display: ${({isSeperated}) => isSeperated? "block" : "none"};
+    animation: ${(isSeperated) => isSeperated ? fadeIn : fadeOut} 1s ease-out;
     width: 45%;
     height: 95%;
     margin: auto;

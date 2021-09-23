@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import ChatRoomSetting from './components/ChatRoomSetting';
 import ChatUtilFile from './components/ChatUtilFile';
 import ChatUtilNotice from './components/ChatUtilNotice';
-import Notice from './components/ChatUtilNotice';
 import ChatUtilTodoList from './components/ChatUtilTodoList';
 
 import UtilsHeader from './components/UtilsHeader';
 
 
 
-export default function UtilsTemplate({isOnChatSection, participantObject, chatRoomNo}) {
+export default function UtilsTemplate({isOnChatSection,participantObject, chatRoomNo, handleDeleteNotice, notice, userInfo}) {
 
     const [activity, setActivity] = useState("notice"); // 실행되는 작업
 
@@ -26,10 +25,9 @@ export default function UtilsTemplate({isOnChatSection, participantObject, chatR
                 break;
         }
     }
-    // console.log(isOnChatSection);
     const getUtilComponent = () => {
         switch(activity) {
-            case "notice" : return <ChatUtilNotice />;
+            case "notice" : return <ChatUtilNotice chatRoomNo={chatRoomNo} handleDeleteNotice={handleDeleteNotice} notice={notice} userInfo={userInfo}/>;
                 break;
             case "todo" : return <ChatUtilTodoList participantObject={participantObject} chatRoomNo={chatRoomNo} />;
                 break;
@@ -43,7 +41,7 @@ export default function UtilsTemplate({isOnChatSection, participantObject, chatR
     return(
         <Template>
             <UtilsHeaderWrapper>
-                <UtilsHeader isOnChatSection={isOnChatSection} handleActivity={handleActivity} activity={activity}/>
+                <UtilsHeader isOnChatSection={isOnChatSection} handleActivity={handleActivity} activity={activity} />
             </UtilsHeaderWrapper>
             <UtilsContentWrapper>
                 {getUtilComponent()}

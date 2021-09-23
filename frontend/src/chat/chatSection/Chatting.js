@@ -23,7 +23,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     // console.log('hasData: ', participantObject.hasData); // true면 기존입장, false 첫입장
     useEffect(() => {
-        socket.on('chat message', (msg) => {
+        socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
@@ -114,7 +114,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setIsFetching(true);
         }
     }
-    // console.log(messageList)
 
     return (
         <List className={"messageArea"} onScroll={onScroll} ref={messageAreaRef} >

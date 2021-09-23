@@ -1,8 +1,8 @@
+import React, { useState, useEffect } from 'react';
 import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import StarRateRoundedIcon from '@material-ui/icons/StarRateRounded';
-import React, { useState } from 'react';
 import Modal from "react-modal";
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -13,8 +13,14 @@ import '../../assets/sass/chat/modal.scss';
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ room, updateFavoriteRoom, exitRoom, setFavoriteCheck}) {
+export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, handleReceivedMsg}) {
     const classes = madeStyles();
+
+    useEffect(() => {
+        socket.on(`chat:message:room${room.no}`, (msg)=>{
+            handleReceivedMsg(msg);
+        })
+    },[])
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -136,12 +142,7 @@ const madeStyles = makeStyles({
         marginTop: "20px",
     },
     title: {
-        fontWeight: "bolder",
-        // textOverflow: "ellipsis",
-        // backgroundColor:"red",
-        // width:"50px",
-        // overflow: "hidden",
-        // whiteSpace: "nowrap"
+        fontWeight: "bolder"
     },
     participantCount: {
         fontSize: "0.7em",
@@ -153,9 +154,9 @@ const madeStyles = makeStyles({
     },
     leastMessage: {
         fontSize: "0.9em",
-        // textOverflow: "ellipsis",
-        // overflow: "hidden",
-        // whiteSpace: "nowrap"
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        whiteSpace: "nowrap"
     },
     favoriteButton:{
         minHeight:"2px",

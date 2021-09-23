@@ -4,18 +4,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.douzone.mehago.repository.NoticeRepository;
 import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
 import com.douzone.mehago.service.ChatRoomService;
 import com.douzone.mehago.service.FileUploadService;
 import com.douzone.mehago.service.MessageService;
+import com.douzone.mehago.service.NoticeService;
 import com.douzone.mehago.service.ParticipantService;
 import com.douzone.mehago.service.TagService;
 import com.douzone.mehago.service.TodoService;
 import com.douzone.mehago.vo.Account;
 import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.Message;
+import com.douzone.mehago.vo.Notice;
 import com.douzone.mehago.vo.Participant;
 import com.douzone.mehago.vo.Todo;
 
@@ -44,6 +47,7 @@ public class ChatController {
     private final ParticipantService participantService;
     private final TagService tagService;
     private final MessageService messageService;
+    private final NoticeService noticeService;
     private final TodoService todoService;
 
     @Auth
@@ -318,6 +322,20 @@ public class ChatController {
     @DeleteMapping("/exitRoom/{chatRoomNo}")
     public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser Account account) {
         boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), account.getNo());
+        return ResponseEntity.ok().body(CommonResponse.success(result));
+    }
+
+    @Auth
+    @GetMapping("/getNotice/{chatRoomNo}")
+    public ResponseEntity<?> getNotice(@PathVariable Long chatRoomNo, @AuthUser Account account) {
+        List<Map<String, Object>> noticeList = noticeService.getNotice(chatRoomNo, account.getNo());
+        return ResponseEntity.ok().body(CommonResponse.success(noticeList));
+    }
+
+    @Auth
+    @DeleteMapping("/deleteNotice/{noticeNo}")
+    public ResponseEntity<?> deleteNotice(@PathVariable Long noticeNo) {
+        boolean result = noticeService.deleteNotice(noticeNo);
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 }

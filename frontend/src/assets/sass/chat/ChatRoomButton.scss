@@ -46,8 +46,11 @@
         span {
             font-size: 1.2rem;
             font-weight: bold;
-            margin-left: auto;
+            margin-left: 15px;
             margin-right: 10px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
     }
 

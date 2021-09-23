@@ -6,8 +6,36 @@
 <mapper namespace="notice">
     <insert id="addNotice" parameterType="notice">
         <![CDATA[
-        insert into notice values(null, #{participantNo}, #{chatRoomNo}, #{notice})
+        insert into notice values(null, #{participantNo}, #{chatRoomNo}, #{notice}, now())
         ]]>
     </insert>
+
+    <select id="getNotice" parameterType="map" resultType="map">
+        <![CDATA[
+        select DISTINCT
+            n.no, n.participant_no AS participantNo, n.chat_room_no AS chatRoomNo, n.account_no as accountNo, n.notice, DATE_FORMAT(n.created_at, '%m/%d %H:%i') AS createdAt,
+            p.chat_nickname  as nickname,
+            (select thumbnail_url from account where no = n.account_no) as thumbnailUrl
+        from 
+            notice n, participant p
+        where 
+            n.chat_room_no = p.chat_room_no 
+        and 
+            n.participant_no = p.no
+		and 
+			n.chat_room_no = #{chatRoomNo}
+        ORDER BY
+            n.no DESC
+        ]]>
+    </select>
+
+    <delete id="deleteNotice" parameterType="Long">
+    <![CDATA[
+      DELETE from 
+        notice 
+      WHERE
+        no = #{noticeNo} 
+    ]]>
+  </delete>
 
 </mapper>

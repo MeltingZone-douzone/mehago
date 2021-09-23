@@ -8,8 +8,8 @@ module.exports = {
         const query = util.promisify(conn.query).bind(conn);
         try {
             return await query(
-                " insert into notice values(null, ?,?,?)",
-                [notice.participantNo, notice.chatRoomNo, notice.notice]
+                " insert into notice values(null, ?,?,?,?, now())",
+                [notice.participantNo, notice.chatRoomNo, notice.accountNo, notice.notice]
             );
         } catch (err) {
             console.error(err);
