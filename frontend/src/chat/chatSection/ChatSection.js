@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 
 import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice } from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-const socket = io('http://localhost:8888');
-export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants}) {
+
+export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants, socket}) {
     const chatRoomNo = match.params.no;
     const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
     const [participantObject, setParticipantObject] = useState({});
@@ -52,11 +51,6 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         handleParticipants(chatRoomNo); // 방의 participants 뽑아옴
         setJoinSuccess(true);
         
-        if(prevChatRoomNo != chatRoomNo){
-            console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
-            socket.emit('leave', roomObject.title);
-            setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
-        }
     }, [chatRoomNo]);
 
     useEffect(()=>{
@@ -67,11 +61,11 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             handleCurrentParticipants(arrayOfNumbers);
         });
 
-        socket.on('leave', (msgToJson) => {
-            const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            console.log("leave socket : "); // FIXME: 이건왜안찍힘 
-            handleCurrentParticipants(arrayOfNumbers);
-        });
+        // socket.on('leave', (msgToJson) => {
+        //     const arrayOfNumbers = msgToJson.chatMember.map(Number);
+        //     console.log("leave socket : "); // FIXME: 이건왜안찍힘 
+        //     handleCurrentParticipants(arrayOfNumbers);
+        // });
         
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
@@ -91,9 +85,8 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
 
     useEffect(async () => {
         if (joinSuccess) {
-            console.log('joinSuccess');
-            await socket.emit('join', roomObject, participantObject);
-            await socket.emit('participant:join:updateRead');
+            await socket.emit('join:chat', roomObject, participantObject);
+            await socket.emit('participant:updateRead');
             setJoinSuccess(false);
         }
     }, [joinSuccess]);

@@ -22,7 +22,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     // console.log('participantObject.hasData: ', participantObject.hasData); // true면 기존입장, false 첫입장
     useEffect(() => {
-        socket.on('chat message', (msg) => {
+        socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import ChatRoomSetting from './components/ChatRoomSetting';
 import ChatUtilFile from './components/ChatUtilFile';
 import ChatUtilNotice from './components/ChatUtilNotice';
-import Notice from './components/ChatUtilNotice';
 import ChatUtilTodoList from './components/ChatUtilTodoList';
 
 import UtilsHeader from './components/UtilsHeader';
@@ -26,7 +25,7 @@ export default function UtilsTemplate({isOnChatSection}) {
                 break;
         }
     }
-    console.log(isOnChatSection);
+
     const getUtilComponent = () => {
         switch(activity) {
             case "notice" : return <ChatUtilNotice />;

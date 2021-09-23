@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AppBar from '@material-ui/core/AppBar';
@@ -32,6 +32,7 @@ export default function ChatHeader({handleSeperate,messageFunction, roomObject, 
         return;
       }
   }
+  
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
@@ -143,7 +144,7 @@ const SearchResult = styled.p`
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
+
   },
   appBar: {
     background: '#2E3B55'

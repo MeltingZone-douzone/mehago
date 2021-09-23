@@ -7,9 +7,11 @@ import '../../assets/sass/chat/Chat.scss';
 import ChatList from '../../chat/ChatList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
 import SettingChatRoom from '../../chat/SettingChatRoom';
-import { getParticipantsList } from '../../../api/ChatApi'
+import { getParticipantsList } from '../../../api/ChatApi';
 
+import { io } from 'socket.io-client';
 
+const socket = io('http://localhost:8888');
 export default function ChatPage({ match, userInfo }) {
 
     const [participants, setParticipants] = useState([]);
@@ -32,15 +34,13 @@ export default function ChatPage({ match, userInfo }) {
         }
     }
 
-
-
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} />
+            <ChatNavbar currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} socket={socket} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} component={ChatList} />
-                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} />} />
+                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} socket={socket}/>} />
                     <Route path={`${match.path}/chatroom/create`} component={CreateChatRoom} />
                     <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>

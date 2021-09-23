@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from 'react';
 import { InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
-import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { getAllChatListApi, keyword } from '../../api/ChatApi';
 import '../assets/sass/chat/ChatList.scss';
@@ -14,7 +14,6 @@ export default function ChatList() {
     const [isSearched, setIsSearched] = useState(false);
     const [noResult, setNoResult] = useState(false);
 
-    const chatRoomAreaRef = useRef();
     const [offsetNo, setOffsetNo] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
@@ -23,6 +22,13 @@ export default function ChatList() {
     useEffect(() => {
         fetchChatRooms();
     }, [])
+
+    useEffect(() =>{
+        if(!searchValue) {
+            setIsSearched(false);
+            setNoResult(false);
+        }
+    },[searchValue])
 
     const fetchChatRooms = () => {
         try {
@@ -44,7 +50,7 @@ export default function ChatList() {
     }
 
     const onScroll = (e) => {
-        const scrollHeight = e.target.scrollHeight;     // chatRoomAreaRef 의 총 크기
+        const scrollHeight = e.target.scrollHeight;     
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
         const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
         if(scrollTop + clientHeight >= scrollHeight && !isFetching && !isEnd) {
@@ -60,31 +66,17 @@ export default function ChatList() {
         }
     }, [rooms]);
 
-
-    useEffect(() =>{
-        console.log(rooms);
-    },[rooms])
-
-    const keywordSearch = (e) => {
-        console.log(searchValue);
+    const keywordSearch = () => {
         try {
-            if(searchValue === ""){
-                getChatListApi().then(res => {
-                    setRooms(res.data);
-                })
-            } 
-                keyword(searchValue).then(res => {
-                    if (res.data.result === "success") {
-                        setJoinRooms(res.data.data);
-                        setIsSearched(true);
-                        setNoResult(false); // TODO: ~ 와 관련된 채팅방이 ' '개 있습니다.
-                    } else {
-                        console.log(res.data.message); 
-                        setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
-                        setIsSearched(false);
-                    }
-                });
-            
+            keyword(searchValue).then(res => {
+                if (res.data.result === "success") {
+                    setJoinRooms(res.data.data);
+                    setIsSearched(true);
+                    setNoResult(false); // TODO: ~ 와 관련된 채팅방이 ' '개 있습니다.
+                } else {
+                    setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
+                }
+            });
             
         } catch (e) {
             console.log(e);
@@ -93,7 +85,7 @@ export default function ChatList() {
 
     const handleKeyPress = (e) => {
         if (e.key == 'Enter') {
-            keywordSearch()
+            keywordSearch();
         }
     }
 
@@ -131,8 +123,8 @@ export default function ChatList() {
                 noResult ? (
                     <p className={"noResult"}>{noResult}</p>
                 ) : (
-                    <div className={"ChatListContainer"}  onScroll={onScroll} ref={chatRoomAreaRef}>
-                        <List className={"ChatRoom"} ref={chatRoomAreaRef}>
+                    <div className={"ChatListContainer"}  onScroll={onScroll}>
+                        <List className={"ChatRoom"}>
                             { rooms ? getChatrooms().map((room, index)=> {
                                 return(
                                     <div key={index}>

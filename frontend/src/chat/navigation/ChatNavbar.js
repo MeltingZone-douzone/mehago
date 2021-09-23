@@ -13,7 +13,7 @@ import ParticipatingMember from './ParticipatingMember';
 import { Avatar, makeStyles } from '@material-ui/core';
 
 
-export default function ChatNavbar({currentParticipants, userInfo, participants}){
+export default function ChatNavbar({socket, currentParticipants, userInfo, participants}){
     const classes = madeStyles();
     const history = useHistory();
 
@@ -23,17 +23,12 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
+    const [successfullyFetched, setSuccessfullyFetched] = useState(false);
     
     useEffect(()=> {
-        console.log(`fetchRooms() fetchFavoriteRooms(); useEffect`);
         fetchRooms();
         fetchFavoriteRooms();
     },[favoriteCheck]);
-
-    const goHome = (e) => {
-        console.log("asdasd");
-        history.replace('/chat');
-    }
 
     const fetchRooms = () => {
         try {
@@ -41,18 +36,28 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 if(res.data.result == "fail"){
                     return false;
                 }
-                // console.log(res.data.data);
                 setParticipatingRoom(res.data.data);
+                setSuccessfullyFetched(true);
             });
         } catch (e) {
             console.log(e);
         }
     }
 
+    useEffect(() =>{
+        // DB에 저장 된 채팅 방 모두 입장
+        if(participatingRoom.length >= 1) {
+            let rooms = [];
+            participatingRoom.map((room) =>
+                rooms.push(`room${room.no}`)
+            )
+            socket.emit("join", rooms)
+        }
+    },[successfullyFetched]);
+
     const fetchFavoriteRooms = () => {
         try {
             getFavoriteRoomList().then(res => {
-                console.log(res.data);
                 setFavoriteRoom(res.data);
             });
         } catch (e) {
@@ -61,7 +66,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     }
 
     const updateFavoriteRoom = (chatRoomNo, favoriteStatus) => {
-        console.log(favoriteStatus);
         try {
             updateFavoriteRoomApi(chatRoomNo, favoriteStatus).then((res) => {
                 // setFavoriteCheck(false);
@@ -84,6 +88,17 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
         }
     }
 
+    const handleReceivedMsg = (msg) => {
+        let newArr = participatingRoom.map((room)=>{
+            if(room.no == msg.chatRoomNo) {
+                return {...room, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now()};
+            }else {
+                return room;
+            }
+        })
+        setParticipatingRoom(newArr);
+    }
+
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
@@ -92,6 +107,10 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
     const handleChatMember = () => {
         setChatList(false);
         setChatMember(true);
+    }
+
+    const goHome = () => {
+        history.replace('/chat');
     }
 
     return (
@@ -115,7 +134,7 @@ export default function ChatNavbar({currentParticipants, userInfo, participants}
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck}/>: null}
+                {chatList? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} handleReceivedMsg={handleReceivedMsg}/>: null}
                 {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
             </div>
             

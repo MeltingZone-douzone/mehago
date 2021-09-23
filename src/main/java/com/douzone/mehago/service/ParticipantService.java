@@ -40,8 +40,8 @@ public class ParticipantService {
             participant.setChatNickname(auth.getNickname());
             participant.setChatRoomNo(chatRoomNo);
             participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
-            participant.setNo(createParticipant(participant));
             participant.setFavoriteRoom(false);
+            participant.setNo(createParticipant(participant));
             participant.setHasData(false);
         } else {
             participant.setHasData(true);

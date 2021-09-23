@@ -8,11 +8,11 @@ import { colors } from '../../../assets/styles/properties/Colors';
 export default function UtilsHeader({isOnChatSection, handleActivity, activity}) {
 
     return(
-        <HeaderTemplate onSection={isOnChatSection}>
-            <UtilsNavItem onSection={isOnChatSection} active={activity=="notice"? true : false } name={"notice"} onClick={() => handleActivity("notice")}><FontAwesomeIconStyled icon={faBullhorn}/><span>공지사항</span></UtilsNavItem>
-            <UtilsNavItem onSection={isOnChatSection} active={activity=="todo"? true : false } name={"todo"} onClick={() => handleActivity("todo")}><FontAwesomeIconStyled icon={faClipboardList}/><span>해야 할 일</span></UtilsNavItem>
-            <UtilsNavItem onSection={isOnChatSection} active={activity=="file"? true : false } name={"file"} onClick={() => handleActivity("file")}><FontAwesomeIconStyled icon={faFolder}/><span>파일리스트</span></UtilsNavItem>
-            <UtilsNavItem onSection={isOnChatSection} active={activity=="setting"? true : false } name={"setting"} onClick={() => handleActivity("setting")}><FontAwesomeIconStyled icon={faCog}/><span>채팅방 설정</span></UtilsNavItem>
+        <HeaderTemplate isOnSection={isOnChatSection}>
+            <UtilsNavItem isOnSection={isOnChatSection} active={activity=="notice"? true : false } name={"notice"} onClick={() => handleActivity("notice")}><FontAwesomeIconStyled icon={faBullhorn}/><span>공지사항</span></UtilsNavItem>
+            <UtilsNavItem isOnSection={isOnChatSection} active={activity=="todo"? true : false } name={"todo"} onClick={() => handleActivity("todo")}><FontAwesomeIconStyled icon={faClipboardList}/><span>해야 할 일</span></UtilsNavItem>
+            <UtilsNavItem isOnSection={isOnChatSection} active={activity=="file"? true : false } name={"file"} onClick={() => handleActivity("file")}><FontAwesomeIconStyled icon={faFolder}/><span>파일리스트</span></UtilsNavItem>
+            <UtilsNavItem isOnSection={isOnChatSection} active={activity=="setting"? true : false } name={"setting"} onClick={() => handleActivity("setting")}><FontAwesomeIconStyled icon={faCog}/><span>채팅방 설정</span></UtilsNavItem>
         </HeaderTemplate>
     )
 
@@ -23,7 +23,7 @@ const HeaderTemplate = styled.div`
     height: 100%;
 
     display: flex;
-    font-size: ${({onSection}) => onSection? ".9rem" : ".8rem" };
+    font-size: ${({isOnSection}) => isOnSection? ".9rem" : ".8rem" };
 `
 
 const UtilsNavItem = styled.div`
@@ -46,7 +46,7 @@ const UtilsNavItem = styled.div`
     }
 
     span {
-        display: ${({onSection}) => onSection? "inherait" : "none"};
+        display: ${({isOnSection}) => isOnSection? "inherait" : "none"};
         margin-left: 5px;
     }
 `
