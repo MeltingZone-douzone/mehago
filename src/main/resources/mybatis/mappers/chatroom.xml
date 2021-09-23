@@ -133,8 +133,8 @@
                   account_no = #{accountNo })
           AND 
 				    c.is_deleted = false
-      order by 
-        leastMessageAt desc
+        ORDER BY 
+          leastMessageAt desc
     ]]>
   </select>
 

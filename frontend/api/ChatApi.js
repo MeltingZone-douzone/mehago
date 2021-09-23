@@ -182,7 +182,7 @@ export function keyword(searchValue) {
 
 export function getNonMemberInfo() {
     setAuthHeader();
-    return axios.get('api/chat/getNonMemberInfo', { headers: AuthHeader }).then(res => res);
+    return axios.get('/api/chat/getNonMemberInfo', { headers: AuthHeader }).then(res => res);
 }
 export function getNotice(chatRoomNo) {
     setAuthHeader();

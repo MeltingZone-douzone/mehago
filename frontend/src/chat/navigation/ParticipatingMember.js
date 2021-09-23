@@ -16,15 +16,17 @@ import '../../assets/sass/chat/ChatNav.scss';
 export default function ParticipatingMember({ currentParticipants, userInfo, participants }) {
     const [searchNickname, setSearchNickname] = useState('');
     const [nonMember, setNonMember] = useState({});
+
     useEffect(() => {
         if (!userInfo) {
             getNonMemberInfo().then(res => {
                 setNonMember(res.data.data);
             });
         }
-    });
-    console.log(currentParticipants);
+    }, [userInfo]);
+    // console.log(currentParticipants);
     console.log(participants);
+    console.log(userInfo);
 
     const showParticipantsList = (participants, currentParticipants) => {
         let onlineParticipants;
@@ -39,9 +41,17 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
             .map(participant =>
                 <ListItem>
                     <ListItemIcon>
-                        <Avatar alt={participant.chatNickname} src={participant.chatNickname} />
+                        <Avatar alt={participant.thumbnailUrl} src={participant.thumbnailUrl} />
                     </ListItemIcon>
-                    <ListItemText primary={participant.chatNickname}>{participant.chatNickname}</ListItemText>
+                    {
+                        userInfo && participant.accountNo === userInfo.no ?
+                            <ListItemText primary={`${participant.chatNickname} (나)`}></ListItemText>
+                            :
+                            nonMember && participant.no === nonMember.no ?
+                                <ListItemText primary={`${participant.chatNickname} (나)`}></ListItemText>
+                                :
+                                <ListItemText primary={participant.chatNickname}></ListItemText>
+                    }
                     {
                         onlineParticipants.includes(participant.no) ?
                             <ParticipantsStatus style={{ fontSize: '12px', color: '#34d12c' }} />
@@ -73,6 +83,11 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
                         onChange={(e) => setSearchNickname(e.target.value)}
                     />
                 </Grid>
+                <Divider />
+                {/* 접속자 리스트 */}
+                <List>
+                    {showParticipantsList(participants, currentParticipants)}
+                </List>
             </Grid>
         </ParticipatingMemberList>
         :

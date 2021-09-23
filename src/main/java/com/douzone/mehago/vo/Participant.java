@@ -25,5 +25,7 @@ public class Participant extends TokenInfo {
     }
     // private String favoriteRoom; // 잠시 string으로 고침
 
+
+    private String thumbnailUrl;
     private Boolean hasData;
 }
