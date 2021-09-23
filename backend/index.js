@@ -146,10 +146,9 @@ httpServer
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
     console.log("msgToJson", msgToJson.validation, msgToJson);
-    // console.log("msgToJson", msgToJson.validation);
 
     switch (msgToJson.validation) {
-        case "join": io.to(roomname).emit('join', msgToJson);
+        case "join": io.to(roomname).emit('join message', msgToJson);
             break;
         case "object": io.to(roomname).emit('chat message', msgToJson);
             break;
@@ -157,9 +156,9 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "update": io.to(roomname).emit('message:update:readCount', msgToJson);
             break;
-        case "leave": io.to(roomname).emit('leave', msgToJson);
+        case "leave": io.to(roomname).emit('leave message', msgToJson);
             break;
-        case "disconnected": io.to(roomname).emit('disconnected', msgToJson);
+        case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
     }
 
 });
@@ -173,14 +172,10 @@ io.on("connection", (socket) => {
 
 
     socket.on('join', async (roomObject, participantObject) => {
-        console.log(socket.adapter.rooms); 
-
+        // console.log(socket.adapter.rooms); 
         roomObj = roomObject;
         participantObj = participantObject;
         currentRoomName = "room" + roomObject.no;
-        // console.log("participantObj", participantObj.no);
-
-
         redisClient.sadd(currentRoomName, participantObj.no);
         socket.join(currentRoomName);
         io.of('/').adapter.subClient.subscribe(currentRoomName);
@@ -210,7 +205,6 @@ io.on("connection", (socket) => {
         if (receivedMsg) {
             participantObj.lastReadChatNo = receivedMsg.no;
         }
-        // console.log(changedRows);
 
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
@@ -224,45 +218,7 @@ io.on("connection", (socket) => {
         changedRows ? io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object)) : null;
     })
 
-    /** disconnect
-     *  다른 방 보려고 잠시 뒤로가기 / 안나감
-     * 강제종료, 튕긴거, 뒤로가기 구분?
-     */
-    /* if ("비회원") {
-        socket.leave(roomName); //  ㄴㄴ?
-        subClient.unsubscribe(roomName)
-        pubClient.publish(roomName, `${socket.id}님이 방을 나가셨습니다.`);
-        // TODO: DB room에서 비회원 관련 데이터 삭제
-    } 
-    // TODO: DB room에서 회원 관련 데이터 삭제
-    socket.leave(data.roomName); */
-
-    // TODO: disconnect도 srem추가해서 chatMember보내야함
-    socket.on("disconnect", async (reason) => {
-        if (currentRoomName !== null) {
-            console.log('브라우저끔');
-            redisClient.srem(currentRoomName, participantObj.no);
-            socket.leave(currentRoomName, (result) => { });
-            
-            let chatMember;
-            await getChatMember(currentRoomName).then(res => chatMember = res);
-            
-            const disconnectMessage = {
-                "validation": "disconnected",
-                "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.(disconnected)`,
-                chatMember
-            }
-            io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(disconnectMessage));
-        }
-
-
-        console.log("node disconnected", reason);
-    })
-
-    // TODO: 진짜 방 나가기
-
     socket.on('chat message', async (message) => {
-        // TODO: DB 저장
         let chatMember = await getChatCount(currentRoomName);
         // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
         const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
@@ -296,17 +252,12 @@ io.on("connection", (socket) => {
         // fileController.addFile(participantObj.no, roomObj.no, files);
     });
 
-
-
-
-    /** leave
-     * 방 퇴장
-     * 회원 / 비회원 상관없이 나가면 
-     */
     socket.on('leave', async (data) => { // data는 의미없음 지금. roomname받아와야하는데 이미 currentRoomname에 "room 1" ㅣㅇ런식으로 나와잇어서 받아와서 앞에 "room "을 더해야하니까 굳이할필요있나업나몰라안함그래서
         // socket.leave(data.roomName, (result) => { });
         redisClient.srem(currentRoomName, participantObj.no);
         socket.leave(currentRoomName, (result) => { });
+        console.log('currentRoomName: ', currentRoomName);
+        console.log('participantObj.no: ', participantObj.no);
         
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
@@ -331,7 +282,24 @@ io.on("connection", (socket) => {
         // TODO: DB room에서 회원 / 비회원 관련 데이터 삭제
     });
 
-
+    socket.on("disconnect", async (reason) => {
+        if (currentRoomName !== null) {
+            console.log('브라우저끔');
+            redisClient.srem(currentRoomName, participantObj.no);
+            socket.leave(currentRoomName, (result) => { });
+            
+            let chatMember;
+            await getChatMember(currentRoomName).then(res => chatMember = res);
+            
+            const disconnectMessage = {
+                "validation": "disconnected",
+                "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.(disconnected)`,
+                chatMember
+            }
+            io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(disconnectMessage));
+        }
+        console.log("node disconnected", reason);
+    })
 });
 
 const getChatCount = currentRoomName => {

@@ -9,19 +9,6 @@ export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUplo
                 <form onSubmit={buttonFunction.handleTodoSubmit}>
                     <DialogTitle id="form-dialog-title">Todo</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
-                            날짜를 선택하고 추가할 ToDo를 작성하세요 ~~~~ !!!!
-                        </DialogContentText>
-                        <TextField
-                            label="날짜와 시간을 선택하세요"
-                            name="date"
-                            type="datetime-local"
-                            onChange={buttonFunction.handleDateChange}
-                            defaultValue="2017-05-24T10:30"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
                         <TextField
                             margin="dense"
                             label="Insert your Todo"

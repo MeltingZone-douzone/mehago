@@ -23,17 +23,26 @@ export default function ChatNavbar({currentParticipants, userInfo, participants,
     const [favoriteCheck, setFavoriteCheck] = useState(false);
     
     useEffect(()=> {
-        console.log(`fetchRooms() fetchFavoriteRooms(); useEffect`);
         fetchRooms();
         fetchFavoriteRooms();
     },[favoriteCheck]);
 
-
+    // const fetchRooms = () => {
+    //     try {
+    //         getMyChatListApi().then(res => {
+    //             if(res.data.result == "fail"){
+    //                 return false;
+    //             }
+    //             setParticipatingRoom(res.data.data);
+    //         });
+    //     } catch (e) {
+    //         console.log(e);
+    //     }
+    // }
 
     const fetchFavoriteRooms = () => {
         try {
             getFavoriteRoomList().then(res => {
-                console.log(res.data);
                 setFavoriteRoom(res.data);
             });
         } catch (e) {
@@ -42,10 +51,8 @@ export default function ChatNavbar({currentParticipants, userInfo, participants,
     }
 
     const updateFavoriteRoom = (chatRoomNo, favoriteStatus) => {
-        console.log(favoriteStatus);
         try {
             updateFavoriteRoomApi(chatRoomNo, favoriteStatus).then((res) => {
-                // setFavoriteCheck(false);
                 setFavoriteCheck(''); // 이전에 다른방 즐겨찾기 체크한 값들 초기화
             });
         } catch (e) {

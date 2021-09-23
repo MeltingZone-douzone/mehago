@@ -34,7 +34,6 @@ export default function ChatPage({ match, userInfo }) {
     }
 
     const fetchRooms = () => {
-        console.log("aslkdhalsdh");
         try {
             getMyChatListApi().then(res => {
                 if(res.data.result == "fail"){
