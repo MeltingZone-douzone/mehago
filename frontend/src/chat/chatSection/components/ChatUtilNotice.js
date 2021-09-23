@@ -1,5 +1,5 @@
-import { Avatar, Grid } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { Avatar} from '@material-ui/core';
+import React from 'react';
 import "../../../assets/sass/chat/ChatUtil.scss";
 import DeleteOutlined from '@material-ui/icons/DeleteOutlined';
 
@@ -41,6 +41,7 @@ export default function ChatUtilNotice({ handleDeleteNotice , notice, userInfo})
                             </div>
                             {notice.accountNo === userInfo.no ? (
                                     <button onClick={(e) => {handleDeleteNotice(notice.no)}}><DeleteOutlined /></button>
+                                    
                                 ):
                                 null
                             }

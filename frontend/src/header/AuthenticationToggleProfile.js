@@ -20,7 +20,7 @@ const AccountToggleProfile = ({handleAuthentication, userInfo, onClose}) =>{
 
     function handleLogout(){
         handleAuthentication(false);
-        localStorage.removeItem("token");
+        localStorage.remove("token");
         onClose();
         history.push("/account/login");
     }
