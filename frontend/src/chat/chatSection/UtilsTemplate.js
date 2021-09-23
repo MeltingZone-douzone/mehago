@@ -10,7 +10,7 @@ import UtilsHeader from './components/UtilsHeader';
 
 
 
-export default function UtilsTemplate({isOnChatSection}) {
+export default function UtilsTemplate({isOnChatSection, participantObject, chatRoomNo}) {
 
     const [activity, setActivity] = useState("notice"); // 실행되는 작업
 
@@ -26,12 +26,12 @@ export default function UtilsTemplate({isOnChatSection}) {
                 break;
         }
     }
-    console.log(isOnChatSection);
+    // console.log(isOnChatSection);
     const getUtilComponent = () => {
         switch(activity) {
             case "notice" : return <ChatUtilNotice />;
                 break;
-            case "todo" : return <ChatUtilTodoList />;
+            case "todo" : return <ChatUtilTodoList participantObject={participantObject} chatRoomNo={chatRoomNo} />;
                 break;
             case "file" : return <ChatUtilFile />;
                 break;

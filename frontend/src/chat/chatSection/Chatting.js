@@ -114,6 +114,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setIsFetching(true);
         }
     }
+    // console.log(messageList)
 
     return (
         <List className={"messageArea"} onScroll={onScroll} ref={messageAreaRef} >
@@ -124,26 +125,28 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                         return (
                             message.participantNo !== participantObject.no ?
                             <>
-                            {dateDivider(messageList, index, message)}
                             <ReceivedMessage 
                                 key={index} 
-                                previousMessage={messageList[index - 1]} 
+                                nextMessage={messageList[index - 1]} 
+                                previousMessage={messageList[index + 1]} 
                                 message={message} 
                                 searchKeyword={searchMessage[searchMessage.length-1]} 
                                 searchMessage={searchMessage}
                                 hiddenSearchInput={hiddenSearchInput}
                                 no={searchMessage.includes(message.no) ? message.no : null} />
+                                {dateDivider(messageList, index, message)}
                             </>
                             :
                             <>
-                            {dateDivider(messageList, index, message)}
                             <SendMessage 
                                 key={index} 
-                                previousMessage={messageList[index - 1]} 
+                                nextMessage={messageList[index - 1]} 
+                                previousMessage={messageList[index + 1]} 
                                 message={message} 
                                 searchKeyword={searchMessage[searchMessage.length-1]} 
                                 hiddenSearchInput={hiddenSearchInput}
                                 no={searchMessage.includes(message.no) ? message.no : null} />
+                                {dateDivider(messageList, index, message)}
                             </>
                         )}
                 )
@@ -154,11 +157,20 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 }
 // TODO: 메시지가 거꾸로 뽑히고 있어서 index - 1 말고 + 1 로 작업해야함
 function dateDivider(messageList, index, message) {
-    const prevMessage = messageList[index - 1];
+    const prevMessage = messageList[index + 1];
     if (prevMessage && moment(prevMessage.createdAt).format('YY/MM/DD') !== moment(message.createdAt).format('YY/MM/DD')) {
-        console.log(prevMessage && moment(prevMessage.createdAt).format('YY/MM/DD'));
-        console.log(moment(message.createdAt).format('YY/MM/DD'));
-        return <p style={{ textAlign: 'center', backgroundColor:'gray'}}>{moment(message.createdAt).format('YY/MM/DD')}</p>;
+        const msgDate = moment(message.createdAt).format('YY/MM/DD');
+        let day;
+        switch(moment(message.createdAt).day()){
+            case 0: day='일요일'; break;
+            case 1: day='월요일'; break;
+            case 2: day='화요일'; break;
+            case 3: day='수요일'; break;
+            case 4: day='목요일'; break;
+            case 5: day='금요일'; break;
+            case 6: day='토요일'; break;
+        }
+        return <p style={{ padding:'0.1rem', textAlign: 'center', backgroundColor:'#bdc7db'}}>{msgDate} {day}</p>;
     }
 }
 

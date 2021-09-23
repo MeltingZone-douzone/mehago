@@ -28,6 +28,8 @@ export default function ChatSeperatedContainer({socket, messageFunction, partici
             <UtilsWrapper isSeperated={isSeperated}>
                 <UtilsTemplate 
                     isOnChatSection={true} /* 네비랑 같이 쓰는데 css를 위함 */
+                    participantObject={participantObject}
+                    chatRoomNo={chatRoomNo}
                 />
             </UtilsWrapper>
         </Container>

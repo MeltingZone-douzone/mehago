@@ -23,7 +23,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants,
     const [favoriteCheck, setFavoriteCheck] = useState(false);
     
     useEffect(()=> {
-        console.log(`fetchRooms() fetchFavoriteRooms(); useEffect`);
         fetchRooms();
         fetchFavoriteRooms();
     },[favoriteCheck]);
@@ -52,7 +51,6 @@ export default function ChatNavbar({currentParticipants, userInfo, participants,
     }
 
     const updateFavoriteRoom = (chatRoomNo, favoriteStatus) => {
-        console.log(favoriteStatus);
         try {
             updateFavoriteRoomApi(chatRoomNo, favoriteStatus).then((res) => {
                 setFavoriteCheck(''); // 이전에 다른방 즐겨찾기 체크한 값들 초기화

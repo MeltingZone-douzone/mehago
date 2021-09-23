@@ -60,11 +60,6 @@ export default function ChatList() {
         }
     }, [rooms]);
 
-
-    useEffect(() =>{
-        // console.log(rooms);
-    },[rooms])
-
     const keywordSearch = (e) => {
         console.log(searchValue);
         try {
@@ -131,8 +126,8 @@ export default function ChatList() {
                 noResult ? (
                     <p className={"noResult"}>{noResult}</p>
                 ) : (
-                    <div className={"ChatListContainer"}  onScroll={onScroll} ref={chatRoomAreaRef}>
-                        <List className={"ChatRoom"} ref={chatRoomAreaRef}>
+                    <div className={"ChatListContainer"} onScroll={onScroll} ref={chatRoomAreaRef}>
+                        <List className={"ChatRoom"}>
                             { rooms ? getChatrooms().map((room, index)=> {
                                 return(
                                     <div key={index}>

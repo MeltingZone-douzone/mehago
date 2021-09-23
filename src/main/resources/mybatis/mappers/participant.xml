@@ -115,33 +115,17 @@
 		]]>
      </select>
 
-	 <update id="updateFavoriteRoom" parameterType="map" >
-	<choose>
-		<when test='favoriteRoom == true'>
-			<![CDATA[
-				update 
-					participant
-				set
-					favorite_room = false
-				where 
-					chat_room_no= #{chatRoomNo }
-						and
-					account_no = #{accountNo}
-			]]>		
-		</when>
-		<otherwise>
-			<![CDATA[
-				update 
-					participant
-				set
-					favorite_room = true
-				where 
-					chat_room_no= #{chatRoomNo }
-						and
-					account_no = #{accountNo}
-			]]>	
-		</otherwise>
-	</choose>	
+	<update id="updateFavoriteRoom" parameterType="map" >
+		<![CDATA[
+			UPDATE 
+				participant 
+			SET 
+				favorite_room = (IF(favorite_room=true, false, true)) 
+			WHERE 
+				chat_room_no= #{chatRoomNo }
+					and
+				account_no = #{accountNo}
+		]]>		
 	</update>
 
 	<update id="updateParticipantLeaveMember" parameterType="Long" >

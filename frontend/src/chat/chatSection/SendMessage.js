@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 import React from 'react';
 
-export default function SendMessage({ previousMessage, message, no, searchKeyword, hiddenSearchInput }) {
+export default function SendMessage({ nextMessage, previousMessage, message, no, searchKeyword, hiddenSearchInput }) {
     const classes = madeStyles();
 
     const getHighlightedText = ({ text = message.message, highlight = searchKeyword }) => {
@@ -33,7 +33,7 @@ export default function SendMessage({ previousMessage, message, no, searchKeywor
                             secondary={
                                 <Typography className={classes.notReadCountRight}>
                                     <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
-                                    {!previousMessage || previousMessage.participantNo !== message.participantNo || moment(previousMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
+                                    {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
                                         <span className={classes.createdAt}>
                                             {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
                                         </span>
@@ -51,7 +51,7 @@ export default function SendMessage({ previousMessage, message, no, searchKeywor
                             secondary={
                                 <Typography className={classes.notReadCountRight}>
                                     <span>{message.notReadCount > 0 ? message.notReadCount : ""}</span>
-                                    {!previousMessage || previousMessage.participantNo !== message.participantNo || moment(previousMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
+                                    {!nextMessage || nextMessage.participantNo !== message.participantNo || moment(nextMessage.createdAt).format('HH:mm') !== moment(message.createdAt).format('HH:mm') ?
                                         <span className={classes.createdAt}>
                                             {moment(message.createdAt).format("HH") >= 12 ? `오후 ${moment(message.createdAt).format("HH") == 12 ? 12 : moment(message.createdAt).format("HH") - 12}:${moment(message.createdAt).format("mm")}` : `오전 ${moment(message.createdAt).format('HH:mm')}`}
                                         </span>

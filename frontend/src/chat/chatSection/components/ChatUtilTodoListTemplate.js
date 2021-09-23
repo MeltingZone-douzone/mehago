@@ -6,15 +6,15 @@ const ChatUtilTodoListTemplate = ({form, children}) => {
 
     return (
         <main className={classes.todoListTemplate}>
-        <div className={classes.title}>
-            오늘 할 일
-        </div>
-        <section className={classes.formWrapper}>
-            {form}
-        </section>
-        <section className={classes.todosWrapper}>
-            { children }
-        </section>
+            <div className={classes.title}>
+                해야 할 일
+            </div>
+            <section className={classes.formWrapper}>
+                {form}
+            </section>
+            <section className={classes.todosWrapper}>
+                { children }
+            </section>
         </main>
     );
 };
@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
         margin: '0 auto', /* 페이지 중앙 정렬 */
     },
     title: {
-        padding: '2rem',
-        fontSize: '2.5rem',
+        padding: '1rem',
+        fontSize: '1.5rem',
         textAlign: 'center',
         fontWeight: '100',
         background: '#2E3B55',

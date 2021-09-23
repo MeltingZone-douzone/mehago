@@ -20,14 +20,14 @@ export default ChatUtilTodoListForm;
 
 const useStyles = makeStyles((theme) => ({
     form: {
-        display: 'flex'
-    },
-    formInput: {
-        flex: '1', /* 버튼을 뺀 빈 공간을 모두 채워줍니다 */
-        fontSize: '1.25rem',
-        outline: 'none',
-        border: 'none',
-        borderBottom: '1px solid #c5f6fa',
+        display: 'flex',
+        '& input': {
+            flex: '1', /* 버튼을 뺀 빈 공간을 모두 채워줍니다 */
+            fontSize: '1.25rem',
+            outline: 'none',
+            border: 'none',
+            borderBottom: '1px solid #2E3B55',
+        },
     },
     createButton: {
         paddingTop: '0.5rem',
