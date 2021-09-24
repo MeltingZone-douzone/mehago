@@ -39,6 +39,7 @@ export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUplo
                             label="Insert your Notice"
                             name="notice"
                             type="text"
+                            autoFocus={true}
                             fullWidth
                         />
                     </DialogContent>

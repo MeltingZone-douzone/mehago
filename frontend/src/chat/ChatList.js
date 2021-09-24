@@ -6,7 +6,7 @@ import '../assets/sass/chat/ChatList.scss';
 
 import ChatRoom from './ChatRoom';
 
-export default function ChatList() {
+export default function ChatList({ userInfo }) {
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
     const [joinRooms, setJoinRooms] = useState([]);
@@ -18,7 +18,6 @@ export default function ChatList() {
     const [isFetching, setIsFetching] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
 
-    
     useEffect(() => {
         fetchChatRooms();
     }, [])
@@ -129,6 +128,7 @@ export default function ChatList() {
                                 return(
                                     <div key={index}>
                                     <ChatRoom 
+                                        userInfo={userInfo}
                                         no = {room.no}
                                         title={room.title}
                                         limitedUserCount ={room.limitedUserCount}

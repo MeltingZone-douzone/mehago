@@ -5,7 +5,7 @@
 
 <mapper namespace="participant">
 
- <insert id="createParticipant" parameterType="participant">
+ 	<insert id="createParticipant" parameterType="participant">
 		<![CDATA[
 			INSERT INTO
 				participant 
@@ -16,92 +16,108 @@
             select last_insert_id()
         </selectKey>
 	</insert>
-<select id="getParticipantInfo" parameterType="Map" resultType="participant">
-	<![CDATA[
-		select 
-			no, chat_nickname as chatNickname, chat_room_no as chatRoomNo, not_read_count as notReadCount, last_read_chat_no as lastReadChatNo, account_no as accountNo
-		from
-			participant
-		where
-			account_no = #{accountNo}
-		AND
-			chat_room_no = #{chatRoomNo}
-	]]>
-</select>
+	<select id="getParticipantInfo" parameterType="Map" resultType="participant">
+		<![CDATA[
+			SELECT 
+				no, chat_nickname AS chatNickname, chat_room_no AS chatRoomNo, not_read_count AS notReadCount, last_read_chat_no AS lastReadChatNo, account_no AS accountNo
+			FROM
+				participant
+			WHERE
+				account_no = #{accountNo}
+			AND
+				chat_room_no = #{chatRoomNo}
+		]]>
+	</select>
 
 	<update id="updateLastReadNo" parameterType="participant">
-	<![CDATA[
-		update participant
-		set last_read_chat_no = #{lastReadChatNo }
-		where no = #{no}
-			]]>					
+		<![CDATA[
+			UPDATE 
+				participant
+			SET 
+				last_read_chat_no = #{lastReadChatNo }
+			WHERE 
+				no = #{no}
+		]]>					
 	</update>
 	<update id="updateNotReadCount" parameterType="participant">
 		<![CDATA[
-		update participant
-		set not_read_count = 0
-		where no = #{no}
-			]]>	
+			UPDATE
+				participant
+			SET 
+				not_read_count = 0
+			WHERE
+				no = #{no}
+		]]>	
 	</update>
 	<update id="updateLastReadNoForJoin" parameterType="participant">
 		<![CDATA[
-			update participant
-			set last_read_chat_no =  (select max(no) from message where chat_room_no = #{chatRoomNo })
-			where no = #{no}
+			UPDATE 
+				participant
+			SET 
+				last_read_chat_no =  (select max(no) from message WHERE chat_room_no = #{chatRoomNo })
+			WHERE 
+				no = #{no}
 		]]>					
 	</update>
 
 	<update id="addNotReadCount" parameterType="participant">
-	<![CDATA[
-		update participant
-		set not_read_count = not_read_count +1
-		where chat_room_no= #{chatRoomNo }
-			]]>			
+		<![CDATA[
+			UPDATE 
+				participant
+			SET 
+				not_read_count = not_read_count +1
+			WHERE
+				chat_room_no= #{chatRoomNo }
+		]]>			
 	</update>
 
 	<update id="subtractNotReadCount" parameterType="participant">
-	<![CDATA[
-		update participant
-		set not_read_count = 0
-		where no= #{no }
-			]]>			
+		<![CDATA[
+			UPDATE 
+				participant
+			SET 
+				not_read_count = 0
+			WHERE
+				no= #{no }
+		]]>			
 	</update>
 
 	<select id="getParticipantsList" parameterType="Long" resultType="participant">
-	<![CDATA[
-		SELECT
-			p.no, p.account_no as accountNo, p.chat_room_no as chatRoomNo, p.chat_nickname as chatNickname, p.not_read_count as notReadCount, p.last_read_chat_no as lastReadChatNo,
-			a.thumbnail_url as thumbnailUrl
-		FROM
-			participant p, account a
-		WHERE
-				p.account_no = a.no
-			AND
-				chat_room_no = #{chatRoomNo }
-			AND
-				p.is_deleted = 0
-		ORDER BY
-			p.chat_nickname
-			
-	]]>
+		<![CDATA[
+			SELECT
+				p.no, p.account_no as accountNo, p.chat_room_no as chatRoomNo, p.chat_nickname as chatNickname, p.not_read_count as notReadCount, p.last_read_chat_no as lastReadChatNo,
+				a.thumbnail_url as thumbnailUrl
+			FROM
+				participant p, account a
+			WHERE
+					p.account_no = a.no
+				AND
+					chat_room_no = #{chatRoomNo }
+				AND
+					p.is_deleted = 0
+			ORDER BY
+				p.chat_nickname
+		]]>
 	</select>
 	<select id="nicknameValidation" parameterType="participant" resultType="String">
-    <![CDATA[
-      select 
-        no
-      from 
-        participant
-      where chat_room_no = #{chatRoomNo}
-          and
-          chat_nickname = #{chatNickname}
-    ]]>
+		<![CDATA[
+			SELECT
+				no
+			FROM
+				participant
+			WHERE 
+				chat_room_no = #{chatRoomNo}
+				AND
+				chat_nickname = #{chatNickname}
+		]]>
   </select>
   
   <insert id="addNonMember" parameterType="participant">
 		<![CDATA[
-			insert 
-				into participant 
-				values(null,null,#{chatRoomNo},#{chatNickname}, 0,#{lastReadChatNo}, now())
+			INSERT INTO
+				participant 
+			VALUES
+				(null, null, #{chatRoomNo}, #{chatNickname}, 0,#{lastReadChatNo}, now())
         ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -109,10 +125,13 @@
 	</insert>
 
 	<select id="getLastReadChatNo" parameterType="Long" resultType="Long">
-	<![CDATA[
-		select ifnull(max(no), 0)
-		from message
-		where chat_room_no = #{chatRoomNo}
+		<![CDATA[
+			SELECT
+				ifnull(max(no), 0)
+			FROM 
+				message
+			WHERE 
+				chat_room_no = #{chatRoomNo}
 		]]>
      </select>
 
@@ -130,14 +149,29 @@
 	</update>
 
 	<update id="updateParticipantLeaveMember" parameterType="Long" >
-	<![CDATA[
-		update 
-			participant 
-		set 
-			is_deleted = 1 
-		where 
-			account_no = #{accountNo} 
-	]]>	
+		<![CDATA[
+			UPDATE 
+				participant 
+			SET 
+				is_deleted = 1 
+			WHERE 
+				account_no = #{accountNo} 
+		]]>	
 	</update>
+	
+	<select id="isExistsParticipants" parameterType="Map" resultType="String">
+		<![CDATA[
+			SELECT
+				no, account_no, chat_nickname
+			FROM
+				participant
+			WHERE
+				chat_room_no = #{chatRoomNo }
+				AND
+				account_no = #{accountNo }
+				AND
+				is_deleted = 0
+		]]>
 
+	</select>
 </mapper>

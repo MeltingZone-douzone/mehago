@@ -17,8 +17,8 @@ export default function ParticipatingMember({currentParticipants, userInfo, part
     const [searchNickname, setSearchNickname] = useState('');
 
     // console.log(currentParticipants);
-    console.log(participants); 
-    console.log(userInfo); 
+    // console.log(participants); 
+    // console.log(userInfo); 
     
 
     const showParticipantsList = (participants, currentParticipants) => {

@@ -135,6 +135,13 @@ export function nicknameValidation(chatRoomNo, chatNickname) {
         .then(res => res);
 }
 
+export function enterRoomValidationApi(chatRoomNo, accountNo) { // FIXME: 함수명 바꾸기   방에 이미 입장해있는지 check
+    return axios.get(`/api/chat/enterRoomValidation`, { params : { chatRoomNo, accountNo }, headers: AuthHeader})
+        .then(res => res)
+        .catch(e => console.log(e));
+}
+
+
 export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus){
     setAuthHeader();
     const favoriteStatusObject = { "favoriteRoom": favoriteStatus };

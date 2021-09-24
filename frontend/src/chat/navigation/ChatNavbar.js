@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { Avatar, makeStyles } from '@material-ui/core';
+import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
+import HomeIcon from '@material-ui/icons/Home';
+import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { exitRoomApi, getFavoriteRoomList, updateFavoriteRoomApi } from '../../../api/ChatApi';
 import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
-import { Link } from 'react-router-dom';
-import { getMyChatListApi, updateFavoriteRoomApi , getFavoriteRoomList, exitRoomApi} from '../../../api/ChatApi';
-import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
-import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
-import HomeIcon from '@material-ui/icons/Home';
-
-import ParticipatingRoom from './ParticipatingRoom';
+import Logo from '../../assets/images/black-mehago.png';
 import ParticipatingMember from './ParticipatingMember';
-import { Avatar, makeStyles } from '@material-ui/core';
+import ParticipatingRoom from './ParticipatingRoom';
 
 
 export default function ChatNavbar({socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom}){
@@ -112,7 +112,7 @@ export default function ChatNavbar({socket, currentParticipants, userInfo, parti
                         favoriteRoom && favoriteRoom.map((favorite,index) =>{
                             return(
                                 <Link to={`/chat/${favorite.no}`} key={index}> 
-                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl} key={favorite.no}/></NaviButton>
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl ? favorite.thumbnailUrl : Logo} key={favorite.no}/></NaviButton>
                                 </Link>
                             )
                         })
@@ -120,8 +120,8 @@ export default function ChatNavbar({socket, currentParticipants, userInfo, parti
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} handleReceivedMsg={handleReceivedMsg}/>: null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants}userInfo={userInfo} participants={participants}/>: null}
+                {chatList? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} handleReceivedMsg={handleReceivedMsg}/> : null}
+                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
             </div>
             
             

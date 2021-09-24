@@ -1,13 +1,14 @@
+import { Button } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
+import '../assets/sass/chat/modal.scss';
 
-import { Button } from '@material-ui/core';
 
-export default function ChatRoomModalBasic({enterRoom}) {
+export default function ChatRoomModalBasic({ basicEnterRoom }) {
 
     return(
         <ContentTemplate>
-            <Button className={"joinButton"} variant="contained" color="primary" onClick={() => {enterRoom()}} >방입장하기</Button>
+            <Button className={"joinButton"} variant="contained" color="primary" onClick={() => { basicEnterRoom() }} >방 입장하기</Button>
         </ContentTemplate>
     )
 }

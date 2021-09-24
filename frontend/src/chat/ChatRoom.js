@@ -11,12 +11,11 @@ ReactModal.setAppElement('body');
 
 import ChatRoomModalTemplate from './ChatRoomModalTemplate';
 
-export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl}) {
+export default function ChatRoom({ userInfo, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl}) {
     
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [account, setAccount] = useState(true);
     
-
     const getTags = () => {
         if(tagName && tagName.length > 6) {
             return tagName.slice(0,6).map((tag, index)=> {
@@ -106,6 +105,7 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
                 shouldCloseOnEsc={true}
                 contentLabel="채팅방">
                     <ChatRoomModalTemplate
+                        userInfo={userInfo}
                         no = {no}
                         title={title}
                         thumbnailUrl={thumbnailUrl}

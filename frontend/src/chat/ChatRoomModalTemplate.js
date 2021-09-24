@@ -11,9 +11,9 @@ import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import ChatRoomModalBasic from './ChatRoomModalBasic';
 import ChatRoomModalPassword from './ChatRoomModalPassword';
 import ChatRoomModalNickname from './ChatRoomModalNickname';
-import { checkPasswordApi } from '../../api/ChatApi';
+import { checkPasswordApi, enterRoomValidationApi } from '../../api/ChatApi';
 import { useHistory } from 'react-router';
-export default function ChatRoomModalTemplate ({no,title, thumbnailUrl, participantCount, limitedUserCount,timeForToday, lastMessage,tagName, ownerNickname, ownerThumbnailUrl, secretRoom, account }) {
+export default function ChatRoomModalTemplate ({ userInfo, no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, account }) {
     const classes = materialStyles();
     const history = useHistory();
 
@@ -21,19 +21,70 @@ export default function ChatRoomModalTemplate ({no,title, thumbnailUrl, particip
     const [status, setStatus] = useState(() => secretRoom? "secret" : account? "basic" : "nickname");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
+    const [hiddenPasswordInput, setHiddenPasswordInput] = useState(true);
 
     const getContent = () =>{
         switch(status){
-            case "secret" : return <ChatRoomModalPassword password={password} handleChange={handleChange} passwordValidation={passwordValidation}/>
+            case "secret" : return <ChatRoomModalPassword handleChange={handleChange} passwordEnterRoom={passwordEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} />
                 break;
             case "nickname" : return <ChatRoomModalNickname handleChange={handleChange} />
                 break;
-            case "basic" : return <ChatRoomModalBasic enterRoom={enterRoom} />
+            case "basic" : return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} />
                 break;
         }
     }
 
+    const handleChange = (e) =>{
+        const {name, value} = e.target;
+        switch(name) {
+            case "password" : setPassword(value);
+                break;
+            case "nickname" : setNickname(value);
+                break;
+        }
+    }
+
+    const basicEnterRoom = () => {
+        try {
+            enterRoomValidationApi(no, userInfo.no).then(res => { // FIXME: 함수명 바꾸기   방에 이미 입장해있는지 check
+                if(res.data.result === 'success') { // 새입장
+                    limitedUserCountValidation() ? enterRoom() : console.log('인원이 다 차서 들어갈 수 없습니다.')
+                } else {
+                    enterRoom();    // 재입장이면 인원수제한 체크할 필요 없음
+                }
+            })
+        } catch(e) {
+            console.log(e);
+        }
+    }
+    
+    const passwordEnterRoom = () => {
+        enterRoomValidationApi(no, userInfo.no).then(res => {
+            if(res.data.result === 'success') { // 새 입장
+                console.log('새 입장')
+                limitedUserCountValidation ? setHiddenPasswordInput(false) : console.log('인원이 다 차서 들어갈 수 없습니다.')
+            } else {                            // 재 입장
+                console.log('재 입장')
+                enterRoom();
+            }
+        })
+    }
+
+    const limitedUserCountValidation = () => {
+        console.log(participantCount, limitedUserCount);
+        if(participantCount === limitedUserCount) {
+            console.log('들어갈 수 X');
+            return false;
+        }
+        console.log('들어갈 수 O');
+        return true;
+    }
+
     const passwordValidation = () => {
+        if(password === ''){ 
+            return;
+        }
+        console.log('passwordValidation');
         try {
             if (password) (
                 checkPasswordApi(no, password).then((res) => {
@@ -51,19 +102,8 @@ export default function ChatRoomModalTemplate ({no,title, thumbnailUrl, particip
         }
     }
 
-    const handleChange = (e) =>{
-        const {name, value} = e.target;
-
-        switch(name) {
-            case "password" : setPassword(value);
-                break;
-            case "nickname" : setNickname(value);
-                break;
-        }
-    }
-
     const enterRoom = () => {
-        console.log("enterRoom");
+        console.log("enterRoom()");
         history.push(`/chat/${no}`);
     }
 

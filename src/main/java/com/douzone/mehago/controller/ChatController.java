@@ -78,7 +78,6 @@ public class ChatController {
 
         // 3. 태그 생성
         result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
-        System.out.println(result);
 
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         return ResponseEntity.ok().body(participantNo);
@@ -203,9 +202,7 @@ public class ChatController {
 
     @GetMapping("/getSearchMessage")
     public ResponseEntity<?> getSearchMessage(Long chatRoomNo, String searchKeyword) {
-        System.out.println(chatRoomNo + ":" + searchKeyword);
         List<Long> messageNo = messageService.getSearchMessage(chatRoomNo, searchKeyword);
-        System.out.println(messageNo);
         return ResponseEntity.ok()
                 .body(!messageNo.isEmpty() ? CommonResponse.success(messageNo) : CommonResponse.fail("검색결과가 없습니다.")); // 채팅방에
     }
@@ -215,6 +212,13 @@ public class ChatController {
         boolean result = chatRoomService.checkPassword(chatRoom.getNo(), chatRoom.getPassword());
         return ResponseEntity.ok().body(result);
     }
+
+    @GetMapping("/enterRoomValidation")
+    public ResponseEntity<?> enterRoomValidation(Long chatRoomNo, Long accountNo) {
+        Boolean result = participantService.isExistsParticipants(chatRoomNo, accountNo); // true 새입장 false 재입장
+        return ResponseEntity.ok().body(result ? CommonResponse.success(result) : CommonResponse.fail("재입장입니다."));
+    }
+
 
     @Auth
     @PostMapping("/updateChatRoomInfo")
