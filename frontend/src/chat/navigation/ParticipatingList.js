@@ -152,7 +152,8 @@ const madeStyles = makeStyles({
     participantCount: {
         fontSize: "0.7em",
         marginTop: "inherit",
-        float: "left"
+        float: "left",
+        paddingLeft: "1em"
     },
     leastMessageAt: {
         float: "right",

@@ -11,6 +11,8 @@ import InputBase from '@material-ui/core/InputBase';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -36,83 +38,89 @@ export default function ChatHeader({handleSeperate,messageFunction, roomObject, 
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
-            {
-            hiddenSearchInput?
+        <Toolbar className={classes.toolbar}>
+          <div>
+              {
+              hiddenSearchInput?
+                  <IconButton
+                      edge="start"
+                      className={classes.backButton}
+                      color="inherit"
+                      onClick={() => messageFunction.leaveRoom()}
+                  >
+                      <ArrowBackIcon />
+                  </IconButton>
+                  :
+                  <IconButton
+                      edge="start"
+                      className={classes.closeButton}
+                      color="inherit"
+                      onClick={() => handleSetSearch()}
+                  >
+                      <CloseIcon />
+                  </IconButton>
+              }
+            </div>
+            <div>
+              <Typography className={classes.title} variant="h6" noWrap>
+                {roomObject.title}
+              </Typography>
+            </div>
+            <div className={classes.navBar}>
+              {
+                  hiddenSearchInput ?
+
                 <IconButton
-                    edge="start"
-                    className={classes.backButton}
-                    color="inherit"
-                    onClick={() => messageFunction.leaveRoom()}
-                >
-                    <ArrowBackIcon />
+                  edge="end"
+                  className={classes.menuButton}
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={() => handleSetSearch()}>
+                  <SearchIcon />
                 </IconButton>
                 :
-                <IconButton
-                    edge="start"
-                    className={classes.closeButton}
-                    color="inherit"
-                    onClick={() => handleSetSearch()}
-                >
-                    <CloseIcon />
-                </IconButton>
-            }
-            <Typography className={classes.title} variant="h6" noWrap>
-            {roomObject.title}
-            </Typography>
-            {
-                hiddenSearchInput ?
-
-              <IconButton
-                edge="end"
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="open drawer"
-                onClick={() => handleSetSearch()}>
-                <SearchIcon />
-              </IconButton>
-              :
-              <>
-                <div className={classes.search}>
-                    <div className={classes.searchInputIcon}>
-                        <SearchIcon />
-                    </div>
-                    <InputBase
-                        placeholder="내용 검색"
-                        autoComplete="off"
-                        autoFocus={true}
-                        classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput,
-                        }}
-                        name={'searchKeyword'}
-                        onBlur={(e) => handleBlur(e)}
-                        onChange={messageFunction.onChangeSearchKeyword}
-                        onKeyPress={(e) => {
-                          if(e.key == 'Enter') { 
-                            messageFunction.onSearchKeyPress(e); 
-                            hiddenSearchResult? handleKeyPress() : null
+                <>
+                  <div className={classes.search}>
+                      <div className={classes.searchInputIcon}>
+                          <SearchIcon />
+                      </div>
+                      <InputBase
+                          placeholder="내용 검색"
+                          autoComplete="off"
+                          autoFocus={true}
+                          classes={{
+                              root: classes.inputRoot,
+                              input: classes.inputInput,
                           }}
-                        }
-                        inputProps={{ 'aria-label': 'search' }}/>
-                </div> 
-                { 
-                  hiddenSearchResult ?
-                  null
-                  :
-                  <ToggleTemplate>
-                    <SearchResult>
-                      {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'}
-                    </SearchResult>
-                    <ButtonGroup className={classes.buttonGroup} variant="text" color="primary" aria-label="text primary button group">
-                      <Button onClick={(e) => messageFunction.moveSearchResult(e, "left")}>{'<'}</Button>
-                      <Button onClick={(e) => messageFunction.moveSearchResult(e, "right")}>{'>'}</Button>
-                    </ButtonGroup>
-                  </ToggleTemplate>
-                }
-              </>
-          }
-          <button onClick={() => handleSeperate()}>분할</button>
+                          name={'searchKeyword'}
+                          onBlur={(e) => handleBlur(e)}
+                          onChange={messageFunction.onChangeSearchKeyword}
+                          onKeyPress={(e) => {
+                            if(e.key == 'Enter') { 
+                              messageFunction.onSearchKeyPress(e); 
+                              hiddenSearchResult? handleKeyPress() : null
+                            }}
+                          }
+                          inputProps={{ 'aria-label': 'search' }}/>
+                  </div> 
+                  { 
+                    hiddenSearchResult ?
+                    null
+                    :
+                    <ToggleTemplate>
+                      <SearchResult>
+                        {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'}
+                      </SearchResult>
+                      <ButtonGroup className={classes.buttonGroup} variant="text" color="primary" aria-label="text primary button group">
+                        <Button onClick={(e) => messageFunction.moveSearchResult(e, "left")}>{'<'}</Button>
+                        <Button onClick={(e) => messageFunction.moveSearchResult(e, "right")}>{'>'}</Button>
+                      </ButtonGroup>
+                    </ToggleTemplate>
+                  }
+                </>
+            }
+              <button className={classes.nav} onClick={() => handleSeperate()}> <FontAwesomeIcon icon={faBars} size={'2x'} /></button>
+          </div>
         </Toolbar>
       </AppBar>
     </div>
@@ -147,11 +155,19 @@ const useStyles = makeStyles((theme) => ({
 
   },
   appBar: {
-    background: '#2E3B55'
+    background: '#2E3B55',
+    width: "100%",
+    height: "100%"
   },
-  //   backButton: {
-  //     marginRight: theme.spacing(2),
-  //   },
+  toolbar :{
+    display: "flex",
+    justifyContent: "space-between",
+    width:"100%"
+  },
+  navBar:{
+    display:"flex",
+    backgroundColor:"red"
+  },
   title: {
     flexGrow: 1,
     display: 'none',
@@ -206,5 +222,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     width: 'fit-content'
+  },
+  nav : {
+    backgroundColor:'#2E3B55',
+    paddingLeft:"1em"
+
   }
 }));
