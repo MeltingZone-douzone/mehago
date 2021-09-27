@@ -1,14 +1,13 @@
-import React, { useEffect, useState, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Fragment } from 'react';
 import moment from 'moment';
 import styled from 'styled-components';
+// import Pictures from '../../../assets/images/photo.png';
 
-export default function ChatUtilFile({ chatRoomNo, fileList }) {
-
+export default function ChatUtilFile({ fileList }) {
     return (
         <Container>
             <ImageContainer>
-                {fileList ? fileList
+                {fileList.length ? fileList
                     .map((file, index) => {
                         return (
                             !fileList[index - 1] || moment(fileList[index - 1].createdAt).format('YY/MM/DD') !== moment(file.createdAt).format('YY/MM/DD') ?
@@ -20,7 +19,10 @@ export default function ChatUtilFile({ chatRoomNo, fileList }) {
                                 <Image key={index} src={file.url} />
                         )
                     })
-                    : <Text>업로드 한 이미지가 없습니다.</Text>
+                    :
+
+                    <Text>업로드 한 이미지가 없습니다.</Text>
+
                 }
             </ImageContainer>
         </Container>

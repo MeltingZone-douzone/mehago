@@ -3,24 +3,24 @@ import styled from 'styled-components';
 import { TextField, FormControlLabel, Switch, FormControl, InputLabel, Select, Button } from '@material-ui/core';
 import ChipInput from 'material-ui-chip-input';
 
-export default function SettingChatForm({ classes, chatRoom, isSecretRoom, handleChange, handleAddTagName, handleDeleteTagName, passwordFunction }) {
+export default function SettingChatForm({ classes, chatRoom, roomObject, isSecretRoom, handleChange, handleAddTagName, handleDeleteTagName, passwordFunction }) {
     return (
         <FormWrapper>
             <TextField
                 required className={classes.TextField}
                 label="방 이름을 입력하세요" variant="outlined"
-                name="title" value={chatRoom.title ? chatRoom.title : ''} onChange={handleChange} />
+                name="title" value={chatRoom.title ? chatRoom.title : chatRoom.title === undefined ? roomObject.title : ''} onChange={handleChange} />
 
             <ChipInput
                 className={classes.TextField} variant="outlined" name="tagName"
                 label='태그를 입력하세요' placeholder='태그를 입력 후 엔터를 누르세요'
-                value={chatRoom.tagName ? chatRoom.tagName : ''}
+                value={chatRoom.tagName ? chatRoom.tagName : chatRoom.tagName === undefined ? roomObject.tagName : ''}
                 onAdd={(name) => handleAddTagName(name)} onDelete={(name) => handleDeleteTagName(name)} />
             <FormControl className={classes.TextField}>
                 <InputLabel htmlFor="limitedUserCount">최대 인원 수</InputLabel>
                 <Select
                     native
-                    value={chatRoom.limitedUserCount} onChange={handleChange}
+                    value={chatRoom.limitedUserCount === undefined ? roomObject.limitedUserCount : chatRoom.limitedUserCount} onChange={handleChange}
                     name="limitedUserCount" inputProps={{
                         name: "limitedUserCount",
                         id: 'limitedUserCount',
@@ -40,17 +40,17 @@ export default function SettingChatForm({ classes, chatRoom, isSecretRoom, handl
 
             <FormControlLabel
                 control={
-                    <Switch checked={chatRoom.onlyAuthorized ? chatRoom.onlyAuthorized : false} onChange={handleChange}
+                    <Switch checked={chatRoom.onlyAuthorized === undefined ? roomObject.onlyAuthorized : chatRoom.onlyAuthorized} onChange={handleChange}
                         name="onlyAuthorized" color="primary" />}
                 label="회원만 이용 가능" />
 
             <FormControlLabel
                 control={
-                    <Switch checked={chatRoom.searchable ? chatRoom.searchable : false} onChange={handleChange}
+                    <Switch checked={chatRoom.searchable === undefined ? roomObject.searchable : chatRoom.searchable} onChange={handleChange}
                         name="searchable" color="primary" />}
                 label="검색 허용" />
             <div className={classes.password}>
-                {isSecretRoom === true ?
+                {roomObject.secretRoom === true ?
                     <Button variant="contained" onClick={passwordFunction.open}>비밀번호 변경</Button>
                     :
                     <FormControlLabel
@@ -62,9 +62,9 @@ export default function SettingChatForm({ classes, chatRoom, isSecretRoom, handl
                     />
                 }
 
-                {isSecretRoom && isSecretRoom == false && chatRoom.secretRoom === true ?
+                {isSecretRoom == false && chatRoom.secretRoom === true ?
                     <TextField
-                        className={classes.TextField, classes.passwordInput}
+                        className={classes.passwordInput}
                         type="password" variant="outlined" size="small"
                         name="password" value={chatRoom.password} onChange={handleChange} />
                     : null}

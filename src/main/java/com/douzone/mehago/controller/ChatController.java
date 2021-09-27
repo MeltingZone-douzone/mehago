@@ -267,7 +267,7 @@ public class ChatController {
             tagService.unlinkTags(chatRoom.getNo());
             tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
         }
-        return ResponseEntity.ok().body(CommonResponse.success(result));
+        return ResponseEntity.ok().body(CommonResponse.success(chatRoom));
     }
 
     @Auth(role = "ACCOUNT")
@@ -277,9 +277,10 @@ public class ChatController {
         if (account.getNo() != chatRoom.getOwner()) {
             return ResponseEntity.ok().body(CommonResponse.fail("권한이 아닙니다."));
         }
-        if (chatRoom.getPassword() == null) {
+        if (chatRoom.getPassword() == "") {
             chatRoom.setSecretRoom(false);
-            chatRoom.setPassword("");
+        } else {
+            chatRoom.setSecretRoom(true);
         }
         boolean result = chatRoomService.changePassword(chatRoom);
         return ResponseEntity.ok().body(CommonResponse.success(result));
