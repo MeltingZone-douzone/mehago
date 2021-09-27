@@ -309,7 +309,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate} />
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate} notice={notice} />
                 <ChatSeperatedContainer
                     socket={socket}
                     messageFunction={messageFunction}
@@ -320,7 +320,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                     // setCurrentParticipants={setCurrentParticipants} 
                     hiddenSearchInput={hiddenSearchInput}
                     cursor={cursor}
-
                     message={message} buttonFunction={buttonFunction}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                     isSeperated={seperate}

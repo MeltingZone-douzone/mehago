@@ -1,7 +1,8 @@
-import { Avatar, Grid } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { Avatar} from '@material-ui/core';
+import React from 'react';
 import "../../../assets/sass/chat/ChatUtil.scss";
-import DeleteOutlined from '@material-ui/icons/DeleteOutlined';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEraser } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChatUtilNotice({ handleDeleteNotice , notice, userInfo}) {
 
@@ -40,7 +41,8 @@ export default function ChatUtilNotice({ handleDeleteNotice , notice, userInfo})
                                 <p className={"time"}>{notice.nickname } {notice.createdAt}</p>  
                             </div>
                             {notice.accountNo === userInfo.no ? (
-                                    <button onClick={(e) => {handleDeleteNotice(notice.no)}}><DeleteOutlined /></button>
+                                    <button className={"deleteNotice"} onClick={(e) => {handleDeleteNotice(notice.no)}}><FontAwesomeIcon icon={faEraser} size={'1x'} /></button>
+                                    
                                 ):
                                 null
                             }

@@ -11,7 +11,7 @@ class ChatUtilTodoItemList extends Component {
         -> input 값이 onChange될 때 마다 리랜더링이 되었고, input값을 추가 할 때 2번 리랜더링 됐었지만 아래 설정 후 불필요한 리랜더링이 없어짐
     */
    
-    shouldComponentUpdate(nextProps, nestState) {
+    shouldComponentUpdate(nextProps, nextState) {
         return this.props.todos !== nextProps.todos;
     }
     
@@ -32,7 +32,7 @@ class ChatUtilTodoItemList extends Component {
                 />
             )
             :
-            <p style={{ textAlign: 'center', width:'100%' }}>추가된 To-Do가 없습니다. To-Do를 추가해주세요</p>
+            <p style={{ textAlign: 'center', width:'100%', paddingTop:"2em" }}>추가된 To-Do가 없습니다. To-Do를 추가해주세요</p>
         )
     }
 }

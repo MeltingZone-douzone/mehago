@@ -51,6 +51,7 @@
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
+            width: 10em;
         }
     }
 
@@ -76,9 +77,8 @@
         display: grid;
         padding: 10px;
         text-overflow: ellipsis;
-        overflow: auto;
+        overflow: hidden;
         white-space: nowrap;
-
         grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr;
         gap: 10px;
@@ -86,7 +86,12 @@
         span {
             align-self: center;
             text-align: center;
-            color:#616161;
+            color: #616161;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 55px;
+            /* padding-right: 12px; */
+            text-overflow: ellipsis;
         }
     }
 }

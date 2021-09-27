@@ -14,7 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 
-export default function ChatHeader({handleSeperate,messageFunction, roomObject, cursor, setCursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage}) {
+export default function ChatHeader({handleSeperate,messageFunction, roomObject, cursor, setCursor, hiddenSearchInput, setHiddenSearchInput, setSearchMessage, notice}) {
   // const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
   const [hiddenSearchResult, setHiddenSearchResult] = useState(true);
   //   const [searchKeyword, setSearchKeyword] = useState('');
@@ -142,9 +142,10 @@ const SearchResult = styled.p`
     padding: 0 0 0 1em;
 `
 
+
+
 const useStyles = makeStyles((theme) => ({
   root: {
-
   },
   appBar: {
     background: '#2E3B55'

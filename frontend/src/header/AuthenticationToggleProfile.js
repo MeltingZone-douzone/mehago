@@ -14,7 +14,7 @@ const styles = makeStyles({
     }
 })
 
-const AccountToggleProfile = ({handleAuthentication, userInfo, onClose}) =>{
+const AccountToggleProfile = ({handleAuthentication, userInfo, onClose, setUserInfo}) =>{
     const classes = styles();
     let history = useHistory();
 
@@ -22,6 +22,7 @@ const AccountToggleProfile = ({handleAuthentication, userInfo, onClose}) =>{
         handleAuthentication(false);
         localStorage.removeItem("token");
         onClose();
+        setUserInfo({ nickname: "", name: "", phoneNumber: "", thumbnailUrl: "" });
         history.push("/account/login");
     }
 

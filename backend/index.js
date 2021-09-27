@@ -198,7 +198,7 @@ io.on("connection", (socket) => {
             socket.leave(currentRoomName, (result) => { });
             
             let chatMember;
-            await getChatMsember(currentRoomName).then(res => chatMember = res);
+            await getChatMember(currentRoomName).then(res => chatMember = res);
             
             const disconnectMessage = {
                 "validation": "disconnected",

@@ -16,6 +16,7 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
         <Container>
             <ChatWrapper isSeperated={isSeperated}>
                 <ChattingTemplate
+                    isSeperated={isSeperated}
                     socket={socket}
                     messageFunction={messageFunction}
                     participantObject={participantObject}
@@ -25,7 +26,7 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
                     // setCurrentParticipants={setCurrentParticipants} 
                     hiddenSearchInput={hiddenSearchInput}
                     cursor={cursor}
-
+                    notice={notice}
                     message={message} buttonFunction={buttonFunction}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                 />
