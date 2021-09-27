@@ -214,6 +214,7 @@
     <![CDATA[
       update chat_room
       set password= #{password }, secret_room= #{secretRoom }
+      where no= #{no }
     ]]>
   </update>
 

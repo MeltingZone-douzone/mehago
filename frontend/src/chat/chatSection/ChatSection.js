@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, deleteNotice, getNotice, fileUpload, getFileList } from "../../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, deleteNotice, getNotice, fileUpload, getFileList, changePassword, updateChatRoomInfo } from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
@@ -260,6 +260,48 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         }
     }
 
+    const [passwordDialog, setPasswordDialog] = useState(false);
+    const settingRoomFunction = {
+        dialogOpen: () => {
+            setPasswordDialog(true);
+        },
+        dialogClose: () => {
+            setPasswordDialog(false);
+        },
+        passwordChangeSubmit: async (newPassword) => {
+            await changePassword(roomObject.no, newPassword, roomObject.owner).then(res => {
+                if (res.data.result === "fail") {
+                    window.alert('권한이 없습니다.');
+                    setPasswordDialog(false);
+                    return;
+                } else {
+                    newPassword !== '' ?
+                        setRoomObject({ ...roomObject, password: newPassword, secretRoom: true }) :
+                        setRoomObject({ ...roomObject, password: "", secretRoom: false });
+                    window.alert('비밀번호 변경');
+                    setPasswordDialog(false);
+                }
+            }
+            );
+        },
+        updateChatRoom: async (form) => {
+            try {
+                await updateChatRoomInfo(form).then((res) => {
+                    if (res.data.result === "fail") {
+                        window.alert('권한이 없습니다.');
+                        return;
+                    };
+                    window.alert('수정되었습니다. ');
+                    // roomObject의 no, title, thumbnailUrl; res.data.data.no ....
+                    // socket.emit('room:update', res.data.data);
+                    return;
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+
     const handleSeperate = () => {
         setSeperate(!seperate);
     }
@@ -267,7 +309,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate} />
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate} notice={notice} />
                 <ChatSeperatedContainer
                     socket={socket}
                     messageFunction={messageFunction}
@@ -278,13 +320,14 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                     // setCurrentParticipants={setCurrentParticipants} 
                     hiddenSearchInput={hiddenSearchInput}
                     cursor={cursor}
-
                     message={message} buttonFunction={buttonFunction}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                     isSeperated={seperate}
                     handleDeleteNotice={handleDeleteNotice}
                     notice={notice}
                     fileList={fileList}
+                    settingRoomFunction={settingRoomFunction}
+                    passwordDialog={passwordDialog}
                     userInfo={userInfo}
                 />
             </div>

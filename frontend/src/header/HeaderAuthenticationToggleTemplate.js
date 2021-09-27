@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import AccountToggleProfile from './AuthenticationToggleProfile';
 import DevelopingModelMsg from '../components/DevelopingModeMsg';
 
-export default function HeaderAuthenticationToggleTemplate({handleAuthentication, userInfo, hiddenAlarm, hiddenProfile, onClose}) {
+export default function HeaderAuthenticationToggleTemplate({handleAuthentication, userInfo, hiddenAlarm, hiddenProfile, onClose, setUserInfo}) {
 
     const [pointRightpx,setPointRightpx] = useState(null);
 
@@ -26,6 +26,7 @@ export default function HeaderAuthenticationToggleTemplate({handleAuthentication
                     handleAuthentication = {handleAuthentication}
                     userInfo = {userInfo}
                     onClose = {onClose}
+                    setUserInfo ={setUserInfo}
                 />
             );
         }

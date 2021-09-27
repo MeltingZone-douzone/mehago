@@ -10,7 +10,7 @@ import { NavLink } from 'react-router-dom';
 import CircleDiv from '../assets/styles/CircleDiv';
 
 
-const AccountHeaderButtons = ({handleAuthentication, userInfo}) =>{
+const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo}) =>{
 
     const [hiddenProfile,setHiddenProfile] = useState(true);
     const [hiddenAlarm,setHiddenAlarm] = useState(true);
@@ -104,6 +104,7 @@ const AccountHeaderButtons = ({handleAuthentication, userInfo}) =>{
                     hiddenAlarm = {hiddenAlarm}
                     hiddenProfile = {hiddenProfile}
                     onClose = {handleClose}
+                    setUserInfo={setUserInfo}
                 />
             }
         </AccountHeaderProfileDiv>

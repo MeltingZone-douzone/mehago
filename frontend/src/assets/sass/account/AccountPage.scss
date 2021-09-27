@@ -32,7 +32,7 @@
                 width: 100%;
                 height: 100%;
                 display: flex;
-                padding-top: 5em;
+                padding-top: 2em;
                 flex-direction: column;
                 align-items: center;
                 background: white;
@@ -42,19 +42,82 @@
                     font: caption;
                 }
                 .thumbnailUrl{
+                    padding-top: 2em;
                     width: 13em;
                     border-radius: 13em;
                     height: 10em;
                 }
+                .selectAcount{
+                    font-size: 1.5em;
+                }
+                .nonMemberLogo{
+                    width: 85%;
+                    border: 1px solid #e0e0e0;
+                    margin-top: 2em;
+                    border-radius: 10px;
+                }
+                .container{
+                    display: flex;
+                    width: 100%;
+                    height: 100%;
+                    margin-top: 5em;
+                    flex-direction: column;
+                    align-items: center;
+                    .accountButton{
+                        background-color: white;
+                        width: 70%;
+                        border: none;
+                        border-bottom: ridge;
+                        display: flex;
+                        padding: 1em 2em 1em 2em;
+                        text-shadow: 0 0 black;
+                        .userInfo{
+                            width: 80%;
+                            text-align: justify;
+                        }
+                        .search{
+                            width: 1.5em;
+                        }
+                        p{
+                            padding-left: 1em;
+                            align-self: center;
+                        }
+                        span{
+                            background-color: #1c90fc38;
+                            width: 20%;
+                            padding: 0.5em;
+                            align-self: center;
+                            font-size: small;
+                            border-radius: 10px;
+                        }
+                        
+                    }
+                    .loginPageButton{
+                        background-color: #1c90fc38;
+                        width: 40%;
+                        height: 3em;
+                        display: flex;
+                        border: none;
+                        border-bottom: ridge;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 10px;
+                        p{
+                            padding-left: 1em;
+                        }
+                    }
+
+                }
                 
             }
-            .handleButton{
-                width: 100%;
-                height: 20%;
-                display: flex;
-                justify-content: space-evenly;
-            }
         }
+        //     .handleButton{
+        //         width: 100%;
+        //         height: 20%;
+        //         display: flex;
+        //         justify-content: space-evenly;
+        //     }
+
        
     }
 

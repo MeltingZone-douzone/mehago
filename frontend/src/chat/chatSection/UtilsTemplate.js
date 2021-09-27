@@ -9,7 +9,7 @@ import UtilsHeader from './components/UtilsHeader';
 
 
 
-export default function UtilsTemplate({ isOnChatSection, participantObject, chatRoomNo, handleDeleteNotice, notice, fileList, userInfo }) {
+export default function UtilsTemplate({ isOnChatSection, participantObject, chatRoomNo, handleDeleteNotice, notice, fileList, settingRoomFunction, passwordDialog, roomObject, userInfo }) {
 
     const [activity, setActivity] = useState("notice"); // 실행되는 작업
 
@@ -33,7 +33,7 @@ export default function UtilsTemplate({ isOnChatSection, participantObject, chat
                 break;
             case "file": return <ChatUtilFile chatRoomNo={chatRoomNo} fileList={fileList} />;
                 break;
-            case "setting": return <ChatRoomSetting />;
+            case "setting": return <ChatRoomSetting roomObject={roomObject} settingRoomFunction={settingRoomFunction} passwordDialog={passwordDialog} />;
                 break;
         }
     }
@@ -41,7 +41,7 @@ export default function UtilsTemplate({ isOnChatSection, participantObject, chat
     return (
         <Template>
             <UtilsHeaderWrapper>
-                <UtilsHeader isOnChatSection={isOnChatSection} handleActivity={handleActivity} activity={activity} />
+                <UtilsHeader isOnChatSection={isOnChatSection} handleActivity={handleActivity} activity={activity} roomObject={roomObject} userInfo={userInfo} />
             </UtilsHeaderWrapper>
             <UtilsContentWrapper>
                 {getUtilComponent()}

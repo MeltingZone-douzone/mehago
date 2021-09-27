@@ -5,7 +5,7 @@ import { fadeIn, fadeOut } from '../../assets/styles/properties/Fade';
 import ChattingTemplate from './ChattingTemplate';
 import UtilsTemplate from './UtilsTemplate';
 
-export default function ChatSeperatedContainer({ socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen, isSeperated, handleDeleteNotice, notice, fileList, userInfo }) {
+export default function ChatSeperatedContainer({ socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen, isSeperated, handleDeleteNotice, notice, fileList, settingRoomFunction, passwordDialog, userInfo }) {
 
     useEffect(() => {
         console.log(isSeperated);
@@ -16,6 +16,7 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
         <Container>
             <ChatWrapper isSeperated={isSeperated}>
                 <ChattingTemplate
+                    isSeperated={isSeperated}
                     socket={socket}
                     messageFunction={messageFunction}
                     participantObject={participantObject}
@@ -25,7 +26,7 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
                     // setCurrentParticipants={setCurrentParticipants} 
                     hiddenSearchInput={hiddenSearchInput}
                     cursor={cursor}
-
+                    notice={notice}
                     message={message} buttonFunction={buttonFunction}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                 />
@@ -39,6 +40,9 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
                     handleDeleteNotice={handleDeleteNotice}
                     notice={notice}
                     fileList={fileList}
+                    settingRoomFunction={settingRoomFunction}
+                    passwordDialog={passwordDialog}
+                    roomObject={roomObject}
                     userInfo={userInfo}
                 />
             </UtilsWrapper>
