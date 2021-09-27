@@ -90,7 +90,7 @@ export default function SignUpForm() {
           isExist(e.target.name, e.target.value)
         } else {
           setValidation({...validation, [e.target.name]: false })
-          setErrorMessage({...errorMessage, [e.target.name]: "(-)를 제외한 숫자만 입력하세요." })
+          setErrorMessage({...errorMessage, [e.target.name]: "(-)를 제외한 숫자를 정확히 입력하세요." })
         }
       },
     }

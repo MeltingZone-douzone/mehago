@@ -1,10 +1,8 @@
 package com.douzone.mehago.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.douzone.mehago.repository.NoticeRepository;
 import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
 import com.douzone.mehago.security.AuthUser;
@@ -25,7 +23,6 @@ import com.douzone.mehago.vo.Participant;
 import com.douzone.mehago.vo.Todo;
 import com.douzone.mehago.vo.TokenInfo;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -84,7 +81,6 @@ public class ChatController {
 
         // 3. 태그 생성
         result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
-        System.out.println(result);
 
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         return ResponseEntity.ok().body(participantNo);
@@ -130,6 +126,7 @@ public class ChatController {
 
     @GetMapping("/getAllChatList")
     public ResponseEntity<?> getAllChatList(String offset) {
+        System.out.println(offset);
         List<Map<String, Object>> list = chatRoomService.getAllChatList(offset);
         getTagName(list);
         return ResponseEntity.ok()
@@ -230,9 +227,7 @@ public class ChatController {
 
     @GetMapping("/getSearchMessage")
     public ResponseEntity<?> getSearchMessage(Long chatRoomNo, String searchKeyword) {
-        System.out.println(chatRoomNo + ":" + searchKeyword);
         List<Long> messageNo = messageService.getSearchMessage(chatRoomNo, searchKeyword);
-        System.out.println(messageNo);
         return ResponseEntity.ok()
                 .body(!messageNo.isEmpty() ? CommonResponse.success(messageNo) : CommonResponse.fail("검색결과가 없습니다.")); // 채팅방에
     }
@@ -242,6 +237,21 @@ public class ChatController {
         boolean result = chatRoomService.checkPassword(chatRoom.getNo(), chatRoom.getPassword());
         return ResponseEntity.ok().body(result);
     }
+
+    @GetMapping("/enterRoomValidation")
+    public ResponseEntity<?> enterRoomValidation(Long chatRoomNo, @AuthUser TokenInfo auth) {
+        System.out.println(auth);
+
+        if(auth.getNo() == null){
+            return ResponseEntity.ok().body(CommonResponse.success("noNickname"));
+        }
+        Boolean result = participantService.isExistsParticipants(chatRoomNo, 
+            (auth.getIsNonMember() == true ? 0L : auth.getNo()),   // accountNo
+            (auth.getIsNonMember() == true ? auth.getNo() : 0L));  // nonMemberNo
+        System.out.println(result);
+        return ResponseEntity.ok().body(result ? CommonResponse.success(result) : CommonResponse.fail("재입장입니다."));
+    }
+
 
     @Auth(role = "ACCOUNT")
     @PostMapping("/updateChatRoomInfo")
@@ -356,7 +366,7 @@ public class ChatController {
         List<ChatRoom> favoriteRoomList = chatRoomService.getFavoriteRoomList(
                 (auth.getIsNonMember() == true ? 0L : auth.getNo()),
                 (auth.getIsNonMember() == true ? auth.getNo() : 0L));
-        System.out.println("favoriteRoomList" + favoriteRoomList.size());
+        // System.out.println("favoriteRoomList" + favoriteRoomList.size());
         return ResponseEntity.ok().body(favoriteRoomList.size() != 0 ? CommonResponse.success(favoriteRoomList)
                 : CommonResponse.fail("not exist favoriteRoomList"));
 
@@ -379,10 +389,11 @@ public class ChatController {
         boolean result = chatRoomService.checkIsDeleted(Long.parseLong(chatRoomNo));
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
-
+//  @Auth
     @DeleteMapping("/exitRoom/{chatRoomNo}")
-    public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser Account account) {
-        boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), account.getNo());
+    // public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser Account account) {
+    public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser TokenInfo auth) {
+        boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), auth.getNo());
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 

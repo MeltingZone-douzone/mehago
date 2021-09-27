@@ -20,13 +20,15 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
     useEffect(() => {
         if (!userInfo) {
             getNonMemberInfo().then(res => {
+                console.log(res.data.data);
                 setNonMember(res.data.data);
             });
         }
     }, [userInfo]);
     // console.log(currentParticipants);
-    console.log(participants);
-    console.log(userInfo);
+    // console.log(participants); 
+    // console.log(userInfo); 
+    
 
     const showParticipantsList = (participants, currentParticipants) => {
         let onlineParticipants;

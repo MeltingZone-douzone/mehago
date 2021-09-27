@@ -37,15 +37,17 @@ const UtilsNavItem = styled.div`
     justify-content: center;
     align-items: center;
 
-    // background-color: ${({ active }) => active ? colors.mainThemeColor : "#fff"};
-    border-bottom:2px solid ${({ active }) => active ? colors.mainThemeColor : "#00000000"};
-    color: ${({ active }) => active ? colors.mainThemeColor : colors.lightTextColor};
+    // background-color: ${({active}) => active? colors.mainThemeColor : "#fff" };
+    border-bottom:2px solid ${({active}) => active? colors.mainThemeColor : "#00000000" };
+    // color: ${({active}) => active? colors.mainThemeColor : colors.lightTextColor };
+    color: ${({active}) => active? '#555555' : '#a1a1a1' };
 
     cursor: pointer;
 
     &:hover{
-        background-color: ${({ active }) => active ? "#fff" : "#00000005"};
-        color: ${colors.mainThemeColor};
+        background-color: ${({active}) => active? "#fff" : "#00000005" };
+        // color: ${colors.mainThemeColor};
+        color: #646464;
     }
 
     span {

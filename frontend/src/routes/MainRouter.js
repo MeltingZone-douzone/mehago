@@ -57,7 +57,7 @@ export default function MainRouter() {
         });
     }
 
-
+    console.log(userInfo)
     return (
         <Router>
             <Fragment>

@@ -131,7 +131,6 @@ io.on("connection", (socket) => {
         participantObj = participantObject;
         // hasData는 뭔지 사용처가 없다면 false일때 ( 000님 입장했습니다.)메세지 보내기
         currentRoomName = "room" + roomObject.no;
- 
         redisClient.sadd(currentRoomName, participantObj.no);
         socket.join(currentRoomName);
         io.of('/').adapter.subClient.subscribe(currentRoomName);

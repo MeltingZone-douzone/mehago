@@ -6,7 +6,6 @@ import ChatSection from '../../chat/chatSection/ChatSection';
 import '../../assets/sass/chat/Chat.scss';
 import ChatList from '../../chat/ChatList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
-import SettingChatRoom from '../../chat/SettingChatRoom';
 import { getParticipantsList, getMyChatListApi } from '../../../api/ChatApi'
 
 import { io } from 'socket.io-client';
@@ -61,7 +60,6 @@ export default function ChatPage({ match, userInfo }) {
                     <Route exact path={match.path} render={(props) => <ChatList {...props} userInfo={userInfo} />} />
                     <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} />} />
                     <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />} />
-                    <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>
             </div>
         </div>

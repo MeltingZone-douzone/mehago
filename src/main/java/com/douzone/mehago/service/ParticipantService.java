@@ -102,4 +102,8 @@ public class ParticipantService {
     public Boolean updateFavoriteRoom(Long chatRoomNo, Long accountNo, Long nonMemberNo, Boolean favoriteRoom) {
         return participantRepository.updateFavoriteRoom(chatRoomNo, accountNo, nonMemberNo, favoriteRoom);
     }
+
+    public Boolean isExistsParticipants(Long chatRoomNo, Long accountNo, Long nonMemberNo) {
+        return participantRepository.isExistsParticipants(chatRoomNo, accountNo, nonMemberNo);
+    }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
+import { List, ListItem, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import StarRateRoundedIcon from '@material-ui/icons/StarRateRounded';
@@ -93,12 +93,15 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
                 onRequestClose={() => setModalIsOpen(false)}
                 shouldCloseOnOverlayClick={true}
                 contentLabel="채팅방 나가기">
-                <div className={"top"}>
-                    <Button variant="contained" onClick={() => setModalIsOpen(false)}>x</Button>
-                </div>
-                <ListItemText align="center" primary={`[${room.title}] 채팅방에서 나가시겠습니까?`} secondary={'나가면 바보'} />
-                <Button onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
-                <Button onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    <div className={"top"}>
+                        <Button className={classes.close} onClick={() => setModalIsOpen(false)}>&times;</Button>
+                    </div>
+                    <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize:'1.5em' }}>{room.title}</Typography>}/>
+                    <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize:'1em'}}>{'채팅방에서 나가시겠습니까?'} </Typography>}/>
+                    <div className={"modalButton"}>
+                        <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
+                        <Button className={classes.okButton} onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    </div>
             </Modal>
         </div >
     )
@@ -183,5 +186,34 @@ const madeStyles = makeStyles({
         minWidth: "1px",
         padding: 0,
         paddingRight: "5px"
+    },
+    close: {
+        color: '#ffffff',
+        fontWeight: '600',
+        fontSize: '1.25rem'
+    },
+    container:{
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: '3rem',
+        height: '100%',
+        justifyContent: 'center',
+    },
+    cancelButton: {
+        width: '11rem',
+        backgroundColor: '#ffffff',
+        border: '1px solid #1C90FC',
+        color: '#1C90FC',
+        '&:hover': {
+            background: '#e3f2ff',
+        },
+    },
+    okButton: {
+        width: '11rem',
+        backgroundColor: '#1C90FC',
+        color: '#ffffff',
+        '&:hover': {
+            background: '#40a3fd',
+        },
     }
 })
