@@ -16,18 +16,11 @@ const useStyles = theme => ({
                 opacity: '1',
             }
         },
+        /* todo-item 사이에 윗 테두리 */
         '& + todoItem': {
             borderTop: '1px solid #f1f3f5',
         }
     },
-    // /* todo-item 에 마우스가 있을때만 .remove 보이기 */
-    // todoItem:hover .remove: {
-    //     opacity: '1',
-    // },
-      /* todo-item 사이에 윗 테두리 */
-    // todoItem + todoItem: {
-    //     borderTop: '1px solid #f1f3f5',
-    // },
     remove: {
         marginRight: '1rem',
         color: '#e64980',

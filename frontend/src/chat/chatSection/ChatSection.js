@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, deleteNotice , getNotice} from "../../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, deleteNotice, getNotice, fileUpload, getFileList } from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({history, match, handleCurrentParticipants, handleParticipants, socket, userInfo}) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo }) {
     const chatRoomNo = match.params.no;
     const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
     const [participantObject, setParticipantObject] = useState({});
@@ -14,7 +14,7 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
     const [message, setMessage] = useState();
     const [searchKeyword, setSearchKeyword] = useState('');
     const [prevSearchKeyword, setPrevSearchKeyword] = useState('');
-    const [cursor, setCursor] = useState({firstIndex: 0, index: 0, lastIndex: 0});
+    const [cursor, setCursor] = useState({ firstIndex: 0, index: 0, lastIndex: 0 });
 
     const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
 
@@ -26,11 +26,12 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
     const [noticeOpen, setNoticeOpen] = useState(false);
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
     const [notice, setNotice] = useState([]);
-    
-    const noticeList = (chatRoomNo)=> {
+    const [fileList, setFileList] = useState([]);
+
+    const noticeList = (chatRoomNo) => {
         try {
             getNotice(chatRoomNo).then(res => {
-                if(!res.data.data) {
+                if (!res.data.data) {
                     // notice에 아무것도 없을 경우
                     return;
                 }
@@ -41,10 +42,20 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         }
     };
 
-    const handleDeleteNotice = (noticeNo) =>{
-        deleteNotice(noticeNo).then(res=>{
+    const fileUploadList = (chatRoomNo) => {
+        try {
+            getFileList(chatRoomNo).then(res => {
+                setFileList(res.data.data);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const handleDeleteNotice = (noticeNo) => {
+        deleteNotice(noticeNo).then(res => {
             // console.log(res.data);
-            if(res.data.result === "success"){
+            if (res.data.result === "success") {
                 setNotice(
                     notice.filter((notice) => notice.no !== noticeNo)
                 )
@@ -75,15 +86,15 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
 
         handleParticipants(chatRoomNo); // 방의 participants 뽑아옴
         setJoinSuccess(true);
-        
-        if(prevChatRoomNo != chatRoomNo){
-        // console.log("여기서 방나가기 함.",prevChatRoomNo, chatRoomNo, roomObject.no);
-        //     socket.emit('leave', roomObject.title);
-        //     setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
+
+        if (prevChatRoomNo != chatRoomNo) {
+            // console.log("여기서 방나가기 함.",prevChatRoomNo, chatRoomNo, roomObject.no);
+            //     socket.emit('leave', roomObject.title);
+            //     setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
         }
     }, [chatRoomNo]);
 
-    useEffect(()=>{
+    useEffect(() => {
         socket.on('join message', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             // console.log("join socket : ", chatRoomNo, arrayOfNumbers);
@@ -95,7 +106,7 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         //     console.log("leave socket : "); // FIXME: 이건왜안찍힘 
         //     handleCurrentParticipants(arrayOfNumbers);
         // });
-        
+
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
@@ -104,11 +115,11 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
-    },[chatRoomNo])
+    }, [chatRoomNo])
 
     // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
-        return() =>{
+        return () => {
             console.log("unmount. logout할 때");
             socket.emit('leave', roomObject.title)
         }
@@ -121,6 +132,7 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             setJoinSuccess(false);
             console.log(roomObject);
             noticeList(roomObject.no);
+            fileUploadList(roomObject.no);
         }
     }, [joinSuccess]);
 
@@ -142,12 +154,12 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         },
         onSearchKeyPress: (e) => {
             if (e.target.value !== '') {
-                if(prevSearchKeyword === searchKeyword) {
+                if (prevSearchKeyword === searchKeyword) {
                     messageFunction.moveSearchResult(e, "right")
                     return;
                 }
                 getSearchMessage(chatRoomNo, searchKeyword).then(res => {
-                    if(res.data.result === 'success') {
+                    if (res.data.result === 'success') {
                         console.log(res);
                         setSearchMessage([
                             ...res.data.data,
@@ -167,15 +179,15 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
                 console.log("검색어를 한글자 이상 입력해주세요"); // TODO: 뿌리기?
             }
         },
-        moveSearchResult: (e, direction) => {                  
-            if(direction === "left") {
-                if(cursor.index - 1 >= cursor.firstIndex) {
-                    setCursor({...cursor, index: cursor.index - 1 });
+        moveSearchResult: (e, direction) => {
+            if (direction === "left") {
+                if (cursor.index - 1 >= cursor.firstIndex) {
+                    setCursor({ ...cursor, index: cursor.index - 1 });
                     return;
                 }
             } else {
-                if(cursor.index < cursor.lastIndex) {
-                    setCursor({...cursor, index: cursor.index + 1 });
+                if (cursor.index < cursor.lastIndex) {
+                    setCursor({ ...cursor, index: cursor.index + 1 });
                     return;
                 }
                 console.log("마지막 검색결과입니다. ");
@@ -186,7 +198,7 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
             console.log('leaveRoom()호출 in ChatSection');
             socket.emit('leave', roomObject.title); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
             history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
-                                    // TODO: 참여자 삭제
+            // TODO: 참여자 삭제
         },
         /* joinRoom: (e) => {
             if(prevChatRoomNo != chatRoomNo){
@@ -241,8 +253,9 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
-            // fileUpload(files);
-            // socket.emit("file:send", files);    
+            fileUpload(roomObject.no, participantObject.no, files);
+            // socket.emit("file:send", files); 
+            fileUploadList(roomObject.no);
             setFileUploadOpen(false);
         }
     }
@@ -254,23 +267,24 @@ export default function ChatSection({history, match, handleCurrentParticipants, 
     return (
         <div className={"chatSection"} key={match.params.no}>
             <div className={"container"}>
-                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate}/>
+                <ChatHeader socket={socket} roomObject={roomObject} messageFunction={messageFunction} cursor={cursor} setCursor={setCursor} hiddenSearchInput={hiddenSearchInput} setHiddenSearchInput={setHiddenSearchInput} setSearchMessage={setSearchMessage} handleSeperate={handleSeperate} />
                 <ChatSeperatedContainer
-                    socket={socket} 
-                    messageFunction={messageFunction} 
-                    participantObject={participantObject} 
-                    roomObject={roomObject} 
-                    chatRoomNo={chatRoomNo} 
+                    socket={socket}
+                    messageFunction={messageFunction}
+                    participantObject={participantObject}
+                    roomObject={roomObject}
+                    chatRoomNo={chatRoomNo}
                     searchMessage={searchMessage}
                     // setCurrentParticipants={setCurrentParticipants} 
                     hiddenSearchInput={hiddenSearchInput}
                     cursor={cursor}
-                    
+
                     message={message} buttonFunction={buttonFunction}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                     isSeperated={seperate}
                     handleDeleteNotice={handleDeleteNotice}
                     notice={notice}
+                    fileList={fileList}
                     userInfo={userInfo}
                 />
             </div>

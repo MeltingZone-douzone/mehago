@@ -1,12 +1,18 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import "../assets/sass/account/Nonmember.scss";
 
-export default function NonMembers({nonMemberStart}) {
-  
+export default function NonMembers({ isExistToken, getNonMemberToken }) {
+
   return (
     <div className={"NonMembers"}>
       <span>
-        <button onClick={(e)=>{nonMemberStart(e)}}>비회원으로 시작하기</button>
+        {
+          isExistToken ?
+            <NavLink to="/chat">비회원으로 시작하기</NavLink>
+            :
+            <a href="#" onClick={(e) => { getNonMemberToken(e); return false; }}>비회원으로 시작하기</a>
+        }
       </span>
     </div>
   );

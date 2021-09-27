@@ -9,36 +9,36 @@ import UtilsHeader from './components/UtilsHeader';
 
 
 
-export default function UtilsTemplate({isOnChatSection,participantObject, chatRoomNo, handleDeleteNotice, notice, userInfo}) {
+export default function UtilsTemplate({ isOnChatSection, participantObject, chatRoomNo, handleDeleteNotice, notice, fileList, userInfo }) {
 
     const [activity, setActivity] = useState("notice"); // 실행되는 작업
 
     const handleActivity = (value) => {
-        switch(value) {
-            case "notice" : setActivity("notice");
+        switch (value) {
+            case "notice": setActivity("notice");
                 break;
-            case "todo" : setActivity("todo");
+            case "todo": setActivity("todo");
                 break;
-            case "file" : setActivity("file");
+            case "file": setActivity("file");
                 break;
-            case "setting" : setActivity("setting");
+            case "setting": setActivity("setting");
                 break;
         }
     }
     const getUtilComponent = () => {
-        switch(activity) {
-            case "notice" : return <ChatUtilNotice chatRoomNo={chatRoomNo} handleDeleteNotice={handleDeleteNotice} notice={notice} userInfo={userInfo}/>;
+        switch (activity) {
+            case "notice": return <ChatUtilNotice chatRoomNo={chatRoomNo} handleDeleteNotice={handleDeleteNotice} notice={notice} userInfo={userInfo} />;
                 break;
-            case "todo" : return <ChatUtilTodoList participantObject={participantObject} chatRoomNo={chatRoomNo} />;
+            case "todo": return <ChatUtilTodoList participantObject={participantObject} chatRoomNo={chatRoomNo} />;
                 break;
-            case "file" : return <ChatUtilFile />;
+            case "file": return <ChatUtilFile chatRoomNo={chatRoomNo} fileList={fileList} />;
                 break;
-            case "setting" : return <ChatRoomSetting />;
+            case "setting": return <ChatRoomSetting />;
                 break;
         }
     }
 
-    return(
+    return (
         <Template>
             <UtilsHeaderWrapper>
                 <UtilsHeader isOnChatSection={isOnChatSection} handleActivity={handleActivity} activity={activity} />

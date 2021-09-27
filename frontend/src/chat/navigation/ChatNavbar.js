@@ -5,15 +5,16 @@ import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { exitRoomApi, getFavoriteRoomList, updateFavoriteRoomApi } from '../../../api/ChatApi';
 import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
 import Logo from '../../assets/images/black-mehago.png';
-import ParticipatingMember from './ParticipatingMember';
+import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
+
 import ParticipatingRoom from './ParticipatingRoom';
+import ParticipatingMember from './ParticipatingMember';
 
 
-export default function ChatNavbar({socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom}){
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -21,27 +22,31 @@ export default function ChatNavbar({socket, currentParticipants, userInfo, parti
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
-    
-    useEffect(()=> {
+
+    useEffect(() => {
         fetchRooms();
         fetchFavoriteRooms();
-    },[favoriteCheck]);
+    }, [favoriteCheck]);
 
-    useEffect(() =>{
+    useEffect(() => {
         // DB에 저장 된 채팅 방 모두 입장
-        if(participatingRoom.length >= 1) {
+        if (participatingRoom.length >= 1) {
             let rooms = [];
             participatingRoom.map((room) =>
                 rooms.push(`room${room.no}`)
             )
             socket.emit("join", rooms)
         }
-    },[participatingRoom]);
+    }, [participatingRoom]);
 
     const fetchFavoriteRooms = () => {
         try {
             getFavoriteRoomList().then(res => {
-                setFavoriteRoom(res.data);
+                if (res.data.result === "fail") {
+                    console.log("즐겨찾기 한 방이 없어요");
+                    return;
+                }
+                setFavoriteRoom(res.data.data);
             });
         } catch (e) {
             console.log(e);
@@ -56,7 +61,7 @@ export default function ChatNavbar({socket, currentParticipants, userInfo, parti
         } catch (e) {
             console.log(e);
         }
-    } 
+    }
 
     const exitRoom = (chatRoomNo) => {
         try {
@@ -72,10 +77,10 @@ export default function ChatNavbar({socket, currentParticipants, userInfo, parti
 
     const handleReceivedMsg = (msg) => {
         let updated = {};
-        let newArr = participatingRoom.map((room)=>{
-            if(room.no == msg.chatRoomNo) {
-                updated = {...room, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now()};
-            }else {
+        let newArr = participatingRoom.map((room) => {
+            if (room.no == msg.chatRoomNo) {
+                updated = { ...room, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now() };
+            } else {
                 return room;
             }
         })
@@ -100,7 +105,7 @@ export default function ChatNavbar({socket, currentParticipants, userInfo, parti
     }
 
     return (
-        <div className={"ChatNav"} onClick={(e)=>e.stopPropagation()}>
+        <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
                     <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
@@ -123,8 +128,8 @@ export default function ChatNavbar({socket, currentParticipants, userInfo, parti
                 {chatList? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} handleReceivedMsg={handleReceivedMsg}/> : null}
                 {chatMember? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
             </div>
-            
-            
+
+
         </div>
     );
 }
@@ -138,12 +143,12 @@ const NaviButton = styled.button`
     border-radius: 8px;
 
     background-color:#fff;
-    color: ${ props => props.active ? colors.mainThemeColor : "gray" };
+    color: ${props => props.active ? colors.mainThemeColor : "gray"};
 `
 
 const madeStyles = makeStyles({
     favoriteRoom: {
-        width:"30px",
-        height:"30px"                      
+        width: "30px",
+        height: "30px"
     }
 })

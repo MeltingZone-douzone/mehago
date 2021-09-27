@@ -1,9 +1,11 @@
 package com.douzone.mehago.vo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class Participant {
+@EqualsAndHashCode(callSuper = false)
+public class Participant extends TokenInfo {
     private Long no;
     private String chatNickname;
     private int notReadCount;
@@ -13,6 +15,14 @@ public class Participant {
     private Long chatRoomNo;
     private Boolean favoriteRoom;
     private Boolean isDeleted;
+
+    public Participant() {
+    }
+
+    public Participant(TokenInfo tokenInfo) {
+        this.no = tokenInfo.getNo();
+        this.chatNickname = tokenInfo.getNickname();
+    }
     // private String favoriteRoom; // 잠시 string으로 고침
 
 

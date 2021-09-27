@@ -42,7 +42,7 @@ export default function ChatPage({ match, userInfo }) {
     const fetchRooms = () => {
         try {
             getMyChatListApi().then(res => {
-                if(res.data.result == "fail"){
+                if (res.data.result == "fail") {
                     return false;
                 }
                 // console.log(res.data.data);
@@ -58,9 +58,9 @@ export default function ChatPage({ match, userInfo }) {
             <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
-                    <Route exact path={match.path} render={(props) => <ChatList {...props} userInfo={userInfo} /> } />
-                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo}/>} />
-                    <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props}  fetchRooms={fetchRooms} participatingRoom={participatingRoom} />}/>
+                    <Route exact path={match.path} render={(props) => <ChatList {...props} userInfo={userInfo} />} />
+                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} />} />
+                    <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />} />
                     <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>
             </div>

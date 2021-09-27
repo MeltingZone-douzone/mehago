@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
+import { List, ListItem, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import StarRateRoundedIcon from '@material-ui/icons/StarRateRounded';
@@ -13,14 +13,14 @@ import '../../assets/sass/chat/modal.scss';
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, handleReceivedMsg}) {
+export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, handleReceivedMsg }) {
     const classes = madeStyles();
 
     useEffect(() => {
-        socket.on(`chat:message:room${room.no}`, (msg)=>{
+        socket.on(`chat:message:room${room.no}`, (msg) => {
             handleReceivedMsg(msg);
         })
-    },[])
+    }, [])
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -48,43 +48,43 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
         const result = `${timeValue.getFullYear()}-${getMonth}-${getDate}`
         return result;
     }
-    
+
     return (
         <div className={"chatProfile"}>
             <List className={"container"}>
                 {/* <Button onClick={() => updateFavoriteRoom(room.no)}> */}
                 <div className={"profileHeader"}>
-                    <Button 
+                    <Button
                         className={classes.favoriteButton}
                         onClick={() => {
                             setFavoriteCheck(room.favoriteRoom ? false : true)
                             updateFavoriteRoom(room.no, room.favoriteRoom)
                         }}>
                         {
-                            room.favoriteRoom ? 
-                            <StarRateRoundedIcon style={{color: '#f4e02d'}}/>
-                            :
-                            <StarRateRoundedIcon style={{color: '#c0c0c0'}}/>
+                            room.favoriteRoom ?
+                                <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
+                                :
+                                <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
                         }
                     </Button>
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
                 <Link to={`/chat/${room.no}`}>
-                <ListItem button key={`${room.no}`} className={classes.roomContainer} >
-                    <ChattingRoomImage>
-                        <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
-                    </ChattingRoomImage>
-                    <ChattingRoomContent>
-                        <div className={classes.content}>
-                            <span className={classes.title} > {room.title} </span>
-                            <span className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</span>
-                            <span className={classes.leastMessageAt}>{timeForToday(room.leastMessageAt)}</span>
-                        </div>
-                        <div className={classes.content}>
-                            <span className={classes.leastMessage}>{room.leastMessage ? room.leastMessage : '새로운 채팅방입니다.'}</span> <span>{room.notReadCount === 0 ? ' ' : room.notReadCount}</span>
-                        </div>
-                    </ChattingRoomContent>
-                </ListItem>
+                    <ListItem button key={`${room.no}`} className={classes.roomContainer} >
+                        <ChattingRoomImage>
+                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
+                        </ChattingRoomImage>
+                        <ChattingRoomContent>
+                            <div className={classes.content}>
+                                <div className={classes.title} > {room.title} </div>
+                                <div className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</div>
+                                <div className={classes.leastMessageAt}>{timeForToday(room.leastMessageAt)}</div>
+                            </div>
+                            <div className={classes.content}>
+                                <div className={classes.leastMessage}>{room.leastMessage ? room.leastMessage : '새로운 채팅방입니다.'}</div> <div className={classes.notReadCount}>{room.notReadCount === 0 ? ' ' : room.notReadCount}</div>
+                            </div>
+                        </ChattingRoomContent>
+                    </ListItem>
                 </Link>
             </List>
             <Modal
@@ -93,12 +93,15 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
                 onRequestClose={() => setModalIsOpen(false)}
                 shouldCloseOnOverlayClick={true}
                 contentLabel="채팅방 나가기">
-                <div className={"top"}>
-                    <Button variant="contained" onClick={() => setModalIsOpen(false)}>x</Button>
-                </div>
-                <ListItemText align="center" primary={`[${room.title}] 채팅방에서 나가시겠습니까?`} secondary={'나가면 바보'} />
-                <Button onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
-                <Button onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    <div className={"top"}>
+                        <Button className={classes.close} onClick={() => setModalIsOpen(false)}>&times;</Button>
+                    </div>
+                    <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize:'1.5em' }}>{room.title}</Typography>}/>
+                    <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize:'1em'}}>{'채팅방에서 나가시겠습니까?'} </Typography>}/>
+                    <div className={"modalButton"}>
+                        <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
+                        <Button className={classes.okButton} onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    </div>
             </Modal>
         </div >
     )
@@ -142,10 +145,17 @@ const madeStyles = makeStyles({
         marginTop: "20px",
     },
     title: {
-        fontWeight: "bolder"
+        fontWeight: "bolder",
+        maxWidth: "140px",
+        float: "left",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap"
     },
     participantCount: {
         fontSize: "0.7em",
+        marginTop: "inherit",
+        float: "left"
     },
     leastMessageAt: {
         float: "right",
@@ -154,21 +164,55 @@ const madeStyles = makeStyles({
     },
     leastMessage: {
         fontSize: "0.9em",
+        float: "left",
+        maxWidth: "200px",
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap"
     },
-    favoriteButton:{
-        minHeight:"2px",
-        minWidth:"2px",
-        padding:0,
-        paddingLeft:"2px"
+    notReadCount: {
+        float: "right"
     },
-    exitRoom:{
-        minHeight:"0.5px",
-        float:"right",
-        minWidth:"1px",
-        padding:0,
-        paddingRight:"5px"
+    favoriteButton: {
+        minHeight: "2px",
+        minWidth: "2px",
+        padding: 0,
+        paddingLeft: "2px"
+    },
+    exitRoom: {
+        minHeight: "0.5px",
+        float: "right",
+        minWidth: "1px",
+        padding: 0,
+        paddingRight: "5px"
+    },
+    close: {
+        color: '#ffffff',
+        fontWeight: '600',
+        fontSize: '1.25rem'
+    },
+    container:{
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: '3rem',
+        height: '100%',
+        justifyContent: 'center',
+    },
+    cancelButton: {
+        width: '11rem',
+        backgroundColor: '#ffffff',
+        border: '1px solid #1C90FC',
+        color: '#1C90FC',
+        '&:hover': {
+            background: '#e3f2ff',
+        },
+    },
+    okButton: {
+        width: '11rem',
+        backgroundColor: '#1C90FC',
+        color: '#ffffff',
+        '&:hover': {
+            background: '#40a3fd',
+        },
     }
 })

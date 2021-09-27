@@ -64,6 +64,8 @@ export default function ChattingRoom({
         }
     }
 
+    console.log(account);
+
     // function checkJoin(){
     //     if(account === false && joinValidationRoom === "비밀번호가 틀렸습니다."){
     //         joinValidation(`${no}`)

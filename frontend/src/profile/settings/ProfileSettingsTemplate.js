@@ -6,9 +6,10 @@ import ReactModal from "react-modal";
 
 import AccountSettings from './AccountSettings';
 import UserInfoSettings from './UserInfoSettings';
-import { Button, ListItemText } from '@material-ui/core';
+import { Button, ListItemText , makeStyles, Typography } from '@material-ui/core';
 import {leaveMember} from '../../../api/AccountApi';
 import localStorage from "local-storage";
+import '../../assets/sass/chat/modal.scss';
 
 import { useHistory } from 'react-router';
 
@@ -16,6 +17,7 @@ ReactModal.setAppElement('body');
 
 export default function UserSettingsTemplate({ handleAuthentication ,user, settingsApi}) {
     const history = useHistory();
+    const classes = madeStyles();
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -54,12 +56,14 @@ export default function UserSettingsTemplate({ handleAuthentication ,user, setti
                 onRequestClose={() => setModalIsOpen(false)}
                 shouldCloseOnOverlayClick={true}
                 contentLabel="채팅방">
-                <div className={"top"}>
-                    <Button variant="contained" onClick={() => setModalIsOpen(false)}>x</Button>
-                </div>
-                <ListItemText align="center" primary={`[${user.nickname}]님 정말 탈퇴 하시겠습니까?`} secondary={'나가면 바보'} />
-                <Button onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
-                <Button onClick={() => { unregister();  setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    <div className={"top"}>
+                        <Button className={classes.close} onClick={() => setModalIsOpen(false)}>&times;</Button>
+                    </div>
+                    <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize:'1.1em' }}>{user.nickname}{'님 정말 탈퇴 하시겠습니까?'}</Typography>}/>
+                    <div className={"modalButton"}>
+                        <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
+                        <Button className={classes.okButton} onClick={() => { unregister();  setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    </div>
             </ReactModal>
         </SettingsTemplate>
        
@@ -101,3 +105,35 @@ const DropOutButton = styled(FullColorButton)`
 
     opacity:.2;
 `
+
+const madeStyles = makeStyles({
+    close: {
+        color: '#ffffff',
+        fontWeight: '600',
+        fontSize: '1.25rem'
+    },
+    container:{
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: '6rem',
+        height: '100%',
+        justifyContent: 'center',
+    },
+    cancelButton: {
+        width: '11rem',
+        backgroundColor: '#d9d9d9',
+        border: '0px solid #a0a0a0',
+        color: '#595959',
+        '&:hover': {
+            background: '#eaeaea',
+        },
+    },
+    okButton: {
+        width: '11rem',
+        backgroundColor: '#1C90FC',
+        color: '#ffffff',
+        '&:hover': {
+            background: '#40a3fd',
+        },
+    }
+})

@@ -6,13 +6,30 @@
     width: 80%;
     max-width: 500px;
     background-color: white;
-    border-radius: 16px;
     box-shadow: 0 3rem 5rem rgba(0, 0, 0, 0.3);
     text-align: center;
-    border-radius: 0.5rem;
+    // border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
 
+    .container{
+        margin-top: 0;
+        height: 100%;
+        border-radius: 10px;
+    }
     .top{
-        background-color: rgb(180, 189, 214);
+        // background-color: rgb(28, 144, 252);
+        background-color: rgb(58, 74, 104);
+        // background-color: rgb(200, 200, 200);
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+
+    }
+    .modalButton{
+        display: flex;
+        justify-content: space-evenly;
+        padding-bottom: 15px;
     }
     .tagsContainer{
         display: flex;
@@ -38,8 +55,13 @@
         border: none;
         
         color: rgb(241, 241, 241);
+        background-color: rgb(28, 144, 252);
         border-radius: 0.5rem;
         cursor: pointer;
+
+        &:hover {
+            background-color: #40a3fd,
+        }
     }
     
 }

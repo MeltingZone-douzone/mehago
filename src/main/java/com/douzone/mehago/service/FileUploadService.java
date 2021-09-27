@@ -4,12 +4,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.List;
+
+import com.douzone.mehago.repository.FileUploadRepository;
+import com.douzone.mehago.vo.FileUpload;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class FileUploadService {
+
+	private final FileUploadRepository fileUploadRepository;
 
 	private static final String ACCOUNT_SAVE_PATH = "/uploads-mehago/account";
 	private static final String CATHROOM_SAVE_PATH = "/uploads-mehago/chatroom";
@@ -70,6 +79,14 @@ public class FileUploadService {
 		filename += ("." + extName);
 
 		return filename;
+	}
+
+	public boolean addFile(FileUpload file) {
+		return fileUploadRepository.addFile(file);
+	}
+
+	public List<FileUpload> getFileList(Long chatRoomNo) {
+		return fileUploadRepository.getFileList(chatRoomNo);
 	}
 
 }

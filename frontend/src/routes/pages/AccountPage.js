@@ -11,7 +11,7 @@ import PasswordSearchPage from "../../account/PasswordSearch";
 import IdSearchPage from "../../account/IdSerach";
 import SignUpSuccess from "../../account/SignUpSuccess";
 
-export default function AccountPage ({match, setAuthentication}) {
+export default function AccountPage({ match, isExistToken, setAuthentication }) {
 
     return (
         <div className={"PageContainer"}>
@@ -26,44 +26,44 @@ export default function AccountPage ({match, setAuthentication}) {
                     </NavLink>
                 </div>
                 <div className={"ContentWrapper"}>
-                
-                        <AnimatePresence>
-                            <Switch location={location} key={location.pathname}>
-                                <motion.div
-                                  style={pageStyle}
-                                  initial="initial"
-                                  animate="in"
-                                  exit="out"
-                                  variants={pageVariants}
-                                  transition={pageTransition}>
-                                    <Route
-                                      exact
-                                      path={`${match.path}/login`}
-                                      render={ (props) =>( <LoginForm setAuthentication = {setAuthentication} {...props} />)}
-                                    />
-                                    <Route
-                                      exact
-                                      path={`${match.path}/signup`}
-                                      component={SignUpForm}
-                                    />
-                                    <Route
-                                      exact
-                                      path={`${match.path}/idsearch`}
-                                      component={IdSearchPage}
-                                    />
-                                    <Route
-                                      exact
-                                      path={`${match.path}/passwordsearch`}
-                                      component={PasswordSearchPage}
-                                    />
-                                      <Route
-                                      exact
-                                      path={`${match.path}/signup/success`}
-                                      component={SignUpSuccess}
-                                    />
-                                </motion.div>
-                            </Switch>
-                        </AnimatePresence>
+
+                    <AnimatePresence>
+                        <Switch location={location} key={location.pathname}>
+                            <motion.div
+                                style={pageStyle}
+                                initial="initial"
+                                animate="in"
+                                exit="out"
+                                variants={pageVariants}
+                                transition={pageTransition}>
+                                <Route
+                                    exact
+                                    path={`${match.path}/login`}
+                                    render={(props) => (<LoginForm isExistToken={isExistToken} setAuthentication={setAuthentication} {...props} />)}
+                                />
+                                <Route
+                                    exact
+                                    path={`${match.path}/signup`}
+                                    component={SignUpForm}
+                                />
+                                <Route
+                                    exact
+                                    path={`${match.path}/idsearch`}
+                                    component={IdSearchPage}
+                                />
+                                <Route
+                                    exact
+                                    path={`${match.path}/passwordsearch`}
+                                    component={PasswordSearchPage}
+                                />
+                                <Route
+                                    exact
+                                    path={`${match.path}/signup/success`}
+                                    component={SignUpSuccess}
+                                />
+                            </motion.div>
+                        </Switch>
+                    </AnimatePresence>
                 </div>
                 <Links />
             </div>

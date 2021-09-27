@@ -2,8 +2,6 @@
 chat_room isDeleted
 
 
-chatRoomNav.js 
-
 파일업로드 (스프링에서 하고) 
 소켓에서 번호받고 불러오는걸로????
 
@@ -17,4 +15,4 @@ elasticsearch 실행
 $ bin/elasticsearch
 ```
 
-logstash 실행
+logstash

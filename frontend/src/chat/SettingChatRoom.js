@@ -18,7 +18,6 @@ export default function SettingChatRoom({ match, history }) {
 
     useEffect(async () => {
         await getRoomInfo(chatRoomNo).then(res => {
-            console.log(res.data.data.secretRoom);
             if (res.data.data.secretRoom) {
                 setIsSecretRoom(true);
             }

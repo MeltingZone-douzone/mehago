@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
 import styled from 'styled-components';
 import { getAllChatListApi, keyword } from '../../api/ChatApi';
@@ -14,6 +14,7 @@ export default function ChatList({ userInfo }) {
     const [isSearched, setIsSearched] = useState(false);
     const [noResult, setNoResult] = useState(false);
 
+    // const chatRoomAreaRef = useRef();
     const [offsetNo, setOffsetNo] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
@@ -22,19 +23,19 @@ export default function ChatList({ userInfo }) {
         fetchChatRooms();
     }, [])
 
-    useEffect(() =>{
-        if(!searchValue) {
+    useEffect(() => {
+        if (!searchValue) {
             setIsSearched(false);
             setNoResult(false);
         }
-    },[searchValue])
+    }, [searchValue])
 
     const fetchChatRooms = () => {
         try {
             getAllChatListApi(offsetNo).then(res => {
-                if(res.statusText === "OK") {
-                    if(res.data.result === "success") {
-                        if(res.data.data.length === 0){
+                if (res.statusText === "OK") {
+                    if (res.data.result === "success") {
+                        if (res.data.data.length === 0) {
                             setIsEnd(!isEnd);
                         }
                         setRooms(prevState => prevState.concat(res.data.data));
@@ -48,11 +49,13 @@ export default function ChatList({ userInfo }) {
     }
 
     const onScroll = (e) => {
+        
         const scrollHeight = e.target.scrollHeight;
         const fetchPointHeight = scrollHeight * 3 / 4;
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
         const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
-        if(scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
+        if (scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
+            console.log('개시발')
             fetchChatRooms();
             setIsFetching(true);
         }
@@ -60,7 +63,7 @@ export default function ChatList({ userInfo }) {
 
 
     useEffect(() => {
-        if(rooms && rooms.length > 1) {
+        if (rooms && rooms.length > 1) {
             setOffsetNo(rooms[rooms.length - 1].no);
         }
     }, [rooms]);
@@ -76,7 +79,7 @@ export default function ChatList({ userInfo }) {
                     setNoResult(`"${searchValue}" 에 대한 ${res.data.message}`); // 검색결과가 없습니다.
                 }
             });
-            
+
         } catch (e) {
             console.log(e);
         }
@@ -122,10 +125,10 @@ export default function ChatList({ userInfo }) {
                 noResult ? (
                     <p className={"noResult"}>{noResult}</p>
                 ) : (
-                    <div className={"ChatListContainer"}  onScroll={onScroll}>
+                    <div className={"ChatListContainer"} onScroll={onScroll}> {/*  ref={chatRoomAreaRef} */}
                         <List className={"ChatRoom"}>
-                            { rooms ? getChatrooms().map((room, index)=> {
-                                return(
+                            {rooms ? getChatrooms().map((room, index) => {
+                                return (
                                     <div key={index}>
                                     <ChatRoom 
                                         userInfo={userInfo}
@@ -146,24 +149,24 @@ export default function ChatList({ userInfo }) {
                                     />
                                     </div>
                                 )
-                                }) : null }
+                            }) : null}
                         </List>
                     </div>
                 )
             }
-        </ChatListContainer>    
+        </ChatListContainer>
     );
 }
 
 const materialStyles = makeStyles({
     textField: {
         marginTop: "20px",
-        width:"70%"
+        width: "70%"
     },
     searchIcon: {
         backgroundColor: "glay",
-        border:"none",
-        borderRadius:"3px",
+        border: "none",
+        borderRadius: "3px",
     }
 })
 

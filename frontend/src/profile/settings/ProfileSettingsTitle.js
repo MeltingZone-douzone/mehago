@@ -19,7 +19,7 @@ const SettingsTitleContainer = styled.div`
     width:100%;
     display:flex;
     font-size:1.5rem;
-    color:${colors.mainThemeColor};
+    color: #555555;
 
     p{
         margin-left: 10px;
