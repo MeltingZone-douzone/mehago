@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
 import styled from 'styled-components';
 import { getAllChatListApi, keyword } from '../../api/ChatApi';
@@ -14,10 +14,10 @@ export default function ChatList({ userInfo }) {
     const [isSearched, setIsSearched] = useState(false);
     const [noResult, setNoResult] = useState(false);
 
+    // const chatRoomAreaRef = useRef();
     const [offsetNo, setOffsetNo] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
-
 
     useEffect(() => {
         fetchChatRooms();
@@ -49,11 +49,13 @@ export default function ChatList({ userInfo }) {
     }
 
     const onScroll = (e) => {
+        
         const scrollHeight = e.target.scrollHeight;
         const fetchPointHeight = scrollHeight * 3 / 4;
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
         const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
         if (scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
+            console.log('개시발')
             fetchChatRooms();
             setIsFetching(true);
         }
@@ -123,28 +125,28 @@ export default function ChatList({ userInfo }) {
                 noResult ? (
                     <p className={"noResult"}>{noResult}</p>
                 ) : (
-                    <div className={"ChatListContainer"} onScroll={onScroll}>
+                    <div className={"ChatListContainer"} onScroll={onScroll}> {/*  ref={chatRoomAreaRef} */}
                         <List className={"ChatRoom"}>
                             {rooms ? getChatrooms().map((room, index) => {
                                 return (
                                     <div key={index}>
-                                        <ChatRoom
-                                            no={room.no}
-                                            title={room.title}
-                                            limitedUserCount={room.limitedUserCount}
-                                            onlyAuthorized={room.onlyAuthorized}
-                                            owner={room.owner}
-                                            searchable={room.searchable}
-                                            tagName={room.tagName}
-                                            secretRoom={room.secretRoom}
-                                            thumbnailUrl={room.thumbnailUrl}
-                                            titleAndTag={room}
-                                            participantCount={room.participantCount}
-                                            lastMessage={room.lastMessage}
-                                            ownerNickname={room.nickname}
-                                            ownerThumbnailUrl={room.accountThumbnailUrl}
-                                            userInfo={userInfo}
-                                        />
+                                    <ChatRoom 
+                                        userInfo={userInfo}
+                                        no = {room.no}
+                                        title={room.title}
+                                        limitedUserCount ={room.limitedUserCount}
+                                        onlyAuthorized ={room.onlyAuthorized}
+                                        owner =  {room.owner}
+                                        searchable={room.searchable} 
+                                        tagName = {room.tagName}
+                                        secretRoom = {room.secretRoom}
+                                        thumbnailUrl = {room.thumbnailUrl} 
+                                        titleAndTag = { room }
+                                        participantCount = { room.participantCount}
+                                        lastMessage = { room.lastMessage }
+                                        ownerNickname = {room.nickname}
+                                        ownerThumbnailUrl = {room.accountThumbnailUrl}
+                                    />
                                     </div>
                                 )
                             }) : null}

@@ -71,7 +71,7 @@ public class JwtTokenUtil {
                             .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                             .sign(generateAlgorithm());
                 }
-            } else {
+            } else { // 비회원으로 시작
                 token = JWT.create().withIssuer(issuer).withClaim("role", "NONMEMBER")
                         .withExpiresAt(new Date(System.currentTimeMillis() + NONMEMBER_ACCESS_TOKEN_EXPIRE_TIME))
                         .sign(generateAlgorithm());

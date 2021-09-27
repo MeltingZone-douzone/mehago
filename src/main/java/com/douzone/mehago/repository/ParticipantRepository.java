@@ -89,4 +89,12 @@ public class ParticipantRepository {
         // TODO: 지금 받은 list안씀 나중에 처리함 ㄱㄷ
     }
 
+    public Boolean isExistsParticipants(Long chatRoomNo, Long accountNo, Long nonMemberNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("chatRoomNo", chatRoomNo);
+        map.put("accountNo", accountNo);
+        map.put("nonMemberNo", nonMemberNo);
+        return sqlSession.selectOne("participant.isExistsParticipants", map) == null ? true : false; 
+    }
+
 }

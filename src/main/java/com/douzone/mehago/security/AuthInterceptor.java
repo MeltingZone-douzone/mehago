@@ -66,7 +66,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 		if ("NONMEMBER".equals(role)) {
 			return true;
 		}
-
+		// 회원만 쓸 수 있는데 비회원이 접근하면 nonMember 줌
 		if (!"ACCOUNT".equals(authRole)) {
 			response.getWriter().write("nonMember");
 			return false;

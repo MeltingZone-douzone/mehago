@@ -33,6 +33,7 @@ export function getParticipantInfo(chatRoomNo) {
 }
 
 export function getRoomInfo(chatRoomNo) {
+    setAuthHeader();
     return axios.get(`/api/chat/roomInfo/${chatRoomNo}`, { headers: AuthHeader })
         .then(res => res);
 }
@@ -56,21 +57,25 @@ export function getMyChatListApi() {
 }
 
 export function getTodoList(chatRoomNo) { // offsetNo
+    setAuthHeader();
     return axios.get(`/api/chat/todo/${chatRoomNo}`, { headers: AuthHeader })
         .then(res => res);
 }
 
 export function addTodo(todoObject) {
+    setAuthHeader();
     return axios.post("/api/chat/todo", todoObject, { headers: AuthHeader })
         .then(res => res);
 }
 
 export function updateCheckTodo(todoNo) {
+    setAuthHeader();
     return axios.put(`/api/chat/todo/${todoNo}`, {}, { headers: AuthHeader })
         .then(res => res)
 }
 
 export function removeTodo(todoNo) {
+    setAuthHeader();
     return axios.delete(`/api/chat/todo/${todoNo}`, { headers: AuthHeader })
         .then(res => res)
 }
@@ -81,12 +86,12 @@ export function addNotice(roomNo, participantNo, notice) {
         participantNo: participantNo,
         notice: notice,
     }
+    setAuthHeader();
     return axios.post("/api/chat/addNotice", noticeObject, { headers: AuthHeader })
         .then(res => res);
 }
 
 export function fileUpload(roomNo, participantNo, files) {
-
     const formData = new FormData();
 
     files.forEach((file) => {
@@ -111,6 +116,7 @@ export function getSearchMessage(chatRoomNo, searchKeyword) {
 
 
 export function vaildatePassword(chatRoomNo, password) {
+    setAuthHeader();
     const roomObject = { no: chatRoomNo, password: password };
     return axios.post(`/api/chat/vaildatePassword`, roomObject, { headers: AuthHeader }).then(res => res);
 }
@@ -118,12 +124,21 @@ export function vaildatePassword(chatRoomNo, password) {
 
 
 export function vaildateNickname(chatRoomNo, chatNickname) {
+    setAuthHeader();
     const participantObject = { chatRoomNo, chatNickname };
     return axios.post(`/api/chat/vaildateNickname`, participantObject, { headers: AuthHeader })
         .then(res => res);
 }
 
-export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus) {
+export function enterRoomValidationApi(chatRoomNo) { // FIXME: 함수명 바꾸기   방에 이미 입장해있는지 check
+    setAuthHeader();
+    return axios.get(`/api/chat/enterRoomValidation`, { params : { chatRoomNo }, headers: AuthHeader})
+        .then(res => res)
+        .catch(e => console.log(e));
+}
+
+
+export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus){
     setAuthHeader();
     const favoriteStatusObject = { "favoriteRoom": favoriteStatus };
     // console.log(favoriteStatusObject);
@@ -138,13 +153,13 @@ export function getFavoriteRoomList() {
 }
 
 export function exitRoomApi(chatRoomNo) {
-    console.log(`exitRoomApi(${chatRoomNo})`);
     setAuthHeader();
     return axios.delete(`/api/chat/exitRoom/${chatRoomNo}`, { headers: AuthHeader })
         .then(res => res);
 }
 
 export function updateChatRoomInfo(roomObject) {
+    setAuthHeader();
     return axios.post('/api/chat/updateChatRoomInfo', roomObject, { headers: formDataHeader() }).then(res => res);
 }
 
@@ -175,7 +190,7 @@ export function getAllChatListApi(offset) {
 }
 
 export function keyword(searchValue) {
-
+    setAuthHeader();
     return axios.get(`/api/chat/keywordSearch?searchValue=` + searchValue, { headers: AuthHeader })
         .then(res => res);
 }

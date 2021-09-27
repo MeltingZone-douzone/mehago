@@ -11,12 +11,10 @@ ReactModal.setAppElement('body');
 
 import ChatRoomModalTemplate from './ChatRoomModalTemplate';
 
-export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl, userInfo }) {
-
+export default function ChatRoom({ userInfo, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl}) {
+    
     const [modalIsOpen, setModalIsOpen] = useState(false);
-
-
-
+    
     const getTags = () => {
         if (tagName && tagName.length > 6) {
             return tagName.slice(0, 6).map((tag, index) => {
@@ -106,20 +104,19 @@ export default function ChatRoom({ no, title, limitedUserCount, onlyAuthorized, 
                 shouldCloseOnOverlayClick={true}
                 shouldCloseOnEsc={true}
                 contentLabel="채팅방">
-                <ChatRoomModalTemplate
-                    no={no}
-                    title={title}
-                    thumbnailUrl={thumbnailUrl}
-                    participantCount={participantCount}
-                    limitedUserCount={limitedUserCount}
-                    lastMessage={lastMessage}
-                    tagName={tagName}
-                    timeForToday={timeForToday}
-                    secretRoom={secretRoom}
-                    onlyAuthorized={onlyAuthorized}
-                    account={userInfo ? true : false} //todo
-                    ownerThumbnailUrl={ownerThumbnailUrl}
-                    ownerNickname={ownerNickname} />
+                    <ChatRoomModalTemplate
+                        no = {no}
+                        title={title}
+                        thumbnailUrl={thumbnailUrl}
+                        participantCount={participantCount}
+                        limitedUserCount={limitedUserCount}
+                        lastMessage={lastMessage}
+                        tagName={tagName}
+                        timeForToday={timeForToday}
+                        secretRoom = {secretRoom}
+                        account = {userInfo ? true : false} 
+                        ownerThumbnailUrl={ownerThumbnailUrl}
+                        ownerNickname={ownerNickname}/>
             </ReactModal>
         </div>
     )

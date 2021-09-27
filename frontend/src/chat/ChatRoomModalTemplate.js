@@ -14,46 +14,105 @@ import ChatRoomModalBasic from './ChatRoomModalBasic';
 import ChatRoomModalPassword from './ChatRoomModalPassword';
 import ChatRoomModalNickname from './ChatRoomModalNickname';
 import ChatRoomModalIsFull from './ChatRoomModalIsFull';
-import { vaildatePassword, vaildateNickname } from '../../api/ChatApi';
+import { vaildatePassword, vaildateNickname, enterRoomValidationApi } from '../../api/ChatApi';
 import { ValidationExp } from '../utils/ValidationExp';
-
-export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
+export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
     const classes = materialStyles();
     const history = useHistory();
 
     // 비밀방, 비회원, 회원을 식별하여 컴포넌트를 뿌려주기 위한 변수
-    const [status, setStatus] = useState(() => participantCount > limitedUserCount ? "isFull" : secretRoom ? "secret" : account || onlyAuthorized ? "basic" : "nickname");
+    const [status, setStatus] = useState(() => participantCount >= limitedUserCount ? "isFull" : secretRoom ? "secret" : account || onlyAuthorized ? "basic" : "nickname");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
+    const [hiddenPasswordInput, setHiddenPasswordInput] = useState(true);
+    const [hiddenNicknameInput, setHiddenNicknameInput] = useState(true);
     const [wrongPassword, setWrongPassword] = useState(false);
     const [wrongNickname, setWrongNickname] = useState(false);
 
-    const getContent = () => {
-        switch (status) {
-            case "secret": return <ChatRoomModalPassword password={password} handleChange={handleChange} passwordValidation={passwordValidation} wrongPassword={wrongPassword} account={account} />
+    console.log(account);
+    console.log(onlyAuthorized);
+    console.log('status: ', status);
+    const getContent = () =>{
+        switch(status){ // password={password}
+            case "secret" : return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} />
                 break;
-            case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} />
+            case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}/>
                 break;
-            case "basic": return <ChatRoomModalBasic enterRoom={enterRoom} />
+            case "basic" : return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} />
                 break;
             case "isFull": return <ChatRoomModalIsFull />
                 break;
         }
     }
 
-    const passwordValidation = () => {
+    const handleChange = (e) =>{
+        const {name, value} = e.target;
+        switch(name) {
+            case "password" : setPassword(value);
+                break;
+            case "nickname" : setNickname(value);
+                break;
+        }
+    }
+
+    const handleKeyPress = (e) => {
+        if(e.key === 'Enter') {
+            hiddenPasswordInput ? basicEnterRoom() : passwordValidation();
+            return;
+        }
+    }
+
+    // 비회원은 비밀방 입장 못하니까 Password Modal에서 account로 비교로 Button disabled로 막음
+    const basicEnterRoom = () => {
         try {
-            if (password) (
-                vaildatePassword(no, password).then((res) => {
-                    if (res.data == true) {
-                        account ? enterRoom() : setStatus("nickname");
-                    } else {
-                        setPassword("");
-                        setWrongPassword(true);
-                        return;
+            enterRoomValidationApi(no).then(res => { // FIXME: 함수명 바꾸기
+                // if(res.data === 'nonMember') { // 비회원일 경우 
+                //     console.log('회원만 이용가능합니다. 로그인을 해주세요.');
+                //     return;
+                // }
+                if(res.data.result === 'success') { // 새입장
+                    if(res.data.data === 'noNickname') {
+                        return setHiddenNicknameInput(false);
                     }
-                })
-            )
+                    console.log(status);
+                    switch(status) {
+                        case 'secret': {
+                            setHiddenPasswordInput(false);
+                            break;
+                        }
+                        case 'nickname': {
+                            setHiddenNicknameInput(false);
+                            break;
+                        }
+                        default: {
+                            enterRoom();
+                        }
+                    }
+                } else {                            // 재입장
+                    console.log('재입장');
+                    enterRoom();
+                }
+            })
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    const passwordValidation = () => {
+        if(password === ''){ 
+            return;
+        }
+        console.log('passwordValidation');
+        try {
+            vaildatePassword(no, password).then((res) => {
+                if (res.data == true) {
+                    enterRoom();
+                } else {
+                    setPassword("");
+                    setWrongPassword(true);
+                    return;
+                }
+            })
         } catch (err) {
             console.log(err);
         }
@@ -72,7 +131,6 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
                         return;
                     }
                 })
-
             } else {
                 setWrongNickname(true);
             }
@@ -80,20 +138,10 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
             console.log(err);
         }
     }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-
-        switch (name) {
-            case "password": setPassword(value);
-                break;
-            case "nickname": setNickname(value);
-                break;
-        }
-    }
+    
 
     const enterRoom = () => {
-        console.log("enterRoom");
+        console.log("enterRoom()");
         history.push(`/chat/${no}`);
     }
 
@@ -166,7 +214,8 @@ const ModalTemplate = styled.div`
 
 const ModalHeader = styled.div`
     min-height: 350px;
-    background-color: rgb(30 149 252);
+    // background-color: rgb(30 149 252);
+    background-color: rgb(220 220 220);
     background-image: ${({ url }) => url ? `url(${url})` : `url(${Logo})`};
     background-repeat : no-repeat;
     background-size : ${({ url }) => url ? `cover` : `contain`};

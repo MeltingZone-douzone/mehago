@@ -64,6 +64,8 @@ export default function ChattingRoom({
         }
     }
 
+    console.log(account);
+
     // function checkJoin(){
     //     if(account === false && joinValidationRoom === "비밀번호가 틀렸습니다."){
     //         joinValidation(`${no}`)
@@ -165,10 +167,10 @@ export default function ChattingRoom({
                     {
                         account ?
                         <Link to={`/chat/${no}`}>
-                            <Button className={"joinButton"} onClick ={() => {joinValidation(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                            <Button className={"joinButton"} onClick ={() => {joinValidation(no) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
                         </Link>
                         :
-                        <Button className={"joinButton"} onClick ={() => {joinValidation(`${no}`), setModalIsOpen(false), setNicknameModalOpen(true) }}  variant="contained" color="primary" disableElevation>방입장하기</Button>
+                        <Button className={"joinButton"} onClick ={() => {joinValidation(no), setModalIsOpen(false), setNicknameModalOpen(true) }}  variant="contained" color="primary" disableElevation>방입장하기</Button>
                     }
                 </Modal>
                 {/* 비회원 입장시 */}
@@ -199,12 +201,12 @@ export default function ChattingRoom({
                     {
                         validateNickname ?
                             <Link to={`/chat/${no}`}>
-                                <Button className={"joinButton"} onClick={() => { checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                                <Button className={"joinButton"} onClick={() => { checkNickname(no) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
                             </Link>
                             :
                             <div>
                                 <p>{validateNickname}</p>
-                                <Button className={"joinButton"} onClick={() => { checkNickname(`${no}`) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
+                                <Button className={"joinButton"} onClick={() => { checkNickname(no) }} variant="contained" color="primary" disableElevation>방입장하기</Button>
                             </div>
                     }
 
