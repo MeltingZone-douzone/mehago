@@ -6,9 +6,10 @@ import { getMessageList } from '../../../api/ChatApi';
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
+import styled from 'styled-components';
 
 
-export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput }) {
+export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput,notice }) {
     const messageAreaRef = useRef();
 
     const [offsetNo, setOffsetNo] = useState(0);
@@ -151,6 +152,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                 )
                 : null
             }
+            
         </List >
     );
 }
@@ -172,4 +174,3 @@ function dateDivider(messageList, index, message) {
         return <p style={{ padding: '0.1rem', textAlign: 'center', backgroundColor: '#bdc7db' }}>{msgDate} {day}</p>;
     }
 }
-
