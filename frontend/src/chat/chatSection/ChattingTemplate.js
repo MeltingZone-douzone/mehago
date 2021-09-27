@@ -28,7 +28,7 @@ export default function ChattingTemplate({socket, messageFunction, participantOb
                             <div className={classes.notice}>
                                 <p>{notice[0].notice}</p>
                             </div>
-                            <Button className={classes.dropDown} onClick={()=>{setExpandable(!expandable)}}>▼</Button>
+                            <Button className={classes.dropDown} onClick={()=>{setExpandable(!expandable)}}>{expandable ? "▲" : "▼"}</Button>
                             {/* 여기에 버튼 만들어서 접어두기/열기 만들어야 함 */}
                         </Notice>
                         <WriterInfo expandable={expandable}>
@@ -75,6 +75,7 @@ const NoticeTemplate = styled.div`
   align-items: center;
   border-bottom: inset;
   box-sizing: border-box;
+  padding-top: 0.5em;
 `
 
 const Notice = styled.div`
@@ -97,13 +98,16 @@ const WriterInfo = styled.div`
 const useStyles = makeStyles((theme) => ({
     
     noticeIcon : { 
-        paddingLeft:"1.5em"
+        paddingLeft:"1.5em",
+        width:"10%"
       },
       notice:{
-        paddingLeft:"1em"
+        paddingLeft:"1em",
+        width:"70%"
       },
       dropDown:{
-        display: "flex",
-        justifyContent: "center"
+        display: "contents",
+        justifyContent: "end",
+        width:"10%"
       }
 }))
