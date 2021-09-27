@@ -119,7 +119,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         <List className={"messageArea"} onScroll={onScroll} ref={messageAreaRef} >
             {messageList ? messageList
                 .map((message, index) => {
-                    // TODO: +1로 바꾸고 닉네임은 위에꺼랑 비교 날짜는 아래꺼랑 비교
                     return (
                         message.participantNo !== participantObject.no ?
                             <>
@@ -154,7 +153,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         </List >
     );
 }
-// TODO: 메시지가 거꾸로 뽑히고 있어서 index - 1 말고 + 1 로 작업해야함
+// 메시지가 거꾸로 뽑히고 있어서 index - 1 말고 + 1 로 함
 function dateDivider(messageList, index, message) {
     const prevMessage = messageList[index + 1];
     if (prevMessage && moment(prevMessage.createdAt).format('YY/MM/DD') !== moment(message.createdAt).format('YY/MM/DD')) {
