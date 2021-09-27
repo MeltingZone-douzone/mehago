@@ -31,9 +31,9 @@ spring:
          enabled: true
    datasource:
       driver-class-name: org.mariadb.jdbc.Driver 
-      url: jdbc:mysql://127.0.0.1:3306/chat?characterEncoding=utf8
-      username: bookmall_local
-      password: bookmall_local 
+      url: jdbc:mysql://192.168.80.112:3307/mehago?characterEncoding=utf8
+      username: mehago 
+      password: mehago 
    jwt: 
       secret: PeAChHOng
       issuer: Mehago
