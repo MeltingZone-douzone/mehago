@@ -67,7 +67,7 @@ export default function MainRouter() {
                         {/* 로그인(토큰이 존재)을 하고서도 들어올 수 있는 공용 라우터 => <PublicRouter restricted={false} */}
                         <PublicRouter authentication={authentication} restricted={false} userInfo={userInfo} setUserInfo={setUserInfo} handleAuthentication={handleAuthentication} exact path="/"  component={HomePage} /> 
                         {/* 로그인(토큰이 존재)을 하면 들어올 수 없는 공용 라우터 => <PublicRouter restricted={true} */}
-                        <PublicRouter authentication={authentication} restricted={false} setAuthentication={handleAuthentication} isExistToken={isExistToken} path="/account" component={AccountPage} />
+                        <PublicRouter authentication={authentication} restricted={true} setAuthentication={handleAuthentication} isExistToken={isExistToken} path="/account" component={AccountPage} />
                         {/* 로그인(토큰이 존재)을 해야 들어올 수 있는 라우터 => <privateRouter */}
                         <PrivateRouter handleAuthentication={handleAuthentication} reloadUser={getUserInfo} authentication={authentication} userInfo={userInfo} path="/profile" component={ProfileSettingsPage} />
                         {/* <Route authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} /> */}

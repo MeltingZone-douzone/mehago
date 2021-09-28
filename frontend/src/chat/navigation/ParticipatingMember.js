@@ -25,10 +25,6 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
             });
         }
     }, [userInfo]);
-    // console.log(currentParticipants);
-    // console.log(participants); 
-    // console.log(userInfo); 
-    
 
     const showParticipantsList = (participants, currentParticipants) => {
         let onlineParticipants;
@@ -38,10 +34,13 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
             )
         })
 
+        console.log(onlineParticipants);
+        console.log(participants);
+
         return participants && participants
             .filter(participants => participants.chatNickname.indexOf(searchNickname) != -1)
             .map(participant =>
-                <ListItem>
+                <ListItem key={participant.no}>
                     <ListItemIcon>
                         <Avatar alt={participant.thumbnailUrl} src={participant.thumbnailUrl} />
                     </ListItemIcon>
@@ -55,7 +54,9 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
                                 <ListItemText primary={participant.chatNickname}></ListItemText>
                     }
                     {
-                        onlineParticipants.includes(participant.no) ?
+                        
+                        
+                        onlineParticipants.includes(`${participant.no}`) ?
                             <ParticipantsStatus style={{ fontSize: '12px', color: '#34d12c' }} />
                             :
                             <ParticipantsStatus style={{ fontSize: '12px', color: '#0000' }} />

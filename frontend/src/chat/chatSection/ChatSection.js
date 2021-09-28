@@ -5,7 +5,7 @@ import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo }) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo, fetchRooms }) {
     const chatRoomNo = match.params.no;
     const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
     const [participantObject, setParticipantObject] = useState({});
@@ -54,7 +54,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
 
     const handleDeleteNotice = (noticeNo) => {
         deleteNotice(noticeNo).then(res => {
-            // console.log(res.data);
             if (res.data.result === "success") {
                 setNotice(
                     notice.filter((notice) => notice.no !== noticeNo)
@@ -86,27 +85,21 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
 
         handleParticipants(chatRoomNo); // 방의 participants 뽑아옴
         setJoinSuccess(true);
-
-        if (prevChatRoomNo != chatRoomNo) {
-            // console.log("여기서 방나가기 함.",prevChatRoomNo, chatRoomNo, roomObject.no);
-            //     socket.emit('leave', roomObject.title);
-            //     setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
-        }
     }, [chatRoomNo]);
 
+    useEffect(() =>{
+        if(!participantObject.hasData) { // 처음 입장하는 경우에만
+            fetchRooms();// 리스트 다시 불러옴..
+        }
+    },[participantObject])
+
     useEffect(() => {
-        socket.on('join message', (msgToJson) => {
-            const arrayOfNumbers = msgToJson.chatMember.map(Number);
-            // console.log("join socket : ", chatRoomNo, arrayOfNumbers);
-            handleCurrentParticipants(arrayOfNumbers);
+        socket.on(`members:status:room${chatRoomNo}`, (msgToJson) => {
+            const {onlineChatMember} = msgToJson;
+            console.log(onlineChatMember);
+            handleCurrentParticipants(onlineChatMember);
         });
-
-        // socket.on('leave', (msgToJson) => {
-        //     const arrayOfNumbers = msgToJson.chatMember.map(Number);
-        //     console.log("leave socket : "); // FIXME: 이건왜안찍힘 
-        //     handleCurrentParticipants(arrayOfNumbers);
-        // });
-
+        
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
@@ -115,22 +108,24 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
+
+        return () => {
+            socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요
+        }
     }, [chatRoomNo])
 
     // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
         return () => {
-            console.log("unmount. logout할 때");
-            socket.emit('leave', roomObject.title)
+            socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
         }
     }, []);
 
-    useEffect(async () => {
+    useEffect(() => {
         if (joinSuccess) {
-            await socket.emit('join:chat', roomObject, participantObject);
-            await socket.emit('participant:updateRead');
+            socket.emit('join:chat', roomObject, participantObject);
+            socket.emit('participant:updateRead');
             setJoinSuccess(false);
-            console.log(roomObject);
             noticeList(roomObject.no);
             fileUploadList(roomObject.no);
         }
