@@ -10,19 +10,40 @@ import defaultImage from "../../assets/images/black-mehago.png";
 import '../../assets/sass/chat/ChatProfile.scss';
 import '../../assets/sass/chat/modal.scss';
 
+import AlarmPoint from '../../components/AlarmPoint';
+
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, handleReceivedMsg }) {
+export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom}) {
     const classes = madeStyles();
+    
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [updatedRoom, setUpdatedRoom] = useState(room);
 
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
-            handleReceivedMsg(msg);
-        })
-    }, [])
+            setUpdatedRoom(prevState => ({...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now(), ["notReadCount"] : prevState.notReadCount + 1}));
+        });
 
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+        socket.on(`join:room${room.no}`, (msg)=>{
+            setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
+        });
+
+        socket.on(`update:readCount:room${room.no}`, (msg) =>{
+            setUpdatedRoom(prevState => ({...prevState, ["notReadCount"] : 0}));
+        });
+
+    },[])
+
+    useEffect(()=>{
+        return () => {
+            if(room !== updatedRoom) {
+                updateParticipatingRoom(updatedRoom);
+            }
+        }
+    },[updatedRoom])
+
 
     function timeForToday(leastMessageAt) {
         const today = new Date();
@@ -70,21 +91,21 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
                 <Link to={`/chat/${room.no}`}>
-                    <ListItem button key={`${room.no}`} className={classes.roomContainer} >
-                        <ChattingRoomImage>
-                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
-                        </ChattingRoomImage>
-                        <ChattingRoomContent>
-                            <div className={classes.content}>
-                                <div className={classes.title} > {room.title} </div>
-                                <div className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</div>
-                                <div className={classes.leastMessageAt}>{timeForToday(room.leastMessageAt)}</div>
-                            </div>
-                            <div className={classes.content}>
-                                <div className={classes.leastMessage}>{room.leastMessage ? room.leastMessage : '새로운 채팅방입니다.'}</div> <div className={classes.notReadCount}>{room.notReadCount === 0 ? ' ' : room.notReadCount}</div>
-                            </div>
-                        </ChattingRoomContent>
-                    </ListItem>
+                <ListItem button key={`${room.no}`} className={classes.roomContainer} >
+                    <ChattingRoomImage>
+                        <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
+                    </ChattingRoomImage>
+                    <ChattingRoomContent>
+                        <div className={classes.content}>
+                            <span className={classes.title} > {room.title} </span>
+                            <span className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</span>
+                            <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
+                        </div>
+                        <div className={classes.content}>
+                            <span className={classes.leastMessage}>{updatedRoom.leastMessage ? updatedRoom.leastMessage : '새로운 채팅방입니다.'}</span> {updatedRoom.notReadCount ? <AlarmPoint num={updatedRoom.notReadCount} /> : null }
+                        </div>
+                    </ChattingRoomContent>
+                </ListItem>
                 </Link>
             </List>
             <Modal

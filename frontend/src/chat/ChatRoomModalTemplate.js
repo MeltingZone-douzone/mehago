@@ -129,7 +129,6 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
 
 
     const enterRoom = () => {
-        console.log("enterRoom()");
         history.push(`/chat/${no}`);
     }
 

@@ -84,15 +84,20 @@ httpServer
     .listen(process.env.PORT);
 
 
+
+// 모두에게 메세지 보내기
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
-    // console.log("msgToJson", msgToJson.validation, msgToJson);
-    // console.log("msgToJson", msgToJson.validation);
+    // console.log("msgToJson", msgToJson.validation, msgToJson, roomname);
 
     switch (msgToJson.validation) {
-        case "join": io.to(roomname).emit('join message', msgToJson);
+        case "join": io.to(roomname).emit(`join:${roomname}`, msgToJson);
             break;
-        case "object": io.to(roomname).emit(`chat:message:${roomname}`, msgToJson);
+        case "message": io.to(roomname).emit(`chat:message:${roomname}`, msgToJson);
+            break;
+        case "members_count": io.to(roomname).emit(`members:count:${roomname}`, msgToJson);
+            break;
+        case "members_status": io.to(roomname).emit(`members:status:${roomname}`, msgToJson);
             break;
         case "notice": io.to(roomname).emit('notice', msgToJson);
             break;
@@ -100,7 +105,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "todo": io.to(roomname).emit('todo', msgToJson);
             break;
-        case "update": io.to(roomname).emit('message:update:readCount', msgToJson);
+        case "update": io.to(roomname).emit(`message:update:readCount:${roomname}`, msgToJson);
             break;
         case "infoupdate": io.to(roomname).emit('room:updateInfo', msgToJson);
             break;
@@ -108,15 +113,13 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
     }
-
 });
+
+
 
 io.on("connection", (socket) => {
     console.log("node connected");
     let messageObj = {};
-    // 레디스에 방들을 담아서 따로 할 필요 없이 해야함 
-    // --> notReadChatCount 실시간으로 업데이트하기 위해선 처음 메세지를 저장할 때 총 인원수를 넣어야하는데
-    // --> DB나 React에서 처리하게 되면 사람마다 다르게 업데이트 될 수 있음. 아니면 노드에서..?
     let roomObj = {};
     let participantObj = {};
     let currentRoomName = null;
@@ -124,37 +127,40 @@ io.on("connection", (socket) => {
 
     // DB에 저장 된 채팅 방 모두 입장
     socket.on('join', (rooms) => {
-        console.log(rooms);
         socket.join(rooms);
-    })
 
+    })
 
     socket.on('join:chat', async (roomObject, participantObject) => {
         roomObj = roomObject;
         participantObj = participantObject;
-        // hasData는 뭔지 사용처가 없다면 false일때 ( 000님 입장했습니다.)메세지 보내기
         currentRoomName = "room" + roomObject.no;
-        redisClient.sadd(currentRoomName, participantObj.no);
+
+        redisClient.zadd(roomObject.no, 1, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
         socket.join(currentRoomName);
         io.of('/').adapter.subClient.subscribe(currentRoomName);
-        let chatMember;
-        await getChatMember(currentRoomName).then(res => chatMember = res);
 
+        // 신규 유저라면 
         if (!participantObj.hasData) {
+            let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
 
             const joinMessage = {
                 validation: "join",
-                message: `notice::${socket.id}님이 ${roomObj.no}방을 입장하셨습니다.`,
-                chatMember
+                message: `${socket.id}님이 입장하셨습니다.`,
+                chatRoomNo: roomObj.no,
+                AllChatMembers
             }
 
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(joinMessage));
         }
 
+        sendMemberStatus(); // 멤버 온라인, 오프라인
+
         messageObj = {
             participantNo: participantObject.no,
             chatRoomNo: roomObject.no,
-            not_read_count: roomObject.not_read_count, // spring boot 에서 처리후 가져오기 값에 담아서 가져오기
+            accountNo: participantObject.accountNo,
+            notReadCount: "",
             message: ""
         }
     });
@@ -166,59 +172,27 @@ io.on("connection", (socket) => {
         if (receivedMsg) {
             participantObj.lastReadChatNo = receivedMsg.no;
         }
-
-        let chatMember;
-        await getChatMember(currentRoomName).then(res => chatMember = res);
-
+        console.log("changedRows : " + changedRows);
         const object = {
             "validation": "update",
-            changedRows,
-            chatMember
+            changedRows
         }
 
-        changedRows ? io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object)) : null;
+        if (changedRows) {
+            io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object));
+            io.to(socket.id).emit(`update:readCount:${currentRoomName}`, { "chatRoomNo": roomObj.no });
+        }
     })
 
-    /** disconnect
-     *  다른 방 보려고 잠시 뒤로가기 / 안나감
-     * 강제종료, 튕긴거, 뒤로가기 구분?
-     */
-    /* if ("비회원") {
-        socket.leave(roomName); //  ㄴㄴ?
-        subClient.unsubscribe(roomName)
-        pubClient.publish(roomName, `${socket.id}님이 방을 나가셨습니다.`);
-        // TODO: DB room에서 비회원 관련 데이터 삭제
-    } 
-    // TODO: DB room에서 회원 관련 데이터 삭제
-    socket.leave(data.roomName); */
-
-    // TODO: disconnect도 srem추가해서 chatMember보내야함
     socket.on("disconnect", async (reason) => {
-        if (currentRoomName !== null) {
-            console.log('브라우저끔');
-            redisClient.srem(currentRoomName, participantObj.no);
-            socket.leave(currentRoomName, (result) => { });
-
-            let chatMember;
-            await getChatMember(currentRoomName).then(res => chatMember = res);
-
-            const disconnectMessage = {
-                "validation": "disconnected",
-                "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.(disconnected)`,
-                chatMember
-            }
-            io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(disconnectMessage));
-        }
-
-
+        redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
+        sendMemberStatus();
         console.log("node disconnected", reason);
     })
 
     socket.on('chat message', async (message) => {
-        console.log("????");
-        let chatMember = await getChatCount(currentRoomName);
-        // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
-        const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
+        let chatMembersCount = await getAllChatMember(currentRoomName);
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount });
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
@@ -282,19 +256,13 @@ io.on("connection", (socket) => {
      * 회원 / 비회원 상관없이 나가면 
      */
 
-    // leave:chat-section -> chatsection에서 나가게 되면 redis에 담긴 유저 지워야함( 온라인, 오프라인 용도)
-    // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함.
-
+    // leave:chat-section -> chatsection에서 나가게 되면 redis에 담긴 상태 변화함( 온라인, 오프라인 용도)
     socket.on('leave:chat-section', async () => {
-        redisClient.srem(currentRoomName, participantObj.no);
-
-        let chatMember;
-        await getChatMember(currentRoomName).then(res => chatMember = res);
-
-
+        redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
+        sendMemberStatus();
     });
 
-    // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 채팅방 is_deleted = true 일때)
+    // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 참여자가 채팅방에서 나갔을때)
     socket.on('leave:chat-room', () => {
 
         // socket.leave(data.roomName, (result) => { });
@@ -321,11 +289,30 @@ io.on("connection", (socket) => {
 
     });
 
+    // delete:chat-room -> 방 삭제했을 때
+    socket.on("delete:chat-room", () => {
+
+    });
+
+    const sendMemberStatus = async () => {
+        let onlineChatMember;
+        await getOnlineChatMember(currentRoomName).then(res => onlineChatMember = res);
+        console.log(onlineChatMember);
+        const object = {
+            "validation": "members_status",
+            onlineChatMember
+        }
+
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object));
+    }
+
 });
 
-const getChatCount = currentRoomName => {
+const getOnlineChatMember = currentRoomName => { // 해당 채팅방의 온라인 상태인 유저의 no 
+    currentRoomName = getRoomNo(currentRoomName);
+
     return new Promise((resolve, reject) => {
-        redisClient.scard(currentRoomName, (error, result) => {
+        redisClient.zrevrangebyscore(currentRoomName, 1, 1, (error, result) => {
             if (error) {
                 reject(error);
             } else {
@@ -335,9 +322,11 @@ const getChatCount = currentRoomName => {
     });
 };
 
-const getChatMember = currentRoomName => {
+const getAllChatMember = currentRoomName => { // 해당 채팅방의 총 인원 구할 때 사용
+    currentRoomName = getRoomNo(currentRoomName);
+
     return new Promise((resolve, reject) => {
-        redisClient.smembers(currentRoomName, (error, result) => {
+        redisClient.zcard(currentRoomName, (error, result) => {
             if (error) {
                 reject(error);
             } else {
@@ -345,4 +334,8 @@ const getChatMember = currentRoomName => {
             }
         });
     });
-};
+}
+
+const getRoomNo = currentRoomName => {
+    return currentRoomName.split("room")[1];
+}

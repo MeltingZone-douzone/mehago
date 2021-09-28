@@ -7,12 +7,7 @@ import UtilsTemplate from './UtilsTemplate';
 
 export default function ChatSeperatedContainer({ socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen, isSeperated, handleDeleteNotice, notice, fileList, settingRoomFunction, passwordDialog, userInfo }) {
 
-    useEffect(() => {
-        console.log(isSeperated);
-    }, [isSeperated])
-
-
-    return (
+    return(
         <Container>
             <ChatWrapper isSeperated={isSeperated}>
                 <ChattingTemplate
