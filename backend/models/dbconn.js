@@ -6,6 +6,6 @@ module.exports = function () {
                 port: 3306,
                 user: "bookmall_local",
                 password: "bookmall_local",
-                database: "mehago",
+                database: "chat",
         });
 };

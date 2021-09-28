@@ -59,7 +59,7 @@ export default function ChatPage({ match, userInfo }) {
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} userInfo={userInfo} />} />
-                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} />} />
+                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} fetchRooms={fetchRooms}/>} />
                     <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />} />
                     <Route path={`${match.path}/setting/:no`} component={SettingChatRoom} />
                 </Switch>

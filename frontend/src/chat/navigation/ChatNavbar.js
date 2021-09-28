@@ -85,7 +85,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             }
         })
         newArr = newArr.filter(arr => typeof arr === 'object');
-
+        console.log([].concat(updated, newArr));
         const updatedParticipatingRoom = [].concat(updated, newArr);
         updateParticipatingRoom(updatedParticipatingRoom);
     }

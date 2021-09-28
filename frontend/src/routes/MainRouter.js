@@ -42,6 +42,7 @@ export default function MainRouter() {
 
     const getUserInfo = () => {
         getUserInfoApi().then(res => {
+            console.log(res.data.data);
             if (res.data.data === "nonMember") {
                 setUserInfo();
                 setIsExistToken(true);
@@ -57,7 +58,6 @@ export default function MainRouter() {
         });
     }
 
-    console.log(userInfo)
     return (
         <Router>
             <Fragment>

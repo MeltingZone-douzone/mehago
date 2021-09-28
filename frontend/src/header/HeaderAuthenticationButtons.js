@@ -79,9 +79,8 @@ const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo}) =>{
 
     return(
         <AccountHeaderProfileDiv ref={toggleContainer}>
-            <CreateChatRoomButton to="/chat/chatroom/create">
-                <FontAwesomeIcon icon={faPlus} size="1x" color="#fff" />
-                <span>채팅방 개설</span>
+            <CreateChatRoomButton to="/chat">
+                <span>방 둘러보기</span>
             </CreateChatRoomButton>
             <DropdownButton onClick={() => handleSetAlarm()}>
                 {
@@ -123,8 +122,8 @@ const AccountHeaderProfileDiv = styled.div`
 
 `
 const DropdownButton = styled.button`
-    width: 56px;
-    height: 50px;
+    width: 50px;
+    height: 44px;
     background-color: #00000000;
     align-items: center;
     justify-content: center;
@@ -142,8 +141,8 @@ const DropdownButton = styled.button`
     }
 `
 const ImageDiv =styled(CircleDiv)`
-    width:40px;
-    height:40px;
+    width:30px;
+    height:30px;
     overflow:hidden;
     margin:0 auto;
 `
@@ -161,7 +160,6 @@ const CreateChatRoomButton = styled(NavLink)`
     font-size: .8rem;
 
     span{
-        margin-left:6px;
         color:#fff;
         font-size:1rem;
     }

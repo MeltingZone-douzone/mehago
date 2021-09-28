@@ -16,6 +16,7 @@ import ChatRoomModalNickname from './ChatRoomModalNickname';
 import ChatRoomModalIsFull from './ChatRoomModalIsFull';
 import { vaildatePassword, vaildateNickname, enterRoomValidationApi } from '../../api/ChatApi';
 import { ValidationExp } from '../utils/ValidationExp';
+
 export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
     const classes = materialStyles();
     const history = useHistory();
@@ -234,6 +235,9 @@ const InfoArea = styled.div`
         margin-left: 1rem;
         font-size: 2.2rem;
         margin-bottom: 30px;
+        padding-top: 0.3em;
+        overflow-wrap: break-word;
+        padding-right: 0.5em;
     }
 
     span {

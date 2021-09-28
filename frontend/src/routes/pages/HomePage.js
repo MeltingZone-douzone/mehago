@@ -21,12 +21,13 @@ export default function HomePage({authentication, userInfo, handleAuthentication
         history.push("/account/login");
     }
 
+    // // 성공하면 메인화면 가기
+    // localStorage.set("token", res.data);
+    // setAuthentication(true);
+    // history.replace('/chat');
+
     function chatting(){
         history.push("/chat");
-    }
-
-    function loginPage(){
-        history.push("/account/login");
     }
 
     return(
@@ -37,7 +38,7 @@ export default function HomePage({authentication, userInfo, handleAuthentication
                         {
                             (userInfo.name !== "")?(
                             <div className={"homePage"}>
-                                <span className={"selectAcount"} >계정 선택</span>
+                                <span className={"selectAcount"} ></span>
                                 <div className={"thumbnailUrl"}>
                                    <Thumbnail  thumbnailUrl={userInfo.thumbnailUrl} nickname={userInfo.nickname}/>
                                 </div>
@@ -48,17 +49,13 @@ export default function HomePage({authentication, userInfo, handleAuthentication
                                             <p className={"nickname"}>{userInfo.nickname}</p>
                                             <p>{userInfo.email}</p>
                                         </div>
-                                        <span>사용중</span>
+                                        <span>계속하기</span>
                                     </button>
-                                    <button className={"accountButton"} onClick={(e) =>{loginPage(e)}} >
+                                    <button className={"accountButton"} onClick={(e) =>{handleLogout(e)}} >
                                         <FontAwesomeIcon icon={faUserCircle} className="search" size={'2x'} />
                                         <p>다른 계정 사용하기</p>
                                     </button>
 
-                                    <button className={"accountButton"} onClick={(e) =>{handleLogout(e)}}>
-                                        <FontAwesomeIcon icon={faUserAltSlash} className="search" size={'2x'} />
-                                        <p>계정 삭제</p>
-                                    </button>
                                 </div >
                             </div>
 

@@ -78,6 +78,9 @@ const SettingsTemplate = styled.div`
     display:flex;
     flex-direction:column;
     padding:16px;
+    width: 100%;
+    margin-left:3em;
+
 
 `
 
@@ -97,13 +100,12 @@ const TitleText = styled.div`
 
 const DropOutButton = styled(FullColorButton)`
     min-width: 100px;
-    margin-left:auto;
+    margin-left: 72%;
     margin-right: 18%;
-    
     border-color:#ff0606cc;
     background-color:#ff0606cc;
 
-    opacity:.2;
+    opacity:.9;
 `
 
 const madeStyles = makeStyles({

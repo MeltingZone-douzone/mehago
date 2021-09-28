@@ -6,32 +6,9 @@ import { faEraser } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChatUtilNotice({ handleDeleteNotice , notice, userInfo}) {
 
-    // const [notice, setNotice] = useState([]);
-    // // console.log(chatRoomNo);
-    // useEffect(()=> {
-    //     try {
-    //         getNotice(chatRoomNo).then(res => {
-    //             console.log(res.data.data);
-    //             setNotice(res.data.data);
-    //         });
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // },[]);
-
-    // const handleDeleteNotice = (noticeNo) =>{
-    //     deleteNotice(noticeNo).then(res=>{
-    //         // console.log(res.data);
-    //         if(res.data.result === "success"){
-    //             setNotice(
-    //                 notice.filter((notice) => notice.no !== noticeNo)
-    //             )
-    //         }
-    //     })
-    // }
-
     return(
-        <div style={{lineHeight:"1.5rem"}} className={"box"}>
+        notice.length !== 0 ? (
+            <div style={{lineHeight:"1.5rem"}} className={"box"}>
                 { notice.map((notice, index)=> {
                     return(
                         <div className={"notification"} key={index}>  
@@ -43,13 +20,16 @@ export default function ChatUtilNotice({ handleDeleteNotice , notice, userInfo})
                             {notice.accountNo === userInfo.no ? (
                                     <button className={"deleteNotice"} onClick={(e) => {handleDeleteNotice(notice.no)}}><FontAwesomeIcon icon={faEraser} size={'1x'} /></button>
                                     
-                                ):
-                                null
+                                ): null
+
                             }
                         </div>                            
                     )
                 })}
-                
-        </div>
+                </div>
+            ):(
+                <p  className={"nonNotice"} >등록된 공지사항이 없습니다.</p>
+            )
+      
     )
 }

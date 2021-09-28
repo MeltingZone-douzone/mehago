@@ -5,7 +5,7 @@ import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo }) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo , fetchRooms}) {
     const chatRoomNo = match.params.no;
     const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
     const [participantObject, setParticipantObject] = useState({});
@@ -130,7 +130,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             await socket.emit('join:chat', roomObject, participantObject);
             await socket.emit('participant:updateRead');
             setJoinSuccess(false);
-            console.log(roomObject);
             noticeList(roomObject.no);
             fileUploadList(roomObject.no);
         }
@@ -228,22 +227,10 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             setNoticeOpen(false);
             setFileUploadOpen(false);
         },
-        handleTodoSubmit: (e) => {
-            e.preventDefault();
-            if (e.target.todo.value === '') {
-                //error 메시지 보내기
-            };
-            const date = e.target.date.value;
-            const todo = e.target.todo.value;
-
-            socket.emit("todo:send", date, todo);
-            setTodoOpen(false);
-        },
         handleNoticeSubmit: (e) => {
             e.preventDefault();
-            console.log(userInfo.no);
             if (e.target.notice.value === '') {
-                //error 메시지 보내기
+                return false;
             };
             const notice = e.target.notice.value;
             const accountNo = userInfo.no;
@@ -252,7 +239,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             noticeList(roomObject.no);
         },
         handleFileUploadSubmit: (files) => {
-            console.log(files);
             fileUpload(roomObject.no, participantObject.no, files);
             // socket.emit("file:send", files); 
             fileUploadList(roomObject.no);

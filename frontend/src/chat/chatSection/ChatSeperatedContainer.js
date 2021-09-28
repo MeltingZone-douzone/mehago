@@ -44,6 +44,7 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
                     passwordDialog={passwordDialog}
                     roomObject={roomObject}
                     userInfo={userInfo}
+                    
                 />
             </UtilsWrapper>
         </Container>

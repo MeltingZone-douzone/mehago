@@ -119,7 +119,7 @@ export default function ChatUtilTodoList({participantObject, chatRoomNo}) {
     return(
        <ChatUtilTodoListTemplate 
             onScroll={(e) => onScroll} 
-            ref={todoAreaRef}
+            // ref={todoAreaRef}
             form={(<ChatUtilTodoListForm
                         value={inputText}
                         onCreate={handleAddTodo}

@@ -6,7 +6,7 @@ import { ValidationExp } from '../../utils/ValidationExp';
 import { isExistApi } from '../../../api/AccountApi';
 const styles = makeStyles({
     root:{
-        padding:"10px",
+        marginTop:"10px",
         marginBottom: "20px"
     },
     submitBtn:{

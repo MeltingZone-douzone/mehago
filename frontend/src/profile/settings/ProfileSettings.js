@@ -17,6 +17,5 @@ export default function UserSettingsContainer({handleAuthentication, user, setti
 
 const SettingsContainer = styled.div`
     margin-top:2em;
-    padding:0 2rem;
     width:70%;
 `

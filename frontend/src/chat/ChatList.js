@@ -3,10 +3,15 @@ import { InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
 import styled from 'styled-components';
 import { getAllChatListApi, keyword } from '../../api/ChatApi';
 import '../assets/sass/chat/ChatList.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { NavLink } from 'react-router-dom';
+
 
 import ChatRoom from './ChatRoom';
 
 export default function ChatList({ userInfo }) {
+
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
     const [joinRooms, setJoinRooms] = useState([]);
@@ -154,6 +159,9 @@ export default function ChatList({ userInfo }) {
                     </div>
                 )
             }
+            <CreateChatRoomButton to="/chat/chatroom/create">
+                <FontAwesomeIcon className={classes.createChatIcon} icon={faPlus} size="2x" />
+            </CreateChatRoomButton>
         </ChatListContainer>
     );
 }
@@ -167,6 +175,9 @@ const materialStyles = makeStyles({
         backgroundColor: "glay",
         border: "none",
         borderRadius: "3px",
+    },
+    createChatIcon:{
+        marginTop: "9px"
     }
 })
 
@@ -179,4 +190,17 @@ const SearchWrapper = styled.div`
     width:100%;
     height:15%;
     text-align:center;
+`
+const CreateChatRoomButton = styled(NavLink)`
+    position:fixed;
+    width:50px;
+    height:50px;
+    bottom:40px;
+    right:40px;
+    background-color:#1C90FC;
+    color:#FFF;
+    border-radius:50px;
+    text-align:center;
+    box-shadow: 3px 3px 4px #999;
+    }
 `

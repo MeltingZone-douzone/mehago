@@ -15,7 +15,6 @@ Modal.setAppElement('body');
 
 export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, handleReceivedMsg }) {
     const classes = madeStyles();
-
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
             handleReceivedMsg(msg);

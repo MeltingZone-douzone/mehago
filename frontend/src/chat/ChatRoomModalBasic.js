@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import '../assets/sass/chat/modal.scss';
 
 
-export default function ChatRoomModalBasic({ basicEnterRoom }) {
+export default function ChatRoomModalBasic({ basicEnterRoom, updateParticipatingRoom}) {
 
     return(
         <ContentTemplate>
-            <Button className={"joinButton"} variant="contained" color="primary" onClick={() => { basicEnterRoom() }} >방 입장하기</Button>
+            <Button className={"joinButton"} variant="contained" color="primary" onClick={() => { basicEnterRoom(), updateParticipatingRoom()}} >방 입장하기</Button>
         </ContentTemplate>
     )
 }

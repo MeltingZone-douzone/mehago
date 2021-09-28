@@ -7,7 +7,7 @@ import Dialogs from '../dialogs/Dialogs';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullhorn } from '@fortawesome/free-solid-svg-icons'; 
+import { faBullhorn, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'; 
 import { Button } from '@material-ui/core';
 
 
@@ -28,7 +28,7 @@ export default function ChattingTemplate({socket, messageFunction, participantOb
                             <div className={classes.notice}>
                                 <p>{notice[0].notice}</p>
                             </div>
-                            <Button className={classes.dropDown} onClick={()=>{setExpandable(!expandable)}}>{expandable ? "▲" : "▼"}</Button>
+                            <Button className={classes.dropDown} onClick={()=>{setExpandable(!expandable)}}>{expandable ? <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronUp}/> : <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronDown}/>}</Button>
                             {/* 여기에 버튼 만들어서 접어두기/열기 만들어야 함 */}
                         </Notice>
                         <WriterInfo expandable={expandable}>
@@ -66,7 +66,7 @@ const Template = styled.div`
 const NoticeTemplate = styled.div`
   width: 100%;
   min-height: 3em;
-  position: absolute;
+  position: fixed;
   z-index: 1;
   background-color: white;
   border: 1px solid #ccc;
@@ -106,7 +106,6 @@ const useStyles = makeStyles((theme) => ({
         width:"70%"
       },
       dropDown:{
-        display: "contents",
         justifyContent: "end",
         width:"10%"
       }

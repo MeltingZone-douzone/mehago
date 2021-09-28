@@ -44,9 +44,8 @@ const AccountSettings = ({nickname, thumbnailUrl, settingsApi}) =>{
         <Fragment>
         <SettingContainer>
             <LineSettingButton name ="thumbnail" onClick={(e)=>callTemplate(e)}>
-                <span>사진</span> <CurrentInformation/><ImageDiv>
-                    <Thumbnail thumbnailUrl={thumbnailUrl} nickname={nickname} />
-                    </ImageDiv>
+                <span>사진</span> <CurrentInformation><ImageDiv><Thumbnail thumbnailUrl={thumbnailUrl} nickname={nickname} /></ImageDiv></CurrentInformation>
+                <FontAwesomeIcon  icon={faChevronCircleRight} size="lg"/>
             </LineSettingButton>
             
             <LineSettingButton name ="nickname" onClick={(e)=>callTemplate(e)}>

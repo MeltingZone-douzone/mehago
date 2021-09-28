@@ -13,7 +13,6 @@ const logger = require("./logging");
 
 // controllers
 const messageController = require('./controllers/message');
-const todoController = require('./controllers/todo');
 const noticeController = require('./controllers/notice');
 // const fileController = require('./controllers/file');
 
@@ -219,18 +218,8 @@ io.on("connection", (socket) => {
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
 
-    socket.on("todo:send", async (date, todo) => {
-        const todoObject = {
-            participantNo: participantObj.no,
-            chatRoomNo: roomObj.no,
-            todo: todo,
-            date: date,
-        }
-        todoController.addTodo(todoObject);
-
-    });
     socket.on("notice:send", async (notice, accountNo) => {
-        console.log(notice, accountNo);
+        
         const noticeObject = {
             participantNo: participantObj.no,
             chatRoomNo: roomObj.no,
