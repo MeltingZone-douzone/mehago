@@ -28,12 +28,14 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
                     cursor={cursor}
                     notice={notice}
                     message={message} buttonFunction={buttonFunction}
+                    userInfo={userInfo}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                 />
             </ChatWrapper>
 
             <UtilsWrapper isSeperated={isSeperated}>
                 <UtilsTemplate
+                    socket={socket}
                     isOnChatSection={true}
                     participantObject={participantObject}
                     chatRoomNo={chatRoomNo}/* 네비랑 같이 쓰는데 css를 위함 */

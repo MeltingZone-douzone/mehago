@@ -21,7 +21,7 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
     const history = useHistory();
 
     // 비밀방, 비회원, 회원을 식별하여 컴포넌트를 뿌려주기 위한 변수
-    const [status, setStatus] = useState(() => participantCount > limitedUserCount ? "isFull" : !account && onlyAuthorized ? "onlyAuthorized" : secretRoom ? "secret" : account ? "basic" : "nickname");
+    const [status, setStatus] = useState(() => participantCount >= limitedUserCount ? "isFull" : !account && onlyAuthorized ? "onlyAuthorized" : secretRoom ? "secret" : account ? "basic" : "nickname");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
     const [hiddenPasswordInput, setHiddenPasswordInput] = useState(true);
@@ -30,6 +30,7 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
     const [wrongNickname, setWrongNickname] = useState(false);
 
     const getContent = () => {
+        console.log(status);
         switch (status) { // password={password}
             case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} />
             case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom} />
@@ -64,6 +65,7 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
                 //     console.log('회원만 이용가능합니다. 로그인을 해주세요.');
                 //     return;
                 // }
+                console.log(res);
                 if (res.data.result === 'success') { // 새입장
                     if (res.data.data === 'noNickname') {
                         return setHiddenNicknameInput(false);

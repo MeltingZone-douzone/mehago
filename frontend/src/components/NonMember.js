@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import "../assets/sass/account/Nonmember.scss";
 
 export default function NonMembers({ isExistToken, getNonMemberToken }) {
-
   return (
     <div className={"NonMembers"}>
       <span>

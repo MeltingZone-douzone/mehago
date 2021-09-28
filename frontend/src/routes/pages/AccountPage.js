@@ -12,7 +12,6 @@ import IdSearchPage from "../../account/IdSerach";
 import SignUpSuccess from "../../account/SignUpSuccess";
 
 export default function AccountPage({ match, isExistToken, setAuthentication }) {
-
     return (
         <div className={"PageContainer"}>
             <div className={"Page"}>

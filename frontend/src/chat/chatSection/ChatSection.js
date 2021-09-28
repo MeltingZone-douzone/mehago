@@ -42,6 +42,18 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         }
     };
 
+    useEffect(() => {
+        socket.on(`notice`, (msg) => {
+            if (msg.noticeAdd === true) {
+                setNotice([msg, ...notice]);
+            } else {
+                setNotice(
+                    notice.filter((notice) => notice.no !== msg.no))
+            }
+        })
+    }, [notice]);
+
+
     const fileUploadList = (chatRoomNo) => {
         try {
             getFileList(chatRoomNo).then(res => {
@@ -51,6 +63,17 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             console.log(e);
         }
     };
+
+
+    useEffect(() => {
+        socket.on(`file`, (msg) => {
+            console.log(msg)
+            const newList = msg.files.concat(fileList);
+            console.log(newList);
+            setFileList(newList);
+        })
+    }, [fileList]);
+
 
     const handleDeleteNotice = (noticeNo) => {
         deleteNotice(noticeNo).then(res => {
@@ -100,7 +123,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             // console.log("join socket : ", chatRoomNo, arrayOfNumbers);
             handleCurrentParticipants(arrayOfNumbers);
         });
-
+        socket.on('room:updateInfo', (msgToJson) => {
+            setRoomObject(msgToJson.roomObject);
+        })
         // socket.on('leave', (msgToJson) => {
         //     const arrayOfNumbers = msgToJson.chatMember.map(Number);
         //     console.log("leave socket : "); // FIXME: 이건왜안찍힘 
@@ -211,10 +236,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     }
 
     const buttonFunction = {
-        todo: (e) => {
-            e.preventDefault();
-            setTodoOpen(true);
-        },
         notice: (e) => {
             e.preventDefault();
             setNoticeOpen(true);
@@ -224,38 +245,27 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             setFileUploadOpen(true);
         },
         handleClose: (e) => {
-            setTodoOpen(false);
             setNoticeOpen(false);
             setFileUploadOpen(false);
         },
-        handleTodoSubmit: (e) => {
-            e.preventDefault();
-            if (e.target.todo.value === '') {
-                //error 메시지 보내기
-            };
-            const date = e.target.date.value;
-            const todo = e.target.todo.value;
-
-            socket.emit("todo:send", date, todo);
-            setTodoOpen(false);
-        },
         handleNoticeSubmit: (e) => {
             e.preventDefault();
-            console.log(userInfo.no);
             if (e.target.notice.value === '') {
                 //error 메시지 보내기
             };
             const notice = e.target.notice.value;
-            const accountNo = userInfo.no;
-            socket.emit("notice:send", notice, accountNo);
+            addNotice(roomObject.no, participantObject.no, notice).then(res => {
+                const no = res.data.data;
+                socket.emit("notice:send", notice, no);
+            });
             setNoticeOpen(false);
-            noticeList(roomObject.no);
         },
         handleFileUploadSubmit: (files) => {
             console.log(files);
-            fileUpload(roomObject.no, participantObject.no, files);
-            // socket.emit("file:send", files); 
-            fileUploadList(roomObject.no);
+            fileUpload(roomObject.no, participantObject.no, files).then(res => {
+                console.log(res.data.data);
+                socket.emit("file:send", res.data.data);
+            });
             setFileUploadOpen(false);
         }
     }
@@ -293,7 +303,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                     };
                     window.alert('수정되었습니다. ');
                     // roomObject의 no, title, thumbnailUrl; res.data.data.no ....
-                    // socket.emit('room:update', res.data.data);
+                    socket.emit('room:update', res.data.data);
                     return;
                 });
             } catch (err) {

@@ -3,7 +3,7 @@ const http = require('http');
 const path = require('path');
 const dotenv = require("dotenv");
 const argv = require('minimist')(process.argv.slice(2));
-
+const date = require('date-utils');
 // Environment Variables(환경 변수)
 dotenv.config({ path: path.join(__dirname, 'app.config.env') });
 
@@ -13,9 +13,6 @@ const logger = require("./logging");
 
 // controllers
 const messageController = require('./controllers/message');
-const todoController = require('./controllers/todo');
-const noticeController = require('./controllers/notice');
-// const fileController = require('./controllers/file');
 
 // process Argument
 process.title = argv.name;
@@ -97,9 +94,15 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "object": io.to(roomname).emit(`chat:message:${roomname}`, msgToJson);
             break;
-        case "notice": io.to(roomname).emit('notice', message);
+        case "notice": io.to(roomname).emit('notice', msgToJson);
+            break;
+        case "file": io.to(roomname).emit('file', msgToJson);
+            break;
+        case "todo": io.to(roomname).emit('todo', msgToJson);
             break;
         case "update": io.to(roomname).emit('message:update:readCount', msgToJson);
+            break;
+        case "infoupdate": io.to(roomname).emit('room:updateInfo', msgToJson);
             break;
         case "leave": io.to(roomname).emit('leave message', msgToJson);
             break;
@@ -137,7 +140,7 @@ io.on("connection", (socket) => {
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
 
-        if(!participantObj.hasData) {
+        if (!participantObj.hasData) {
 
             const joinMessage = {
                 validation: "join",
@@ -195,10 +198,10 @@ io.on("connection", (socket) => {
             console.log('브라우저끔');
             redisClient.srem(currentRoomName, participantObj.no);
             socket.leave(currentRoomName, (result) => { });
-            
+
             let chatMember;
             await getChatMember(currentRoomName).then(res => chatMember = res);
-            
+
             const disconnectMessage = {
                 "validation": "disconnected",
                 "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.(disconnected)`,
@@ -212,6 +215,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on('chat message', async (message) => {
+        console.log("????");
         let chatMember = await getChatCount(currentRoomName);
         // 총 인원수 수정 필요 => Navi에 유저를 구하는데 거기서 총 몇명인지 가져와야함.
         const insertMsg = Object.assign({}, messageObj, { "validation": "object", "message": message, "notReadCount": chatMember });
@@ -219,32 +223,57 @@ io.on("connection", (socket) => {
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
 
-    socket.on("todo:send", async (date, todo) => {
-        const todoObject = {
-            participantNo: participantObj.no,
-            chatRoomNo: roomObj.no,
-            todo: todo,
-            date: date,
-        }
-        todoController.addTodo(todoObject);
-
-    });
-    socket.on("notice:send", async (notice, accountNo) => {
-        console.log(notice, accountNo);
+    socket.on("notice:send", (notice, noticeNo) => {
+        const createdAt = new Date();
         const noticeObject = {
+            validation: "notice",
+            noticeAdd: true,
             participantNo: participantObj.no,
-            chatRoomNo: roomObj.no,
-            accountNo: accountNo,
+            accountNo: participantObj.accountNo,
+            nickname: participantObj.chatNickname,
+            thumbnailUrl: participantObj.thumbnailUrl,
+            no: noticeNo,
             notice: notice,
+            createdAt: createdAt.toFormat('MM/DD HH24:MI')
         }
-        noticeController.addNotice(noticeObject);
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(noticeObject));
     });
 
-    socket.on("file:send", async (files) => {
-        // console.log(files);
-        // fileController.addFile(participantObj.no, roomObj.no, files);
+    socket.on('notice:delete', (noticeNo) => {
+        const noticeObject = {
+            validation: "notice",
+            noticeAdd: false,
+            no: noticeNo,
+        }
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(noticeObject));
     });
 
+
+    socket.on("file:send", (files) => {
+        const createdAt = new Date();
+        for (let i = 0; i < files.length; i++) {
+            files[i].createdAt = createdAt.toFormat('YYYY/MM/DD');
+        }
+        const filesObject = {
+            validation: "file",
+            files: files,
+        }
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(filesObject));
+    });
+
+    socket.on("todo", (validation, data) => {
+        const todoObject = {
+            validation: "todo",
+            purpose: validation,
+            todo: data,
+        }
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(todoObject));
+    });
+
+    socket.on("room:update", (data) => {
+        const roomObject = { validation: "infoupdate", roomObject: data };
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(roomObject));
+    })
 
 
 
@@ -256,17 +285,17 @@ io.on("connection", (socket) => {
     // leave:chat-section -> chatsection에서 나가게 되면 redis에 담긴 유저 지워야함( 온라인, 오프라인 용도)
     // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함.
 
-    socket.on('leave:chat-section', async () => { 
+    socket.on('leave:chat-section', async () => {
         redisClient.srem(currentRoomName, participantObj.no);
 
         let chatMember;
         await getChatMember(currentRoomName).then(res => chatMember = res);
 
-        
+
     });
 
     // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 채팅방 is_deleted = true 일때)
-    socket.on('leave:chat-room', ()=>{
+    socket.on('leave:chat-room', () => {
 
         // socket.leave(data.roomName, (result) => { });
 

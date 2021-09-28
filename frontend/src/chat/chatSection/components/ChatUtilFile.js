@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
 import moment from 'moment';
 import styled from 'styled-components';
-// import Pictures from '../../../assets/images/photo.png';
+import pictures from '../../../assets/images/images.svg';
 
 export default function ChatUtilFile({ fileList }) {
+    console.log(fileList);
     return (
         <Container>
             <ImageContainer>
@@ -20,8 +21,10 @@ export default function ChatUtilFile({ fileList }) {
                         )
                     })
                     :
-
-                    <Text>업로드 한 이미지가 없습니다.</Text>
+                    <NonFile>
+                        <Pictures src={pictures} />
+                        <Text>업로드 한 이미지가 없습니다.</Text>
+                    </NonFile>
 
                 }
             </ImageContainer>
@@ -43,5 +46,14 @@ const Image = styled.img`
     width:100px;
     height:100px;
     margin:2px;
+`
+
+const NonFile = styled.div`
+   margin-top: 10%;
+   text-align:center;
+`
+
+const Pictures = styled.img`
+    width:80%;
 `
 
