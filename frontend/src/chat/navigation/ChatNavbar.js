@@ -13,8 +13,7 @@ import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../.
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom}) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -75,21 +74,6 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         }
     }
 
-    const handleReceivedMsg = (msg) => {
-        let updated = {};
-        let newArr = participatingRoom.map((room) => {
-            if (room.no == msg.chatRoomNo) {
-                updated = { ...room, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now() };
-            } else {
-                return room;
-            }
-        })
-        newArr = newArr.filter(arr => typeof arr === 'object');
-        console.log([].concat(updated, newArr));
-        const updatedParticipatingRoom = [].concat(updated, newArr);
-        updateParticipatingRoom(updatedParticipatingRoom);
-    }
-
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
@@ -99,11 +83,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         setChatList(false);
         setChatMember(true);
     }
-
-    const goHome = () => {
-        history.replace('/chat');
-    }
-
+    
     return (
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
@@ -125,8 +105,8 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} handleReceivedMsg={handleReceivedMsg}/> : null}
-                {chatMember? <ParticipatingMember currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
+                {chatList? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} />: null}
+                {chatMember? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
             </div>
 
 

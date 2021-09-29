@@ -6,8 +6,11 @@
 <mapper namespace="notice">
     <insert id="addNotice" parameterType="notice">
         <![CDATA[
-        insert into notice values(null, #{participantNo}, #{chatRoomNo}, #{notice}, now())
+        insert into notice values(null, #{participantNo}, #{chatRoomNo}, #{accountNo }, #{notice}, now())
         ]]>
+        <selectKey keyProperty="no" order="AFTER" resultType="Long">
+            select last_insert_id()
+        </selectKey>
     </insert>
 
     <select id="getNotice" parameterType="map" resultType="map">

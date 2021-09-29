@@ -1,23 +1,37 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { ButtonGroup, Grid, Button, TextField, Fab, makeStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListAlt, faBullhorn, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 
-export default function MsgInput({ message, messageFunction, buttonFunction }) {
+export default function MsgInput({ message, messageFunction, buttonFunction, userInfo }) {
     const classes = madeStyles();
+    const [visibleButton, setVisibleButton] = useState(false);
+
+    const visibleButtonGroup = () => {
+        if (visibleButton) {
+            setVisibleButton(false);
+        } else {
+            setVisibleButton(true);
+        }
+    }
 
     return (
         <Fragment>
             <Grid container className={classes.gridContainer}>
-                <ButtonGroup variant="contained" color="primary" size="large" aria-label="outlined primary button group" className={classes.buttonGroup} styles={fadeIn}>
-                    <Button onClick={buttonFunction.notice}><FontAwesomeIcon icon={faBullhorn} /></Button>
-                    <Button onClick={buttonFunction.fileupload}><FontAwesomeIcon icon={faPaperclip} /></Button>
-                </ButtonGroup>
+                {visibleButton ?
+                    <ButtonGroup variant="contained" color="primary" size="large" aria-label="outlined primary button group" className={classes.buttonGroup} >
+                        <Button onClick={buttonFunction.notice}><FontAwesomeIcon icon={faBullhorn} /></Button>
+                        <Button onClick={buttonFunction.fileupload}><FontAwesomeIcon icon={faPaperclip} /></Button>
+                    </ButtonGroup>
+                    : null}
                 <Grid item xs={12}>
-                    <Fab color="primary" size="small" className={classes.uploads}>
-                        <AddIcon />
-                    </Fab>
+                    {userInfo ?
+                        <Fab color="primary" size="small" className={classes.uploads}>
+                            <AddIcon onClick={visibleButtonGroup} />
+                        </Fab>
+                        : null
+                    }
                     <form onSubmit={messageFunction.onSubmitMessage} className={classes.inputMsgContainer}>
                         <TextField
                             id="message"
@@ -55,12 +69,4 @@ const madeStyles = makeStyles({
         margin: "10px 10px 0 10px",
     }
 });
-const fadeIn = `@keyframes fadein {
-    from {
-        opacity:0;
-    }
-    to {
-        opacity:1;
-    }
-}`;
 

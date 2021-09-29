@@ -81,7 +81,7 @@ public class FileUploadService {
 		return filename;
 	}
 
-	public boolean addFile(FileUpload file) {
+	public Long addFile(FileUpload file) {
 		return fileUploadRepository.addFile(file);
 	}
 

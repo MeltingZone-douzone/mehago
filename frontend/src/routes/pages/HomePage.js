@@ -4,46 +4,45 @@ import chattingPage from '../../assets/images/mehago-chat.png';
 import "../../assets/sass/account/AccountPage.scss";
 import localStorage from "local-storage";
 import { Link } from 'react-router-dom';
-import { Avatar, makeStyles ,Button} from '@material-ui/core';
+import { Avatar, makeStyles, Button } from '@material-ui/core';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserAltSlash , faUserCircle} from "@fortawesome/free-solid-svg-icons";
+import { faUserAltSlash, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import styled from 'styled-components';
 import Thumbnail from '../../components/Thumbnail';
 
 
-export default function HomePage({authentication, userInfo, handleAuthentication, history, setUserInfo}) {
+export default function HomePage({ authentication, userInfo, handleAuthentication, history, setUserInfo }) {
     const classes = madeStyles();
-    
-    function handleLogout(){
+
+    function handleLogout() {
         handleAuthentication(false);
         setUserInfo({ nickname: "", name: "", phoneNumber: "", thumbnailUrl: "" });
         localStorage.remove("token");
         history.push("/account/login");
     }
 
-    // // 성공하면 메인화면 가기
-    // localStorage.set("token", res.data);
-    // setAuthentication(true);
-    // history.replace('/chat');
-
-    function chatting(){
+    function chatting() {
         history.push("/chat");
     }
 
-    return(
+    function loginPage() {
+        history.push("/account/login");
+    }
+
+    return (
         <div className={"PageContainer"}>
             <div className={"Page"}>
-            <img src={Logo} alt={"logo"} className={"logo"}/>
+                <img src={Logo} alt={"logo"} className={"logo"} />
                 <div className={"home"}>
-                        {
-                            (userInfo.name !== "")?(
+                    {
+                        (userInfo && userInfo.name !== "") ? (
                             <div className={"homePage"}>
                                 <span className={"selectAcount"} ></span>
                                 <div className={"thumbnailUrl"}>
-                                   <Thumbnail  thumbnailUrl={userInfo.thumbnailUrl} nickname={userInfo.nickname}/>
+                                    <Thumbnail thumbnailUrl={userInfo.thumbnailUrl} nickname={userInfo.nickname} />
                                 </div>
                                 <div className={"container"}>
-                                    <button className={"accountButton"} onClick={(e) =>{chatting(e)}}>
+                                    <button className={"accountButton"} onClick={(e) => { chatting(e) }}>
                                         <Avatar className={classes.logoImg} alt="프로필 사진" src={userInfo.thumbnailUrl} />
                                         <div className={"userInfo"}>
                                             <p className={"nickname"}>{userInfo.nickname}</p>
@@ -59,20 +58,20 @@ export default function HomePage({authentication, userInfo, handleAuthentication
                                 </div >
                             </div>
 
-                            ):(
+                        ) : (
                             <div className={"homePage"}>
                                 <span className={"selectAcount"} >지금 당장 MEHAGO를 사용해 보세요</span>
-                                <img src={chattingPage} className={"nonMemberLogo"}  alt={"logo"} />
+                                <img src={chattingPage} className={"nonMemberLogo"} alt={"logo"} />
                                 <div className={"container"}>
-                                    <button className={"loginPageButton"} onClick={(e) =>{loginPage(e)}} >
+                                    <button className={"loginPageButton"} onClick={(e) => { loginPage(e) }} >
                                         <FontAwesomeIcon icon={faUserCircle} className="search" size={'2x'} />
                                         <p>로그인 페이지로 이동</p>
                                     </button>
                                 </div >
                             </div>
-                            )
-                        }
-                        
+                        )
+                    }
+
                 </div>
             </div>
         </div>
@@ -82,7 +81,7 @@ export default function HomePage({authentication, userInfo, handleAuthentication
 const madeStyles = makeStyles({
     logoImg: {
         display: "flex",
-        alignSelf:"center"
+        alignSelf: "center"
 
     }
 });

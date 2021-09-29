@@ -28,8 +28,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
-
-        socket.on('message:update:readCount', (msgToJson) => {
+        
+        socket.on(`message:update:readCount:room${chatRoomNo}`, (msgToJson) => {
             setChangedRows(msgToJson.changedRows);
         });
         fetchItems();
@@ -122,9 +122,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                 .map((message, index) => {
                     return (
                         message.participantNo !== participantObject.no ?
-                            <>
+                            <div key={index}>
                                 <ReceivedMessage
-                                    key={index}
                                     nextMessage={messageList[index - 1]}
                                     previousMessage={messageList[index + 1]}
                                     message={message}
@@ -133,21 +132,19 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                                     hiddenSearchInput={hiddenSearchInput}
                                     no={searchMessage.includes(message.no) ? message.no : null} />
                                 {dateDivider(messageList, index, message)}
-                            </>
+                            </div>
                             :
-                            <>
-                                <SendMessage
-                                    key={index}
-                                    nextMessage={messageList[index - 1]}
-                                    previousMessage={messageList[index + 1]}
-                                    message={message}
-                                    searchKeyword={searchMessage[searchMessage.length - 1]}
-                                    hiddenSearchInput={hiddenSearchInput}
-                                    no={searchMessage.includes(message.no) ? message.no : null} />
+                            <div key={index}>
+                            <SendMessage 
+                                nextMessage={messageList[index - 1]} 
+                                previousMessage={messageList[index + 1]} 
+                                message={message} 
+                                searchKeyword={searchMessage[searchMessage.length-1]} 
+                                hiddenSearchInput={hiddenSearchInput}
+                                no={searchMessage.includes(message.no) ? message.no : null} />
                                 {dateDivider(messageList, index, message)}
-                            </>
-                    )
-                }
+                            </div>
+                        )}
                 )
                 : null
             }

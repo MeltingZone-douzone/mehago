@@ -38,7 +38,7 @@ const AccountToggleProfile = ({handleAuthentication, userInfo, onClose, setUserI
             <Line/>
             <ThemeProvider theme={theme}>
                 <Button className={classes.root}><StyleLink to={"/profile"} onClick={()=> onClose()}>계정관리</StyleLink></Button>
-                <Button className={classes.root} variant="contained" color="primary" onClick={() => {handleLogout}}>로그아웃</Button>
+                <Button className={classes.root} variant="contained" color="primary" onClick={handleLogout}>로그아웃</Button>
             </ThemeProvider>
         </ToggleContainer>
     )

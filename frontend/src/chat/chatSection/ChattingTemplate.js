@@ -11,16 +11,16 @@ import { faBullhorn, faChevronDown, faChevronUp } from '@fortawesome/free-solid-
 import { Button } from '@material-ui/core';
 
 
-export default function ChattingTemplate({socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen, notice, isSeperated}) {
-    
+export default function ChattingTemplate({ socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, userInfo, todoOpen, noticeOpen, fileUploadOpen, notice, isSeperated }) {
+
     const classes = useStyles();
 
     const [expandable, setExpandable] = useState(false);
-    
-    return(
+
+    return (
         <Template>
             {
-            !isSeperated ? (
+                !isSeperated ? (
                     notice.length !== 0 ? (
                     <NoticeTemplate>
                         <Notice>
@@ -38,23 +38,23 @@ export default function ChattingTemplate({socket, messageFunction, participantOb
                     ):(
                     null
                     )
-            ):(
-                null
-            )
+                ) : (
+                    null
+                )
             }
-            
-                <Chatting socket={socket} 
-                    messageFunction={messageFunction} 
-                    participantObject={participantObject} 
-                    roomObject={roomObject} 
-                    chatRoomNo={chatRoomNo} 
-                    searchMessage={searchMessage}
-                    // setCurrentParticipants={setCurrentParticipants} 
-                    hiddenSearchInput={hiddenSearchInput}
-                    cursor={cursor}
-                    notice={notice} />
-                <MsgInput socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} />
-                <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
+
+            <Chatting socket={socket}
+                messageFunction={messageFunction}
+                participantObject={participantObject}
+                roomObject={roomObject}
+                chatRoomNo={chatRoomNo}
+                searchMessage={searchMessage}
+                // setCurrentParticipants={setCurrentParticipants} 
+                hiddenSearchInput={hiddenSearchInput}
+                cursor={cursor}
+                notice={notice} />
+            <MsgInput socket={socket} message={message} messageFunction={messageFunction} buttonFunction={buttonFunction} userInfo={userInfo} />
+            <Dialogs buttonFunction={buttonFunction} todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen} />
         </Template>
     )
 }
@@ -85,9 +85,9 @@ const Notice = styled.div`
 `
 
 const WriterInfo = styled.div`
-    visibility: ${({expandable}) => expandable ? "visible" : "hidden"};
+    visibility: ${({ expandable }) => expandable ? "visible" : "hidden"};
     widht: 100%;
-    height: ${({expandable}) => expandable ? "50px" : "0"};
+    height: ${({ expandable }) => expandable ? "50px" : "0"};
     display: flex;
     width: 100%;
     align-items: center;

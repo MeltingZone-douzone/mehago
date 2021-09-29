@@ -9,7 +9,7 @@ import UtilsHeader from './components/UtilsHeader';
 
 
 
-export default function UtilsTemplate({ isOnChatSection, participantObject, chatRoomNo, handleDeleteNotice, notice, fileList, settingRoomFunction, passwordDialog, roomObject, userInfo }) {
+export default function UtilsTemplate({ socket, isOnChatSection, participantObject, chatRoomNo, handleDeleteNotice, notice, fileList, settingRoomFunction, passwordDialog, roomObject, userInfo }) {
 
     const [activity, setActivity] = useState("notice"); // 실행되는 작업
 
@@ -29,7 +29,7 @@ export default function UtilsTemplate({ isOnChatSection, participantObject, chat
         switch (activity) {
             case "notice": return <ChatUtilNotice chatRoomNo={chatRoomNo} handleDeleteNotice={handleDeleteNotice} notice={notice} userInfo={userInfo} />;
                 break;
-            case "todo": return <ChatUtilTodoList participantObject={participantObject} chatRoomNo={chatRoomNo} />;
+            case "todo": return <ChatUtilTodoList socket={socket} participantObject={participantObject} chatRoomNo={chatRoomNo} />;
                 break;
             case "file": return <ChatUtilFile chatRoomNo={chatRoomNo} fileList={fileList} />;
                 break;

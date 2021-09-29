@@ -16,8 +16,9 @@ import lombok.RequiredArgsConstructor;
 public class NoticeRepository {
     private final SqlSession sqlSession;
 
-    public boolean addNotice(Notice notice) {
-        return sqlSession.insert("notice.addNotice", notice) == 1 ? true : false;
+    public Long addNotice(Notice notice) {
+        sqlSession.insert("notice.addNotice", notice);
+        return notice.getNo();
     }
 
     public List<Map<String, Object>> getNotice(Long chatRoomNo, Long accountNo) {
@@ -28,7 +29,7 @@ public class NoticeRepository {
     }
 
     public boolean deleteNotice(Long noticeNo) {
-        
+
         return sqlSession.delete("notice.deleteNotice", noticeNo) == 1 ? true : false;
     }
 

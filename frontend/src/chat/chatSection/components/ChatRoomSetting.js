@@ -150,14 +150,14 @@ export default function ChatRoomSetting({ roomObject, settingRoomFunction, passw
         open: () => { setDeleteDialog(true) },
         close: () => { setDeleteDialog(false) },
         deleteChatRoom: () => {
-            deleteChatRoom(chatRoom)
+            deleteChatRoom(roomObject)
                 .then(res => {
                     if (res.data.result === "fail") {
                         window.alert('권한이 없습니다.');
                         history.goBack();
                         return;
                     };
-                    window.alert(`${chatRoom.title} 채팅방이 삭제되었습니다.`);
+                    window.alert(`${chatRoom && chatRoom.title !== undefined ? chatRoom.title : roomObject.title} 채팅방이 삭제되었습니다.`);
                     history.push('/chat')
                     return;
                 })
