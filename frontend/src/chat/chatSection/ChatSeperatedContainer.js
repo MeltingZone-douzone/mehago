@@ -7,12 +7,7 @@ import UtilsTemplate from './UtilsTemplate';
 
 export default function ChatSeperatedContainer({ socket, messageFunction, participantObject, roomObject, chatRoomNo, searchMessage, hiddenSearchInput, cursor, message, buttonFunction, todoOpen, noticeOpen, fileUploadOpen, isSeperated, handleDeleteNotice, notice, fileList, settingRoomFunction, passwordDialog, userInfo }) {
 
-    useEffect(() => {
-        console.log(isSeperated);
-    }, [isSeperated])
-
-
-    return (
+    return(
         <Container>
             <ChatWrapper isSeperated={isSeperated}>
                 <ChattingTemplate
@@ -28,12 +23,14 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
                     cursor={cursor}
                     notice={notice}
                     message={message} buttonFunction={buttonFunction}
+                    userInfo={userInfo}
                     todoOpen={todoOpen} noticeOpen={noticeOpen} fileUploadOpen={fileUploadOpen}
                 />
             </ChatWrapper>
 
             <UtilsWrapper isSeperated={isSeperated}>
                 <UtilsTemplate
+                    socket={socket}
                     isOnChatSection={true}
                     participantObject={participantObject}
                     chatRoomNo={chatRoomNo}/* 네비랑 같이 쓰는데 css를 위함 */
@@ -44,6 +41,7 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
                     passwordDialog={passwordDialog}
                     roomObject={roomObject}
                     userInfo={userInfo}
+                    
                 />
             </UtilsWrapper>
         </Container>

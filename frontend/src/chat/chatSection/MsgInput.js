@@ -1,24 +1,38 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { ButtonGroup, Grid, Button, TextField, Fab, makeStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListAlt, faBullhorn, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 
-export default function MsgInput({ message, messageFunction, buttonFunction }) {
+export default function MsgInput({ message, messageFunction, buttonFunction, userInfo }) {
     const classes = madeStyles();
+    const [visibleButton, setVisibleButton] = useState(false);
+
+    const visibleButtonGroup = () => {
+        if (visibleButton) {
+            setVisibleButton(false);
+        } else {
+            setVisibleButton(true);
+        }
+    }
 
     return (
         <Fragment>
             <Grid container className={classes.gridContainer}>
+            {visibleButton ?
                 <ButtonGroup variant="contained" color="primary" size="large" aria-label="outlined primary button group" className={classes.buttonGroup} styles={{boxShadow: 'none'}}>
                     <Button className={classes.button} onClick={buttonFunction.todo}><FontAwesomeIcon icon={faListAlt} /></Button>
                     <Button className={classes.button} onClick={buttonFunction.notice}><FontAwesomeIcon icon={faBullhorn} /></Button>
                     <Button className={classes.button} onClick={buttonFunction.fileupload}><FontAwesomeIcon icon={faPaperclip} /></Button>
                 </ButtonGroup>
+                : null}
                 <Grid item xs={12}>
+                    {userInfo ?
                     <Fab color="primary" size="small" className={`${classes.uploads} ${classes.button}`}>
                         <AddIcon className={classes.button} />
                     </Fab>
+                    : null
+                }
                     <form onSubmit={messageFunction.onSubmitMessage} className={classes.inputMsgContainer}>
                         <TextField
                             id="message"
@@ -73,12 +87,4 @@ const madeStyles = makeStyles({
         }
     }
 });
-const fadeIn = `@keyframes fadein {
-    from {
-        opacity:0;
-    }
-    to {
-        opacity:1;
-    }
-}`;
 

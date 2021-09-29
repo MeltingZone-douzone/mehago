@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class NoticeService {
     private final NoticeRepository noticeRepository;
 
-    public boolean addNotice(Notice notice) {
+    public Long addNotice(Notice notice) {
         return noticeRepository.addNotice(notice);
     }
 

@@ -4,25 +4,32 @@ import ChatUtilTodoItemList from './ChatUtilTodoItemList';
 import ChatUtilTodoListForm from './ChatUtilTodoListForm';
 import ChatUtilTodoListTemplate from './ChatUtilTodoListTemplate';
 
-export default function ChatUtilTodoList({participantObject, chatRoomNo}) {
-    const [todos, setTodos] = useState({});
+export default function ChatUtilTodoList({ socket, participantObject, chatRoomNo }) {
+    const [todos, setTodos] = useState([]);
     const [inputText, setInputText] = useState('');
 
     const todoAreaRef = React.forwardRef();
     const [offsetNo, setOffsetNo] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
-    
-    
+
+    useEffect(() => {
+        socket.on('todo', result => {
+            if (result.purpose === "add") { setTodos([...todos, result.todo]) }
+            else if (result.purpose === "update") { setTodos(todos.map((todo) => todo.no === result.todo ? { ...todo, checked: !todo.checked } : todo)) }
+            else if (result.purpose === "remove") { setTodos(todos.filter((todo) => todo.no !== result.todo)) }
+        })
+    }, [todos])
+
     useEffect(() => {
         getTodos();
-    },[])
-    
+    }, [])
+
     const getTodos = () => {
-        getTodoList(chatRoomNo, offsetNo) 
+        getTodoList(chatRoomNo, offsetNo)
             .then(res => {
                 if (res.data.result === 'success') {
-                    if(res.data.data.length === 0){
+                    if (res.data.data.length === 0) {
                         setIsEnd(!isEnd);
                     }
                     setTodos(res.data.data);
@@ -41,7 +48,7 @@ export default function ChatUtilTodoList({participantObject, chatRoomNo}) {
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
         const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
         console.log(scrollHeight, fetchPointHeight, scrollTop, clientHeight);
-        if(scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
+        if (scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
             console.log("오 ㅎㅇ");
             fetchChatRooms();
             setIsFetching(true);
@@ -53,13 +60,9 @@ export default function ChatUtilTodoList({participantObject, chatRoomNo}) {
     const handleToggle = (no) => {
         console.log(no);
         updateCheckTodo(no)
-            .then(res =>{
-                if(res.data.result === 'success') {
-                    setTodos(
-                        todos.map((todo) =>
-                            todo.no === no ? { ...todo, checked: !todo.checked} : todo
-                        )
-                    )
+            .then(res => {
+                if (res.data.result === 'success') {
+                    socket.emit('todo', "update", no);
                 }
             })
             .catch((error) => {
@@ -70,10 +73,8 @@ export default function ChatUtilTodoList({participantObject, chatRoomNo}) {
     const handleRemove = (no) => {
         removeTodo(no)
             .then(res => {
-                if(res.data.result === 'success') {
-                    setTodos(
-                        todos.filter((todo) => todo.no !== no)
-                    )
+                if (res.data.result === 'success') {
+                    socket.emit('todo', "remove", no);
                 }
             })
             .catch((error) => {
@@ -90,18 +91,10 @@ export default function ChatUtilTodoList({participantObject, chatRoomNo}) {
             todo: inputText,
         }
         addTodo(todoObject)
-            .then(res =>{
-                if(res.data.result === "success") { 
-                    setTodos(prevState => [  // selectkey로 no
-                        ...prevState, {
-                            no: res.data.data,
-                            chatNickname: participantObject.chatNickname,
-                            chatRoomNo,
-                            checked: false,
-                            participantNo: participantObject.no,
-                            todo: inputText,
-                        }
-                    ])
+            .then(res => {
+                if (res.data.result === "success") {
+                    todoObject.no = res.data.data;
+                    socket.emit("todo", "add", todoObject);
                     setInputText('');
                 }
             })
@@ -117,22 +110,22 @@ export default function ChatUtilTodoList({participantObject, chatRoomNo}) {
         }
     }
 
-    return(
-       <ChatUtilTodoListTemplate 
-            onScroll={(e) => onScroll} 
+    return (
+        <ChatUtilTodoListTemplate
+            onScroll={(e) => onScroll}
             ref={todoAreaRef}
             form={(<ChatUtilTodoListForm
-                        value={inputText}
-                        onCreate={handleAddTodo}
-                        onChange={handleChange}
-                        onKeyPress={handleKeyPress}
-                    />
+                value={inputText}
+                onCreate={handleAddTodo}
+                onChange={handleChange}
+                onKeyPress={handleKeyPress}
+            />
             )}>
-        <ChatUtilTodoItemList
-            todos={todos} 
-            onToggle={handleToggle} 
-            onRemove={handleRemove}/>
-       </ChatUtilTodoListTemplate>
+            <ChatUtilTodoItemList
+                todos={todos}
+                onToggle={handleToggle}
+                onRemove={handleRemove} />
+        </ChatUtilTodoListTemplate>
     )
 }
 

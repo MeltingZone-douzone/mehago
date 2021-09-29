@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
-const ChatUtilTodoListTemplate = ({form, children}) => {
+const ChatUtilTodoListTemplate = ({ form, children }) => {
     const classes = useStyles();
 
     return (
@@ -13,7 +13,7 @@ const ChatUtilTodoListTemplate = ({form, children}) => {
                 {form}
             </section>
             <section className={classes.todosWrapper}>
-                { children }
+                {children}
             </section>
         </main>
     );
@@ -22,22 +22,23 @@ const ChatUtilTodoListTemplate = ({form, children}) => {
 const useStyles = makeStyles((theme) => ({
     todoListTemplate: {
         background: 'white',
-        width: '512px',
-        boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)', /* 그림자 */ 
+        width: '100%',
+        boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)', /* 그림자 */
         margin: '0 auto', /* 페이지 중앙 정렬 */
+        paddingTop:"1em"
     },
     title: {
         padding: '1rem',
-        fontSize: '1.5rem',
+        fontSize: '1rem',
         textAlign: 'center',
         fontWeight: '100',
         background: '#2E3B55',
         color: 'white'
     },
     formWrapper: {
-        padding: '1rem',
+        padding: '0.5rem',
         borderBottom: '1px solid #2E3B55'
-    },      
+    },
     todosWrapper: {
         minHeight: '5rem'
     }

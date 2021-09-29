@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import '../assets/sass/chat/modal.scss';
 
 
-export default function ChatRoomModalBasic({ basicEnterRoom, onlyAuthorized, account }) {
+export default function ChatRoomModalBasic({ basicEnterRoom }) {
 
     return(
         <ContentTemplate>
-            <Button className={"joinButton"} variant="contained" color="primary" disabled={onlyAuthorized != account ? true : false} onClick={() => { basicEnterRoom() }}> { onlyAuthorized != account ? '회원만 이용가능한 방입니다.' : '방 입장하기'}</Button>
+            <Button className={"joinButton"} variant="contained" color="primary" onClick={() => { basicEnterRoom() }} >방 입장하기</Button>
         </ContentTemplate>
     )
 }

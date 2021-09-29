@@ -28,6 +28,7 @@
     "axios": "^0.21.1",
     "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
+    "date-utils": "^1.2.21",
     "dotenv": "^10.0.0",
     "elastic-apm-node": "^3.20.0",
     "elasticsearch": "^16.7.2",

@@ -28,13 +28,15 @@
 	<select id="getParticipantInfo" parameterType="Map" resultType="participant">
 		<![CDATA[
 			SELECT 
-				no, chat_nickname AS chatNickname, chat_room_no AS chatRoomNo, not_read_count AS notReadCount, last_read_chat_no AS lastReadChatNo, account_no AS accountNo
+				p.no as no , p.chat_nickname AS chatNickname, p.chat_room_no AS chatRoomNo, p.not_read_count AS notReadCount, p.last_read_chat_no AS lastReadChatNo, p.account_no AS accountNo, a.thumbnail_url as thumbnailUrl	
 			FROM
-				participant
+				participant p , account a
 			WHERE
-				account_no = #{accountNo}
+				p.account_no = a.no
 			AND
-				chat_room_no = #{chatRoomNo}
+				p.account_no = #{accountNo}
+			AND
+				p.chat_room_no = #{chatRoomNo}
 		]]>
 	</select>
 

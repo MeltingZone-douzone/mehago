@@ -28,8 +28,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
-
-        socket.on('message:update:readCount', (msgToJson) => {
+        
+        socket.on(`message:update:readCount:room${chatRoomNo}`, (msgToJson) => {
             setChangedRows(msgToJson.changedRows);
         });
         fetchItems();
@@ -122,32 +122,29 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                 .map((message, index) => {
                     return (
                         message.participantNo !== participantObject.no ?
-                            <>
+                            <div key={index}>
+                                {dateDivider(messageList, index, message)}
                                 <ReceivedMessage
-                                    key={index}
                                     nextMessage={messageList[index - 1]}
                                     previousMessage={messageList[index + 1]}
                                     message={message}
                                     searchKeyword={searchMessage[searchMessage.length - 1]}
-                                    searchMessage={searchMessage}
+                                    searchMessage={searchMessage} 
                                     hiddenSearchInput={hiddenSearchInput}
                                     no={searchMessage.includes(message.no) ? message.no : null} />
-                                {dateDivider(messageList, index, message)}
-                            </>
+                            </div>
                             :
-                            <>
-                                <SendMessage
-                                    key={index}
-                                    nextMessage={messageList[index - 1]}
-                                    previousMessage={messageList[index + 1]}
-                                    message={message}
-                                    searchKeyword={searchMessage[searchMessage.length - 1]}
+                            <div key={index}>
+                                {dateDivider(messageList, index, message)}
+                                <SendMessage 
+                                    nextMessage={messageList[index - 1]} 
+                                    previousMessage={messageList[index + 1]} 
+                                    message={message} 
+                                    searchKeyword={searchMessage[searchMessage.length-1]} 
                                     hiddenSearchInput={hiddenSearchInput}
                                     no={searchMessage.includes(message.no) ? message.no : null} />
-                                {dateDivider(messageList, index, message)}
-                            </>
-                    )
-                }
+                            </div>
+                        )}
                 )
                 : null
             }

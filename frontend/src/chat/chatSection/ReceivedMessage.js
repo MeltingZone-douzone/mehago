@@ -23,14 +23,13 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
             }
         </p>;
     }
-
     return (
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
                 <Grid item xs={1} align="center">
                     {!previousMessage || previousMessage.participantNo !== message.participantNo ?
                         <div className="profile">
-                            <Thumbnail nickname={message.nickname} />
+                            <Thumbnail thumbnailUrl={message.thumbnailUrl} nickname={message.nickname} />
                         </div>
                         : ''}
                 </Grid>

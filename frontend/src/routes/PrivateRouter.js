@@ -7,6 +7,6 @@ export default function PrivateRouter({component: Component, restricted, authent
         <Route {...rest} render={props =>(
             authentication ? 
             <Component handleAuthentication={handleAuthentication} reloadUser={reloadUser} userInfo={userInfo} {...props} />
-            : <Redirect to="/account/login" /> )} />
+            : <Redirect to="/" /> )} />
     );
 }

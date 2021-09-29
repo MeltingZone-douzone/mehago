@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
 
-export default function ParticipatingRoom({socket, participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck, handleReceivedMsg}){
+export default function ParticipatingRoom({socket, participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom}){
     const classes = styles();
 
     return Object.keys(participatingRoom).length !== 0 ?
@@ -28,18 +28,18 @@ export default function ParticipatingRoom({socket, participatingRoom, setSearchV
             </SerachBarWarpper>
             <ContentWrapper>
                 {
-                participatingRoom
-                .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
-                .map((room ,index)=>
-                    <ParticipatingList
-                        key={index}
-                        socket={socket}
-                        room = {room} 
-                        updateFavoriteRoom={updateFavoriteRoom} 
-                        exitRoom={exitRoom}
-                        setFavoriteCheck={setFavoriteCheck}
-                        handleReceivedMsg={handleReceivedMsg}/>
-                    )
+                    participatingRoom
+                    .filter(rooms => rooms.title.indexOf(searchValue) != -1 )
+                    .map((room)=>
+                        <ParticipatingList
+                            key={room.no}
+                            socket={socket}
+                            room = {room} 
+                            updateFavoriteRoom={updateFavoriteRoom} 
+                            exitRoom={exitRoom}
+                            setFavoriteCheck={setFavoriteCheck}
+                            updateParticipatingRoom={updateParticipatingRoom}/>
+                        )
                 }
             </ContentWrapper>
         </MyChatRoomList>

@@ -1,5 +1,6 @@
 package com.douzone.mehago.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import com.douzone.mehago.vo.ChatRoom;
 import com.douzone.mehago.vo.FileUpload;
 import com.douzone.mehago.vo.Message;
 import com.douzone.mehago.vo.NonMember;
+import com.douzone.mehago.vo.Notice;
 import com.douzone.mehago.vo.Participant;
 import com.douzone.mehago.vo.Todo;
 import com.douzone.mehago.vo.TokenInfo;
@@ -37,6 +39,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * auth : 회원, 비회원 모두가 사용 할 수 있는 기능 (ChatController는 토큰이 있어야 사용 가능하도록 구현 했기 때문에
+ * controller에 @Auth, 회원만 사용 가능한 기능(채팅방 생성 등 )이라면 @Auth(role="ACCOUNT")으로 토큰 비교
+ * 후 실행 ) 구분이 필요한 기능들 같은 경우에는 @AuthUser TokenInfo 의 isNonMember로 구분 후 기능 구현
+ * isNonMember = true : 비회원 isNonMember = true && no = null : 아무런 방에 참여하지 않은 비회원
+ * isNonMember = false : 회원
+ */
 @Auth
 @RequestMapping("/api/chat")
 @Controller
@@ -118,15 +127,9 @@ public class ChatController {
                 : CommonResponse.fail("해당 채팅방에 해당 참여자가 존재하지 않습니다"));
     }
 
-    // 비회원 getParticipantInfo
-    // @Auth
-    // @GetMapping("/participantInfo/{chatRoomNo}")
-    // public ResponseEntity<?> getParticipantInfo(String chatNickname,
-    // @PathVariable Long chatRoomNo)
-
     @GetMapping("/getAllChatList")
     public ResponseEntity<?> getAllChatList(String offset) {
-        System.out.println(offset);
+        System.out.println("offset" + offset);
         List<Map<String, Object>> list = chatRoomService.getAllChatList(offset);
         getTagName(list);
         return ResponseEntity.ok()
@@ -153,15 +156,17 @@ public class ChatController {
     @Auth(role = "ACCOUNT")
     @PostMapping("/fileUpload")
     public ResponseEntity<?> fileUpload(String chatRoomNo, String participantNo, List<MultipartFile> files) {
-        FileUpload file = new FileUpload();
-        file.setChatRoomNo(Long.valueOf(chatRoomNo));
-        file.setParticipantNo(Long.valueOf(participantNo));
-        boolean result = false;
-        for (int i = 0; i < files.size(); i++) {
-            file.setUrl(fileUploadService.restore("chatroom", files.get(i)));
-            result = fileUploadService.addFile(file);
+        List<FileUpload> fileList = new ArrayList<>();
+        for (MultipartFile a : files) {
+            FileUpload file = new FileUpload();
+            file.setChatRoomNo(Long.valueOf(chatRoomNo));
+            file.setParticipantNo(Long.valueOf(participantNo));
+            file.setUrl(fileUploadService.restore("chatroom", a));
+            file.setNo(fileUploadService.addFile(file));
+            System.out.println("file" + file.toString());
+            fileList.add(file);
         }
-        return ResponseEntity.ok().body(CommonResponse.success(result));
+        return ResponseEntity.ok().body(CommonResponse.success(fileList));
     }
 
     @GetMapping("/getFileList/{chatRoomNo}")
@@ -242,16 +247,15 @@ public class ChatController {
     public ResponseEntity<?> enterRoomValidation(Long chatRoomNo, @AuthUser TokenInfo auth) {
         System.out.println(auth);
 
-        if(auth.getNo() == null){
+        if (auth.getNo() == null) {
             return ResponseEntity.ok().body(CommonResponse.success("noNickname"));
         }
-        Boolean result = participantService.isExistsParticipants(chatRoomNo, 
-            (auth.getIsNonMember() == true ? 0L : auth.getNo()),   // accountNo
-            (auth.getIsNonMember() == true ? auth.getNo() : 0L));  // nonMemberNo
+        Boolean result = participantService.isExistsParticipants(chatRoomNo,
+                (auth.getIsNonMember() == true ? 0L : auth.getNo()), // accountNo
+                (auth.getIsNonMember() == true ? auth.getNo() : 0L)); // nonMemberNo
         System.out.println(result);
         return ResponseEntity.ok().body(result ? CommonResponse.success(result) : CommonResponse.fail("재입장입니다."));
     }
-
 
     @Auth(role = "ACCOUNT")
     @PostMapping("/updateChatRoomInfo")
@@ -389,9 +393,11 @@ public class ChatController {
         boolean result = chatRoomService.checkIsDeleted(Long.parseLong(chatRoomNo));
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
-//  @Auth
+
+    // @Auth
     @DeleteMapping("/exitRoom/{chatRoomNo}")
-    // public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser Account account) {
+    // public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser
+    // Account account) {
     public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser TokenInfo auth) {
         boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), auth.getNo());
         return ResponseEntity.ok().body(CommonResponse.success(result));
@@ -400,6 +406,14 @@ public class ChatController {
     @GetMapping("/getNonMemberInfo")
     public ResponseEntity<?> getNonMemberInfo(@AuthUser TokenInfo auth) {
         return ResponseEntity.ok().body(CommonResponse.success(auth));
+    }
+
+    @Auth(role = "ACCOUNt")
+    @PostMapping("/addNotice")
+    public ResponseEntity<?> addNotice(@AuthUser TokenInfo auth, @RequestBody Notice notice) {
+        notice.setAccountNo(auth.getNo());
+        Long noticeNo = noticeService.addNotice(notice);
+        return ResponseEntity.ok().body(CommonResponse.success(noticeNo));
     }
 
     @GetMapping("/getNotice/{chatRoomNo}")
@@ -414,4 +428,5 @@ public class ChatController {
         boolean result = noticeService.deleteNotice(noticeNo);
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
+
 }

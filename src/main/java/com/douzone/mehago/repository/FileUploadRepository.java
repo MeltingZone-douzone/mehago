@@ -14,8 +14,9 @@ import lombok.RequiredArgsConstructor;
 public class FileUploadRepository {
     private final SqlSession sqlSession;
 
-    public boolean addFile(FileUpload file) {
-        return sqlSession.insert("fileupload.addFile", file) == 1 ? true : false;
+    public Long addFile(FileUpload file) {
+        sqlSession.insert("fileupload.addFile", file);
+        return file.getNo();
     }
 
     public List<FileUpload> getFileList(Long chatRoomNo) {

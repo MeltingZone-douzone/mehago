@@ -18,7 +18,6 @@
         </selectKey>
 	</insert>
 
-<!-- 이거 안돼서 가려놨음... -->
   <select id="getAllChatList" parameterType="Long" resultType="map">
     <choose>
       <when test="value == 0">
@@ -40,8 +39,8 @@
           limit
             0, 15
         ]]>
-      </when>
-      <otherwise>
+        </when>
+    <otherwise>
         <![CDATA[
         select DISTINCT
           c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner, c.secret_room as secretRoom,

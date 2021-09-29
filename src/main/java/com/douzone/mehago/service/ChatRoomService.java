@@ -23,7 +23,7 @@ public class ChatRoomService {
     }
 
     public List<Map<String, Object>> getAllChatList(String offset) {
-        return chatRoomRepository.getAllChatList(Long.parseLong(offset));
+        return chatRoomRepository.getAllChatList(Long.valueOf(offset));
     }
 
     public ChatRoom getRoomInfo(Long chatRoomNo) {
