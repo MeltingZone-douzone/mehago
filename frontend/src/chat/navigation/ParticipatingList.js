@@ -131,13 +131,13 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
 
 const ChattingRoomImage = styled.div`
     width: 60px;
-    height: 50px;
+    height: 45px;
 
     overflow:hidden;
 
     border: 1px solid #ccc;
     border-color: rgba(0,0,0,.2);
-    border-radius:20px;
+    border-radius:2em;
 `
 const ChattingRoomContent = styled.div`
    margin-left:10px;
