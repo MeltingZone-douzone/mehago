@@ -19,8 +19,8 @@
 	</insert>
 
   <select id="getAllChatList" parameterType="Long" resultType="map">
-    <!-- <choose>
-      <when test="value == 0"> -->
+    <choose>
+      <when test="value == 0">
         <![CDATA[
           select DISTINCT
             c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner, c.secret_room as secretRoom,
@@ -39,7 +39,7 @@
           limit
             0, 15
         ]]>
-       <!--  </when>
+        </when>
     <otherwise>
         <![CDATA[
         select DISTINCT
@@ -61,7 +61,7 @@
           15
         ]]>
       </otherwise>
-    </choose> -->
+    </choose>
   </select>
 
   <select id="getRoomInfo" parameterType="Long" resultType="chatroom">

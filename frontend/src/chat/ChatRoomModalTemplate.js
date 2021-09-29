@@ -34,10 +34,15 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
         console.log(status);
         switch (status) { // password={password}
             case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} />
+                break;
             case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom} />
+                break;
             case "basic": return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} />
+                break;
             case "onlyAuthorized": return <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
+                break;
             case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
+                break;
         }
     }
 
@@ -50,7 +55,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 break;
         }
     }
-
+// TODO: 닉네임도 엔터해야함
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             hiddenPasswordInput ? basicEnterRoom() : passwordValidation();
@@ -67,8 +72,10 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 //     return;
                 // }
                 console.log(res);
-                if (res.data.result === 'success') { // 새입장
-                    if (res.data.data === 'noNickname') {
+                if(res.data.result === 'success') { // 새입장
+                    console.log('1');
+                    if(res.data.data === 'noNickname') {  // 비회원이고 닉네임이 없는경우 닉네임 필드를 보여줌
+                        console.log('2');
                         return setHiddenNicknameInput(false);
                     }
                     console.log(status);
@@ -108,6 +115,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
     }
 
     const nicknameValidation = () => {
+        console.log(nickname);
         try {
             if (ValidationExp.nicknameExp.test(nickname)) {
                 vaildateNickname(no, nickname).then((res) => {
@@ -138,7 +146,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
             <ModalHeader url={thumbnailUrl}>
                 <Avatar className={classes.large} alt="프로필 사진" src={ownerThumbnailUrl} />
                 <InfoArea>
-                    <OwnerNickname><FontAwesomeIcon icon={faCrown} color={colors.subThemeColor} size={'1x'} /><span>{ownerNickname}</span></OwnerNickname>
+                    <OwnerNickname><FontAwesomeIcon icon={faCrown} color={'#F6C328'} size={'1x'} /><span>{ownerNickname}</span></OwnerNickname>
                     <span style={{ marginBottom: 10 }}>오픈 채팅</span>
                     <h1>{title}</h1>
                     <span>{"참여중: " + participantCount + "/" + limitedUserCount}</span>
@@ -202,8 +210,7 @@ const ModalTemplate = styled.div`
 
 const ModalHeader = styled.div`
     min-height: 350px;
-    // background-color: rgb(30 149 252);
-    background-color: rgb(220 220 220);
+    background-color: rgb(230 230 230);
     background-image: ${({ url }) => url ? `url(${url})` : `url(${Logo})`};
     background-repeat : no-repeat;
     background-size : ${({ url }) => url ? `cover` : `contain`};
@@ -212,7 +219,7 @@ const ModalHeader = styled.div`
 
 const InfoArea = styled.div`
     width:100%;
-    background-color: #00000030;
+    background-color: #00000040;
     color:white;
     padding: 2em 0;
     

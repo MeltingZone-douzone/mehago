@@ -104,7 +104,8 @@ export default function ChatUtilTodoList({ socket, participantObject, chatRoomNo
     }
     console.log(todos);
     const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
+        if(e.key === 'Enter' && inputText !== '') {
+            console.log(inputText);
             handleAddTodo();
         }
     }

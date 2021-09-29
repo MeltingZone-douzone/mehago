@@ -11,6 +11,8 @@ import InputBase from '@material-ui/core/InputBase';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faColumns } from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -27,7 +29,7 @@ export default function ChatHeader({handleSeperate,messageFunction, roomObject, 
       if(e.target.value === '') {
         handleSetSearch();
         setHiddenSearchResult(true);
-        // setCursor()
+        setCursor({ firstIndex: 0, index: 0, lastIndex: 0 });
         setSearchMessage(''); // SearchInput을 끄고 message를 ''초기화해서 ReceivedMessage, SendMessage에서 뿌릴때 no ? 삼항연산식에서 searchMessage가 존재하면 하이라이트, 없으면 일반문자로 출력
         return;
       }
@@ -37,26 +39,14 @@ export default function ChatHeader({handleSeperate,messageFunction, roomObject, 
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
-            {
-            hiddenSearchInput?
-                <IconButton
-                    edge="start"
-                    className={classes.backButton}
-                    color="inherit"
-                    onClick={() => messageFunction.leaveRoom()}
-                >
-                    <ArrowBackIcon />
-                </IconButton>
-                :
-                <IconButton
-                    edge="start"
-                    className={classes.closeButton}
-                    color="inherit"
-                    onClick={() => handleSetSearch()}
-                >
-                    <CloseIcon />
-                </IconButton>
-            }
+            <IconButton
+                edge="start"
+                className={classes.backButton}
+                color="inherit"
+                onClick={() => messageFunction.leaveRoom()}
+            >
+                <ArrowBackIcon />
+            </IconButton>
             <Typography className={classes.title} variant="h6" noWrap>
             {roomObject.title}
             </Typography>
@@ -73,6 +63,14 @@ export default function ChatHeader({handleSeperate,messageFunction, roomObject, 
               </IconButton>
               :
               <>
+                <IconButton
+                    edge="start"
+                    className={classes.closeButton}
+                    color="inherit"
+                    onClick={() => handleSetSearch()}
+                >
+                    <CloseIcon />
+                </IconButton>
                 <div className={classes.search}>
                     <div className={classes.searchInputIcon}>
                         <SearchIcon />
@@ -102,7 +100,8 @@ export default function ChatHeader({handleSeperate,messageFunction, roomObject, 
                   :
                   <ToggleTemplate>
                     <SearchResult>
-                      {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'}
+                      {/* {cursor.lastIndex ? `${cursor.index} / ${cursor.lastIndex}` : '0'} */}
+                      {`${cursor.index} / ${cursor.lastIndex}`}
                     </SearchResult>
                     <ButtonGroup className={classes.buttonGroup} variant="text" color="primary" aria-label="text primary button group">
                       <Button onClick={(e) => messageFunction.moveSearchResult(e, "left")}>{'<'}</Button>
@@ -112,7 +111,9 @@ export default function ChatHeader({handleSeperate,messageFunction, roomObject, 
                 }
               </>
           }
-          <button onClick={() => handleSeperate()}>분할</button>
+          <Button className={classes.splitIcon} onClick={() => handleSeperate()}>
+            <FontAwesomeIcon icon={faColumns} color={'#ffffff'}/>
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
@@ -142,13 +143,15 @@ const SearchResult = styled.p`
     padding: 0 0 0 1em;
 `
 
-
-
 const useStyles = makeStyles((theme) => ({
   root: {
   },
   appBar: {
-    background: '#2E3B55'
+    // background: '#2E3B55'
+    background: '#354668'
+  },
+  closeButton: {
+    padding: '0'
   },
   //   backButton: {
   //     marginRight: theme.spacing(2),
@@ -207,5 +210,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     width: 'fit-content'
+  },
+  splitIcon: {
+    fontSize: '1.3rem',
   }
 }));

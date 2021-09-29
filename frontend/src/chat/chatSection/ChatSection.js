@@ -193,7 +193,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                         setPrevSearchKeyword(searchKeyword)
                     } else {
                         console.log(res.data.message);         // TODO: 검색결과가 없습니다.
-                        setCursor({});
+                        setCursor({ firstIndex: 0, index: 0, lastIndex: 0 });
                     }
                 });
             } else {

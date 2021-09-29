@@ -83,6 +83,7 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
                         label="참여자 검색"
                         variant="outlined"
                         fullWidth
+                        color="#1C90FC"
                         onChange={(e) => setSearchNickname(e.target.value)}
                     />
                 </Grid>

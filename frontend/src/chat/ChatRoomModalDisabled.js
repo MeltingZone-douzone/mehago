@@ -3,8 +3,7 @@ import styled from 'styled-components';
 
 import { Button } from '@material-ui/core';
 
-export default function ChatRoomModalIsFull({ isFull, onlyAuthorized }) {
-
+export default function ChatRoomModalDisabled({ isFull, onlyAuthorized }) {
     return (
         <ContentTemplate>
             {isFull ?
