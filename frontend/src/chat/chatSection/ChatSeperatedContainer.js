@@ -52,8 +52,8 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
 
 const Container = styled.div`
     width:100%;
-    height:90%;
-    max-height: 90%;
+    height:95%;
+    max-height: 95%;
     display:flex;
     justify-content: center;
     align-items: center;
@@ -65,7 +65,7 @@ const ChatWrapper = styled.div`
 
     transition: all .5s ease-in-out;
 
-    background-color: #F5F5F5;
+    background-color: #fcfcfc;
     border:1px soild #eee;
     border-radius: 8px;
     margin: auto;

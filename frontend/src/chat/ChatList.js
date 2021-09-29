@@ -130,7 +130,7 @@ export default function ChatList({ userInfo }) {
                             {rooms ? getChatrooms().map((room, index) => {
                                 return (
                                     <div key={index}>
-                                    <ChatRoom 
+                                    <ChatRoom
                                         userInfo={userInfo}
                                         no = {room.no}
                                         title={room.title}

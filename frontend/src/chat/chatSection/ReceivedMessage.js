@@ -95,13 +95,13 @@ const madeStyles = makeStyles({
     },
     nickname: {
         fontWeight: "bolder",
+        fontSize: '1.3vh'
     },
     receivedMessage: {
-        boxShadow: "2px 3px rgb(0 0 0 / 20%)",
         borderRadius: "5px",
         width: "fit-content",
         padding: "10px",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#e3f1ff",
         textAlign: "left"
     },
     left: {

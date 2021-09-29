@@ -66,7 +66,7 @@ const Template = styled.div`
 const NoticeTemplate = styled.div`
   width: 100%;
   min-height: 3em;
-  position: absolute;
+  position: fixed;
   z-index: 1;
   background-color: white;
   border: 1px solid #ccc;

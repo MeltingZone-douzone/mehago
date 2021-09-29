@@ -114,6 +114,7 @@ export default function ChatRoom({ userInfo, no, title, limitedUserCount, onlyAu
                         tagName={tagName}
                         timeForToday={timeForToday}
                         secretRoom = {secretRoom}
+                        onlyAuthorized={onlyAuthorized}
                         account = {userInfo ? true : false} 
                         ownerThumbnailUrl={ownerThumbnailUrl}
                         ownerNickname={ownerNickname}/>

@@ -13,7 +13,7 @@ import localStorage from "local-storage";
 import ChatRoomModalBasic from './ChatRoomModalBasic';
 import ChatRoomModalPassword from './ChatRoomModalPassword';
 import ChatRoomModalNickname from './ChatRoomModalNickname';
-import ChatRoomModalIsFull from './ChatRoomModalIsFull';
+import ChatRoomModalDisabled from './ChatRoomModalDisabled';
 import { vaildatePassword, vaildateNickname, enterRoomValidationApi } from '../../api/ChatApi';
 import { ValidationExp } from '../utils/ValidationExp';
 export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
@@ -21,7 +21,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
     const history = useHistory();
 
     // 비밀방, 비회원, 회원을 식별하여 컴포넌트를 뿌려주기 위한 변수
-    const [status, setStatus] = useState(() => participantCount >= limitedUserCount ? "isFull" : secretRoom ? "secret" : account || onlyAuthorized ? "basic" : "nickname");
+    const [status, setStatus] = useState(() => participantCount >= limitedUserCount ? "isFull" : !account && onlyAuthorized ? "onlyAuthorized" : secretRoom ? "secret" : account ? "basic" : "nickname");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
     const [hiddenPasswordInput, setHiddenPasswordInput] = useState(true);
@@ -29,8 +29,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
     const [wrongPassword, setWrongPassword] = useState(false);
     const [wrongNickname, setWrongNickname] = useState(false);
 
-    console.log(account);
-    console.log(onlyAuthorized);
+    console.log(account," : ", onlyAuthorized);
     console.log('status: ', status);
     const getContent = () =>{
         switch(status){ // password={password}
@@ -38,10 +37,12 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 break;
             case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}/>
                 break;
-            case "basic" : return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} />
+            case "basic" : return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} account={account} onlyAuthorized={onlyAuthorized} />
                 break;
-            case "isFull": return <ChatRoomModalIsFull />
+            case "onlyAuthorized": return <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
                 break;
+            case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
+                break;  
         }
     }
 
@@ -54,7 +55,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 break;
         }
     }
-
+// TODO: 닉네임도 엔터해야함
     const handleKeyPress = (e) => {
         if(e.key === 'Enter') {
             hiddenPasswordInput ? basicEnterRoom() : passwordValidation();
@@ -70,8 +71,11 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 //     console.log('회원만 이용가능합니다. 로그인을 해주세요.');
                 //     return;
                 // }
+                console.log(res);
                 if(res.data.result === 'success') { // 새입장
-                    if(res.data.data === 'noNickname') {
+                    console.log('1');
+                    if(res.data.data === 'noNickname') {  // 비회원이고 닉네임이 없는경우 닉네임 필드를 보여줌
+                        console.log('2');
                         return setHiddenNicknameInput(false);
                     }
                     console.log(status);
@@ -119,6 +123,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
     }
 
     const nicknameValidation = () => {
+        console.log(nickname);
         try {
             if (ValidationExp.nicknameExp.test(nickname)) {
                 vaildateNickname(no, nickname).then((res) => {
@@ -150,7 +155,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
             <ModalHeader url={thumbnailUrl}>
                 <Avatar className={classes.large} alt="프로필 사진" src={ownerThumbnailUrl} />
                 <InfoArea>
-                    <OwnerNickname><FontAwesomeIcon icon={faCrown} color={colors.subThemeColor} size={'1x'} /><span>{ownerNickname}</span></OwnerNickname>
+                    <OwnerNickname><FontAwesomeIcon icon={faCrown} color={'#F6C328'} size={'1x'} /><span>{ownerNickname}</span></OwnerNickname>
                     <span style={{ marginBottom: 10 }}>오픈 채팅</span>
                     <h1>{title}</h1>
                     <span>{"참여중: " + participantCount + "/" + limitedUserCount}</span>
@@ -214,8 +219,7 @@ const ModalTemplate = styled.div`
 
 const ModalHeader = styled.div`
     min-height: 350px;
-    // background-color: rgb(30 149 252);
-    background-color: rgb(220 220 220);
+    background-color: rgb(230 230 230);
     background-image: ${({ url }) => url ? `url(${url})` : `url(${Logo})`};
     background-repeat : no-repeat;
     background-size : ${({ url }) => url ? `cover` : `contain`};
@@ -224,7 +228,7 @@ const ModalHeader = styled.div`
 
 const InfoArea = styled.div`
     width:100%;
-    background-color: #00000030;
+    background-color: #00000040;
     color:white;
     padding: 2em 0;
     

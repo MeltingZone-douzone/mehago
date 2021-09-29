@@ -35,7 +35,7 @@ export default function HomePage({authentication, userInfo, handleAuthentication
             <img src={Logo} alt={"logo"} className={"logo"}/>
                 <div className={"home"}>
                         {
-                            (userInfo.name !== "")?(
+                            (userInfo && userInfo.name !== "")?(
                             <div className={"homePage"}>
                                 <span className={"selectAcount"} >계정 선택</span>
                                 <div className={"thumbnailUrl"}>
@@ -45,8 +45,8 @@ export default function HomePage({authentication, userInfo, handleAuthentication
                                     <button className={"accountButton"} onClick={(e) =>{chatting(e)}}>
                                         <Avatar className={classes.logoImg} alt="프로필 사진" src={userInfo.thumbnailUrl} />
                                         <div className={"userInfo"}>
-                                            <p className={"nickname"}>{userInfo.nickname}</p>
-                                            <p>{userInfo.email}</p>
+                                            <p className={"account"}>{userInfo.nickname}</p>
+                                            <p className={"account"}>{userInfo.email}</p>
                                         </div>
                                         <span>사용중</span>
                                     </button>
