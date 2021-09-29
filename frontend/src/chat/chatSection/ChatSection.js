@@ -7,7 +7,7 @@ import ChatSeperatedContainer from './ChatSeperatedContainer';
 
 export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo , fetchRooms}) {
     const chatRoomNo = match.params.no;
-    const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
+    
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
     const [searchMessage, setSearchMessage] = useState([]);
