@@ -16,6 +16,8 @@ import ParticipatingMember from './ParticipatingMember';
 export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom}) {
     const classes = madeStyles();
 
+    console.log(participants);
+
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
     const [searchValue, setSearchValue] = useState('');
@@ -88,7 +90,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
-                    <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
+                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link>
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>

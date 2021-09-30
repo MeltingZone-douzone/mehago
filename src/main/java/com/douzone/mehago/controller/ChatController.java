@@ -129,7 +129,6 @@ public class ChatController {
 
     @GetMapping("/getAllChatList")
     public ResponseEntity<?> getAllChatList(String offset) {
-        System.out.println("offset" + offset);
         List<Map<String, Object>> list = chatRoomService.getAllChatList(offset);
         getTagName(list);
         return ResponseEntity.ok()

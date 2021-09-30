@@ -158,6 +158,8 @@ io.on("connection", (socket) => {
 
         messageObj = {
             participantNo: participantObject.no,
+            nickname: participantObject.chatNickname,
+            thumbnailUrl: participantObject.thumbnailUrl,
             chatRoomNo: roomObject.no,
             accountNo: participantObject.accountNo,
             notReadCount: "",

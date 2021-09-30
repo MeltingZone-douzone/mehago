@@ -68,7 +68,7 @@ const NoticeTemplate = styled.div`
   min-height: 3em;
   position: fixed;
   z-index: 1;
-  background-color: white;
+  background-color: #f4f4f4;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;

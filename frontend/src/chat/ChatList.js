@@ -11,7 +11,6 @@ import { NavLink } from 'react-router-dom';
 import ChatRoom from './ChatRoom';
 
 export default function ChatList({ userInfo }) {
-
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
     const [joinRooms, setJoinRooms] = useState([]);

@@ -22,7 +22,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
     const [noData, setNoData] = useState(false);
     const [searchMessageOffset, setSearchMessageOffset] = useState([]);
 
-    // console.log('hasData: ', participantObject.hasData); // true면 기존입장, false 첫입장
     useEffect(() => {
         socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
             setReceivedMsg(msg);
@@ -87,8 +86,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     useEffect(() => {
         if (searchMessage) {
-            const af = Array.from(document.querySelectorAll("p[name=chat-message]"));
-            const messageOffset = af.map(item => +item.offsetParent.offsetTop);
+            const arrayResult = Array.from(document.querySelectorAll("p[name=chat-message]"));
+            const messageOffset = arrayResult.map(item => +item.offsetParent.offsetTop);
             if (messageOffset.length !== cursor.lastIndex) {
                 setSearchMessageOffset(messageOffset);
             }
@@ -156,6 +155,13 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 function dateDivider(messageList, index, message) {
     const prevMessage = messageList[index + 1];
     if (prevMessage && moment(prevMessage.createdAt).format('YY/MM/DD') !== moment(message.createdAt).format('YY/MM/DD')) {
+        return renderDateDivider();
+    }
+    // if (typeof prevMessage === 'undefined' && message !== null) { // 방의 첫 메시지이면
+    if (!prevMessage && message) { // 방의 첫 메시지이면
+        return renderDateDivider();
+    }
+    function renderDateDivider() {
         const msgDate = moment(message.createdAt).format('YY/MM/DD');
         let day;
         switch (moment(message.createdAt).day()) {
@@ -173,18 +179,18 @@ function dateDivider(messageList, index, message) {
                 width: "100%",
                 justifyContent: "center"
             }}>
-                <p style={{ 
-                    padding: '0.5rem 0.7rem', 
-                    textAlign: 'center', 
-                    backgroundColor: '#d4d4d4', 
-                    borderRadius: '15px', 
-                    margin: '5px' ,
+                <p style={{
+                    padding: '0.5rem 0.7rem',
+                    textAlign: 'center',
+                    backgroundColor: '#d4d4d4',
+                    borderRadius: '15px',
+                    margin: '5px',
                     width: 'fit-content',
                     fontSize: 'smaller'
                 }}
                 >{msgDate} {day}
                 </p>
             </div>
-        )
+        );
     }
 }

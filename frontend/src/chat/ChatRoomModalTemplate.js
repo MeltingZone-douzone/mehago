@@ -21,28 +21,24 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
     const classes = materialStyles();
     const history = useHistory();
 
-    // 비밀방, 비회원, 회원을 식별하여 컴포넌트를 뿌려주기 위한 변수
-    const [status, setStatus] = useState(() => participantCount >= limitedUserCount ? "isFull" : !account && onlyAuthorized ? "onlyAuthorized" : secretRoom ? "secret" : account ? "basic" : "nickname");
+    // const [status, setStatus] = useState(() => participantCount >= limitedUserCount ? "isFull" : !account && onlyAuthorized ? "onlyAuthorized" : secretRoom ? "secret" : account ? "basic" : "nickname");
+    const [status, setStatus] = useState(() => !account && onlyAuthorized ? "onlyAuthorized" : secretRoom ? "secret" : account ? "basic" : "nickname");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
     const [hiddenPasswordInput, setHiddenPasswordInput] = useState(true);
     const [hiddenNicknameInput, setHiddenNicknameInput] = useState(true);
     const [wrongPassword, setWrongPassword] = useState(false);
     const [wrongNickname, setWrongNickname] = useState(false);
+    const [limitCountMsg, setLimitCountMsg] = useState(false);
 
     const getContent = () => {
         console.log(status);
-        switch (status) { // password={password}
-            case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} />
-                break;
-            case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom} />
-                break;
-            case "basic": return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} />
-                break;
+        switch (status) { 
+            case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />
+            case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}  handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg}/>
+            case "basic": return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg}/>
             case "onlyAuthorized": return <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
-                break;
-            case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
-                break;
+            // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
         }
     }
 
@@ -55,36 +51,39 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 break;
         }
     }
-// TODO: 닉네임도 엔터해야함
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            hiddenPasswordInput ? basicEnterRoom() : passwordValidation();
+            console.log(`status: ${status}`);
+            switch (status) {
+                case 'secret': hiddenPasswordInput ? basicEnterRoom() : passwordValidation();
+                    break;
+                case 'nickname': hiddenNicknameInput ? basicEnterRoom() : nicknameValidation();
+                    break;
+            }
             return;
         }
     }
 
-    // 비회원은 비밀방 입장 못하니까 Password Modal에서 account로 비교로 Button disabled로 막음
     const basicEnterRoom = () => {
         try {
-            enterRoomValidationApi(no).then(res => { // FIXME: 함수명 바꾸기
-                // if(res.data === 'nonMember') { // 비회원일 경우 
-                //     console.log('회원만 이용가능합니다. 로그인을 해주세요.');
-                //     return;
-                // }
+            enterRoomValidationApi(no).then(res => {
                 console.log(res);
                 if(res.data.result === 'success') { // 새입장
-                    console.log('1');
+                    if(participantCount >= limitedUserCount) {
+                        console.log("인원 다 차서 못들어감"); // <p> function()
+                        setLimitCountMsg(true);
+                        return;
+                    }
                     if(res.data.data === 'noNickname') {  // 비회원이고 닉네임이 없는경우 닉네임 필드를 보여줌
-                        console.log('2');
                         return setHiddenNicknameInput(false);
                     }
                     console.log(status);
                     switch (status) {
                         case 'secret': setHiddenPasswordInput(false); break;
                         case 'nickname': setHiddenNicknameInput(false); break;
-                        default: enterRoom(); break;
+                        default: { console.log('새입장'); enterRoom();} break;
                     }
-                } else {                            // 재입장
+                } else {
                     console.log('재입장');
                     enterRoom();
                 }
