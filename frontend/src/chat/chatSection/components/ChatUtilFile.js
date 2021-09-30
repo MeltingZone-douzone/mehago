@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import pictures from '../../../assets/images/images.svg';
 
 export default function ChatUtilFile({ fileList }) {
-    console.log(fileList);
     return (
         <Container>
             <ImageContainer>

@@ -143,15 +143,17 @@ io.on("connection", (socket) => {
         // 신규 유저라면 
         if (!participantObj.hasData) {
             let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
-
+            console.log(participantObj)
             const joinMessage = {
                 validation: "join",
-                message: `${socket.id}님이 입장하셨습니다.`,
+                message: `${participantObj.chatNickname}님이 입장하셨습니다.`,
                 chatRoomNo: roomObj.no,
-                AllChatMembers
+                AllChatMembers,
+                state : 0
             }
 
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(joinMessage));
+            participantObj.hasData = true;
         }
 
         sendMemberStatus(); // 멤버 온라인, 오프라인
@@ -190,9 +192,9 @@ io.on("connection", (socket) => {
         console.log("node disconnected", reason);
     })
 
-    socket.on('chat message', async (message) => {
+    socket.on('chat message', async (message,state) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount });
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount , "state": state} );
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
