@@ -33,6 +33,11 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
         socket.on(`update:readCount:room${room.no}`, (msg) => {
             setUpdatedRoom(prevState => ({ ...prevState, ["notReadCount"]: 0 }));
         });
+
+        socket.on(`members:leave:room${room.no}`, (msg) => {
+            // 멤버 줄이기 추가도 해야됨
+            // setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
+        });
     }, [])
 
     useEffect(() => {

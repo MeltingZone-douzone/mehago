@@ -42,7 +42,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     };
 
     useEffect(() => {
-        socket.on(`notice`, (msg) => {
+        socket.on(`notice:room${chatRoomNo}`, (msg) => {
             if (msg.noticeAdd === true) {
                 setNotice([msg, ...notice]);
             } else {
@@ -65,7 +65,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
 
 
     useEffect(() => {
-        socket.on(`file`, (msg) => {
+        socket.on(`file:room${chatRoomNo}`, (msg) => {
             console.log(msg)
             const newList = msg.files.concat(fileList);
             console.log(newList);
@@ -122,11 +122,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             handleCurrentParticipants(onlineChatMember);
         });
         socket.on(`room:updateInfo`, (msgToJson) => {
-            // console.log(msgToJson.roomObject);
-            // if (msgToJson.roomObject.secretRoom === true) {
-            //     msgToJson.roomObject.password = ""
-            // }
-            setRoomObject(msgToJson.roomObject);
+            if (msgToJson.roomObject === roomObject.no) {
+                setRoomObject(msgToJson.roomObject);
+            }
         })
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
