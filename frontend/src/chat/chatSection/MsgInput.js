@@ -19,20 +19,19 @@ export default function MsgInput({ message, messageFunction, buttonFunction, use
     return (
         <Fragment>
             <Grid container className={classes.gridContainer}>
-            {visibleButton ?
-                <ButtonGroup variant="contained" color="primary" size="large" aria-label="outlined primary button group" className={classes.buttonGroup} styles={{boxShadow: 'none'}}>
-                    <Button className={classes.button} onClick={buttonFunction.todo}><FontAwesomeIcon icon={faListAlt} /></Button>
-                    <Button className={classes.button} onClick={buttonFunction.notice}><FontAwesomeIcon icon={faBullhorn} /></Button>
-                    <Button className={classes.button} onClick={buttonFunction.fileupload}><FontAwesomeIcon icon={faPaperclip} /></Button>
-                </ButtonGroup>
-                : null}
+                {visibleButton ?
+                    <ButtonGroup variant="contained" color="primary" size="large" aria-label="outlined primary button group" className={classes.buttonGroup} styles={{ boxShadow: 'none' }}>
+                        <Button className={classes.button} onClick={buttonFunction.notice}><FontAwesomeIcon icon={faBullhorn} /></Button>
+                        <Button className={classes.button} onClick={buttonFunction.fileupload}><FontAwesomeIcon icon={faPaperclip} /></Button>
+                    </ButtonGroup>
+                    : null}
                 <Grid item xs={12}>
                     {userInfo ?
-                    <Fab color="primary" size="small" className={`${classes.uploads} ${classes.button}`}>
-                        <AddIcon className={classes.button} />
-                    </Fab>
-                    : null
-                }
+                        <Fab color="primary" size="small" className={`${classes.uploads} ${classes.button}`} onClick={visibleButtonGroup}>
+                            <AddIcon className={classes.button} />
+                        </Fab>
+                        : null
+                    }
                     <form onSubmit={messageFunction.onSubmitMessage} className={classes.inputMsgContainer}>
                         <TextField
                             id="message"
@@ -41,10 +40,10 @@ export default function MsgInput({ message, messageFunction, buttonFunction, use
                             onChange={messageFunction.onChangeMessage}
                             style={{
                                 marginLeft: '1em',
-                                marginTop:'0.25em',
-                                marginBottom:'0.25em',
-                                display:'flex',
-                                alignItems:'center'
+                                marginTop: '0.25em',
+                                marginBottom: '0.25em',
+                                display: 'flex',
+                                alignItems: 'center'
                             }}
                             InputProps={{ disableUnderline: true }}
                             fullWidth
@@ -72,7 +71,7 @@ const madeStyles = makeStyles({
         display: "flex",
         backgroundColor: "#e0e0e0",
         borderRadius: "25px",
-        alignItems:"inherit"
+        alignItems: "inherit"
 
     },
     uploads: {
@@ -82,7 +81,7 @@ const madeStyles = makeStyles({
     button: {
         backgroundColor: '#1C90FC',
         borderRadius: '25px',
-        '&:hover':{
+        '&:hover': {
             backgroundColor: '#0381f1'
         }
     }

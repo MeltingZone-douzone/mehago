@@ -1,6 +1,7 @@
 package com.douzone.mehago.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -329,23 +330,25 @@ public class ChatController {
     public ResponseEntity<?> vaildateNickname(@AuthUser TokenInfo auth, @RequestBody Participant participant) {
         boolean checkNicname = participantService.nicknameValidation(participant);
         String token = "";
-
+        Map<String, Object> map = new HashMap<>();
         if (checkNicname == false) {
             Long lastReadChatno = participantService.getLastReadChatNo(participant.getChatRoomNo());
             participant.setLastReadChatNo(lastReadChatno);
             NonMember nonMember = new NonMember();
             if (auth.getIsNonMember() == true && auth.getNo() != null) {
-                // 이미 들어가있는 채팅방이 있는 경우에는 어떻게 해야 할까????????
+                List<Map<String, Object>> list = chatRoomService.getRoomInfoNonMember(auth.getNo());
                 participantService.updateIsDeleted(auth.getNo());
+                map.put("chatRoomNo", list.get(0).get("no"));
+                map.put("participantNo", auth.getNo());
             }
 
             nonMember.setParticipantNo(participantService.addNonMember(participant));
             nonMember.setNickname(participant.getChatNickname());
             token = jwtTokenUtil.generateAccessToken(nonMember);
-
+            map.put("token", token);
         }
         return ResponseEntity.ok()
-                .body(checkNicname ? CommonResponse.fail("사용중인 닉네임 입니다.") : CommonResponse.success(token));
+                .body(checkNicname ? CommonResponse.fail("사용중인 닉네임 입니다.") : CommonResponse.success(map));
     }
 
     @PostMapping("/updateFavoriteRoom/{chatRoomNo}")
@@ -395,13 +398,20 @@ public class ChatController {
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 
-    // @Auth
     @DeleteMapping("/exitRoom/{chatRoomNo}")
-    // public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser
-    // Account account) {
     public ResponseEntity<?> exitRoom(@PathVariable String chatRoomNo, @AuthUser TokenInfo auth) {
-        boolean result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), auth.getNo());
-        return ResponseEntity.ok().body(CommonResponse.success(result));
+
+        boolean result = false;
+        Participant participant = new Participant();
+        if (auth.getIsNonMember() == false) {
+            Account account = new Account(auth);
+            participant = participantService.getParticipantInfo(account, Long.valueOf(chatRoomNo));
+        } else {
+            participant.setNo(auth.getNo());
+        }
+        result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), participant.getNo());
+        return ResponseEntity.ok()
+                .body(result ? CommonResponse.success(participant) : CommonResponse.fail("failed to exit"));
     }
 
     @GetMapping("/getNonMemberInfo")

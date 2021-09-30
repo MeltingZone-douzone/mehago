@@ -70,10 +70,10 @@ public class ChatRoomService {
         return chatRoomRepository.deleteChatRoom(chatRoomNo);
     }
 
-    public boolean exitRoom(Long chatRoomNo, Long accountNo) {
+    public boolean exitRoom(Long chatRoomNo, Long participantNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("chatRoomNo", chatRoomNo);
-        map.put("accountNo", accountNo);
+        map.put("participantNo", participantNo);
         return chatRoomRepository.exitRoom(map);
     }
 

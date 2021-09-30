@@ -9,7 +9,7 @@ import SendMessage from './SendMessage';
 import styled from 'styled-components';
 
 
-export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput,notice }) {
+export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput, notice }) {
     const messageAreaRef = useRef();
 
     const [offsetNo, setOffsetNo] = useState(0);
@@ -28,7 +28,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
-        
+
         socket.on(`message:update:readCount:room${chatRoomNo}`, (msgToJson) => {
             setChangedRows(msgToJson.changedRows);
         });
@@ -142,7 +142,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                                 width: 'fit-content',
                                 fontSize: 'smaller'
                             }}
-                            >{message.message}님이 입장하였습니다.
+                            >{message.message}
                             </p>
                         </div>
                         :
@@ -177,7 +177,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                 )
                 : null
             }
-            
+
         </List >
     );
 }
@@ -202,12 +202,12 @@ function dateDivider(messageList, index, message) {
                 width: "100%",
                 justifyContent: "center"
             }}>
-                <p style={{ 
-                    padding: '0.5rem 0.7rem', 
-                    textAlign: 'center', 
-                    backgroundColor: '#d4d4d4', 
-                    borderRadius: '15px', 
-                    margin: '5px' ,
+                <p style={{
+                    padding: '0.5rem 0.7rem',
+                    textAlign: 'center',
+                    backgroundColor: '#d4d4d4',
+                    borderRadius: '15px',
+                    margin: '5px',
                     width: 'fit-content',
                     fontSize: 'smaller'
                 }}

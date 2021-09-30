@@ -5,9 +5,9 @@ import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo , fetchRooms}) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo, fetchRooms }) {
     const chatRoomNo = match.params.no;
-    const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
+
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
     const [searchMessage, setSearchMessage] = useState([]);
@@ -27,7 +27,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
     const [notice, setNotice] = useState([]);
     const [fileList, setFileList] = useState([]);
-
     const noticeList = (chatRoomNo) => {
         try {
             getNotice(chatRoomNo).then(res => {
@@ -122,10 +121,13 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             console.log(onlineChatMember);
             handleCurrentParticipants(onlineChatMember);
         });
-        socket.on('room:updateInfo', (msgToJson) => {
+        socket.on(`room:updateInfo`, (msgToJson) => {
+            // console.log(msgToJson.roomObject);
+            // if (msgToJson.roomObject.secretRoom === true) {
+            //     msgToJson.roomObject.password = ""
+            // }
             setRoomObject(msgToJson.roomObject);
         })
-
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
@@ -134,6 +136,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
+        socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
+            history.push("/chat")
+        })
 
         return () => {
             socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요

@@ -37,6 +37,8 @@
 				p.account_no = #{accountNo}
 			AND
 				p.chat_room_no = #{chatRoomNo}
+			AND
+				p.is_deleted=false
 		]]>
 	</select>
 

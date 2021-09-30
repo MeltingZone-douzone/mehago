@@ -16,8 +16,7 @@ import ChatRoomModalNickname from './ChatRoomModalNickname';
 import ChatRoomModalDisabled from './ChatRoomModalDisabled';
 import { vaildatePassword, vaildateNickname, enterRoomValidationApi } from '../../api/ChatApi';
 import { ValidationExp } from '../utils/ValidationExp';
-
-export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
+export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
     const classes = materialStyles();
     const history = useHistory();
 
@@ -31,7 +30,6 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
     const [wrongNickname, setWrongNickname] = useState(false);
 
     const getContent = () => {
-        console.log(status);
         switch (status) { // password={password}
             case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} />
                 break;
@@ -55,7 +53,7 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 break;
         }
     }
-// TODO: 닉네임도 엔터해야함
+    // TODO: 닉네임도 엔터해야함
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             hiddenPasswordInput ? basicEnterRoom() : passwordValidation();
@@ -72,9 +70,9 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 //     return;
                 // }
                 console.log(res);
-                if(res.data.result === 'success') { // 새입장
+                if (res.data.result === 'success') { // 새입장
                     console.log('1');
-                    if(res.data.data === 'noNickname') {  // 비회원이고 닉네임이 없는경우 닉네임 필드를 보여줌
+                    if (res.data.data === 'noNickname') {  // 비회원이고 닉네임이 없는경우 닉네임 필드를 보여줌
                         console.log('2');
                         return setHiddenNicknameInput(false);
                     }
@@ -121,7 +119,8 @@ export default function ChatRoomModalTemplate ({ no, title, thumbnailUrl, partic
                 vaildateNickname(no, nickname).then((res) => {
                     console.log(res.data);
                     if (res.data.result === "success") {
-                        localStorage.set("token", res.data.data);
+                        socket.emit('leave:chat-room', res.data.data.chatRoomNo, res.data.data.participantNo);
+                        localStorage.set("token", res.data.data.token);
                         enterRoom();
                     } else {
                         setWrongNickname(true);

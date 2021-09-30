@@ -11,7 +11,7 @@ export default function ChatUtilFile({ fileList }) {
                     .map((file, index) => {
                         return (
                             !fileList[index - 1] || moment(fileList[index - 1].createdAt).format('YY/MM/DD') !== moment(file.createdAt).format('YY/MM/DD') ?
-                                <Fragment>
+                                <Fragment key={index}>
                                     <Text>{moment(file.createdAt).format('YYYY.MM.DD.')}</Text>
                                     <Image key={index} src={file.url} />
                                 </Fragment>
@@ -53,6 +53,6 @@ const NonFile = styled.div`
 `
 
 const Pictures = styled.img`
-    width:80%;
+    width:50%;
 `
 

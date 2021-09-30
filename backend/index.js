@@ -107,9 +107,9 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "update": io.to(roomname).emit(`message:update:readCount:${roomname}`, msgToJson);
             break;
-        case "infoupdate": io.to(roomname).emit('room:updateInfo', msgToJson);
+        case "infoupdate": io.to(roomname).emit(`room:updateInfo`, msgToJson);
             break;
-        case "leave": io.to(roomname).emit('leave message', msgToJson);
+        case "leave": io.to(roomname).emit(`room:leave:${roomname}`, msgToJson);
             break;
         case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
     }
@@ -160,6 +160,8 @@ io.on("connection", (socket) => {
 
         messageObj = {
             participantNo: participantObject.no,
+            nickname: participantObject.chatNickname,
+            thumbnailUrl: participantObject.thumbnailUrl,
             chatRoomNo: roomObject.no,
             accountNo: participantObject.accountNo,
             notReadCount: "",
@@ -265,16 +267,29 @@ io.on("connection", (socket) => {
     });
 
     // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 참여자가 채팅방에서 나갔을때)
-    socket.on('leave:chat-room', () => {
+    socket.on('leave:chat-room', async (chatRoomNo, participantNo) => {
 
         // socket.leave(data.roomName, (result) => { });
+        // 회원
+        // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
 
+        // 비회원
+        // roomNo, participantNo를 가져와야 하는데 front단에서 넘겨줘야 하지 않을까??????
+
+        redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
+            console.log(result); // 1
+        });
+        const memberObj = {
+            "chatRoomNo": chatRoomNo,
+            "participantNo": participantNo,
+        }
         const leaveMessage = {
             "validation": "leave",
-            "message": `notice:${socket.id}님이 ${currentRoomName}방을 나가셨습니다.`,
-            chatMember
+            "message": `notice:${socket.id}님이 room${chatRoomNo}방을 나가셨습니다.`,
+            memberObj
         }
-        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(leaveMessage));
+        io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
+        io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
 
 
         // io.of('/').adapter.subClient.unsubscribe(currentRoomName) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴

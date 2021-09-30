@@ -186,7 +186,7 @@ export default function ChatRoomSetting({ roomObject, settingRoomFunction, passw
                         </InfoFormWrapper>
                         <ButtonWrapper>
                             <div className={classes.buttons}>
-                                <Button className={classes.button} variant="outlined" color="primary" type="button" onClick={() => { history.goBack(); }}>취소</Button>
+                                <Button className={classes.button} variant="outlined" color="primary" type="button" onClick={() => { setChatRoom({}); }}>취소</Button>
                                 <Button className={classes.button} variant="outlined" color="primary" type="submit" >채팅방 정보 변경하기</Button>
                                 <Button className={classes.button} variant="contained" color="secondary" type="button" onClick={deleteFunction.open}>채팅방 삭제하기</Button>
                             </div>
