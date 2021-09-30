@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import pictures from '../../../assets/images/images.svg';
 
 export default function ChatUtilFile({ fileList }) {
-    console.log(fileList);
     return (
         <Container>
             <ImageContainer>
@@ -12,7 +11,7 @@ export default function ChatUtilFile({ fileList }) {
                     .map((file, index) => {
                         return (
                             !fileList[index - 1] || moment(fileList[index - 1].createdAt).format('YY/MM/DD') !== moment(file.createdAt).format('YY/MM/DD') ?
-                                <Fragment>
+                                <Fragment key={index}>
                                     <Text>{moment(file.createdAt).format('YYYY.MM.DD.')}</Text>
                                     <Image key={index} src={file.url} />
                                 </Fragment>

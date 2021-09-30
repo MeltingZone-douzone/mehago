@@ -12,6 +12,7 @@ public class Message {
     private Long chatRoomNo;
 
     // socket에 뿌릴 객체에 필요한 컬럼임. DB X
+    private String thumbnailUrl;
     private String nickname;
     private String roomName;
 

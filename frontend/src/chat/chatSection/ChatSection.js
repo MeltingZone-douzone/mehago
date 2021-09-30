@@ -27,7 +27,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
     const [notice, setNotice] = useState([]);
     const [fileList, setFileList] = useState([]);
-
     const noticeList = (chatRoomNo) => {
         try {
             getNotice(chatRoomNo).then(res => {
@@ -122,10 +121,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             console.log(onlineChatMember);
             handleCurrentParticipants(onlineChatMember);
         });
-        socket.on('room:updateInfo', (msgToJson) => {
+        socket.on(`room:updateInfo`, (msgToJson) => {
             setRoomObject(msgToJson.roomObject);
         })
-
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
@@ -134,6 +132,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
+        socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
+            history.push("/chat")
+        })
 
         return () => {
             socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요

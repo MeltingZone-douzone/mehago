@@ -15,34 +15,33 @@ import AlarmPoint from '../../components/AlarmPoint';
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom}) {
+export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom }) {
     const classes = madeStyles();
-    
+
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
 
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
-            setUpdatedRoom(prevState => ({...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now(), ["notReadCount"] : prevState.notReadCount + 1}));
+            setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now(), ["notReadCount"]: prevState.notReadCount + 1 }));
         });
 
-        socket.on(`join:room${room.no}`, (msg)=>{
-            setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
+        socket.on(`join:room${room.no}`, (msg) => {
+            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
 
-        socket.on(`update:readCount:room${room.no}`, (msg) =>{
-            setUpdatedRoom(prevState => ({...prevState, ["notReadCount"] : 0}));
+        socket.on(`update:readCount:room${room.no}`, (msg) => {
+            setUpdatedRoom(prevState => ({ ...prevState, ["notReadCount"]: 0 }));
         });
+    }, [])
 
-    },[])
-
-    useEffect(()=>{
+    useEffect(() => {
         return () => {
-            if(room !== updatedRoom) {
+            if (room !== updatedRoom) {
                 updateParticipatingRoom(updatedRoom);
             }
         }
-    },[updatedRoom])
+    }, [updatedRoom])
 
 
     function timeForToday(leastMessageAt) {
@@ -91,21 +90,21 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
                 <Link to={`/chat/${room.no}`}>
-                <ListItem button key={`${room.no}`} className={classes.roomContainer} >
-                    <ChattingRoomImage>
-                        <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
-                    </ChattingRoomImage>
-                    <ChattingRoomContent>
-                        <div className={classes.content}>
-                            <span className={classes.title} > {room.title} </span>
-                            <span className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</span>
-                            <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
-                        </div>
-                        <div className={classes.content}>
-                            <span className={classes.leastMessage}>{updatedRoom.leastMessage ? updatedRoom.leastMessage : '새로운 채팅방입니다.'}</span> {updatedRoom.notReadCount ? <AlarmPoint num={updatedRoom.notReadCount} /> : null }
-                        </div>
-                    </ChattingRoomContent>
-                </ListItem>
+                    <ListItem button key={`${room.no}`} className={classes.roomContainer} >
+                        <ChattingRoomImage>
+                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
+                        </ChattingRoomImage>
+                        <ChattingRoomContent>
+                            <div className={classes.content}>
+                                <span className={classes.title} > {room.title} </span>
+                                <span className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</span>
+                                <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
+                            </div>
+                            <div className={classes.content}>
+                                <span className={classes.leastMessage}>{updatedRoom.leastMessage ? updatedRoom.leastMessage : '새로운 채팅방입니다.'}</span> {updatedRoom.notReadCount ? <AlarmPoint num={updatedRoom.notReadCount} /> : null}
+                            </div>
+                        </ChattingRoomContent>
+                    </ListItem>
                 </Link>
             </List>
             <Modal
@@ -114,15 +113,15 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
                 onRequestClose={() => setModalIsOpen(false)}
                 shouldCloseOnOverlayClick={true}
                 contentLabel="채팅방 나가기">
-                    <div className={"top"}>
-                        <Button className={classes.close} onClick={() => setModalIsOpen(false)}>&times;</Button>
-                    </div>
-                    <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize:'1.5em' }}>{room.title}</Typography>}/>
-                    <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize:'1em'}}>{'채팅방에서 나가시겠습니까?'} </Typography>}/>
-                    <div className={"modalButton"}>
-                        <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
-                        <Button className={classes.okButton} onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
-                    </div>
+                <div className={"top"}>
+                    <Button className={classes.close} onClick={() => setModalIsOpen(false)}>&times;</Button>
+                </div>
+                <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize: '1.5em' }}>{room.title}</Typography>} />
+                <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize: '1em' }}>{'채팅방에서 나가시겠습니까?'} </Typography>} />
+                <div className={"modalButton"}>
+                    <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
+                    <Button className={classes.okButton} onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                </div>
             </Modal>
         </div >
     )
@@ -213,7 +212,7 @@ const madeStyles = makeStyles({
         fontWeight: '600',
         fontSize: '1.25rem'
     },
-    container:{
+    container: {
         display: 'flex',
         alignItems: 'center',
         minHeight: '3rem',

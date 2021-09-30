@@ -9,7 +9,7 @@ import SendMessage from './SendMessage';
 import styled from 'styled-components';
 
 
-export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput,notice }) {
+export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput, notice }) {
     const messageAreaRef = useRef();
 
     const [offsetNo, setOffsetNo] = useState(0);
@@ -28,7 +28,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
-        
+
         socket.on(`message:update:readCount:room${chatRoomNo}`, (msgToJson) => {
             setChangedRows(msgToJson.changedRows);
         });
@@ -135,20 +135,21 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                             </div>
                             :
                             <div key={index}>
-                            <SendMessage 
-                                nextMessage={messageList[index - 1]} 
-                                previousMessage={messageList[index + 1]} 
-                                message={message} 
-                                searchKeyword={searchMessage[searchMessage.length-1]} 
-                                hiddenSearchInput={hiddenSearchInput}
-                                no={searchMessage.includes(message.no) ? message.no : null} />
+                                <SendMessage
+                                    nextMessage={messageList[index - 1]}
+                                    previousMessage={messageList[index + 1]}
+                                    message={message}
+                                    searchKeyword={searchMessage[searchMessage.length - 1]}
+                                    hiddenSearchInput={hiddenSearchInput}
+                                    no={searchMessage.includes(message.no) ? message.no : null} />
                                 {dateDivider(messageList, index, message)}
                             </div>
-                        )}
+                    )
+                }
                 )
                 : null
             }
-            
+
         </List >
     );
 }

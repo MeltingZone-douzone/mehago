@@ -16,7 +16,7 @@ import ChatRoomModalNickname from './ChatRoomModalNickname';
 import ChatRoomModalDisabled from './ChatRoomModalDisabled';
 import { vaildatePassword, vaildateNickname, enterRoomValidationApi } from '../../api/ChatApi';
 import { ValidationExp } from '../utils/ValidationExp';
-export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
+export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl, participantCount, limitedUserCount, timeForToday, lastMessage, tagName, ownerNickname, ownerThumbnailUrl, secretRoom, onlyAuthorized, account }) {
     const classes = materialStyles();
     const history = useHistory();
 
@@ -30,7 +30,6 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
     const [wrongNickname, setWrongNickname] = useState(false);
 
     const getContent = () => {
-        console.log(status);
         switch (status) { // password={password}
             case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} />
             case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom} />
@@ -112,7 +111,8 @@ export default function ChatRoomModalTemplate({ no, title, thumbnailUrl, partici
                 vaildateNickname(no, nickname).then((res) => {
                     console.log(res.data);
                     if (res.data.result === "success") {
-                        localStorage.set("token", res.data.data);
+                        socket.emit('leave:chat-room', res.data.data.chatRoomNo, res.data.data.participantNo);
+                        localStorage.set("token", res.data.data.token);
                         enterRoom();
                     } else {
                         setWrongNickname(true);

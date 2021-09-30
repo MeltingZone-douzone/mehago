@@ -132,6 +132,8 @@
                   account_no = #{accountNo })
           AND 
 				    c.is_deleted = false
+          AND			
+            p.is_deleted= false
         ORDER BY 
           leastMessageAt desc
     ]]>
@@ -162,6 +164,8 @@
                   no= #{value })
           AND 
 				    c.is_deleted = false
+          AND			
+            p.is_deleted= false
            ]]>
   </select>
 
@@ -264,7 +268,8 @@
       FROM 
         chat_room 
       where 
-        no in (select chat_room_no from participant where 
+        no in (select chat_room_no from participant where is_deleted=false 
+        AND
            ]]> 
         <choose>
           <when test="(0L).equals(accountNo)==false">
@@ -301,16 +306,18 @@
   </select>
   
 
-  <delete id="exitRoom" parameterType="map">
+  <update id="exitRoom" parameterType="map">
     <![CDATA[
-      DELETE from 
+      UPDATE 
         participant 
+      SET
+        is_deleted=1, chat_nickname="(알수없음)"
       WHERE
-        account_no = #{accountNo } 
+            no = #{participantNo }
       AND
         chat_room_no = #{chatRoomNo };
     ]]>
-  </delete>
+  </update>
 
   <update id="updateOwnerLeaved" parameterType="Long">
     <![CDATA[
