@@ -36,9 +36,9 @@
                 flex-direction: column;
                 align-items: center;
                 background: white;
-                .nickname{
+                .account{
                     font-size: 3em;
-                    padding-bottom: 1em;
+                    padding-bottom: 0.2em;
                     font: caption;
                 }
                 .thumbnailUrl{
@@ -93,15 +93,20 @@
                         
                     }
                     .loginPageButton{
-                        background-color: #1c90fc38;
+                        background-color: #ffffff;
                         width: 40%;
                         height: 3em;
                         display: flex;
-                        border: none;
-                        border-bottom: ridge;
+                        border: 1px solid #1C90FC;
+                        color: #1C90FC;
                         justify-content: center;
                         align-items: center;
                         border-radius: 10px;
+
+                        &:hover {
+                            background-color: #1C90FC;
+                            color: #ffffff;
+                        }
                         p{
                             padding-left: 1em;
                         }

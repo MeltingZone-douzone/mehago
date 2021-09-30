@@ -72,11 +72,10 @@ const madeStyles = makeStyles({
         paddingBottom: 0,
     },
     myChatMessage: {
-        boxShadow: "3px 3px rgb(0 0 0 / 20%)",
         borderRadius: "5px",
         width: "fit-content",
         padding: "10px",
-        backgroundColor: "#A1F1FF",
+        backgroundColor: "#ebebeb",
         textAlign: "left"
     },
     right: {

@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import UserProfile from '../../profile/UserProfile';
 import UserSettingsContainer from '../../profile/settings/ProfileSettings';
 import localStorage from 'local-storage';
 
@@ -78,7 +77,6 @@ export default function ProfileSettingsPage({ handleAuthentication,userInfo, rel
     return (
         <Template>
             <Fragment>
-                <UserProfile user={userInfo} />
                 <UserSettingsContainer handleAuthentication={handleAuthentication} user={userInfo} settingsApi={settingsApi} />
             </Fragment>
         </Template>
@@ -87,4 +85,6 @@ export default function ProfileSettingsPage({ handleAuthentication,userInfo, rel
 
 const Template = styled.div`
     display:flex;
+    width: 100%;
+    justify-content: center;
 `

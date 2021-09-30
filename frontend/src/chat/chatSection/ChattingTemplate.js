@@ -7,7 +7,7 @@ import Dialogs from '../dialogs/Dialogs';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import { faBullhorn, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'; 
 import { Button } from '@material-ui/core';
 
 
@@ -22,21 +22,21 @@ export default function ChattingTemplate({ socket, messageFunction, participantO
             {
                 !isSeperated ? (
                     notice.length !== 0 ? (
-                        <NoticeTemplate>
-                            <Notice>
-                                <span ><FontAwesomeIcon className={classes.noticeIcon} icon={faBullhorn} /></span>
-                                <div className={classes.notice}>
-                                    <p>{notice[0].notice}</p>
-                                </div>
-                                <Button className={classes.dropDown} onClick={() => { setExpandable(!expandable) }}>▼</Button>
-                                {/* 여기에 버튼 만들어서 접어두기/열기 만들어야 함 */}
-                            </Notice>
-                            <WriterInfo expandable={expandable}>
-                                <p>{notice[0].nickname}님이 등록</p>
-                            </WriterInfo>
-                        </NoticeTemplate>
-                    ) : (
-                        null
+                    <NoticeTemplate>
+                        <Notice>
+                            <span ><FontAwesomeIcon className={classes.noticeIcon} icon={faBullhorn}/></span>
+                            <div className={classes.notice}>
+                                <p>{notice[0].notice}</p>
+                            </div>
+                            <Button className={classes.dropDown} onClick={()=>{setExpandable(!expandable)}}>{expandable ? <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronUp}/> : <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronDown}/>}</Button>
+                            {/* 여기에 버튼 만들어서 접어두기/열기 만들어야 함 */}
+                        </Notice>
+                        <WriterInfo expandable={expandable}>
+                            <p>{notice[0].nickname}님이 등록</p>
+                        </WriterInfo>
+                    </NoticeTemplate>
+                    ):(
+                    null
                     )
                 ) : (
                     null
@@ -66,7 +66,7 @@ const Template = styled.div`
 const NoticeTemplate = styled.div`
   width: 100%;
   min-height: 3em;
-  position: absolute;
+  position: fixed;
   z-index: 1;
   background-color: white;
   border: 1px solid #ccc;
@@ -75,6 +75,7 @@ const NoticeTemplate = styled.div`
   align-items: center;
   border-bottom: inset;
   box-sizing: border-box;
+  padding-top: 0.5em;
 `
 
 const Notice = styled.div`
@@ -95,15 +96,17 @@ const WriterInfo = styled.div`
 `
 
 const useStyles = makeStyles((theme) => ({
-
-    noticeIcon: {
-        paddingLeft: "1.5em"
-    },
-    notice: {
-        paddingLeft: "1em"
-    },
-    dropDown: {
-        display: "flex",
-        justifyContent: "center"
-    }
+    
+    noticeIcon : { 
+        paddingLeft:"1.5em",
+        width:"10%"
+      },
+      notice:{
+        paddingLeft:"1em",
+        width:"70%"
+      },
+      dropDown:{
+        justifyContent: "end",
+        width:"10%"
+      }
 }))

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import ChatNavbar from '../../chat/navigation/ChatNavbar';
 import ChatSection from '../../chat/chatSection/ChatSection';
-// import Chatting from '../../chat/Chatting';
 import '../../assets/sass/chat/Chat.scss';
 import ChatList from '../../chat/ChatList';
 import CreateChatRoom from '../../chat/CreateChatRoom';

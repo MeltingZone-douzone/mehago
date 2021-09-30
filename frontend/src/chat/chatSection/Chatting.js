@@ -123,6 +123,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                     return (
                         message.participantNo !== participantObject.no ?
                             <div key={index}>
+                                {dateDivider(messageList, index, message)}
                                 <ReceivedMessage
                                     nextMessage={messageList[index - 1]}
                                     previousMessage={messageList[index + 1]}
@@ -131,10 +132,10 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                                     searchMessage={searchMessage}
                                     hiddenSearchInput={hiddenSearchInput}
                                     no={searchMessage.includes(message.no) ? message.no : null} />
-                                {dateDivider(messageList, index, message)}
                             </div>
                             :
                             <div key={index}>
+                                {dateDivider(messageList, index, message)}
                                 <SendMessage
                                     nextMessage={messageList[index - 1]}
                                     previousMessage={messageList[index + 1]}
@@ -142,7 +143,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                                     searchKeyword={searchMessage[searchMessage.length - 1]}
                                     hiddenSearchInput={hiddenSearchInput}
                                     no={searchMessage.includes(message.no) ? message.no : null} />
-                                {dateDivider(messageList, index, message)}
                             </div>
                     )
                 }
@@ -168,6 +168,24 @@ function dateDivider(messageList, index, message) {
             case 5: day = '금요일'; break;
             case 6: day = '토요일'; break;
         }
-        return <p style={{ padding: '0.1rem', textAlign: 'center', backgroundColor: '#bdc7db' }}>{msgDate} {day}</p>;
+        return (
+            <div style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "center"
+            }}>
+                <p style={{
+                    padding: '0.5rem 0.7rem',
+                    textAlign: 'center',
+                    backgroundColor: '#d4d4d4',
+                    borderRadius: '15px',
+                    margin: '5px',
+                    width: 'fit-content',
+                    fontSize: 'smaller'
+                }}
+                >{msgDate} {day}
+                </p>
+            </div>
+        )
     }
 }

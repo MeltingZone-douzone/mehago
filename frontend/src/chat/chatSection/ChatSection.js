@@ -7,7 +7,7 @@ import ChatSeperatedContainer from './ChatSeperatedContainer';
 
 export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo, fetchRooms }) {
     const chatRoomNo = match.params.no;
-    const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
+
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
     const [searchMessage, setSearchMessage] = useState([]);
@@ -122,6 +122,10 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             handleCurrentParticipants(onlineChatMember);
         });
         socket.on(`room:updateInfo`, (msgToJson) => {
+            // console.log(msgToJson.roomObject);
+            // if (msgToJson.roomObject.secretRoom === true) {
+            //     msgToJson.roomObject.password = ""
+            // }
             setRoomObject(msgToJson.roomObject);
         })
         socket.on('disconnect', (msgToJson) => {
@@ -194,7 +198,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                         setPrevSearchKeyword(searchKeyword)
                     } else {
                         console.log(res.data.message);         // TODO: 검색결과가 없습니다.
-                        setCursor({});
+                        setCursor({ firstIndex: 0, index: 0, lastIndex: 0 });
                     }
                 });
             } else {
@@ -248,7 +252,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         handleNoticeSubmit: (e) => {
             e.preventDefault();
             if (e.target.notice.value === '') {
-                //error 메시지 보내기
+                return false;
             };
             const notice = e.target.notice.value;
             addNotice(roomObject.no, participantObject.no, notice).then(res => {

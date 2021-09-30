@@ -53,6 +53,6 @@ const NonFile = styled.div`
 `
 
 const Pictures = styled.img`
-    width:80%;
+    width:50%;
 `
 

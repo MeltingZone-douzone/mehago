@@ -5,7 +5,7 @@ import { theme } from '../../assets/styles/material/MaterialTheme';
 import { ValidationExp } from '../../utils/ValidationExp';
 const styles = makeStyles({
     root:{
-        padding:"10px",
+        marginTop:"10px",
         marginBottom: "20px"
     },
     submitBtn:{

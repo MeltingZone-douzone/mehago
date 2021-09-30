@@ -16,7 +16,7 @@ export default function ParticipatingRoom({socket, participatingRoom, setSearchV
             <TextField
                 className={classes.textField}
                 onChange={(e) => { setSearchValue(e.target.value) } }
-                label="채팅방 검색"
+                label="내 채팅방 검색"
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
