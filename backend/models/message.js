@@ -9,8 +9,8 @@ module.exports = {
         try {
             console.log(message);
             return await query(
-                "INSERT INTO message VALUES (null, ?, ?, ?, now(), ?)",
-                [message.participantNo, message.message, message.notReadCount, message.chatRoomNo]
+                "INSERT INTO message VALUES (null, ?, ?, ?, now(), ?, ?)",
+                [message.participantNo, message.message, message.notReadCount, message.chatRoomNo, message.state]
             );
         } catch (err) {
             console.error(err);

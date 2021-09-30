@@ -85,8 +85,8 @@ public class FileUploadService {
 		return fileUploadRepository.addFile(file);
 	}
 
-	public List<FileUpload> getFileList(Long chatRoomNo) {
-		return fileUploadRepository.getFileList(chatRoomNo);
+	public List<FileUpload> getFileList(Long chatRoomNo, Long accountNo) {
+		return fileUploadRepository.getFileList(chatRoomNo, accountNo);
 	}
 
 }

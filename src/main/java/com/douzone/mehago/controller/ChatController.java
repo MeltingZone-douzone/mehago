@@ -93,7 +93,8 @@ public class ChatController {
         result = tagService.createTags(chatRoom.getNo(), chatRoom.getTagName());
 
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
-        return ResponseEntity.ok().body(participantNo);
+        participant.setNo(participantNo);
+        return ResponseEntity.ok().body( CommonResponse.success(participant));
     }
 
     @GetMapping("/roomInfo/{chatRoomNo}")
@@ -108,8 +109,8 @@ public class ChatController {
     }
 
     @GetMapping("/getMessageList/{chatRoomNo}")
-    public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset) {
-        List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset));
+    public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset, @AuthUser TokenInfo auth) {
+        List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset), auth.getNo());
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
     }
@@ -171,8 +172,8 @@ public class ChatController {
     }
 
     @GetMapping("/getFileList/{chatRoomNo}")
-    public ResponseEntity<?> getFileList(@PathVariable String chatRoomNo) {
-        List<FileUpload> list = fileUploadService.getFileList(Long.valueOf(chatRoomNo));
+    public ResponseEntity<?> getFileList(@PathVariable String chatRoomNo, @AuthUser TokenInfo auth) {
+        List<FileUpload> list = fileUploadService.getFileList(Long.valueOf(chatRoomNo), auth.getNo());
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 올린 파일이 없습니다."));
     }

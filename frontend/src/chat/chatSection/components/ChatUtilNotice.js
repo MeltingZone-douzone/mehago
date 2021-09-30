@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEraser } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChatUtilNotice({ handleDeleteNotice, notice, userInfo }) {
-
     return (
-        <div style={{ lineHeight: "1.5rem" }} className={"box"}>
+        notice.length !== 0 ? (
+            <div style={{ lineHeight: "1.5rem" }} className={"box"}>
             {notice.map((notice, index) => {
                 return (
                     <div className={"notification"} key={index}>
@@ -27,5 +27,11 @@ export default function ChatUtilNotice({ handleDeleteNotice, notice, userInfo })
             })}
 
         </div>
+        ):(
+            <div style={{ lineHeight: "1.5rem" }} className={"nonNotice"} >
+                <p>공지사항이 없습니다.</p>
+            </div>
+        )
+        
     )
 }

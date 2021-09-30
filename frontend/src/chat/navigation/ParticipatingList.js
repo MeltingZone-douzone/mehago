@@ -26,8 +26,9 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
             setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now(), ["notReadCount"]: prevState.notReadCount + 1 }));
         });
 
-        socket.on(`join:room${room.no}`, (msg) => {
-            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
+        socket.on(`join:room${room.no}`, (msg)=>{
+            console.log(msg);
+            setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
         });
 
         socket.on(`update:readCount:room${room.no}`, (msg) => {
@@ -135,13 +136,13 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
 
 const ChattingRoomImage = styled.div`
     width: 60px;
-    height: 50px;
+    height: 45px;
 
     overflow:hidden;
 
     border: 1px solid #ccc;
     border-color: rgba(0,0,0,.2);
-    border-radius:20px;
+    border-radius:2em;
 `
 const ChattingRoomContent = styled.div`
    margin-left:10px;

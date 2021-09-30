@@ -22,13 +22,13 @@ export default function ChattingTemplate({ socket, messageFunction, participantO
             {
                 !isSeperated ? (
                     notice.length !== 0 ? (
-                    <NoticeTemplate>
+                    <NoticeTemplate onClick={()=>{setExpandable(!expandable)}}>
                         <Notice>
-                            <span ><FontAwesomeIcon className={classes.noticeIcon} icon={faBullhorn}/></span>
+                            <span ><FontAwesomeIcon className={classes.noticeIcon} icon={faBullhorn}/></span>                            
                             <div className={classes.notice}>
                                 <p>{notice[0].notice}</p>
+                                <Button className={classes.dropDown} >{expandable ? <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronUp}/> : <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronDown}/>}</Button>
                             </div>
-                            <Button className={classes.dropDown} onClick={()=>{setExpandable(!expandable)}}>{expandable ? <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronUp}/> : <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronDown}/>}</Button>
                             {/* 여기에 버튼 만들어서 접어두기/열기 만들어야 함 */}
                         </Notice>
                         <WriterInfo expandable={expandable}>
@@ -63,12 +63,12 @@ const Template = styled.div`
     width: 100%;
     height: 100%;
 `
-const NoticeTemplate = styled.div`
+const NoticeTemplate = styled.button`
   width: 100%;
   min-height: 3em;
   position: fixed;
   z-index: 1;
-  background-color: white;
+  background-color: #f4f4f4;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
@@ -82,6 +82,8 @@ const Notice = styled.div`
     display:flex;
     width: 100%;
     align-items: center;
+    flex-direction: row;
+
 `
 
 const WriterInfo = styled.div`
@@ -99,14 +101,18 @@ const useStyles = makeStyles((theme) => ({
     
     noticeIcon : { 
         paddingLeft:"1.5em",
-        width:"10%"
       },
       notice:{
         paddingLeft:"1em",
-        width:"70%"
+        display:"flex",
+        flexDirection: "row",
+        alignItems: "center",
+        width: "75%",
+        justifyContent: "space-between"
+
+
       },
       dropDown:{
         justifyContent: "end",
-        width:"10%"
       }
 }))
