@@ -10,9 +10,10 @@ public class Message {
     private Long notReadCount;
     private String createdAt;
     private Long chatRoomNo;
-    private String thumbnailUrl;
+    private Long state;
 
     // socket에 뿌릴 객체에 필요한 컬럼임. DB X
+    private String thumbnailUrl;
     private String nickname;
     private String roomName;
 

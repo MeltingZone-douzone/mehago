@@ -10,7 +10,7 @@ import { NavLink } from 'react-router-dom';
 
 import ChatRoom from './ChatRoom';
 
-export default function ChatList({ userInfo }) {
+export default function ChatList({ socket, userInfo }) {
     const classes = materialStyles();
     const [rooms, setRooms] = useState([]);
     const [joinRooms, setJoinRooms] = useState([]);
@@ -53,7 +53,7 @@ export default function ChatList({ userInfo }) {
     }
 
     const onScroll = (e) => {
-        
+
         const scrollHeight = e.target.scrollHeight;
         const fetchPointHeight = scrollHeight * 3 / 4;
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
@@ -134,23 +134,24 @@ export default function ChatList({ userInfo }) {
                             {rooms ? getChatrooms().map((room, index) => {
                                 return (
                                     <div key={index}>
-                                    <ChatRoom
-                                        userInfo={userInfo}
-                                        no = {room.no}
-                                        title={room.title}
-                                        limitedUserCount ={room.limitedUserCount}
-                                        onlyAuthorized ={room.onlyAuthorized}
-                                        owner =  {room.owner}
-                                        searchable={room.searchable} 
-                                        tagName = {room.tagName}
-                                        secretRoom = {room.secretRoom}
-                                        thumbnailUrl = {room.thumbnailUrl} 
-                                        titleAndTag = { room }
-                                        participantCount = { room.participantCount}
-                                        lastMessage = { room.lastMessage }
-                                        ownerNickname = {room.nickname}
-                                        ownerThumbnailUrl = {room.accountThumbnailUrl}
-                                    />
+                                        <ChatRoom
+                                            socket={socket}
+                                            userInfo={userInfo}
+                                            no={room.no}
+                                            title={room.title}
+                                            limitedUserCount={room.limitedUserCount}
+                                            onlyAuthorized={room.onlyAuthorized}
+                                            owner={room.owner}
+                                            searchable={room.searchable}
+                                            tagName={room.tagName}
+                                            secretRoom={room.secretRoom}
+                                            thumbnailUrl={room.thumbnailUrl}
+                                            titleAndTag={room}
+                                            participantCount={room.participantCount}
+                                            lastMessage={room.lastMessage}
+                                            ownerNickname={room.nickname}
+                                            ownerThumbnailUrl={room.accountThumbnailUrl}
+                                        />
                                     </div>
                                 )
                             }) : null}
@@ -175,7 +176,7 @@ const materialStyles = makeStyles({
         border: "none",
         borderRadius: "3px",
     },
-    createChatIcon:{
+    createChatIcon: {
         marginTop: "9px"
     }
 })

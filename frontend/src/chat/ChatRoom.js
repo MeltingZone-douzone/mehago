@@ -11,7 +11,7 @@ ReactModal.setAppElement('body');
 
 import ChatRoomModalTemplate from './ChatRoomModalTemplate';
 
-export default function ChatRoom({ userInfo, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl }) {
+export default function ChatRoom({ socket, userInfo, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl }) {
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -105,6 +105,7 @@ export default function ChatRoom({ userInfo, no, title, limitedUserCount, onlyAu
                 shouldCloseOnEsc={true}
                 contentLabel="채팅방">
                 <ChatRoomModalTemplate
+                    socket={socket}
                     no={no}
                     title={title}
                     thumbnailUrl={thumbnailUrl}

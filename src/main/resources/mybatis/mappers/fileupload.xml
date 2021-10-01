@@ -14,11 +14,16 @@
         </selectKey>
   </insert>
 
-  <select id="getFileList" parameterType="Long" resultType="fileupload">
+  <select id="getFileList" parameterType="map" resultType="fileupload">
   <![CDATA[
-    select no, url, created_at as createdAt
-    from file_upload
-    where chat_room_no =  #{value }
+    select 
+      no, url, created_at as createdAt
+    from 
+      file_upload
+    where 
+      chat_room_no =  #{chatRoomNo}
+      AND
+	  created_at > (select created_at from participant where account_no = #{accountNo} and chat_room_no=#{chatRoomNo})
     order by no desc
   ]]>
   </select>
