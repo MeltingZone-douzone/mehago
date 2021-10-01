@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { getParticipantInfo, getRoomInfo, getSearchMessage, addTodo, addNotice, deleteNotice, getNotice, fileUpload, getFileList, changePassword, updateChatRoomInfo } from "../../../api/ChatApi";
+import { getParticipantInfo, getRoomInfo, getSearchMessage, addNotice, deleteNotice, getNotice, fileUpload, getFileList, changePassword, updateChatRoomInfo } from "../../../api/ChatApi";
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo, fetchRooms }) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, participants, userInfo, fetchRooms}) {
     const chatRoomNo = match.params.no;
 
     const [participantObject, setParticipantObject] = useState({});
@@ -115,6 +115,12 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         }
     }, [participantObject])
 
+    // useEffect(() =>{
+    //     if(participants){
+    //         console.log(participants);
+    //     }
+    // },[participants])
+
     useEffect(() => {
         socket.on(`members:status:room${chatRoomNo}`, (msgToJson) => {
             const { onlineChatMember } = msgToJson;
@@ -149,6 +155,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     useEffect(() => {
         return () => {
             socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
+            handleParticipants(); // 네비 Member없애기 위함
         }
     }, []);
 
@@ -321,6 +328,21 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             } catch (err) {
                 console.error(err);
             }
+        },
+
+        deletedChatRoom: async (reason) => {
+            console.log(participants,reason);
+
+            alarm = {
+                "accountNo" : participants.accountNo,
+                "chatRoomNo" : participants.chatRoomNo,
+                "reason" : reason,
+                "read" : false
+            }
+
+            createDeletedChatAlarmApi(alarm).then();
+            //여기서 알람생성 추가 비회원 제외
+            socket.emit('delete:chat-room');
         }
     }
 

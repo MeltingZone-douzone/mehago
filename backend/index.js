@@ -88,7 +88,6 @@ httpServer
 // 모두에게 메세지 보내기
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
-    // console.log("msgToJson", msgToJson.validation, msgToJson, roomname);
 
     switch (msgToJson.validation) {
         case "join": io.to(roomname).emit(`join:${roomname}`, msgToJson);
@@ -112,6 +111,8 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
         case "leave": io.to(roomname).emit(`room:leave:${roomname}`, msgToJson);
             break;
         case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
+            break;
+        case "room-deleted": io.to(roomname).emit(`room:deleted:${roomname}`,msgToJson);
     }
 });
 
@@ -308,7 +309,14 @@ io.on("connection", (socket) => {
 
     // delete:chat-room -> 방 삭제했을 때
     socket.on("delete:chat-room", () => {
+        console.log("delete",roomObj);
+        redisClient.zremrangebylex(getRoomNo(currentRoomName),"-","+");
+        const roomDeleted = {
+            "validation": "room-deleted",
+            "deletedRoomNo" : roomObj.no
+        }
 
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(roomDeleted));
     });
 
     const sendMemberStatus = async () => {
