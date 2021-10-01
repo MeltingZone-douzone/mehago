@@ -15,7 +15,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom}) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom}) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -53,8 +53,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         try {
             getFavoriteRoomList().then(res => {
                 if (res.data.result === "fail") {
-                    console.log("즐겨찾기 한 방이 없어요");
-                    return;
+                    return false;
                 }
                 setFavoriteRoom(res.data.data);
             });
@@ -72,25 +71,25 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             console.log(e);
         }
     }
+    // setNotice(
+        // notice.filter((notice) => notice.no !== msg.no)
 
     const exitRoom = (chatRoomNo) => {
         try {
             exitRoomApi(chatRoomNo).then((res) => {
+                if (res.data.data.hasData) {
+                    const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
+                    socket.emit('chat message', leaveMessage, 0);
+                }
                 socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
-                setLeaveMessage(res.data.data.chatNickname);
-                // setLeaveMessage(res.data.data.chatNickname + "님이 퇴장하였습니다.") ;
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
-                        
                         localStorage.set('token', res.data);
                     })
                 };
-                
             })
             fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
             fetchFavoriteRooms();
-            console.log(leaveMessage);
-            // socket.emit('chat message', leaveMessage, 0);
         } catch (error) {
             console.log();
         }

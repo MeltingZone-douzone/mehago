@@ -288,12 +288,11 @@ io.on("connection", (socket) => {
             "message": `${socket.id}님이 room${chatRoomNo}방을 나가셨습니다.`,
             memberObj
         }
-        console.log(leaveMessage);
-
+        
         io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
 
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
-
+        
 
         // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
