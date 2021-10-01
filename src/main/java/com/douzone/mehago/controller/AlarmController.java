@@ -22,12 +22,12 @@ public class AlarmController {
     private final AlarmService alarmService;
 
 
-    @Auth(role = "ACCOUNT")
-    @PostMapping("deleted-chat/create")
-    public ResponseEntity<?> createDeletedChatAlarm(@AuthUser TokenIn auth, @RequestBody Alarm alarm) {
+    // @Auth(role = "ACCOUNT")
+    // @PostMapping("deleted-chat/create")
+    // public ResponseEntity<?> createDeletedChatAlarm(@AuthUser TokenIn auth, @RequestBody Alarm alarm) {
         
 
-        return ResponseEntity.ok().build();
-    }
+    //     return ResponseEntity.ok().build();
+    // }
 
 }

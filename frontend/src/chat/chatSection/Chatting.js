@@ -34,7 +34,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         });
         fetchItems();
 
-        socket.on(`leave:room${chatRoomNo}`, (msg)=>{
+        socket.on(`members:room${chatRoomNo}`, (msg)=>{
             console.log(msg);
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);

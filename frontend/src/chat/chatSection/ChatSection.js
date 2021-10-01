@@ -237,10 +237,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                 console.log("마지막 검색결과입니다. ");
             }
         },
-        leaveRoom: (e) => {
+        leaveRoom: () => {
             // socket.emit('leave', data); // roomName
             console.log('leaveRoom()호출 in ChatSection');
-            console.log("어딜 나가는거야 방이야 아님 잠시 나간거야");
             socket.emit('leave', roomObject.title); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
             history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
             // TODO: 참여자 삭제

@@ -23,7 +23,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
-
+    const [leaveMessage, setLeaveMessage] = useState('');
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -77,16 +77,20 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         try {
             exitRoomApi(chatRoomNo).then((res) => {
                 socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
+                setLeaveMessage(res.data.data.chatNickname);
+                // setLeaveMessage(res.data.data.chatNickname + "님이 퇴장하였습니다.") ;
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
+                        
                         localStorage.set('token', res.data);
                     })
                 };
-                const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
-                socket.emit('chat message', leaveMessage, 0);
+                
             })
             fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
             fetchFavoriteRooms();
+            console.log(leaveMessage);
+            // socket.emit('chat message', leaveMessage, 0);
         } catch (error) {
             console.log();
         }
