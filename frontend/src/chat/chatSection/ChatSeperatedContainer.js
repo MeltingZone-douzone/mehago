@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { fadeIn, fadeOut } from '../../assets/styles/properties/Fade';
 
@@ -49,6 +49,8 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
 }
 
 const Container = styled.div`
+    //TODO : media - height
+
     width:100%;
     height:92%;
     max-height: 92%;

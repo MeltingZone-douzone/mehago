@@ -15,7 +15,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom}) {
     const classes = madeStyles();
 
     console.log(participants);
@@ -25,7 +25,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
-
+    const [leaveMessage, setLeaveMessage] = useState('');
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -55,8 +55,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         try {
             getFavoriteRoomList().then(res => {
                 if (res.data.result === "fail") {
-                    console.log("즐겨찾기 한 방이 없어요");
-                    return;
+                    return false;
                 }
                 setFavoriteRoom(res.data.data);
             });
@@ -74,10 +73,16 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             console.log(e);
         }
     }
+    // setNotice(
+        // notice.filter((notice) => notice.no !== msg.no)
 
     const exitRoom = (chatRoomNo) => {
         try {
             exitRoomApi(chatRoomNo).then((res) => {
+                if (res.data.data.hasData) {
+                    const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
+                    socket.emit('chat message', leaveMessage, 0);
+                }
                 socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
@@ -123,8 +128,8 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList ? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} userInfo={userInfo}/> : null} {/* 2021-10-01 18:58:34 participantList에 비회원이면 즐겨찾기 별 버튼 안보이게 하기위해서 유저정보(회원/비회원)가 필요 */}
-                {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
+                {chatList? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom}/>: null}
+                {chatMember? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
             </div>
 
 

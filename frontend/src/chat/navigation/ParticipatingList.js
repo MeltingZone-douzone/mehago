@@ -9,39 +9,50 @@ import styled from 'styled-components';
 import defaultImage from "../../assets/images/black-mehago.png";
 import '../../assets/sass/chat/ChatProfile.scss';
 import '../../assets/sass/chat/modal.scss';
-
+import { getNonMemberInfo } from '../../../api/ChatApi';
 import AlarmPoint from '../../components/AlarmPoint';
 
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom,  userInfo}) {
+export default function ParticipatingList({ socket, room, userInfo, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom}) {
     const classes = madeStyles();
 
-    console.log(userInfo);
-    console.log(userInfo !== undefined);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
+    const [nonMember, setNonMember] = useState({});
+
+    useEffect(() => {
+        if (!userInfo) {
+            getNonMemberInfo().then(res => {
+                setNonMember(res.data.data);
+            });
+        }
+    }, [userInfo]);
 
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
-            setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now(), ["notReadCount"]: prevState.notReadCount + 1 }));
+            setUpdatedRoom(prevState => ((userInfo ? userInfo.no != msg.accountNo : nonMember.no != msg.participantNo ) ?  {...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now(), ["notReadCount"] : prevState.notReadCount + 1} : {...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now()}));
         });
 
         socket.on(`join:room${room.no}`, (msg)=>{
             console.log(msg);
             setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
         });
-
-        socket.on(`update:readCount:room${room.no}`, (msg) => {
-            setUpdatedRoom(prevState => ({ ...prevState, ["notReadCount"]: 0 }));
+        
+        socket.on(`update:readCount:room${room.no}`, () =>{
+            setUpdatedRoom(prevState => ({...prevState, ["notReadCount"] : 0}));
         });
-    }, [])
+    
+        socket.on(`room:deleted:room${room.no}`, (msg) =>{
+            deletedParticipatingRoom.deletedParticipatingRoom(msg);
+        });
+    },[])
 
-    useEffect(() => {
+    useEffect(()=>{
         return () => {
-            if (room !== updatedRoom) {
-                updateParticipatingRoom(updatedRoom);
+            if(room !== updatedRoom) {
+                room.leastMessage !== updatedRoom.leastMessage ? updateParticipatingRoomMessage(updatedRoom) : updateParticipatingRoom(updatedRoom);
             }
         }
     }, [updatedRoom])
@@ -98,21 +109,21 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
                 <Link to={`/chat/${room.no}`}>
-                    <ListItem button key={`${room.no}`} className={classes.roomContainer} >
-                        <ChattingRoomImage>
-                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
-                        </ChattingRoomImage>
-                        <ChattingRoomContent>
-                            <div className={classes.content}>
-                                <span className={classes.title} > {room.title} </span>
-                                <span className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</span>
-                                <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
-                            </div>
-                            <div className={classes.content}>
-                                <span className={classes.leastMessage}>{updatedRoom.leastMessage ? updatedRoom.leastMessage : '새로운 채팅방입니다.'}</span> {updatedRoom.notReadCount ? <AlarmPoint num={updatedRoom.notReadCount} /> : null}
-                            </div>
-                        </ChattingRoomContent>
-                    </ListItem>
+                <ListItem button key={`${room.no}`} className={classes.roomContainer} >
+                    <ChattingRoomImage>
+                        <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
+                    </ChattingRoomImage>
+                    <ChattingRoomContent>
+                        <div className={classes.content}>
+                            <span className={classes.title} > {room.title} </span>
+                            <span className={classes.participantCount}>{updatedRoom.participantCount === 1 ? ' ' : updatedRoom.participantCount}</span>
+                            <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
+                        </div>
+                        <div className={classes.content}>
+                            <span className={classes.leastMessage}>{updatedRoom.leastMessage ? updatedRoom.leastMessage : '새로운 채팅방입니다.'}</span> {updatedRoom.notReadCount ? <AlarmPoint num={updatedRoom.notReadCount} /> : null }
+                        </div>
+                    </ChattingRoomContent>
+                </ListItem>
                 </Link>
             </List>
             <Modal

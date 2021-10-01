@@ -97,6 +97,10 @@ public class ParticipantService {
         return participantRepository.updateIsDeleted(participantNo);
     }
 
+    public boolean chatRoomDeleted(Long ChatRoomNo) {
+        return participantRepository.chatRoomDeleted(ChatRoomNo);
+    }
+
     public Participant getnonMemberInfo(Long nonMemberNo, Long chatRoomNo) {
         return participantRepository.getnonMemberInfo(nonMemberNo, chatRoomNo);
     }

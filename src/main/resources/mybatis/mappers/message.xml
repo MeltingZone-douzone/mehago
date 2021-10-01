@@ -18,7 +18,7 @@
 
 
 
-       <select id="getMessageList" parameterType="map" resultType="message">
+      <select id="getMessageList" parameterType="map" resultType="message">
         <choose>
             <when test="offset == 0">
                 <![CDATA[
