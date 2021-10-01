@@ -23,7 +23,20 @@
     where 
       chat_room_no =  #{chatRoomNo}
       AND
-	  created_at > (select created_at from participant where account_no = #{accountNo} and chat_room_no=#{chatRoomNo})
+      ]]>
+      <choose>
+      <when test="(0L).equals(accountNo)==false">
+      <![CDATA[
+	      created_at > (select created_at from participant where account_no = #{accountNo} and chat_room_no= #{chatRoomNo } and is_deleted=false)
+      ]]>
+       </when>
+       <otherwise>
+      <![CDATA[
+	      created_at > (select created_at from participant where no = #{nonMemberNo } and chat_room_no=#{chatRoomNo})
+      ]]>
+      </otherwise>
+      </choose>
+      <![CDATA[
     order by no desc
   ]]>
   </select>

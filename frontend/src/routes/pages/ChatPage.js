@@ -45,7 +45,8 @@ export default function ChatPage({ match, userInfo }) {
     const fetchRooms = () => {
         try {
             getMyChatListApi().then(res => {
-                if (res.data.result == "fail") {
+                if (res.data.result == "fail") { //리스트 없으면
+                    setParticipatingRoom([]);
                     return false;
                 }
                 setParticipatingRoom(res.data.data);
@@ -63,13 +64,20 @@ export default function ChatPage({ match, userInfo }) {
             }
         })
         newArr = newArr.filter(arr => typeof arr === 'object');
-        const updatedParticipatingRoom = [].concat(updatedData, newArr);
-        setParticipatingRoom(updatedParticipatingRoom);
+        // is_deleted도 받아서 변경여부 파악하고 array 수정시켜야 할듯
+        if (updatedData.title === "(알수없음") {
+            const updatedParticipatingRoom = newArr;
+            setParticipatingRoom(updatedParticipatingRoom);
+            return;
+        } else {
+            const updatedParticipatingRoom = [].concat(updatedData, newArr);
+            setParticipatingRoom(updatedParticipatingRoom);
+        }
     }
 
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} />
+            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} setParticipatingRoom={setParticipatingRoom} updateParticipatingRoom={updateParticipatingRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} socket={socket} userInfo={userInfo} />} />

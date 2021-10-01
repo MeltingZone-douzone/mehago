@@ -21,10 +21,11 @@ public class FileUploadRepository {
         return file.getNo();
     }
 
-    public List<FileUpload> getFileList(Long chatRoomNo, Long accountNo) {
+    public List<FileUpload> getFileList(Long chatRoomNo, Long accountNo, Long nonMemberNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("chatRoomNo", chatRoomNo);
         map.put("accountNo", accountNo);
+        map.put("nonMemberNo", nonMemberNo);
         return sqlSession.selectList("fileupload.getFileList", map);
     }
 

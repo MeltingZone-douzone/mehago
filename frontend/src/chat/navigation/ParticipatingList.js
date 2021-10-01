@@ -20,30 +20,40 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
-
+    // 나가는거 구현해야 됨
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
+            console.log(`chat:message:room${room.no}`);
             setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now(), ["notReadCount"]: prevState.notReadCount + 1 }));
         });
 
-        socket.on(`join:room${room.no}`, (msg)=>{
-            console.log(msg);
-            setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
+        socket.on(`join:room${room.no}`, (msg) => {
+            console.log(`join:room${room.no}`);
+            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
 
         socket.on(`update:readCount:room${room.no}`, (msg) => {
+            console.log(`update:readCount:room${room.no}`);
             setUpdatedRoom(prevState => ({ ...prevState, ["notReadCount"]: 0 }));
         });
 
         socket.on(`members:leave:room${room.no}`, (msg) => {
             // 멤버 줄이기 추가도 해야됨
-            // setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
+            console.log("members:leave", msg)
+            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
+
+        socket.on(`room:leave:room${room.no}`, (msg) => {
+            console.log(`room:leave:room${room.no}`, msg);
+            setUpdatedRoom(prevState => ({ ...prevState, ["title"]: "(알수없음)" }));
+        })
     }, [])
 
     useEffect(() => {
         return () => {
             if (room !== updatedRoom) {
+                console.log(room);
+                console.log(updatedRoom);
                 updateParticipatingRoom(updatedRoom);
             }
         }

@@ -94,7 +94,7 @@ public class ChatController {
 
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         participant.setNo(participantNo);
-        return ResponseEntity.ok().body( CommonResponse.success(participant));
+        return ResponseEntity.ok().body(CommonResponse.success(participant));
     }
 
     @GetMapping("/roomInfo/{chatRoomNo}")
@@ -173,7 +173,8 @@ public class ChatController {
 
     @GetMapping("/getFileList/{chatRoomNo}")
     public ResponseEntity<?> getFileList(@PathVariable String chatRoomNo, @AuthUser TokenInfo auth) {
-        List<FileUpload> list = fileUploadService.getFileList(Long.valueOf(chatRoomNo), auth.getNo());
+        List<FileUpload> list = fileUploadService.getFileList(Long.valueOf(chatRoomNo),
+                auth.getIsNonMember() == true ? 0L : auth.getNo(), auth.getIsNonMember() == true ? auth.getNo() : 0L);
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 올린 파일이 없습니다."));
     }
@@ -362,8 +363,8 @@ public class ChatController {
             favoriteRoomList = chatRoomService.getFavoriteRoomList((auth.getIsNonMember() == true ? 0L : auth.getNo()),
                     (auth.getIsNonMember() == true ? auth.getNo() : 0L));
         }
-        return ResponseEntity.ok().body(favoriteRoomList.size() == 0 ? CommonResponse.success(favoriteRoomList)
-                : CommonResponse.fail("not exist participantingRoom"));
+        return ResponseEntity.ok().body(favoriteRoomList == null ? CommonResponse.fail("not exist participantingRoom")
+                : CommonResponse.success(favoriteRoomList));
     }
 
     @GetMapping("/getFavoriteRoomList")

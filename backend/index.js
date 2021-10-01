@@ -143,13 +143,13 @@ io.on("connection", (socket) => {
         // 신규 유저라면 
         if (!participantObj.hasData) {
             let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
-            console.log(participantObj)
+            console.log("join:chat", participantObj)
             const joinMessage = {
                 validation: "join",
                 message: `${participantObj.chatNickname}님이 입장하셨습니다.`,
                 chatRoomNo: roomObj.no,
                 AllChatMembers,
-                state : 0
+                state: 0
             }
 
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(joinMessage));
@@ -194,10 +194,14 @@ io.on("connection", (socket) => {
         console.log("node disconnected", reason);
     })
 
-    socket.on('chat message', async (message,state) => {
+    socket.on('chat message', async (message, state) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount , "state": state} );
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state": state });
         await messageController.addMessage(insertMsg);
+        if (state === 0) {
+            console.log("들어오고 나가는거 알림");
+
+        }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
 
@@ -276,25 +280,31 @@ io.on("connection", (socket) => {
         // 비회원
         // roomNo, participantNo를 가져와야 하는데 front단에서 넘겨줘야 하지 않을까??????
 
-        await redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
-            console.log(result); // 1
-        });
-
+        await exitChatMember(chatRoomNo, participantNo); //zrem
+        let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
+        console.log("allChatMembers", AllChatMembers);
         const memberObj = {
             "chatRoomNo": chatRoomNo,
             "participantNo": participantNo,
         }
 
-        let AllChatMembers = await getAllChatMember(`room${chatRoomNo}`).then(res => res);
         const leaveMessage = {
             "validation": "leave",
             "message": `notice:${socket.id}님이 room${chatRoomNo}방을 나가셨습니다.`,
             memberObj,
-            AllChatMembers
+            AllChatMembers,
         }
-        io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
+
+
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
-        io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`);
+        io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
+
+        // 레디스 구독 취소
+        redisClient.unsubscribe(`room${chatRoomNo}`);
+        // 소켓 방 나가야 됨
+        socket.leave(`room${chatRoomNo}`);
+
+
 
         // io.of('/').adapter.subClient.unsubscribe(currentRoomName) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
@@ -318,7 +328,7 @@ io.on("connection", (socket) => {
     const sendMemberStatus = async () => {
         let onlineChatMember;
         await getOnlineChatMember(currentRoomName).then(res => onlineChatMember = res);
-        console.log(onlineChatMember);
+        console.log("getOnlineChatMember", onlineChatMember);
         const object = {
             "validation": "members_status",
             onlineChatMember
@@ -351,6 +361,19 @@ const getAllChatMember = currentRoomName => { // 해당 채팅방의 총 인원 
             if (error) {
                 reject(error);
             } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+const exitChatMember = (chatRoomNo, participantNo) => { // 해당 채팅방의 총 인원 구할 때 사용
+    return new Promise((resolve, reject) => {
+        redisClient.zrem(chatRoomNo, participantNo, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                console.log("zrem success", result);
                 resolve(result);
             }
         });

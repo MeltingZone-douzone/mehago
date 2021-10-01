@@ -15,7 +15,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, setParticipatingRoom, updateParticipatingRoom }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -23,6 +23,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
+    const [exit, setExit] = useState(false);
 
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
@@ -37,6 +38,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         fetchRooms();
         fetchFavoriteRooms();
     }, [favoriteCheck]);
+
 
     useEffect(() => {
         // DB에 저장 된 채팅 방 모두 입장
@@ -54,6 +56,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             getFavoriteRoomList().then(res => {
                 if (res.data.result === "fail") {
                     console.log("즐겨찾기 한 방이 없어요");
+                    setFavoriteRoom([]);
                     return;
                 }
                 setFavoriteRoom(res.data.data);
@@ -73,18 +76,16 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         }
     }
 
-    const exitRoom = (chatRoomNo) => {
+    const exitRoom = async (chatRoomNo) => {
         try {
-            exitRoomApi(chatRoomNo).then((res) => {
-                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
+            await exitRoomApi(chatRoomNo).then((res) => {
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
                         localStorage.set('token', res.data);
                     })
                 };
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
             })
-            fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
-            fetchFavoriteRooms();
         } catch (error) {
             console.log();
         }
