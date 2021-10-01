@@ -109,7 +109,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "infoupdate": io.to(roomname).emit(`room:updateInfo`, msgToJson);
             break;
-        case "leave": io.to(roomname).emit(`room:leave:${roomname}`, msgToJson);
+        case "leave": io.to(roomname).emit(`members:leave:${roomname}`, msgToJson);
             break;
         case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
     }
@@ -285,14 +285,14 @@ io.on("connection", (socket) => {
         }
         const leaveMessage = {
             "validation": "leave",
-            "message": `notice:${socket.id}님이 room${chatRoomNo}방을 나가셨습니다.`,
+            "message": `${socket.id}님이 room${chatRoomNo}방을 나가셨습니다.`,
             memberObj
         }
         io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
 
 
-        // io.of('/').adapter.subClient.unsubscribe(currentRoomName) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
+        io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
         // io.of('/').adapter.subClient.end(); // 구독자 설정 해제
         // io.of('/').adapter.pubClient.end(); // 발행자 설정 해제

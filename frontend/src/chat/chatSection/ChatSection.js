@@ -156,8 +156,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         if (joinSuccess) {
             socket.emit('join:chat', roomObject, participantObject);
             socket.emit('participant:updateRead');
+            const joinMessage = participantObject.chatNickname + "님이 입장하였습니다."
             if (!participantObject.hasData) { // 처음 입장하는 경우에만
-                socket.emit('chat message', participantObject.chatNickname, 0);
+                socket.emit('chat message', joinMessage, 0);
                 participantObject.hasData = true;
             }
             setJoinSuccess(false);
@@ -176,8 +177,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             e.preventDefault();
             if (message) {
                 var state = 1;
-                console.log(participantObject);
-                if (!participantObject.hasData) { // 처음 입장하는 경우에만
+                if (!participantObject.hasData) { // 처음 입장하는 경우 & 나갔을 경우
                     state = 0;
                     participantObject.hasData = true;
                 }
@@ -233,6 +233,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         leaveRoom: (e) => {
             // socket.emit('leave', data); // roomName
             console.log('leaveRoom()호출 in ChatSection');
+            console.log("어딜 나가는거야 방이야 아님 잠시 나간거야");
             socket.emit('leave', roomObject.title); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
             history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
             // TODO: 참여자 삭제

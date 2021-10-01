@@ -82,6 +82,8 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                         localStorage.set('token', res.data);
                     })
                 };
+                const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
+                socket.emit('chat message', leaveMessage, 0);
             })
             fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
             fetchFavoriteRooms();
