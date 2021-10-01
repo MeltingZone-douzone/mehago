@@ -9,13 +9,13 @@ import styled from 'styled-components';
 import defaultImage from "../../assets/images/black-mehago.png";
 import '../../assets/sass/chat/ChatProfile.scss';
 import '../../assets/sass/chat/modal.scss';
-
+import { getNonMemberInfo } from '../../../api/ChatApi';
 import AlarmPoint from '../../components/AlarmPoint';
 
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom }) {
+export default function ParticipatingList({ socket, room, userInfo, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom }) {
     const classes = madeStyles();
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -113,7 +113,7 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
                         <ChattingRoomContent>
                             <div className={classes.content}>
                                 <span className={classes.title} > {room.title} </span>
-                                <span className={classes.participantCount}>{room.participantCount === 1 ? ' ' : room.participantCount}</span>
+                                <span className={classes.participantCount}>{updatedRoom.participantCount === 1 ? ' ' : updatedRoom.participantCount}</span>
                                 <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
                             </div>
                             <div className={classes.content}>

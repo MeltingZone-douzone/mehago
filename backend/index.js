@@ -306,7 +306,7 @@ io.on("connection", (socket) => {
 
 
 
-        // io.of('/').adapter.subClient.unsubscribe(currentRoomName) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
+        // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
         // io.of('/').adapter.subClient.end(); // 구독자 설정 해제
         // io.of('/').adapter.pubClient.end(); // 발행자 설정 해제

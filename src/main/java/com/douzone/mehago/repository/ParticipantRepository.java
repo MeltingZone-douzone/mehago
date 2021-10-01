@@ -71,6 +71,10 @@ public class ParticipantRepository {
         return sqlSession.update("participant.updateIsDeleted", participantNo) == 1 ? true : false;
     }
 
+    public boolean chatRoomDeleted(Long chatRoomNo) {
+        return sqlSession.update("participant.updateIsDeletedWhereChatRoomNo",chatRoomNo) >= 1 ? true : false;
+    }
+
     public Participant getnonMemberInfo(Long nonMemberNo, Long chatRoomNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("no", nonMemberNo);

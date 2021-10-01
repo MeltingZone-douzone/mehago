@@ -15,7 +15,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, setParticipatingRoom, updateParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, setParticipatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -23,8 +23,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
-    const [exit, setExit] = useState(false);
-
+    const [leaveMessage, setLeaveMessage] = useState('');
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -79,8 +78,12 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const exitRoom = async (chatRoomNo) => {
         try {
             await exitRoomApi(chatRoomNo).then((res) => {
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
+                setLeaveMessage(res.data.data.chatNickname);
+                // setLeaveMessage(res.data.data.chatNickname + "님이 퇴장하였습니다.") ;
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
+
                         localStorage.set('token', res.data);
                     })
                 };
@@ -122,7 +125,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList ? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} /> : null}
+                {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} /> : null}
                 {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </div>
 

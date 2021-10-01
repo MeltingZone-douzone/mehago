@@ -29,16 +29,20 @@ export default function ChatPage({ match, userInfo }) {
     }
 
     const handleParticipants = (chatRoomNo) => {
-        try {
-            getParticipantsList(chatRoomNo).then(res => {
-                if (res.data.result == "fail") {
-                    console.log('fail');
-                    return;
-                }
-                setParticipants(res.data.data);
-            })
-        } catch (error) {
-            console.log(error);
+        if (chatRoomNo) {
+            try {
+                getParticipantsList(chatRoomNo).then(res => {
+                    if (res.data.result == "fail") {
+                        console.log('fail');
+                        return;
+                    }
+                    setParticipants(res.data.data);
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            setParticipants([]);
         }
     }
 
@@ -57,7 +61,17 @@ export default function ChatPage({ match, userInfo }) {
     }
 
     const updateParticipatingRoom = (updatedData) => {
+        const updatedParticipatingRoom = participatingRoom.map((room) => {
+            if (room.no != updatedData.no) {
+                return room;
+            } else {
+                return updatedData;
+            }
+        })
+        setParticipatingRoom(updatedParticipatingRoom);
+    }
 
+    const updateParticipatingRoomMessage = (updatedData) => {
         let newArr = participatingRoom.map((room) => {
             if (room.no != updatedData.no) {
                 return room;
@@ -75,13 +89,17 @@ export default function ChatPage({ match, userInfo }) {
         }
     }
 
+    const deletedParticipatingRoom = () => {
+
+    }
+
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} setParticipatingRoom={setParticipatingRoom} updateParticipatingRoom={updateParticipatingRoom} />
+            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} setParticipatingRoom={setParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} socket={socket} userInfo={userInfo} />} />
-                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} fetchRooms={fetchRooms} />} />
+                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} participants={participants} userInfo={userInfo} fetchRooms={fetchRooms} />} />
                     <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />} />
                 </Switch>
             </div>
