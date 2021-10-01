@@ -405,10 +405,11 @@ public class ChatController {
         if (auth.getIsNonMember() == false) {
             Account account = new Account(auth);
             participant = participantService.getParticipantInfo(account, Long.valueOf(chatRoomNo));
+            result = chatRoomService.exitRoomMember(Long.parseLong(chatRoomNo), participant.getNo()); // 알 수 없음
         } else {
             participant.setNo(auth.getNo());
+            result = chatRoomService.exitRoomNonmember(Long.parseLong(chatRoomNo), participant.getNo());
         }
-        result = chatRoomService.exitRoom(Long.parseLong(chatRoomNo), participant.getNo());
         return ResponseEntity.ok()
                 .body(result ? CommonResponse.success(participant) : CommonResponse.fail("failed to exit"));
     }

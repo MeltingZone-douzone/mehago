@@ -43,7 +43,8 @@ export default function ChattingTemplate({ socket, messageFunction, participantO
                 )
             }
 
-            <Chatting socket={socket}
+            <Chatting 
+                socket={socket}
                 messageFunction={messageFunction}
                 participantObject={participantObject}
                 roomObject={roomObject}

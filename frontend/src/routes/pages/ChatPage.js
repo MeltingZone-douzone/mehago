@@ -67,13 +67,15 @@ export default function ChatPage({ match, userInfo }) {
         setParticipatingRoom(updatedParticipatingRoom);
     }
 
+    console.log('participants', participants);
+
     return (
         <div className={"ChattingContainer"} >
             <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} socket={socket} userInfo={userInfo} />} />
-                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} fetchRooms={fetchRooms} />} />
+                    <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} userInfo={userInfo} fetchRooms={fetchRooms} setParticipants={setParticipants} />} />
                     <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />} />
                 </Switch>
             </div>

@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
 
-export default function ParticipatingRoom({socket, participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom}){
+export default function ParticipatingRoom({socket, participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, userInfo}){
     const classes = styles();
 
     return Object.keys(participatingRoom).length !== 0 ?
@@ -38,7 +38,8 @@ export default function ParticipatingRoom({socket, participatingRoom, setSearchV
                             updateFavoriteRoom={updateFavoriteRoom} 
                             exitRoom={exitRoom}
                             setFavoriteCheck={setFavoriteCheck}
-                            updateParticipatingRoom={updateParticipatingRoom}/>
+                            updateParticipatingRoom={updateParticipatingRoom}
+                            userInfo={userInfo}/>
                         )
                 }
             </ContentWrapper>
