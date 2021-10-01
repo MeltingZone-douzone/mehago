@@ -28,7 +28,7 @@ export default function MsgInput({ message, messageFunction, buttonFunction, use
                 : null}
                 <Grid item xs={12}>
                     {userInfo ?
-                    <Fab color="primary" size="small" className={`${classes.uploads} ${classes.button}`}>
+                    <Fab color="primary" size="small" className={`${classes.uploads} ${classes.button}`} onClick={visibleButtonGroup}>
                         <AddIcon className={classes.button} />
                     </Fab>
                     : null

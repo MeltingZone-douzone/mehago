@@ -1,9 +1,7 @@
 import React from 'react';
 import Jdenticon from 'react-jdenticon';
-import UserInfoSettings from '../profile/settings/UserInfoSettings';
 
 export default function Thumbnail({ thumbnailUrl, nickname }) {
-console.log(thumbnailUrl)
     return(
         <>
             {

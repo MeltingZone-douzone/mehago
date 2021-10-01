@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.douzone.mehago.repository.ChatRoomRepository;
 import com.douzone.mehago.vo.ChatRoom;
-import com.douzone.mehago.vo.Notice;
 
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatRoomService {
 
+    private final ParticipantService participantService;
     private final ChatRoomRepository chatRoomRepository;
 
     public Long createRoom(ChatRoom chatRoom) {
@@ -67,7 +67,9 @@ public class ChatRoomService {
     }
 
     public boolean deleteChatRoom(Long chatRoomNo) {
-        return chatRoomRepository.deleteChatRoom(chatRoomNo);
+        boolean result = participantService.chatRoomDeleted(chatRoomNo);
+        System.out.println("deleteChatRoom result : " + result);
+        return result ? chatRoomRepository.deleteChatRoom(chatRoomNo) : false;
     }
 
     public boolean exitRoom(Long chatRoomNo, Long accountNo) {
