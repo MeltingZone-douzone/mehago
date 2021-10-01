@@ -23,6 +23,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
             }
         </p>;
     }
+
     return (
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>

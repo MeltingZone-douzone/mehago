@@ -23,7 +23,6 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
-    const [leaveMessage, setLeaveMessage] = useState('');
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -74,23 +73,19 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     // setNotice(
         // notice.filter((notice) => notice.no !== msg.no)
 
-    const exitRoom = (chatRoomNo) => {
+    const exitRoom = (chatRoomNo, nickname) => {
+        console.log("chatRoomNo:", chatRoomNo);
         try {
             exitRoomApi(chatRoomNo).then((res) => {
                
-                const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
-                socket.emit('chat message', chatRoomNo, leaveMessage, 0);
-                
-                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, nickname);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
                         localStorage.set('token', res.data);
                     })
                 };
             })
-            // console.log(participatingRoom);
-            // setParticipatingRoom(participatingRoom.filter((participant) => participant.no !== chatRoomNo))
-            fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
+            fetchRooms(); TODO:
             fetchFavoriteRooms();
         } catch (error) {
             console.log();
@@ -111,7 +106,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
-                    <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
+                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link> {/* 일단 홈 클릭하면 채팅방리스트으로 보이게 해놓음 */}
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>

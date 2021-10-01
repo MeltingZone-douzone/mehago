@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.douzone.mehago.repository.AccountRepository;
 import com.douzone.mehago.repository.MessageRepository;
 import com.douzone.mehago.repository.ParticipantRepository;
 import com.douzone.mehago.vo.Account;
@@ -22,6 +23,7 @@ public class ParticipantService {
 
     private final ParticipantRepository participantRepository;
     private final MessageRepository messageRepository;
+    private final AccountRepository accountRepository;
 
     public Long createParticipant(Participant participant) {
         return participantRepository.createParticipant(participant);
@@ -31,7 +33,6 @@ public class ParticipantService {
         Map<String, Long> map = new HashMap<>();
         map.put("accountNo", auth.getNo());
         map.put("chatRoomNo", chatRoomNo);
-
         Participant participant = participantRepository.getParticipantInfo(map);
 
         if (participant == null) {
@@ -43,6 +44,7 @@ public class ParticipantService {
             participant.setLastReadChatNo(messageRepository.getLastReadChatNo(chatRoomNo));
             participant.setFavoriteRoom(false);
             participant.setNo(createParticipant(participant));
+            participant.setThumbnailUrl(accountRepository.getAccountByToken(auth).getThumbnailUrl());
             participant.setHasData(false);
         } else {
             participant.setHasData(true);

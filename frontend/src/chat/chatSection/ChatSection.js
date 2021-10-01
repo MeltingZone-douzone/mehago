@@ -124,7 +124,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     useEffect(() => {
         socket.on(`members:status:room${chatRoomNo}`, (msgToJson) => {
             const { onlineChatMember } = msgToJson;
-            console.log(onlineChatMember);
             handleCurrentParticipants(onlineChatMember);
         });
         socket.on(`room:updateInfo`, (msgToJson) => {
@@ -144,6 +143,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         });
         socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
             history.push("/chat")
+        });
+        socket.on(`room:leave:set`, (msgToJson) => {
+            console.log('room:leave:set');
         })
 
         return () => {
@@ -163,11 +165,11 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         if (joinSuccess) {
             socket.emit('join:chat', roomObject, participantObject);
             socket.emit('participant:updateRead');
-            const joinMessage = participantObject.chatNickname + "님이 입장하였습니다."
-            if (!participantObject.hasData) { // 처음 입장하는 경우에만
-                socket.emit('chat message', roomObject.no, joinMessage, 0);
-                participantObject.hasData = true;
-            }
+            // const joinMessage = participantObject.chatNickname + "님이 입장하였습니다."
+            // if (!participantObject.hasData) { // 처음 입장하는 경우에만
+            //     socket.emit('chat message', roomObject.no, joinMessage, 0);
+            //     participantObject.hasData = true;
+            // }
             setJoinSuccess(false);
             noticeList(roomObject.no);
             fileUploadList(roomObject.no);
@@ -183,12 +185,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         onSubmitMessage: (e) => {
             e.preventDefault();
             if (message) {
-                var state = 1;
-                if (!participantObject.hasData) { // 처음 입장하는 경우 & 나갔을 경우
-                    state = 0;
-                    participantObject.hasData = true;
-                }
-                socket.emit('chat message', roomObject.no ,message,state);
+                socket.emit('chat message', message);
                 e.target.message.value = '';
                 setMessage('');
             }
@@ -240,18 +237,10 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         leaveRoom: () => {
             // socket.emit('leave', data); // roomName
             console.log('leaveRoom()호출 in ChatSection');
-            socket.emit('leave', roomObject.title); // FIXME: roomName 안줘도 됨 이유는 [index.js] socket.on('leave', async (data) => { 에 있음
-            history.push('/chat')   // TODO: 참여자 조회하는것도 나가야함 Nav에서
+            socket.emit('leave', roomObject.title);
+            history.push('/chat')
             // TODO: 참여자 삭제
         },
-        /* joinRoom: (e) => {
-            if(prevChatRoomNo != chatRoomNo){
-                console.log("여기서 방나가기 해야합니다.",prevChatRoomNo, chatRoomNo, roomObject.no);
-                socket.emit('leave', roomObject.title);
-                setPrevChatRoomNo(chatRoomNo); // TODO:  지금 chatRoomNo 넣고 leave하고 새로 chatRoomNo으로들어옴
-            }
-        } */
-
     }
 
     const buttonFunction = {
@@ -282,7 +271,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         handleFileUploadSubmit: (files) => {
             console.log(files);
             fileUpload(roomObject.no, participantObject.no, files).then(res => {
-                console.log(res.data.data);
                 socket.emit("file:send", res.data.data);
             });
             setFileUploadOpen(false);

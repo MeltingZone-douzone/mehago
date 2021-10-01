@@ -57,6 +57,7 @@ public class AccountController {
         }
         Account account = new Account(auth);
         Account result = accountService.getAccountByToken(account);
+        System.out.println(result);
         return ResponseEntity.ok().body(CommonResponse.success(result));
     }
 

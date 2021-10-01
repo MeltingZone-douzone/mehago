@@ -22,9 +22,9 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
     const [noData, setNoData] = useState(false);
     const [searchMessageOffset, setSearchMessageOffset] = useState([]);
 
-    // console.log('hasData: ', participantObject.hasData); // true면 기존입장, false 첫입장
     useEffect(() => {
         socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
+            console.log(msg , "msgmsgmsgmsgmsg");
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
@@ -34,10 +34,11 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         });
         fetchItems();
 
-        socket.on(`members:room${chatRoomNo}`, (msg)=>{
-            console.log(msg);
+        socket.on(`members:leave:room${chatRoomNo}`, (msg)=>{
             setReceivedMsg(msg);
-            setReceviedMessageSuccess(true);
+        });
+        socket.on(`join:room${chatRoomNo}`, (msg)=>{
+            setReceivedMsg(msg);
         });
     }, []);
 
@@ -46,7 +47,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         setMessageList([receivedMsg, ...messageList]);
 
     }, [receivedMsg]);
-
+    
     useEffect(() => {
         if (changedRows) {
             let needToUpdateList = messageList.splice(0, changedRows);
@@ -93,8 +94,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     useEffect(() => {
         if (searchMessage) {
-            const af = Array.from(document.querySelectorAll("p[name=chat-message]"));
-            const messageOffset = af.map(item => +item.offsetParent.offsetTop);
+            const arrayResult = Array.from(document.querySelectorAll("p[name=chat-message]"));
+            const messageOffset = arrayResult.map(item => +item.offsetParent.offsetTop);
             if (messageOffset.length !== cursor.lastIndex) {
                 setSearchMessageOffset(messageOffset);
             }
@@ -185,6 +186,13 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 function dateDivider(messageList, index, message) {
     const prevMessage = messageList[index + 1];
     if (prevMessage && moment(prevMessage.createdAt).format('YY/MM/DD') !== moment(message.createdAt).format('YY/MM/DD')) {
+        return renderDateDivider();
+    }
+    // if (typeof prevMessage === 'undefined' && message !== null) { // 방의 첫 메시지이면
+    if (!prevMessage && message) { // 방의 첫 메시지이면
+        return renderDateDivider();
+    }
+    function renderDateDivider() {
         const msgDate = moment(message.createdAt).format('YY/MM/DD');
         let day;
         switch (moment(message.createdAt).day()) {
@@ -214,6 +222,6 @@ function dateDivider(messageList, index, message) {
                 >{msgDate} {day}
                 </p>
             </div>
-        )
+        );
     }
 }

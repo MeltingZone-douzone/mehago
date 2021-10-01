@@ -47,14 +47,12 @@ export default function ChatPage({ match, userInfo }) {
     }
 
     const fetchRooms = () => {
-        console.log("나간다고");
         try {
             getMyChatListApi().then(res => {
                 if (res.data.result == "fail") {
                     return false;
                 }
                 setParticipatingRoom(res.data.data);
-                console.log(res.data.data)
             });
         } catch (e) {
             console.log(e);

@@ -17,7 +17,6 @@ Modal.setAppElement('body');
 
 export default function ParticipatingList({ socket, room, userInfo, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom}) {
     const classes = madeStyles();
-
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
     const [nonMember, setNonMember] = useState({});
@@ -88,19 +87,24 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
             <List className={"container"}>
                 {/* <Button onClick={() => updateFavoriteRoom(room.no)}> */}
                 <div className={"profileHeader"}>
-                    <Button
-                        className={classes.favoriteButton}
-                        onClick={() => {
-                            setFavoriteCheck(room.favoriteRoom ? false : true)
-                            updateFavoriteRoom(room.no, room.favoriteRoom)
-                        }}>
-                        {
-                            room.favoriteRoom ?
-                                <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
-                                :
-                                <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
-                        }
-                    </Button>
+                    {
+                        userInfo !== undefined ?
+                        <Button
+                            className={classes.favoriteButton}
+                            onClick={() => {
+                                setFavoriteCheck(room.favoriteRoom ? false : true)
+                                updateFavoriteRoom(room.no, room.favoriteRoom)
+                            }}>
+                            {
+                                room.favoriteRoom ?
+                                    <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
+                                    :
+                                    <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
+                            }
+                        </Button>
+                        :
+                        null
+                    }
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
                 <Link to={`/chat/${room.no}`}>
@@ -134,7 +138,7 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                 <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize: '1em' }}>{'채팅방에서 나가시겠습니까?'} </Typography>} />
                 <div className={"modalButton"}>
                     <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
-                    <Button className={classes.okButton} onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    <Button className={classes.okButton} onClick={() => { exitRoom(room.no, userInfo.nickname); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
                 </div>
             </Modal>
         </div >
