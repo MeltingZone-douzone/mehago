@@ -8,5 +8,4 @@ public class MehagoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MehagoApplication.class, args);
 	}
-
 }

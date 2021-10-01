@@ -15,6 +15,8 @@ public class Participant extends TokenInfo {
     private Long chatRoomNo;
     private Boolean favoriteRoom;
     private Boolean isDeleted;
+    private String thumbnailUrl;
+    private Boolean hasData;
 
     public Participant() {
     }
@@ -23,9 +25,5 @@ public class Participant extends TokenInfo {
         this.no = tokenInfo.getNo();
         this.chatNickname = tokenInfo.getNickname();
     }
-    // private String favoriteRoom; // 잠시 string으로 고침
 
-
-    private String thumbnailUrl;
-    private Boolean hasData;
 }

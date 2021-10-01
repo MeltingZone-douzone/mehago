@@ -143,7 +143,7 @@ io.on("connection", (socket) => {
         // 신규 유저라면 
         if (!participantObj.hasData) {
             let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
-            console.log(participantObj)
+            console.log('participantObj', participantObj)
             const joinMessage = {
                 validation: "join",
                 message: `${participantObj.chatNickname}님이 입장하셨습니다.`,
@@ -167,6 +167,7 @@ io.on("connection", (socket) => {
             notReadCount: "",
             message: ""
         }
+        console.log('messageObj', messageObj.thumbnailUrl);
     });
 
     socket.on("participant:updateRead", async (receivedMsg) => {
@@ -264,6 +265,8 @@ io.on("connection", (socket) => {
     socket.on('leave:chat-section', async () => {
         redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
         sendMemberStatus();
+        // TODO:  여기서 줘서 저기서 받아야하나  방나갔다고 프론트에 알려주고 거기서 나간거를 받으면 멤버리스트 안띄우게
+        io.to(socket.id).emit(`room:leave:set`);
     });
 
     // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 참여자가 채팅방에서 나갔을때)
@@ -277,7 +280,7 @@ io.on("connection", (socket) => {
         // roomNo, participantNo를 가져와야 하는데 front단에서 넘겨줘야 하지 않을까??????
 
         redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
-            console.log(result); // 1
+            console.log('leave:chat-room', result); // 1
         });
         const memberObj = {
             "chatRoomNo": chatRoomNo,
@@ -314,7 +317,7 @@ io.on("connection", (socket) => {
     const sendMemberStatus = async () => {
         let onlineChatMember;
         await getOnlineChatMember(currentRoomName).then(res => onlineChatMember = res);
-        console.log(onlineChatMember);
+        console.log('onlineChatMember', onlineChatMember);
         const object = {
             "validation": "members_status",
             onlineChatMember

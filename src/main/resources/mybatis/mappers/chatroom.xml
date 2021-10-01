@@ -306,12 +306,25 @@
   </select>
   
 
-  <update id="exitRoom" parameterType="map">
+  <update id="exitRoomNonmember" parameterType="map">
     <![CDATA[
       UPDATE 
         participant 
       SET
         is_deleted=1, chat_nickname="(알수없음)"
+      WHERE
+            no = #{participantNo }
+      AND
+        chat_room_no = #{chatRoomNo };
+    ]]>
+  </update> 
+
+  <update id="exitRoomMember" parameterType="map">
+    <![CDATA[
+      UPDATE 
+        participant 
+      SET
+        is_deleted=1
       WHERE
             no = #{participantNo }
       AND

@@ -70,15 +70,23 @@ public class ChatRoomService {
         return chatRoomRepository.deleteChatRoom(chatRoomNo);
     }
 
-    public boolean exitRoom(Long chatRoomNo, Long participantNo) {
+    public boolean exitRoomNonmember(Long chatRoomNo, Long participantNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("chatRoomNo", chatRoomNo);
         map.put("participantNo", participantNo);
-        return chatRoomRepository.exitRoom(map);
+        return chatRoomRepository.exitRoomNonmember(map);
+    }
+
+    public boolean exitRoomMember(Long chatRoomNo, Long participantNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("chatRoomNo", chatRoomNo);
+        map.put("participantNo", participantNo);
+        return chatRoomRepository.exitRoomMember(map);
     }
 
     public List<Map<String, Object>> getRoomInfoNonMember(Long nonMemberNo) {
         return chatRoomRepository.getRoomInfoNonMember(nonMemberNo);
     }
+
 
 }

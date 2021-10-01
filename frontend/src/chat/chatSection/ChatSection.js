@@ -5,7 +5,7 @@ import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo, fetchRooms }) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo, fetchRooms, setParticipants }) {
     const chatRoomNo = match.params.no;
 
     const [participantObject, setParticipantObject] = useState({});
@@ -102,6 +102,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                     return;
                 }
                 setParticipantObject(res.data.data);
+                console.log(res.data.data);
             }
         });
 
@@ -138,10 +139,13 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         });
         socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
             history.push("/chat")
+        });
+        socket.on(`room:leave:set`, (msgToJson) => {
+            console.log('room:leave:set');
+            setParticipants({});
         })
 
         return () => {
-            console.log('언마');
             socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요
         }
     }, [chatRoomNo])
@@ -157,6 +161,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         if (joinSuccess) {
             socket.emit('join:chat', roomObject, participantObject);
             socket.emit('participant:updateRead');
+            console.log('participantObject',participantObject);
             if (!participantObject.hasData) { // 처음 입장하는 경우에만
                 socket.emit('chat message', participantObject.chatNickname, 0);
                 participantObject.hasData = true;

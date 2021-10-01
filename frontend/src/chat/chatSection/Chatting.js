@@ -46,6 +46,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     }, [receivedMsg]);
 
+    console.log('receivedMsg', receivedMsg);
+    
     useEffect(() => {
         if (changedRows) {
             let needToUpdateList = messageList.splice(0, changedRows);

@@ -85,7 +85,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                     })
                 };
             })
-            fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
+            fetchRooms(); TODO:
             fetchFavoriteRooms();
         } catch (error) {
             console.log();
@@ -106,7 +106,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
-                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link>
+                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link> {/* 일단 홈 클릭하면 채팅방리스트으로 보이게 해놓음 */}
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>
@@ -123,7 +123,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList ? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} /> : null}
+                {chatList ? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} userInfo={userInfo}/> : null} {/* 2021-10-01 18:58:34 participantList에 비회원이면 즐겨찾기 별 버튼 안보이게 하기위해서 유저정보(회원/비회원)가 필요 */}
                 {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </div>
 

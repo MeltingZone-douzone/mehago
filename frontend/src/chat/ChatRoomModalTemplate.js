@@ -50,7 +50,6 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
                 break;
         }
     }
-    // TODO: 닉네임도 엔터해야함
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             console.log(`status: ${status}`);

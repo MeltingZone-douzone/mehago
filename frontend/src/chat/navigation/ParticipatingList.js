@@ -15,9 +15,11 @@ import AlarmPoint from '../../components/AlarmPoint';
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom }) {
+export default function ParticipatingList({ socket, room, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom,  userInfo}) {
     const classes = madeStyles();
 
+    console.log(userInfo);
+    console.log(userInfo !== undefined);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
 
@@ -75,19 +77,24 @@ export default function ParticipatingList({ socket, room, updateFavoriteRoom, ex
             <List className={"container"}>
                 {/* <Button onClick={() => updateFavoriteRoom(room.no)}> */}
                 <div className={"profileHeader"}>
-                    <Button
-                        className={classes.favoriteButton}
-                        onClick={() => {
-                            setFavoriteCheck(room.favoriteRoom ? false : true)
-                            updateFavoriteRoom(room.no, room.favoriteRoom)
-                        }}>
-                        {
-                            room.favoriteRoom ?
-                                <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
-                                :
-                                <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
-                        }
-                    </Button>
+                    {
+                        userInfo !== undefined ?
+                        <Button
+                            className={classes.favoriteButton}
+                            onClick={() => {
+                                setFavoriteCheck(room.favoriteRoom ? false : true)
+                                updateFavoriteRoom(room.no, room.favoriteRoom)
+                            }}>
+                            {
+                                room.favoriteRoom ?
+                                    <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
+                                    :
+                                    <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
+                            }
+                        </Button>
+                        :
+                        null
+                    }
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
                 <Link to={`/chat/${room.no}`}>

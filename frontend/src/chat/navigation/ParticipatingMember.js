@@ -48,7 +48,8 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
             .map(participant =>
                 <ListItem key={participant.no}>
                     <ListItemIcon>
-                    {participant.thumbnailUrl ?
+                    {
+											participant.thumbnailUrl ?
                         <Avatar className={classes.profile} alt={participant.thumbnailUrl} src={participant.thumbnailUrl}/>
                         :
                         <div className={classes.profile}>
@@ -66,8 +67,6 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
                                 <ListItemText primary={participant.chatNickname}></ListItemText>
                     }
                     {
-                        
-                        
                         onlineParticipants.includes(`${participant.no}`) ?
                             <ParticipantsStatus style={{ fontSize: '12px', color: '#34d12c' }} />
                             :
@@ -95,7 +94,6 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
                         label="참여자 검색"
                         variant="outlined"
                         fullWidth
-                        color="#1C90FC"
                         onChange={(e) => setSearchNickname(e.target.value)}
                     />
                 </Grid>
