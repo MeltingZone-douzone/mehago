@@ -165,7 +165,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             socket.emit('participant:updateRead');
             const joinMessage = participantObject.chatNickname + "님이 입장하였습니다."
             if (!participantObject.hasData) { // 처음 입장하는 경우에만
-                socket.emit('chat message', joinMessage, 0);
+                socket.emit('chat message', roomObject.no, joinMessage, 0);
                 participantObject.hasData = true;
             }
             setJoinSuccess(false);
@@ -188,7 +188,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                     state = 0;
                     participantObject.hasData = true;
                 }
-                socket.emit('chat message', message,state);
+                socket.emit('chat message', roomObject.no ,message,state);
                 e.target.message.value = '';
                 setMessage('');
             }

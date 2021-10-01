@@ -27,7 +27,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
         <ListItem key={message.no} className={classes.listItem}>
             <Grid container>
                 <Grid item xs={1} align="center">
-                    {!previousMessage || previousMessage.participantNo !== message.participantNo ?
+                    {!previousMessage || previousMessage.state !== 1 || previousMessage.participantNo !== message.participantNo ?
                         <div className="profile">
                             <Thumbnail thumbnailUrl={message.thumbnailUrl} nickname={message.nickname} />
                         </div>
@@ -35,7 +35,7 @@ export default function ReceivedMessage({ nextMessage, previousMessage, message,
                 </Grid>
                 <Grid item xs={11}>
                     <Grid item xs={12}>
-                        {!previousMessage || previousMessage.participantNo !== message.participantNo ?
+                    {!previousMessage || previousMessage.state !== 1 || previousMessage.participantNo !== message.participantNo ?
                             <ListItemText align="left" secondary={
                                 <Typography className={classes.nickname}>
                                     {message.nickname}

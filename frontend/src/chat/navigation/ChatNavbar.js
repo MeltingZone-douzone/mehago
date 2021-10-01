@@ -15,7 +15,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom}) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants,setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom}) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -77,10 +77,10 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const exitRoom = (chatRoomNo) => {
         try {
             exitRoomApi(chatRoomNo).then((res) => {
-                if (res.data.data.hasData) {
-                    const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
-                    socket.emit('chat message', leaveMessage, 0);
-                }
+               
+                const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
+                socket.emit('chat message', chatRoomNo, leaveMessage, 0);
+                
                 socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
@@ -88,6 +88,8 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                     })
                 };
             })
+            // console.log(participatingRoom);
+            // setParticipatingRoom(participatingRoom.filter((participant) => participant.no !== chatRoomNo))
             fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
             fetchFavoriteRooms();
         } catch (error) {

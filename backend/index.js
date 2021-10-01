@@ -181,7 +181,9 @@ io.on("connection", (socket) => {
             "validation": "update",
             changedRows
         }
-
+        console.log("participantObj");
+        console.log(participantObj);
+        console.log("participantObj");
         if (changedRows) {
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object));
             io.to(socket.id).emit(`update:readCount:${currentRoomName}`, { "chatRoomNo": roomObj.no });
@@ -194,7 +196,7 @@ io.on("connection", (socket) => {
         console.log("node disconnected", reason);
     })
 
-    socket.on('chat message', async (message,state) => {
+    socket.on('chat message', async (chatRoomNo, message,state) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
         const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount , "state": state} );
         await messageController.addMessage(insertMsg);
