@@ -16,7 +16,7 @@ export default function ChatRoomSetting({ roomObject, settingRoomFunction, passw
     const history = useHistory();
     const [chatRoom, setChatRoom] = useState({});
     const [isSecretRoom, setIsSecretRoom] = useState(false);
-
+    const [reason, setReason] = useState("");
 
     useEffect(() => {
         setChatRoom({ ...chatRoom, roomObject });
@@ -153,15 +153,20 @@ export default function ChatRoomSetting({ roomObject, settingRoomFunction, passw
             deleteChatRoom(roomObject)
                 .then(res => {
                     if (res.data.result === "fail") {
-                        window.alert('권한이 없습니다.');
+                        window.alert(res.data.message);
                         history.goBack();
                         return;
                     };
+                    settingRoomFunction.deletedChatRoom(reason);
                     window.alert(`${chatRoom && chatRoom.title !== undefined ? chatRoom.title : roomObject.title} 채팅방이 삭제되었습니다.`);
-                    history.push('/chat')
+                    history.replace('/chat');
                     return;
                 })
         },
+        handleDeleteReason: (e) => {
+            setReason(e.target.value);
+        },
+        
     }
 
     const classes = styles();
@@ -186,15 +191,15 @@ export default function ChatRoomSetting({ roomObject, settingRoomFunction, passw
                         </InfoFormWrapper>
                         <ButtonWrapper>
                             <div className={classes.buttons}>
-                                <Button className={classes.button} variant="outlined" color="primary" type="button" onClick={() => { setChatRoom({}); }}>취소</Button>
-                                <Button className={classes.button} variant="outlined" color="primary" type="submit" >채팅방 정보 변경하기</Button>
-                                <Button className={classes.button} variant="contained" color="secondary" type="button" onClick={deleteFunction.open}>채팅방 삭제하기</Button>
+                                <Button className={classes.deleteChatRoomButton} variant="contained" color="secondary" type="button" onClick={deleteFunction.open}>채팅방 삭제하기</Button>
+                                <Button className={classes.button} variant="outlined" color="primary" type="button" onClick={() => { history.goBack(); }}>취소</Button>
+                                <Button className={classes.button} variant="contained" color="primary" type="submit" >채팅방 정보 변경하기</Button>
                             </div>
                         </ButtonWrapper>
                     </FormWrapper>
                 </FormTemplate>
                 <SettingDialog passwordDialog={passwordDialog} classes={classes} passwordFunction={passwordFunction} isCorrectPassword={isCorrectPassword} isWrongPassword={isWrongPassword} password={password} vaildateNewPassword={vaildateNewPassword} />
-                <DeleteDialog deleteDialog={deleteDialog} deleteFunction={deleteFunction} />
+                <DeleteDialog reason={reason} deleteDialog={deleteDialog} deleteFunction={deleteFunction} />
 
             </Container>
         </ThemeProvider >
@@ -253,6 +258,7 @@ const ImageWrapper = styled.div`
 `
 
 const ButtonWrapper = styled.div`
+    width: 100%;
     margin-left: auto;
 `
 
@@ -260,10 +266,6 @@ const styles = makeStyles({
     root: {
         width: "100%",
         height: "100%",
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
     },
     TextField: {
         marginTop: "10px",
@@ -277,12 +279,17 @@ const styles = makeStyles({
         width: "60%"
     },
     buttons: {
+        display: "flex",
+        width: "95%",
         marginTop: "10px",
-        marginLeft: "auto",
-        marginRight: "1em"
     },
     button: {
+        fontWeight: "bold",
         marginLeft: "10px"
+    },
+    deleteChatRoomButton: {
+        fontWeight: "500",
+        marginRight: "auto"
     },
     error: {
         fontSize: "0.8em",

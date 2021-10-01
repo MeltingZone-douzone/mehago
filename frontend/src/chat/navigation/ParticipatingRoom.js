@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
 
-export default function ParticipatingRoom({socket, participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom}){
+export default function ParticipatingRoom({socket, userInfo, participatingRoom, setSearchValue, searchValue, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom}){
     const classes = styles();
 
     return Object.keys(participatingRoom).length !== 0 ?
@@ -34,11 +34,14 @@ export default function ParticipatingRoom({socket, participatingRoom, setSearchV
                         <ParticipatingList
                             key={room.no}
                             socket={socket}
+                            userInfo={userInfo}
                             room = {room} 
                             updateFavoriteRoom={updateFavoriteRoom} 
                             exitRoom={exitRoom}
                             setFavoriteCheck={setFavoriteCheck}
-                            updateParticipatingRoom={updateParticipatingRoom}/>
+                            updateParticipatingRoom={updateParticipatingRoom}
+                            updateParticipatingRoomMessage={updateParticipatingRoomMessage}
+                            deletedParticipatingRoom={deletedParticipatingRoom}/>
                         )
                 }
             </ContentWrapper>
@@ -82,8 +85,4 @@ const ContentWrapper = styled.div`
     overflow-x: hidden;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
-`
-
-const Content = styled(NavLink)`
-
 `

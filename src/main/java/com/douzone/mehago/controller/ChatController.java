@@ -389,7 +389,7 @@ public class ChatController {
         }
         boolean result = chatRoomService.deleteChatRoom(chatRoom.getNo());
         return ResponseEntity.ok()
-                .body(result ? CommonResponse.success(result) : CommonResponse.fail("채팅방 삭제에 실패했습니다."));
+                .body(result ? CommonResponse.success(result) : CommonResponse.fail("권한이 없거나 채팅방 삭제에 실패했습니다."));
     }
 
     @GetMapping("/checkIsDeleted")

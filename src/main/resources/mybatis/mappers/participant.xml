@@ -196,6 +196,14 @@
 		]]>
 	</update>
 
+	<update id="updateIsDeletedWhereChatRoomNo" parameterType="Long">
+		<![CDATA[
+			update participant
+			set is_deleted = 1
+			where chat_room_no = #{chatRoomNo }
+		]]>
+	</update>
+
 	<select id="getNonMemberInfo" parameterType="map" resultType="participant">
 		<![CDATA[
 		select 
