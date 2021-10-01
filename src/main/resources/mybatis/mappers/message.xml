@@ -23,7 +23,7 @@
             <when test="offset == 0">
                 <![CDATA[
                     SELECT
-                        m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
+                        m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, m.state,
                         a.thumbnail_url as thumbnailUrl, p.chat_nickname as nickname 
                     FROM
                         participant p 
@@ -36,6 +36,8 @@
                         m.chat_room_no = #{chatRoomNo }
                         AND
                         m.participant_no = p.no
+                        AND
+                        m.created_at > (select created_at from participant where account_no = #{accountNo} and chat_room_no = #{chatRoomNo})
                     ORDER BY
                         no DESC
                     LIMIT 
@@ -45,7 +47,7 @@
             <otherwise>
                 <![CDATA[
                     SELECT
-                        m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, 
+                        m.no, m.participant_no as participantNo, m.message, m.not_read_count as notReadCount, m.created_at as createdAt, m.state,
                         a.thumbnail_url as thumbnailUrl, p.chat_nickname as nickname 
                     FROM
                         participant p 
@@ -58,6 +60,8 @@
                         m.chat_room_no = #{chatRoomNo }
                         AND
                         m.participant_no = p.no
+                        AND
+                        m.created_at > (select created_at from participant where account_no = #{accountNo} and chat_room_no = #{chatRoomNo})
                         AND
                         m.no < #{offset }
                     ORDER BY

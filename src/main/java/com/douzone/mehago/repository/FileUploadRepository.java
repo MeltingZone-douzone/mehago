@@ -1,6 +1,8 @@
 package com.douzone.mehago.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.douzone.mehago.vo.FileUpload;
 
@@ -19,8 +21,11 @@ public class FileUploadRepository {
         return file.getNo();
     }
 
-    public List<FileUpload> getFileList(Long chatRoomNo) {
-        return sqlSession.selectList("fileupload.getFileList", chatRoomNo);
+    public List<FileUpload> getFileList(Long chatRoomNo, Long accountNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("chatRoomNo", chatRoomNo);
+        map.put("accountNo", accountNo);
+        return sqlSession.selectList("fileupload.getFileList", map);
     }
 
 }

@@ -4,16 +4,18 @@ import HomeIcon from '@material-ui/icons/Home';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import localStorage from "local-storage";
 import styled from 'styled-components';
 import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
 import Logo from '../../assets/images/black-mehago.png';
 import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
+import { createNonMember } from '../../../api/AccountApi';
 
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom}) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom }) {
     const classes = madeStyles();
 
     console.log(participants);
@@ -23,6 +25,15 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
+
+    useEffect(() => {
+        socket.on(`room:updateInfo`, (msg) => {
+            setFavoriteRoom(
+                favoriteRoom.map((room) =>
+                    room.no === msg.roomObject.no ? { ...room, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl } : room)
+            );
+        })
+    }, [favoriteRoom])
 
     useEffect(() => {
         fetchRooms();
@@ -67,7 +78,12 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const exitRoom = (chatRoomNo) => {
         try {
             exitRoomApi(chatRoomNo).then((res) => {
-                console.log(res);
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
+                if (userInfo === undefined) {
+                    createNonMember().then((res) => {
+                        localStorage.set('token', res.data);
+                    })
+                };
             })
             fetchRooms(); // useEffect에서 하게해야? 아니면 res로 그냥 받을까 이대로? ㅇㅋ  TODO:
             fetchFavoriteRooms();
@@ -85,7 +101,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         setChatList(false);
         setChatMember(true);
     }
-    
+
     return (
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
@@ -96,10 +112,10 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
                 <div className={"FavoriteNav"}>
                     {
-                        favoriteRoom && favoriteRoom.map((favorite,index) =>{
-                            return(
-                                <Link to={`/chat/${favorite.no}`} key={index}> 
-                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl ? favorite.thumbnailUrl : Logo} key={favorite.no}/></NaviButton>
+                        favoriteRoom && favoriteRoom.map((favorite, index) => {
+                            return (
+                                <Link to={`/chat/${favorite.no}`} key={index}>
+                                    <NaviButton ><Avatar className={classes.favoriteRoom} alt="프로필 사진" src={favorite.thumbnailUrl ? favorite.thumbnailUrl : Logo} key={favorite.no} /></NaviButton>
                                 </Link>
                             )
                         })
@@ -107,8 +123,8 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} />: null}
-                {chatMember? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
+                {chatList ? <ParticipatingRoom socket={socket} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} /> : null}
+                {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </div>
 
 

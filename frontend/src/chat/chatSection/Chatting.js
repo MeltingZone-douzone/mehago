@@ -9,7 +9,7 @@ import SendMessage from './SendMessage';
 import styled from 'styled-components';
 
 
-export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput,notice }) {
+export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput, notice }) {
     const messageAreaRef = useRef();
 
     const [offsetNo, setOffsetNo] = useState(0);
@@ -27,11 +27,17 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
-        
+
         socket.on(`message:update:readCount:room${chatRoomNo}`, (msgToJson) => {
             setChangedRows(msgToJson.changedRows);
         });
         fetchItems();
+
+        // socket.on(`join:room${chatRoomNo}`, (msg)=>{
+        //     console.log(msg);
+        //     setReceivedMsg(msg);
+        //     setReceviedMessageSuccess(true);
+        // });
     }, []);
 
 
@@ -117,37 +123,60 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     return (
         <List className={"messageArea"} onScroll={onScroll} ref={messageAreaRef} >
-            {messageList ? messageList
-                .map((message, index) => {
+            { messageList ? 
+                messageList.map((message, index) => {
                     return (
-                        message.participantNo !== participantObject.no ?
-                            <div key={index}>
-                                {dateDivider(messageList, index, message)}
-                                <ReceivedMessage
-                                    nextMessage={messageList[index - 1]}
-                                    previousMessage={messageList[index + 1]}
-                                    message={message}
-                                    searchKeyword={searchMessage[searchMessage.length - 1]}
-                                    searchMessage={searchMessage} 
-                                    hiddenSearchInput={hiddenSearchInput}
-                                    no={searchMessage.includes(message.no) ? message.no : null} />
-                            </div>
-                            :
-                            <div key={index}>
-                                {dateDivider(messageList, index, message)}
-                                <SendMessage 
-                                    nextMessage={messageList[index - 1]} 
-                                    previousMessage={messageList[index + 1]} 
-                                    message={message} 
-                                    searchKeyword={searchMessage[searchMessage.length-1]} 
-                                    hiddenSearchInput={hiddenSearchInput}
-                                    no={searchMessage.includes(message.no) ? message.no : null} />
-                            </div>
+                        message.state === 0 ? 
+                        <div style={{
+                            display: "flex",
+                            width: "100%",
+                            justifyContent: "center"
+                        }}>
+                            <p style={{ 
+                                padding: '0.5rem 0.7rem', 
+                                textAlign: 'center', 
+                                backgroundColor: '#d4d4d4', 
+                                borderRadius: '15px', 
+                                margin: '5px' ,
+                                width: 'fit-content',
+                                fontSize: 'smaller'
+                            }}
+                            >{message.message}
+                            </p>
+                        </div>
+                        :
+                        <div>
+                            {
+                            message.participantNo !== participantObject.no ?
+                                <div key={index}>
+                                    {dateDivider(messageList, index, message)}
+                                    <ReceivedMessage
+                                        nextMessage={messageList[index - 1]}
+                                        previousMessage={messageList[index + 1]}
+                                        message={message}
+                                        searchKeyword={searchMessage[searchMessage.length - 1]}
+                                        searchMessage={searchMessage} 
+                                        hiddenSearchInput={hiddenSearchInput}
+                                        no={searchMessage.includes(message.no) ? message.no : null} />
+                                </div>
+                                :
+                                <div key={index}>
+                                    {dateDivider(messageList, index, message)}
+                                    <SendMessage 
+                                        nextMessage={messageList[index - 1]} 
+                                        previousMessage={messageList[index + 1]} 
+                                        message={message} 
+                                        searchKeyword={searchMessage[searchMessage.length-1]} 
+                                        hiddenSearchInput={hiddenSearchInput}
+                                        no={searchMessage.includes(message.no) ? message.no : null} />
+                                </div>
+                            }
+                        </div>
                         )}
                 )
                 : null
             }
-            
+
         </List >
     );
 }

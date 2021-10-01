@@ -5,9 +5,9 @@ import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo , fetchRooms}) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, userInfo, fetchRooms }) {
     const chatRoomNo = match.params.no;
-    const [prevChatRoomNo, setPrevChatRoomNo] = useState(match.params.no); // 이전 채팅방과 비교하는 변수
+
     const [participantObject, setParticipantObject] = useState({});
     const [roomObject, setRoomObject] = useState({});
     const [searchMessage, setSearchMessage] = useState([]);
@@ -27,7 +27,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
     const [notice, setNotice] = useState([]);
     const [fileList, setFileList] = useState([]);
-
     const noticeList = (chatRoomNo) => {
         try {
             getNotice(chatRoomNo).then(res => {
@@ -122,10 +121,13 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             console.log(onlineChatMember);
             handleCurrentParticipants(onlineChatMember);
         });
-        socket.on('room:updateInfo', (msgToJson) => {
+        socket.on(`room:updateInfo`, (msgToJson) => {
+            // console.log(msgToJson.roomObject);
+            // if (msgToJson.roomObject.secretRoom === true) {
+            //     msgToJson.roomObject.password = ""
+            // }
             setRoomObject(msgToJson.roomObject);
         })
-
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
@@ -134,6 +136,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
+        socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
+            history.push("/chat")
+        })
 
         return () => {
             console.log('언마');
@@ -152,9 +157,14 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         if (joinSuccess) {
             socket.emit('join:chat', roomObject, participantObject);
             socket.emit('participant:updateRead');
+            if (!participantObject.hasData) { // 처음 입장하는 경우에만
+                socket.emit('chat message', participantObject.chatNickname, 0);
+                participantObject.hasData = true;
+            }
             setJoinSuccess(false);
             noticeList(roomObject.no);
             fileUploadList(roomObject.no);
+            
         }
     }, [joinSuccess]);
 
@@ -166,7 +176,13 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         onSubmitMessage: (e) => {
             e.preventDefault();
             if (message) {
-                socket.emit('chat message', message);
+                var state = 1;
+                console.log(participantObject);
+                if (!participantObject.hasData) { // 처음 입장하는 경우에만
+                    state = 0;
+                    participantObject.hasData = true;
+                }
+                socket.emit('chat message', message,state);
                 e.target.message.value = '';
                 setMessage('');
             }

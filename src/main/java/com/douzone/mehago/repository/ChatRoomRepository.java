@@ -80,7 +80,7 @@ public class ChatRoomRepository {
     }
 
     public boolean exitRoom(Map<String, Long> map) {
-        return sqlSession.delete("chatroom.exitRoom", map) == 1 ? true : false;
+        return sqlSession.update("chatroom.exitRoom", map) == 1 ? true : false;
     }
 
     public List<Map<String, Object>> getRoomInfoNonMember(Long nonMemberNo) {
