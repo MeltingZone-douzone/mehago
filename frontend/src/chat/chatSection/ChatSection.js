@@ -102,7 +102,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
                     return;
                 }
                 setParticipantObject(res.data.data);
-                console.log(res.data.data);
             }
         });
 
@@ -125,7 +124,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     useEffect(() => {
         socket.on(`members:status:room${chatRoomNo}`, (msgToJson) => {
             const { onlineChatMember } = msgToJson;
-            console.log(onlineChatMember);
             handleCurrentParticipants(onlineChatMember);
         });
         socket.on(`room:updateInfo`, (msgToJson) => {
@@ -167,11 +165,11 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         if (joinSuccess) {
             socket.emit('join:chat', roomObject, participantObject);
             socket.emit('participant:updateRead');
-            const joinMessage = participantObject.chatNickname + "님이 입장하였습니다."
-            if (!participantObject.hasData) { // 처음 입장하는 경우에만
-                socket.emit('chat message', joinMessage, 0);
-                participantObject.hasData = true;
-            }
+            // const joinMessage = participantObject.chatNickname + "님이 입장하였습니다."
+            // if (!participantObject.hasData) { // 처음 입장하는 경우에만
+            //     socket.emit('chat message', roomObject.no, joinMessage, 0);
+            //     participantObject.hasData = true;
+            // }
             setJoinSuccess(false);
             noticeList(roomObject.no);
             fileUploadList(roomObject.no);
@@ -187,12 +185,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         onSubmitMessage: (e) => {
             e.preventDefault();
             if (message) {
-                var state = 1;
-                if (!participantObject.hasData) { // 처음 입장하는 경우 & 나갔을 경우
-                    state = 0;
-                    participantObject.hasData = true;
-                }
-                socket.emit('chat message', message,state);
+                socket.emit('chat message', message);
                 e.target.message.value = '';
                 setMessage('');
             }
@@ -278,7 +271,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         handleFileUploadSubmit: (files) => {
             console.log(files);
             fileUpload(roomObject.no, participantObject.no, files).then(res => {
-                console.log(res.data.data);
                 socket.emit("file:send", res.data.data);
             });
             setFileUploadOpen(false);

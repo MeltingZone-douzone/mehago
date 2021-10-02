@@ -25,6 +25,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     useEffect(() => {
         socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
+            console.log(msg , "msgmsgmsgmsgmsg");
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
@@ -34,10 +35,11 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         });
         fetchItems();
 
-        socket.on(`members:room${chatRoomNo}`, (msg)=>{
-            console.log(msg);
+        socket.on(`members:leave:room${chatRoomNo}`, (msg)=>{
             setReceivedMsg(msg);
-            setReceviedMessageSuccess(true);
+        });
+        socket.on(`join:room${chatRoomNo}`, (msg)=>{
+            setReceivedMsg(msg);
         });
     }, []);
 
@@ -46,8 +48,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         setMessageList([receivedMsg, ...messageList]);
 
     }, [receivedMsg]);
-
-    console.log('receivedMsg', receivedMsg);
     
     useEffect(() => {
         if (changedRows) {

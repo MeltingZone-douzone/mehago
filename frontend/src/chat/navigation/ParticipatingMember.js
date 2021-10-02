@@ -21,12 +21,11 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
     const [searchNickname, setSearchNickname] = useState('');
     const [nonMember, setNonMember] = useState({});
 
-    console.log(participants);
 
     useEffect(() => {
         if (!userInfo) {
             getNonMemberInfo().then(res => {
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 setNonMember(res.data.data);
             });
         }
@@ -39,9 +38,6 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
                 participant.no === currentParticipant ? participant.no : "not"
             )
         })
-
-        console.log(onlineParticipants);
-        console.log(participants);
 
         return participants && participants
             .filter(participants => participants.chatNickname.indexOf(searchNickname) != -1)

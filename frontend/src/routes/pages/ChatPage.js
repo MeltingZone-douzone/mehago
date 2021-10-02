@@ -47,14 +47,12 @@ export default function ChatPage({ match, userInfo }) {
     }
 
     const fetchRooms = () => {
-        console.log("나간다고");
         try {
             getMyChatListApi().then(res => {
                 if (res.data.result == "fail") {
                     return false;
                 }
                 setParticipatingRoom(res.data.data);
-                console.log(res.data.data)
             });
         } catch (e) {
             console.log(e);
@@ -89,7 +87,7 @@ export default function ChatPage({ match, userInfo }) {
 
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />
+            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants = {setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} socket={socket} userInfo={userInfo} />} />

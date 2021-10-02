@@ -15,17 +15,14 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom}) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants,setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom}) {
     const classes = madeStyles();
-
-    console.log(participants);
 
     const [chatList, setChatList] = useState(true);
     const [chatMember, setChatMember] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
-    const [leaveMessage, setLeaveMessage] = useState('');
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -76,14 +73,12 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     // setNotice(
         // notice.filter((notice) => notice.no !== msg.no)
 
-    const exitRoom = (chatRoomNo) => {
+    const exitRoom = (chatRoomNo, nickname) => {
+        console.log("chatRoomNo:", chatRoomNo);
         try {
             exitRoomApi(chatRoomNo).then((res) => {
-                if (res.data.data.hasData) {
-                    const leaveMessage = res.data.data.chatNickname + "님이 퇴장하였습니다."
-                    socket.emit('chat message', leaveMessage, 0);
-                }
-                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
+               
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, nickname);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
                         localStorage.set('token', res.data);

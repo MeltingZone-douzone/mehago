@@ -31,7 +31,7 @@ spring:
          enabled: true
    datasource:
       driver-class-name: org.mariadb.jdbc.Driver 
-      url: jdbc:mysql://127.0.0.1:3306/mehago?characterEncoding=utf8
+      url: jdbc:mysql://127.0.0.1:3306/chat?characterEncoding=utf8
       username: bookmall_local
       password: bookmall_local 
    jwt: 
@@ -46,7 +46,7 @@ spring:
       on-profile: production
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/mehago?characterEncoding=utf8
+    url: jdbc:mysql://127.0.0.1:3306/chat?characterEncoding=utf8
     username: bookmall_local
     password: bookmall_local
 ---
