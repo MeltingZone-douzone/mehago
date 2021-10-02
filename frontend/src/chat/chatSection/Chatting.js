@@ -9,6 +9,7 @@ import SendMessage from './SendMessage';
 import styled from 'styled-components';
 
 
+// export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput, notice }) {
 export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput, notice }) {
     const messageAreaRef = useRef();
 
@@ -182,6 +183,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         </List >
     );
 }
+
+
 // 메시지가 거꾸로 뽑히고 있어서 index - 1 말고 + 1 로 함
 function dateDivider(messageList, index, message) {
     const prevMessage = messageList[index + 1];

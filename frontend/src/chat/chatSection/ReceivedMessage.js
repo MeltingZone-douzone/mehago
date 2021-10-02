@@ -9,9 +9,6 @@ import Thumbnail from '../../components/Thumbnail';
 
 export default function ReceivedMessage({ nextMessage, previousMessage, message, no, searchKeyword}) {
     const classes = madeStyles();
-
-    console.log('message',message);
-    console.log('previousMessage',previousMessage);
     
     const getHighlightedText = ({ text = message.message, highlight = searchKeyword }) => {
         const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
