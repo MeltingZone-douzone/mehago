@@ -77,16 +77,15 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         console.log("chatRoomNo:", chatRoomNo);
         try {
             exitRoomApi(chatRoomNo).then((res) => {
-               
                 socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, nickname);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
                         localStorage.set('token', res.data);
                     })
                 };
+                fetchRooms();
+                fetchFavoriteRooms();
             })
-            fetchRooms(); TODO:
-            fetchFavoriteRooms();
         } catch (error) {
             console.log();
         }

@@ -15,8 +15,10 @@ export default function ChatPage({ match, userInfo }) {
     const [participants, setParticipants] = useState([]);
     const [currentParticipants, setCurrentParticipants] = useState([]);
     const [participatingRoom, setParticipatingRoom] = useState([]);
-
+    
+    console.log(participatingRoom);
     useEffect(() => {
+        console.log(participatingRoom);
         socket.on(`room:updateInfo`, (msg) => {
             setParticipatingRoom(participatingRoom.map((room) =>
                 room.no === msg.roomObject.no ? { ...room, ["title"]: msg.roomObject.title, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl } : room
@@ -46,20 +48,10 @@ export default function ChatPage({ match, userInfo }) {
         }
     }
 
-    const fetchRooms = () => {
-        try {
-            getMyChatListApi().then(res => {
-                if (res.data.result == "fail") {
-                    return false;
-                }
-                setParticipatingRoom(res.data.data);
-            });
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
+    
+    console.log(participatingRoom);
     const updateParticipatingRoom = (updatedData) => {
+        console.log(participatingRoom);
         const updatedParticipatingRoom = participatingRoom.map((room) =>{
             if(room.no != updatedData.no) {
                 return room;
@@ -71,6 +63,7 @@ export default function ChatPage({ match, userInfo }) {
     }
 
     const updateParticipatingRoomMessage = (updatedData) => {
+        console.log(participatingRoom);
         let newArr = participatingRoom.map((room)=>{
             if(room.no != updatedData.no) {
                 return room;
@@ -85,6 +78,25 @@ export default function ChatPage({ match, userInfo }) {
     
     }
 
+    const fetchRooms = () => {
+        console.log(participatingRoom);
+        try {
+            getMyChatListApi().then(res => {
+                if (res.data.result == "fail") {
+                    console.log('fetchRooms fail: ', res.data.data);
+                    return false;
+                }
+                // setParticipatingRoom(res.data.data);
+                setParticipatingRoom((prevState)=> {
+                    return Object.assign([], prevState, res.data.data)
+                });
+                console.log('fetchRooms : ', res.data.data);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    console.log(participatingRoom);
     return (
         <div className={"ChattingContainer"} >
             <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants = {setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />

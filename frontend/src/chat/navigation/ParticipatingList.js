@@ -31,15 +31,18 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
 
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
+            console.log(`socket.on(chat:message:room`);
             setUpdatedRoom(prevState => ((userInfo ? userInfo.no != msg.accountNo : nonMember.no != msg.participantNo ) ?  {...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now(), ["notReadCount"] : prevState.notReadCount + 1} : {...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now()}));
         });
 
         socket.on(`join:room${room.no}`, (msg)=>{
+            console.log(`socket.on(join:room`);
             console.log(msg);
             setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
         });
         
         socket.on(`update:readCount:room${room.no}`, () =>{
+            console.log(`socket.on(update:readCount:room`);
             setUpdatedRoom(prevState => ({...prevState, ["notReadCount"] : 0}));
         });
     
@@ -51,6 +54,9 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
     useEffect(()=>{
         return () => {
             if(room !== updatedRoom) {
+
+                console.log('updateParticipatingRoomMessage',room);             // 입장하셨습니다
+                console.log('updateParticipatingRoomMessage',updatedRoom);      // "1123"
                 room.leastMessage !== updatedRoom.leastMessage ? updateParticipatingRoomMessage(updatedRoom) : updateParticipatingRoom(updatedRoom);
             }
         }

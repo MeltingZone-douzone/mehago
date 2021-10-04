@@ -118,8 +118,8 @@ export default function SignUpForm() {
                     return false;
                   }
                 }
-                history.push("/account/signup/success");
-              })
+              history.push("/account/signup/success");
+            })
           }
       }
     }

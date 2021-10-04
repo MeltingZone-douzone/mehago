@@ -298,9 +298,12 @@ io.on("connection", (socket) => {
 
         await messageController.addMessage(leaveMessage);
         await messageController.leaveRoom(chatRoomNo);
+
+        // /chat 화면으로 보내기위해
         io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
 
-        io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
+        // 퇴장메시지 뿌리기 위해
+        io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage)); 
         
 
         // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴

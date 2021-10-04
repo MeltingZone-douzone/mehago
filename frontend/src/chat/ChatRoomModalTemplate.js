@@ -66,7 +66,6 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
     const basicEnterRoom = () => {
         try {
             enterRoomValidationApi(no).then(res => {
-                console.log(res);
                 if(res.data.result === 'success') { // 새입장
                     if(participantCount >= limitedUserCount) {
                         console.log("인원 다 차서 못들어감"); // <p> function()
