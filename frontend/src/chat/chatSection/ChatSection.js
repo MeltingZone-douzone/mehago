@@ -138,15 +138,12 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
-
         socket.on(`room:leave:${chatRoomNo}`, () => {
             history.push("/chat");
         });
-
-        socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
+        socket.on(`members:leave:room${chatRoomNo}`, (msgToJson) => {
             handleParticipants.leaveParticipant(msgToJson.participantNo);
         });
-
         socket.on(`join:room${chatRoomNo}`, () => {
             handleParticipants.fetchParticipants(chatRoomNo);
         })
@@ -159,8 +156,10 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
         return () => {
-            socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
-            handleParticipants.fetchParticipants(); // 네비 Member없애기 위함
+            if (userInfo) {
+                socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
+                handleParticipants.fetchParticipants(); // 네비 Member없애기 위함
+            }
         }
     }, []);
 

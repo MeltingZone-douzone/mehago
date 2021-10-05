@@ -279,10 +279,10 @@ io.on("connection", (socket) => {
 
         // 비회원
         // roomNo, participantNo를 가져와야 하는데 front단에서 넘겨줘야 하지 않을까??????
+        // redisClient.zremrangebylex(chatRoomNo, `${participantNo}`);
+        // redisClient.zrem(chatRoomNo, `${participantNo}`);
 
-        redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
-            console.log('leave:chat-room', result); // 1
-        });
+        exitChatMember(chatRoomNo, participantNo);
 
         const leaveMessage = {
             "validation": "leave",
@@ -298,8 +298,8 @@ io.on("connection", (socket) => {
         await messageController.leaveRoom(chatRoomNo);
 
 
+        io.to(socket.id).emit(`room:leave:${chatRoomNo}`, { "chatRoomNo": chatRoomNo });
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
-        io.to(socket.id).emit(`room:leave:${chatRoomNo}`);
 
         socket.leave(`room${chatRoomNo}`, (result) => { });
         redisClient.unsubscribe(`room${chatRoomNo}`);

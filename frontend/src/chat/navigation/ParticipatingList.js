@@ -40,10 +40,10 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
             console.log("members:leave", msg)
             setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
-
         socket.on(`room:leave:${room.no}`, (msg) => {
             deletedParticipatingRoom.deletedParticipatingRoom(msg);
         })
+
     }, [])
 
     useEffect(() => {

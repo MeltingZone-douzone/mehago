@@ -84,22 +84,21 @@ export default function ChatPage({ match, userInfo }) {
             }
         })
         newArr = newArr.filter(arr => typeof arr === 'object');
-        // is_deleted도 받아서 변경여부 파악하고 array 수정시켜야 할듯
-        if (updatedData.title === "(알수없음") {
-            const updatedParticipatingRoom = newArr;
-            setParticipatingRoom(updatedParticipatingRoom);
-            return;
-        } else {
-            const updatedParticipatingRoom = [].concat(updatedData, newArr);
-            setParticipatingRoom(updatedParticipatingRoom);
-        }
+        const updatedParticipatingRoom = [].concat(updatedData, newArr);
+        setParticipatingRoom(updatedParticipatingRoom);
     }
 
     const deletedParticipatingRoom = {
         deletedParticipatingRoom: (deletedData) => {
-            participatingRoom.shift();
-            console.log(participatingRoom);
-            setParticipatingRoom(participatingRoom);
+            console.log(deletedData);
+            let newArr = participatingRoom.map((room) => {
+                if (room.no != deletedData.chatRoomNo) {
+                    return room;
+                }
+            })
+            newArr = newArr.filter(arr => typeof arr === 'object');
+            const updatedParticipatingRoom = newArr;
+            setParticipatingRoom(updatedParticipatingRoom);
         }
     }
 
