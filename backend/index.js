@@ -142,16 +142,17 @@ io.on("connection", (socket) => {
 
         // 신규 유저라면 
         if (!participantObj.hasData) {
-            let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
-            console.log("join:chat", participantObj)
+            // let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
             const joinMessage = {
-                validation: "join",
-                message: `${participantObj.chatNickname}님이 입장하셨습니다.`,
-                chatRoomNo: roomObj.no,
-                AllChatMembers,
-                state: 0
+                "validation": "join",
+                "message": `${participantObj.chatNickname}님이 입장하셨습니다.`,
+                "chatRoomNo": roomObj.no,
+                "state": 0,
+                "participantNo": participantObj.no,
+                "notReadCount": 0
             }
-
+            await messageController.addMessage(joinMessage);
+            // console.log(joinMessage , "joinMessage");
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(joinMessage));
             participantObj.hasData = true;
         }
@@ -167,6 +168,7 @@ io.on("connection", (socket) => {
             notReadCount: "",
             message: ""
         }
+        console.log('messageObj', messageObj.thumbnailUrl);
     });
 
     socket.on("participant:updateRead", async (receivedMsg) => {
@@ -181,7 +183,7 @@ io.on("connection", (socket) => {
             "validation": "update",
             changedRows
         }
-
+        console.log(object);
         if (changedRows) {
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object));
             io.to(socket.id).emit(`update:readCount:${currentRoomName}`, { "chatRoomNo": roomObj.no });
@@ -194,9 +196,9 @@ io.on("connection", (socket) => {
         console.log("node disconnected", reason);
     })
 
-    socket.on('chat message', async (message, state) => {
+    socket.on('chat message', async (message) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state": state });
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount });
         await messageController.addMessage(insertMsg);
         if (state === 0) {
             console.log("들어오고 나가는거 알림");
@@ -268,10 +270,12 @@ io.on("connection", (socket) => {
     socket.on('leave:chat-section', async () => {
         redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
         sendMemberStatus();
+        // TODO:  여기서 줘서 저기서 받아야하나  방나갔다고 프론트에 알려주고 거기서 나간거를 받으면 멤버리스트 안띄우게
+        io.to(socket.id).emit(`room:leave:set`);
     });
 
     // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 참여자가 채팅방에서 나갔을때)
-    socket.on('leave:chat-room', async (chatRoomNo, participantNo) => {
+    socket.on('leave:chat-room', async (chatRoomNo, participantNo, nickname) => {
 
         // socket.leave(data.roomName, (result) => { });
         // 회원
@@ -280,30 +284,27 @@ io.on("connection", (socket) => {
         // 비회원
         // roomNo, participantNo를 가져와야 하는데 front단에서 넘겨줘야 하지 않을까??????
 
-        await exitChatMember(chatRoomNo, participantNo); //zrem
-        let AllChatMembers = await getAllChatMember(currentRoomName).then(res => res);
-        console.log("allChatMembers", AllChatMembers);
-        const memberObj = {
-            "chatRoomNo": chatRoomNo,
-            "participantNo": participantNo,
-        }
-
+        redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
+            console.log('leave:chat-room', result); // 1
+        });
+        // const memberObj = {
+        //     "chatRoomNo": chatRoomNo,
+        //     "participantNo": participantNo,
+        // }
         const leaveMessage = {
             "validation": "leave",
-            "message": `notice:${socket.id}님이 room${chatRoomNo}방을 나가셨습니다.`,
-            memberObj,
-            AllChatMembers,
+            "message": `${nickname}님이 방을 나가셨습니다.`,
+            "state": 0,
+            "chatRoomNo": chatRoomNo,
+            "participantNo": participantNo,
+            "notReadCount": 0
         }
 
-
-        io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
+        await messageController.addMessage(leaveMessage);
+        await messageController.leaveRoom(chatRoomNo);
         io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
 
-        // 레디스 구독 취소
-        redisClient.unsubscribe(`room${chatRoomNo}`);
-        // 소켓 방 나가야 됨
-        socket.leave(`room${chatRoomNo}`);
-
+        io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
 
 
         // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
@@ -328,7 +329,6 @@ io.on("connection", (socket) => {
     const sendMemberStatus = async () => {
         let onlineChatMember;
         await getOnlineChatMember(currentRoomName).then(res => onlineChatMember = res);
-        console.log("getOnlineChatMember", onlineChatMember);
         const object = {
             "validation": "members_status",
             onlineChatMember
@@ -355,7 +355,6 @@ const getOnlineChatMember = currentRoomName => { // 해당 채팅방의 온라�
 
 const getAllChatMember = currentRoomName => { // 해당 채팅방의 총 인원 구할 때 사용
     currentRoomName = getRoomNo(currentRoomName);
-
     return new Promise((resolve, reject) => {
         redisClient.zcard(currentRoomName, (error, result) => {
             if (error) {

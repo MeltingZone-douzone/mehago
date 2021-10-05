@@ -78,11 +78,16 @@ public class ChatRoomRepository {
         return sqlSession.update("chatroom.deleteChatRoom", chatRoomNo) == 1 ? true : false;
     }
 
-    public boolean exitRoom(Map<String, Long> map) {
-        return sqlSession.update("chatroom.exitRoom", map) == 1 ? true : false;
+    public boolean exitRoomNonmember(Map<String, Long> map) {
+        return sqlSession.update("chatroom.exitRoomNonmember", map) == 1 ? true : false;
+    }
+
+    public boolean exitRoomMember(Map<String, Long> map) {
+        return sqlSession.update("chatroom.exitRoomMember", map) == 1 ? true : false;
     }
 
     public List<Map<String, Object>> getRoomInfoNonMember(Long nonMemberNo) {
         return sqlSession.selectList("chatroom.getRoomInfoNonMember", nonMemberNo);
     }
+
 }

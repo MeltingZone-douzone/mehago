@@ -1,17 +1,24 @@
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 import React from 'react';
 import styled from 'styled-components';
 import '../assets/sass/chat/modal.scss';
 
-export default function ChatRoomModalPassword({ handleChange, account, password, wrongPassword, basicEnterRoom, passwordValidation, hiddenPasswordInput, handleKeyPress }) {
+export default function ChatRoomModalPassword({ handleChange, account, password, wrongPassword, basicEnterRoom, passwordValidation, hiddenPasswordInput, handleKeyPress, limitCountMsg }) {
 
     const showPasswordInput = () => {
         return <TextField id="chat-room-modal-password-input" variant="outlined" type="password" name="password" label="비밀번호" placeholder="8 ~ 10자 영문, 숫자의 비밀번호를 입력하세요." onKeyPress={(e) => handleKeyPress(e)} onChange={(e) => handleChange(e)} value={password} helperText={wrongPassword ? "비밀번호가 틀렸습니다" : null}/>
     }
 
+    const showResultMsgText = () => {
+        return <Typography id="chat-room-modal-resultMsg-text" variant="subtitle2" noWrap>인원이 가득 차 입장할 수 없습니다.</Typography>
+    }
+
     return (
         <ContentTemplate>
+            {
+                limitCountMsg ? showResultMsgText() : null
+            }
             {
                 hiddenPasswordInput ? null : showPasswordInput()
             }

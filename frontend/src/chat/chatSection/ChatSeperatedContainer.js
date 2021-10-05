@@ -52,8 +52,8 @@ const Container = styled.div`
     //TODO : media - height
 
     width:100%;
-    height:95%;
-    max-height: 95%;
+    height:92%;
+    max-height: 92%;
     display:flex;
     justify-content: center;
     align-items: center;

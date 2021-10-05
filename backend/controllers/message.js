@@ -5,7 +5,7 @@ const participantModel = require("../models/participant");
 module.exports = {
     addMessage: async function (insertMsg) {
         const result = await messageModel.addMessage(insertMsg);
-
+        console.log(result ,": affectedRows");
         if (result.affectedRows == 1) {
             insertMsg.no = result.insertId;
             await participantModel.addNotReadCount(insertMsg.chatRoomNo);
@@ -31,6 +31,9 @@ module.exports = {
         const result = await participantModel.updateNotReadCountToZero(participant);
         console.log(result);
 
+    },
+    leaveRoom : async function (chatRoomNo) {
+        console.log(chatRoomNo);
     }
 
 };

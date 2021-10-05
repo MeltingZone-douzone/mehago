@@ -15,7 +15,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, setParticipatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -23,7 +23,6 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
-    const [leaveMessage, setLeaveMessage] = useState('');
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -74,21 +73,23 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             console.log(e);
         }
     }
+    // setNotice(
+    // notice.filter((notice) => notice.no !== msg.no)
 
-    const exitRoom = async (chatRoomNo) => {
+    const exitRoom = (chatRoomNo, nickname) => {
+        console.log("chatRoomNo:", chatRoomNo);
         try {
-            await exitRoomApi(chatRoomNo).then((res) => {
-                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
-                setLeaveMessage(res.data.data.chatNickname);
-                // setLeaveMessage(res.data.data.chatNickname + "님이 퇴장하였습니다.") ;
+            exitRoomApi(chatRoomNo).then((res) => {
+
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, nickname);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
-
                         localStorage.set('token', res.data);
                     })
                 };
-                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no);
             })
+            fetchRooms(); TODO:
+            fetchFavoriteRooms();
         } catch (error) {
             console.log();
         }
@@ -108,7 +109,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
-                    <Link to="/chat"><NaviButton><HomeIcon /></NaviButton></Link>
+                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link> {/* 일단 홈 클릭하면 채팅방리스트으로 보이게 해놓음 */}
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>
