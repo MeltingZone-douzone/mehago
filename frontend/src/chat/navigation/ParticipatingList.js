@@ -27,7 +27,6 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
         });
 
         socket.on(`join:room${room.no}`, (msg) => {
-            console.log(`join:room${room.no}`);
             setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
 
@@ -42,17 +41,14 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
             setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
 
-        socket.on(`room:leave:room${room.no}`, (msg) => {
-            console.log(`room:leave:room${room.no}`, msg);
-            setUpdatedRoom(prevState => ({ ...prevState, ["title"]: "(알수없음)" }));
+        socket.on(`room:leave:${room.no}`, (msg) => {
+            deletedParticipatingRoom.deletedParticipatingRoom(msg);
         })
     }, [])
 
     useEffect(() => {
         return () => {
             if (room !== updatedRoom) {
-                console.log(room);
-                console.log(updatedRoom);
                 updateParticipatingRoom(updatedRoom);
             }
         }
@@ -91,21 +87,21 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                 <div className={"profileHeader"}>
                     {
                         userInfo !== undefined ?
-                        <Button
-                            className={classes.favoriteButton}
-                            onClick={() => {
-                                setFavoriteCheck(room.favoriteRoom ? false : true)
-                                updateFavoriteRoom(room.no, room.favoriteRoom)
-                            }}>
-                            {
-                                room.favoriteRoom ?
-                                    <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
-                                    :
-                                    <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
-                            }
-                        </Button>
-                        :
-                        null
+                            <Button
+                                className={classes.favoriteButton}
+                                onClick={() => {
+                                    setFavoriteCheck(room.favoriteRoom ? false : true)
+                                    updateFavoriteRoom(room.no, room.favoriteRoom)
+                                }}>
+                                {
+                                    room.favoriteRoom ?
+                                        <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
+                                        :
+                                        <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
+                                }
+                            </Button>
+                            :
+                            null
                     }
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
@@ -140,7 +136,7 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                 <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize: '1em' }}>{'채팅방에서 나가시겠습니까?'} </Typography>} />
                 <div className={"modalButton"}>
                     <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
-                    <Button className={classes.okButton} onClick={() => { exitRoom(room.no, userInfo.nickname); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    <Button className={classes.okButton} onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
                 </div>
             </Modal>
         </div >

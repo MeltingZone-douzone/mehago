@@ -198,12 +198,8 @@ io.on("connection", (socket) => {
 
     socket.on('chat message', async (message) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount });
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state": 1 });
         await messageController.addMessage(insertMsg);
-        if (state === 0) {
-            console.log("들어오고 나가는거 알림");
-
-        }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
 
@@ -287,10 +283,7 @@ io.on("connection", (socket) => {
         redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
             console.log('leave:chat-room', result); // 1
         });
-        // const memberObj = {
-        //     "chatRoomNo": chatRoomNo,
-        //     "participantNo": participantNo,
-        // }
+
         const leaveMessage = {
             "validation": "leave",
             "message": `${nickname}님이 방을 나가셨습니다.`,
@@ -300,13 +293,16 @@ io.on("connection", (socket) => {
             "notReadCount": 0
         }
 
+
         await messageController.addMessage(leaveMessage);
         await messageController.leaveRoom(chatRoomNo);
-        io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
+
 
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
+        io.to(socket.id).emit(`room:leave:${chatRoomNo}`);
 
-
+        socket.leave(`room${chatRoomNo}`, (result) => { });
+        redisClient.unsubscribe(`room${chatRoomNo}`);
         // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
         // io.of('/').adapter.subClient.end(); // 구독자 설정 해제
@@ -323,6 +319,11 @@ io.on("connection", (socket) => {
 
     // delete:chat-room -> 방 삭제했을 때
     socket.on("delete:chat-room", () => {
+        redisClient.zremrangebylex(getRoomNo(currentRoomName), "-", "+");
+        const roomDeleted = {
+            "validation": "room-deleted",
+            "deletedRoomNo": roomObj.no
+        }
 
     });
 

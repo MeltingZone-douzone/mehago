@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import { getParticipantInfo, getRoomInfo, getSearchMessage, addNotice, deleteNotice, getNotice, fileUpload, getFileList, changePassword, updateChatRoomInfo } from "../../../api/ChatApi";
+import { createDeletedChatAlarmApi } from '../../../api/AlarmApi';
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, participants, userInfo, fetchRooms}) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, participants, userInfo, fetchRooms }) {
     const chatRoomNo = match.params.no;
 
     const [participantObject, setParticipantObject] = useState({});
@@ -105,7 +106,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             }
         });
 
-        handleParticipants(chatRoomNo); // 방의 participants 뽑아옴
+        handleParticipants.fetchParticipants(chatRoomNo); // 방의 participants 뽑아옴
         setJoinSuccess(true);
     }, [chatRoomNo]);
 
@@ -115,11 +116,11 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         }
     }, [participantObject])
 
-    // useEffect(() =>{
-    //     if(participants){
-    //         console.log(participants);
-    //     }
-    // },[participants])
+    useEffect(() => {
+        if (participants) {
+            console.log(participants);
+        }
+    }, [participants])
 
     useEffect(() => {
         socket.on(`members:status:room${chatRoomNo}`, (msgToJson) => {
@@ -127,9 +128,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             handleCurrentParticipants(onlineChatMember);
         });
         socket.on(`room:updateInfo`, (msgToJson) => {
-            if (msgToJson.roomObject === roomObject.no) {
-                setRoomObject(msgToJson.roomObject);
-            }
+            setRoomObject(msgToJson.roomObject);
         })
         socket.on('disconnect', (msgToJson) => {
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
@@ -139,11 +138,17 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
-        socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
-            history.push("/chat")
+
+        socket.on(`room:leave:${chatRoomNo}`, () => {
+            history.push("/chat");
         });
-        socket.on(`room:leave:set`, (msgToJson) => {
-            console.log('room:leave:set');
+
+        socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) => {
+            handleParticipants.leaveParticipant(msgToJson.participantNo);
+        });
+
+        socket.on(`join:room${chatRoomNo}`, () => {
+            handleParticipants.fetchParticipants(chatRoomNo);
         })
 
         return () => {
@@ -155,7 +160,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     useEffect(() => {
         return () => {
             socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
-            handleParticipants(); // 네비 Member없애기 위함
+            handleParticipants.fetchParticipants(); // 네비 Member없애기 위함
         }
     }, []);
 
@@ -171,7 +176,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             setJoinSuccess(false);
             noticeList(roomObject.no);
             fileUploadList(roomObject.no);
-            
+
         }
     }, [joinSuccess]);
 
@@ -317,17 +322,19 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         },
 
         deletedChatRoom: async (reason) => {
-            console.log(participants,reason);
+            const participantsAccountNo = participants.map((participant) => {
+                if (participant.accountNo)
+                    return participant.accountNo;
+            })
 
-            alarm = {
-                "accountNo" : participants.accountNo,
-                "chatRoomNo" : participants.chatRoomNo,
-                "reason" : reason,
-                "read" : false
+            const alarmData = {
+                "participantsAccountNo": participantsAccountNo,
+                "chatRoomNo": chatRoomNo,
+                "reason": reason,
+                "read": false
             }
 
-            createDeletedChatAlarmApi(alarm).then();
-            //여기서 알람생성 추가 비회원 제외
+            createDeletedChatAlarmApi(alarmData).then(res => console.log(res));
             socket.emit('delete:chat-room');
         }
     }

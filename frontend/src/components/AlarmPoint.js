@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-export default function AlarmPoint({num}) {
+export default function AlarmPoint({num, left, top}) {
 
     return(
-        <PointPosition>
+        <PointPosition left={left} top={top}>
             <Point>{num}</Point>
         </PointPosition>
     );
@@ -14,6 +14,8 @@ const PointPosition = styled.div`
     display: inline-block;
     bottom: 8px;
     right: 15px;
+    left: ${({left}) => left};
+    top: ${({top}) => top};
 `
 const Point = styled.div`
     display:flex;

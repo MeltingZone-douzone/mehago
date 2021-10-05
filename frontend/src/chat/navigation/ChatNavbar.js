@@ -76,12 +76,10 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     // setNotice(
     // notice.filter((notice) => notice.no !== msg.no)
 
-    const exitRoom = (chatRoomNo, nickname) => {
-        console.log("chatRoomNo:", chatRoomNo);
+    const exitRoom = (chatRoomNo) => {
         try {
             exitRoomApi(chatRoomNo).then((res) => {
-
-                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, nickname);
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, res.data.data.chatNickname);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
                         localStorage.set('token', res.data);

@@ -409,6 +409,7 @@ public class ChatController {
             result = chatRoomService.exitRoomMember(Long.parseLong(chatRoomNo), participant.getNo()); // 알 수 없음
         } else {
             participant.setNo(auth.getNo());
+            participant.setChatNickname(auth.getNickname());
             result = chatRoomService.exitRoomNonmember(Long.parseLong(chatRoomNo), participant.getNo());
         }
         return ResponseEntity.ok()
