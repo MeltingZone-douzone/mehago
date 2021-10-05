@@ -28,21 +28,27 @@ export default function ChatPage({ match, userInfo }) {
         setCurrentParticipants(arrayOfNumbers);
     }
 
-    const handleParticipants = (chatRoomNo) => {
-        if(chatRoomNo) {
-            try {
-                getParticipantsList(chatRoomNo).then(res => {
-                    if (res.data.result == "fail") {
-                        console.log('fail');
-                        return;
-                    }
-                    setParticipants(res.data.data);
-                })
-            } catch (error) {
-                console.log(error);
+    const handleParticipants = {
+        fetchParticipants : (chatRoomNo) =>{
+            if(chatRoomNo) {
+                try {
+                    getParticipantsList(chatRoomNo).then(res => {
+                        if (res.data.result == "fail") {
+                            console.log('fail');
+                            return;
+                        }
+                        setParticipants(res.data.data);
+                    })
+                } catch (error) {
+                    console.log(error);
+                }
+            } else{
+                setParticipants([]);
             }
-        } else{
-            setParticipants([]);
+        },
+
+        leaveParticipant : (leaveParticipantNo) =>{
+            setParticipants(prevState => prevState.filter(participant => participant.no != leaveParticipantNo));
         }
     }
 

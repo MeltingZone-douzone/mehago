@@ -283,10 +283,7 @@ io.on("connection", (socket) => {
         redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
             console.log('leave:chat-room', result); // 1
         });
-        // const memberObj = {
-        //     "chatRoomNo": chatRoomNo,
-        //     "participantNo": participantNo,
-        // }
+
         const leaveMessage = {
             "validation": "leave",
             "message": `${nickname}님이 방을 나가셨습니다.`,
@@ -294,12 +291,13 @@ io.on("connection", (socket) => {
             "chatRoomNo": chatRoomNo,
             "participantNo": participantNo,
             "notReadCount": 0
-        }
+        } 
+        
 
         await messageController.addMessage(leaveMessage);
         await messageController.leaveRoom(chatRoomNo);
-        io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
 
+        io.to(socket.id).emit(`room:leave:${chatRoomNo}`);
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
         
 
@@ -319,13 +317,17 @@ io.on("connection", (socket) => {
 
     // delete:chat-room -> 방 삭제했을 때
     socket.on("delete:chat-room", () => {
+        redisClient.zremrangebylex(getRoomNo(currentRoomName),"-","+");
+        const roomDeleted = {
+            "validation": "room-deleted",
+            "deletedRoomNo" : roomObj.no
+        }
 
     });
 
     const sendMemberStatus = async () => {
         let onlineChatMember;
         await getOnlineChatMember(currentRoomName).then(res => onlineChatMember = res);
-        console.log('onlineChatMember', onlineChatMember);
         const object = {
             "validation": "members_status",
             onlineChatMember

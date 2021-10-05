@@ -15,6 +15,7 @@
 		<typeAlias type="com.douzone.mehago.vo.FileUpload" alias="fileupload"/>
 		<typeAlias type="com.douzone.mehago.vo.Message" alias="message"/>
 		<typeAlias type="com.douzone.mehago.vo.PasswordVo" alias="passwordvo"/>
+		<typeAlias type="com.douzone.mehago.vo.Alarm" alias="alarm"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="mybatis/mappers/account.xml" />
@@ -25,5 +26,6 @@
 		<mapper resource="mybatis/mappers/todo.xml" />
 		<mapper resource="mybatis/mappers/notice.xml" />
 		<mapper resource="mybatis/mappers/fileupload.xml" />
+		<mapper resource="mybatis/mappers/alarm.xml" />
 	</mappers>
 </configuration>
