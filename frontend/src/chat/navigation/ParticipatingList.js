@@ -36,7 +36,6 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
         });
 
         socket.on(`join:room${room.no}`, (msg)=>{
-            console.log(msg);
             setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
         });
         

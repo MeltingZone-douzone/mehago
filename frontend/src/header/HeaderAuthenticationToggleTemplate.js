@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import AlarmToggle from '../alarm/AlarmToggle';
 import AccountToggleProfile from './AuthenticationToggleProfile';
-import DevelopingModelMsg from '../components/DevelopingModeMsg';
 
-export default function HeaderAuthenticationToggleTemplate({handleAuthentication, userInfo, hiddenAlarm, hiddenProfile, onClose, setUserInfo}) {
+
+export default function HeaderAuthenticationToggleTemplate({handleAuthentication, userInfo, alarms, hiddenAlarm, hiddenProfile, onClose, setUserInfo}) {
 
     const [pointRightpx,setPointRightpx] = useState(null);
 
@@ -18,7 +19,8 @@ export default function HeaderAuthenticationToggleTemplate({handleAuthentication
     function getUsedComponent (){
         if(!hiddenAlarm){
             return(
-                <DevelopingModelMsg/>
+                <AlarmToggle
+                    alarms={alarms}/>
             );
         }else if(!hiddenProfile){
             return(
@@ -69,6 +71,7 @@ const ToggleTemplate = styled.div`
     right:10px;
     width:300px;
     height:auto;
+    max-height: 800px;
     
     background: #fff;
     border: 1px solid #ccc;

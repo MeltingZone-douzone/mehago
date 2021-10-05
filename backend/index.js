@@ -152,7 +152,7 @@ io.on("connection", (socket) => {
                 AllChatMembers,
                 state : 0
             }
-
+ 
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(joinMessage));
             participantObj.hasData = true;
         }
@@ -288,8 +288,8 @@ io.on("connection", (socket) => {
             "validation": "leave",
             "message": `notice:${socket.id}님이 room${chatRoomNo}방을 나가셨습니다.`,
             memberObj
-        }
-        io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
+        } 
+        io.to(socket.id).emit(`room:leave:${chatRoomNo}`);
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
 
 
@@ -309,7 +309,6 @@ io.on("connection", (socket) => {
 
     // delete:chat-room -> 방 삭제했을 때
     socket.on("delete:chat-room", () => {
-        console.log("delete",roomObj);
         redisClient.zremrangebylex(getRoomNo(currentRoomName),"-","+");
         const roomDeleted = {
             "validation": "room-deleted",
@@ -322,7 +321,6 @@ io.on("connection", (socket) => {
     const sendMemberStatus = async () => {
         let onlineChatMember;
         await getOnlineChatMember(currentRoomName).then(res => onlineChatMember = res);
-        console.log(onlineChatMember);
         const object = {
             "validation": "members_status",
             onlineChatMember
