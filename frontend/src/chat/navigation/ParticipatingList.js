@@ -42,9 +42,15 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
             setUpdatedRoom(prevState => ({...prevState, ["notReadCount"] : 0}));
         });
     
-        socket.on(`room:deleted:room${room.no}`, (msg) =>{
+        socket.on(`room:leave:${room.no}`, (msg) =>{
             deletedParticipatingRoom.deletedParticipatingRoom(msg);
         });
+
+        socket.on(`room:deleted:room${room.no}`, (msg) =>{
+            deletedParticipatingRoom.deletedParticipatingRoom(msg);
+            deletedParticipatingRoom.handleAlarm();
+        });
+
     },[])
 
     useEffect(()=>{

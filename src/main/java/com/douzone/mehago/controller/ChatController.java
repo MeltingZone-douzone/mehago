@@ -191,6 +191,7 @@ public class ChatController {
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 To-Do가 존재하지 않습니다"));
     }
 
+
     @Auth(role = "ACCOUNT")
     @PostMapping("/todo")
     public ResponseEntity<?> addTodo(@RequestBody Todo todo) {

@@ -7,14 +7,14 @@ import { colors } from '../assets/styles/properties/Colors';
 import HeaderAuthenticationButtons from './HeaderAuthenticationButtons';
 
 
-export default function Header({ handleAuthentication, authentication, userInfo ,setUserInfo}) {
+export default function Header({ handleAuthentication, authentication, userInfo ,setUserInfo, alarms, alarmsCount, setAlarmsCount}) {
 
     return (
         <HeaderContainer>
             <NavLink to="/"><LogoImg src={Logo} alt="LogoImage"></LogoImg></NavLink>
             {/* <div style={{marginLeft:"5rem"}}>navi</div> */}
             {authentication && userInfo ?
-                <HeaderAuthenticationButtons handleAuthentication={handleAuthentication} userInfo={userInfo} setUserInfo={setUserInfo} />
+                <HeaderAuthenticationButtons handleAuthentication={handleAuthentication} userInfo={userInfo} setUserInfo={setUserInfo} alarms={alarms} alarmsCount={alarmsCount} setAlarmsCount={setAlarmsCount}/>
                 :
                 <AuthenticationWrapper>
                     <NavLinkButton to="/account/login">로그인</NavLinkButton>

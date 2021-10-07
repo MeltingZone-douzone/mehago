@@ -3,8 +3,11 @@ package com.douzone.mehago.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import com.douzone.mehago.entities.ChatRoomEntity;
 import com.douzone.mehago.repository.ChatRoomRepository;
+import com.douzone.mehago.repository.ES_ChatRoomRepository;
 import com.douzone.mehago.vo.ChatRoom;
 
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ public class ChatRoomService {
 
     private final ParticipantService participantService;
     private final ChatRoomRepository chatRoomRepository;
+    private final ES_ChatRoomRepository esChatRoomRepository;
 
     public Long createRoom(ChatRoom chatRoom) {
         return chatRoomRepository.createRoom(chatRoom);
@@ -89,6 +93,5 @@ public class ChatRoomService {
     public List<Map<String, Object>> getRoomInfoNonMember(Long nonMemberNo) {
         return chatRoomRepository.getRoomInfoNonMember(nonMemberNo);
     }
-
 
 }

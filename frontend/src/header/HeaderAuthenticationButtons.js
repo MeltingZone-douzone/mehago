@@ -9,30 +9,16 @@ import HeaderDropdownTemp from './HeaderAuthenticationToggleTemplate';
 import Thumbnail from '../components/Thumbnail';
 import { NavLink } from 'react-router-dom';
 import CircleDiv from '../assets/styles/CircleDiv';
-import { getAlarmsApi, updateAlarmsApi } from '../../api/AlarmApi';
+import { updateAlarmsApi } from '../../api/AlarmApi';
 
 
-const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo}) =>{
+const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo, alarms, alarmsCount, setAlarmsCount}) =>{
 
     const [hiddenProfile,setHiddenProfile] = useState(true);
     const [hiddenAlarm,setHiddenAlarm] = useState(true);
     const [hiddenTemp,setHiddenTemp] = useState(true);
-    const [alarms, setAlarms] = useState([]);
-    const [alarmsCount, setAlarmsCount] = useState("");
     const [updated, setUpdated] = useState(false);
     const toggleContainer = useRef(null);
-
-    useEffect(()=>{
-        if(userInfo){
-            getAlarmsApi().then((res) =>{
-                if(res.data.result === 'fail') {
-                    return;
-                }
-                setAlarms(res.data.data);
-                setAlarmsCount(res.data.data.length);
-            })
-        }
-    },[userInfo]);
 
     useEffect(() =>{
 

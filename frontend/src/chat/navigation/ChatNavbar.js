@@ -85,7 +85,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                     })
                 };
             })
-            fetchRooms(); TODO:
+            fetchRooms();
             fetchFavoriteRooms();
         } catch (error) {
             console.log();

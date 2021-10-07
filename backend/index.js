@@ -112,6 +112,9 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
         case "leave": io.to(roomname).emit(`members:leave:${roomname}`, msgToJson);
             break;
         case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
+            break;
+        case "room-deleted": io.to(roomname).emit(`room:deleted:${roomname}`,msgToJson);
+            break;
     }
 });
 
@@ -198,7 +201,7 @@ io.on("connection", (socket) => {
 
     socket.on('chat message', async (message) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount } );
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state":1});
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
@@ -297,9 +300,11 @@ io.on("connection", (socket) => {
         await messageController.addMessage(leaveMessage);
         await messageController.leaveRoom(chatRoomNo);
 
-        io.to(socket.id).emit(`room:leave:${chatRoomNo}`);
+        io.to(socket.id).emit(`room:leave:${chatRoomNo}`, {"chatRoomNo": chatRoomNo});
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
         
+        socket.leave(`room${chatRoomNo}`);
+        redisClient.unsubscribe(`room${chatRoomNo}`);
 
         // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
@@ -318,11 +323,14 @@ io.on("connection", (socket) => {
     // delete:chat-room -> 방 삭제했을 때
     socket.on("delete:chat-room", () => {
         redisClient.zremrangebylex(getRoomNo(currentRoomName),"-","+");
+        const temp = getAllChatMember(currentRoomName)
+        console.log(temp);
+
         const roomDeleted = {
             "validation": "room-deleted",
-            "deletedRoomNo" : roomObj.no
+            "chatRoomNo" : roomObj.no
         }
-
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(roomDeleted));
     });
 
     const sendMemberStatus = async () => {

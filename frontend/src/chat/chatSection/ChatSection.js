@@ -117,9 +117,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     }, [participantObject])
 
     useEffect(() =>{
-        if(participants){
-            console.log(participants);
-        }
+        if(participants){}
     },[participants])
 
     useEffect(() => {
@@ -143,13 +141,17 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             history.push("/chat");
         });
 
-        socket.on(`room:leave:room${chatRoomNo}`, (msgToJson) =>{ 
+        socket.on(`room:deleted:room${chatRoomNo}`, () =>{
+            history.push("/chat");
+        });
+
+        socket.on(`members:leave:room${chatRoomNo}`, (msgToJson) =>{ 
             handleParticipants.leaveParticipant(msgToJson.participantNo);
         });
 
         socket.on(`join:room${chatRoomNo}`, () =>{
             handleParticipants.fetchParticipants(chatRoomNo);
-        })
+        });
 
         return () => {
             socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요
@@ -159,8 +161,10 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
         return () => {
-            socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
-            handleParticipants.fetchParticipants(); // 네비 Member없애기 위함
+            if(userInfo) {
+                socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
+                handleParticipants.fetchParticipants(); // 네비 Member없애기 위함
+            }
         }
     }, []);
 

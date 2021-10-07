@@ -10,7 +10,7 @@ import { getParticipantsList, getMyChatListApi } from '../../../api/ChatApi'
 import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:8888');
-export default function ChatPage({ match, userInfo }) {
+export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
 
     const [participants, setParticipants] = useState([]);
     const [currentParticipants, setCurrentParticipants] = useState([]);
@@ -87,10 +87,21 @@ export default function ChatPage({ match, userInfo }) {
         setParticipatingRoom(updatedParticipatingRoom);
     }
 
-    const deletedParticipatingRoom = () =>{
-    
-    }
+    const deletedParticipatingRoom = {
+        deletedParticipatingRoom:({chatRoomNo}) =>{
+            let newArr = participatingRoom.map((room)=>{
+                if(room.no != chatRoomNo) {
+                    return room;
+                }
+            })
+            newArr = newArr.filter(arr => typeof arr === 'object');
+            setParticipatingRoom(newArr);
+        },
 
+        handleAlarm: ()  =>{
+            reloadHeaderAlarm();
+        }
+    }
     return (
         <div className={"ChattingContainer"} >
             <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants = {setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />
