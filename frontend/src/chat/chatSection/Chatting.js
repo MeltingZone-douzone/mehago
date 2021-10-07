@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput, notice }) {
     const messageAreaRef = useRef();
-
+    console.log(participantObject);
     const [offsetNo, setOffsetNo] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
 
@@ -24,7 +24,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     useEffect(() => {
         socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
-            console.log(msg , "msgmsgmsgmsgmsg");
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
@@ -34,11 +33,16 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
         });
         fetchItems();
 
-        socket.on(`members:leave:room${chatRoomNo}`, (msg)=>{
-            setReceivedMsg(msg);
-        });
+        // socket.on(`members:leave:room${chatRoomNo}`, (msg)=>{
+        //     console.log(msg , "msg");
+        //     setReceivedMsg(msg);
+        //     // setMessageList([...messageList, msg]);
+
+        // });
         socket.on(`join:room${chatRoomNo}`, (msg)=>{
-            setReceivedMsg(msg);
+            // setReceivedMsg(msg);
+            setMessageList([...messageList, msg]);
+
         });
     }, []);
 

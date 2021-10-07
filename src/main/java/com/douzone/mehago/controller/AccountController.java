@@ -19,10 +19,12 @@ import com.douzone.mehago.vo.TokenInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -107,14 +109,12 @@ public class AccountController {
     }
 
     @PostMapping("/findByNameAndEmail")
-    public ResponseEntity<?> findByNameAndEmail(@RequestBody TokenInfo auth, Mail mailDto) {
-        Account account = new Account(auth);
+    public ResponseEntity<?> findByNameAndEmail(@RequestBody Account account, Mail mailDto) {
         Account accountVo = null;
         try {
             String name = account.getName();
             String email = account.getEmail();
             accountVo = accountService.searchAccount(name, email);
-            System.out.println(accountVo + "aaaaaa");
             if (accountVo == null) {
                 return ResponseEntity.ok().body("false");
             }

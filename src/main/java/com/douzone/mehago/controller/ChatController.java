@@ -246,15 +246,12 @@ public class ChatController {
 
     @GetMapping("/enterRoomValidation")
     public ResponseEntity<?> enterRoomValidation(Long chatRoomNo, @AuthUser TokenInfo auth) {
-        System.out.println(auth);
-
         if (auth.getNo() == null) {
             return ResponseEntity.ok().body(CommonResponse.success("noNickname"));
         }
         Boolean result = participantService.isExistsParticipants(chatRoomNo,
                 (auth.getIsNonMember() == true ? 0L : auth.getNo()), // accountNo
                 (auth.getIsNonMember() == true ? auth.getNo() : 0L)); // nonMemberNo
-        System.out.println(result);
         return ResponseEntity.ok().body(result ? CommonResponse.success(result) : CommonResponse.fail("재입장입니다."));
     }
 

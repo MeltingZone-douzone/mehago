@@ -146,7 +146,8 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         });
         socket.on(`room:leave:set`, (msgToJson) => {
             console.log('room:leave:set');
-        })
+            console.log(msgToJson);
+        });
 
         return () => {
             socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요

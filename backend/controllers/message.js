@@ -4,9 +4,10 @@ const participantModel = require("../models/participant");
 
 module.exports = {
     addMessage: async function (insertMsg) {
+        console.log("insertMsg", insertMsg);
         const result = await messageModel.addMessage(insertMsg);
         console.log(result ,": affectedRows");
-        if (result.affectedRows == 1) {
+        if (result.affectedRows == 1 ) {
             insertMsg.no = result.insertId;
             await participantModel.addNotReadCount(insertMsg.chatRoomNo);
         }

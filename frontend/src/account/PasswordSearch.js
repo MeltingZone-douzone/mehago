@@ -11,6 +11,7 @@ export default function PasswordSearch() {
   const classes = madeStyles();
   const [accounts, setAccount] = useState({name:"", email:""});
   const [sendMassege, setSendMassege] = useState("");
+  
   const onChangeUserInput = (e) => {
     const { name, value } = e.target;
     setAccount({
@@ -18,6 +19,7 @@ export default function PasswordSearch() {
       [name]:value}
     );
   };
+
   const emailSend = () => {
     console.log("보내기");
     try {
