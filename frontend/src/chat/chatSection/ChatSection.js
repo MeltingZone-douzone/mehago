@@ -6,7 +6,7 @@ import '../../assets/sass/chat/ChatRoomSection.scss';
 import ChatHeader from './ChatHeader';
 import ChatSeperatedContainer from './ChatSeperatedContainer';
 
-export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, participants, userInfo, fetchRooms}) {
+export default function ChatSection({ history, match, handleCurrentParticipants, handleParticipants, socket, participants, userInfo, fetchRooms }) {
     const chatRoomNo = match.params.no;
 
     const [participantObject, setParticipantObject] = useState({});
@@ -43,7 +43,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     };
 
     useEffect(() => {
-        socket.on(`notice`, (msg) => {
+        socket.on(`notice:room${chatRoomNo}`, (msg) => {
             if (msg.noticeAdd === true) {
                 setNotice([msg, ...notice]);
             } else {
@@ -66,7 +66,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
 
 
     useEffect(() => {
-        socket.on(`file`, (msg) => {
+        socket.on(`file:room${chatRoomNo}`, (msg) => {
             console.log(msg)
             const newList = msg.files.concat(fileList);
             console.log(newList);
@@ -136,7 +136,6 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const arrayOfNumbers = msgToJson.chatMember.map(Number);
             handleCurrentParticipants(arrayOfNumbers);
         });
-
         socket.on(`room:leave:${chatRoomNo}`, () => {
             history.push("/chat");
         });
@@ -148,8 +147,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         socket.on(`members:leave:room${chatRoomNo}`, (msgToJson) =>{ 
             handleParticipants.leaveParticipant(msgToJson.participantNo);
         });
-
-        socket.on(`join:room${chatRoomNo}`, () =>{
+        socket.on(`join:room${chatRoomNo}`, () => {
             handleParticipants.fetchParticipants(chatRoomNo);
         });
 
@@ -180,7 +178,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             setJoinSuccess(false);
             noticeList(roomObject.no);
             fileUploadList(roomObject.no);
-            
+
         }
     }, [joinSuccess]);
 
@@ -326,16 +324,16 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         },
 
         deletedChatRoom: async (reason) => {
-            const participantsAccountNo = participants.map((participant) =>{
-                if(participant.accountNo)
+            const participantsAccountNo = participants.map((participant) => {
+                if (participant.accountNo)
                     return participant.accountNo;
             })
-             
+
             const alarmData = {
                 "participantsAccountNo": participantsAccountNo,
-                "chatRoomNo" : chatRoomNo,
-                "reason" : reason,
-                "read" : false
+                "chatRoomNo": chatRoomNo,
+                "reason": reason,
+                "read": false
             }
 
             createDeletedChatAlarmApi(alarmData).then(res => console.log(res));

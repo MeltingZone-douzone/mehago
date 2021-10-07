@@ -9,4 +9,5 @@ public class FileUpload {
     private Long participantNo;
     private String url;
     private String createdAt;
+    private String type;
 }

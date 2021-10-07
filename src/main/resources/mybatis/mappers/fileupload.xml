@@ -7,7 +7,7 @@
 
   <insert id="addFile" parameterType="fileupload">
    <![CDATA[
-    insert into file_upload values(null, #{chatRoomNo}, #{participantNo }, #{url }, now())
+    insert into file_upload values(null, #{chatRoomNo}, #{participantNo }, #{url }, now(), #{type })
     ]]>
         <selectKey keyProperty="no" order="AFTER" resultType="Long">
             select last_insert_id()
@@ -17,14 +17,33 @@
   <select id="getFileList" parameterType="map" resultType="fileupload">
   <![CDATA[
     select 
-      no, url, created_at as createdAt
+      no, url, created_at as createdAt, type
     from 
       file_upload
     where 
       chat_room_no =  #{chatRoomNo}
       AND
-	  created_at > (select created_at from participant where account_no = #{accountNo} and chat_room_no=#{chatRoomNo})
+      ]]>
+      <choose>
+      <when test="(0L).equals(accountNo)==false">
+      <![CDATA[
+	      created_at > (select created_at from participant where account_no = #{accountNo} and chat_room_no= #{chatRoomNo } and is_deleted=false)
+      ]]>
+       </when>
+       <otherwise>
+      <![CDATA[
+	      created_at > (select created_at from participant where no = #{nonMemberNo } and chat_room_no=#{chatRoomNo})
+      ]]>
+      </otherwise>
+      </choose>
+      <![CDATA[
     order by no desc
   ]]>
+  </select>
+
+  <select id="getFileName" parameterType="Long" resultType="map">
+      select url, type
+      from file_upload
+      where no = #{fileNo }
   </select>
 </mapper>

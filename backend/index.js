@@ -99,11 +99,11 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "members_status": io.to(roomname).emit(`members:status:${roomname}`, msgToJson);
             break;
-        case "notice": io.to(roomname).emit('notice', msgToJson);
+        case "notice": io.to(roomname).emit(`notice:${roomname}`, msgToJson);
             break;
-        case "file": io.to(roomname).emit('file', msgToJson);
+        case "file": io.to(roomname).emit(`file:${roomname}`, msgToJson);
             break;
-        case "todo": io.to(roomname).emit('todo', msgToJson);
+        case "todo": io.to(roomname).emit(`todo:${roomname}`, msgToJson);
             break;
         case "update": io.to(roomname).emit(`message:update:readCount:${roomname}`, msgToJson);
             break;
@@ -187,7 +187,7 @@ io.on("connection", (socket) => {
             changedRows
         }
         console.log(object);
-        if (changedRows ) {
+        if (changedRows) {
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object));
             io.to(socket.id).emit(`update:readCount:${currentRoomName}`, { "chatRoomNo": roomObj.no });
         }
@@ -201,7 +201,7 @@ io.on("connection", (socket) => {
 
     socket.on('chat message', async (message) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state":1});
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state": 1 });
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
@@ -282,10 +282,10 @@ io.on("connection", (socket) => {
 
         // 비회원
         // roomNo, participantNo를 가져와야 하는데 front단에서 넘겨줘야 하지 않을까??????
+        // redisClient.zremrangebylex(chatRoomNo, `${participantNo}`);
+        // redisClient.zrem(chatRoomNo, `${participantNo}`);
 
-        redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
-            console.log('leave:chat-room', result); // 1
-        });
+        exitChatMember(chatRoomNo, participantNo);
 
         const leaveMessage = {
             "validation": "leave",
@@ -294,8 +294,8 @@ io.on("connection", (socket) => {
             "chatRoomNo": chatRoomNo,
             "participantNo": participantNo,
             "notReadCount": 0
-        } 
-        
+        }
+
 
         await messageController.addMessage(leaveMessage);
         await messageController.leaveRoom(chatRoomNo);
@@ -322,13 +322,10 @@ io.on("connection", (socket) => {
 
     // delete:chat-room -> 방 삭제했을 때
     socket.on("delete:chat-room", () => {
-        redisClient.zremrangebylex(getRoomNo(currentRoomName),"-","+");
-        const temp = getAllChatMember(currentRoomName)
-        console.log(temp);
-
+        redisClient.zremrangebylex(getRoomNo(currentRoomName), "-", "+");
         const roomDeleted = {
             "validation": "room-deleted",
-            "chatRoomNo" : roomObj.no
+            "deletedRoomNo": roomObj.no
         }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(roomDeleted));
     });
@@ -362,12 +359,24 @@ const getOnlineChatMember = currentRoomName => { // 해당 채팅방의 온라�
 
 const getAllChatMember = currentRoomName => { // 해당 채팅방의 총 인원 구할 때 사용
     currentRoomName = getRoomNo(currentRoomName);
-
     return new Promise((resolve, reject) => {
         redisClient.zcard(currentRoomName, (error, result) => {
             if (error) {
                 reject(error);
             } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+const exitChatMember = (chatRoomNo, participantNo) => { // 해당 채팅방의 총 인원 구할 때 사용
+    return new Promise((resolve, reject) => {
+        redisClient.zrem(chatRoomNo, participantNo, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                console.log("zrem success", result);
                 resolve(result);
             }
         });
