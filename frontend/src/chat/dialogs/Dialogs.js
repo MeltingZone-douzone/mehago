@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent,  DialogTitle } from '@material-ui/core';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
 import { DropzoneDialog } from 'material-ui-dropzone';
 
 export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUploadOpen }) {
@@ -33,7 +33,6 @@ export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUplo
                 submitButtonText={"등록"}
                 maxFileSize={50000000} /**변경하기???? */
                 open={fileUploadOpen}
-                acceptedFiles={['image/jpeg', 'image/png', 'image/jpg']}
                 onClose={buttonFunction.handleClose}
                 onSave={(files) => { buttonFunction.handleFileUploadSubmit(files) }}
                 showPreviews={true}

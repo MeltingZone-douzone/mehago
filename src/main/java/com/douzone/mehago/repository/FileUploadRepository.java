@@ -29,4 +29,8 @@ public class FileUploadRepository {
         return sqlSession.selectList("fileupload.getFileList", map);
     }
 
+    public Map<String, String> getFileName(Long fileNo) {
+        return sqlSession.selectOne("fileupload.getFileName", fileNo);
+    }
+
 }

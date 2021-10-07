@@ -163,8 +163,8 @@ public class ChatController {
             file.setChatRoomNo(Long.valueOf(chatRoomNo));
             file.setParticipantNo(Long.valueOf(participantNo));
             file.setUrl(fileUploadService.restore("chatroom", a));
+            file.setType(fileUploadService.getType(a));
             file.setNo(fileUploadService.addFile(file));
-            System.out.println("file" + file.toString());
             fileList.add(file);
         }
         return ResponseEntity.ok().body(CommonResponse.success(fileList));
