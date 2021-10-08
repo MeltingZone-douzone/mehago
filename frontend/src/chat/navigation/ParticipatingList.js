@@ -62,6 +62,7 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
         }
     }, [updatedRoom])
 
+    console.log(room);
 
     function timeForToday(leastMessageAt) {
         const today = new Date();
@@ -103,15 +104,20 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                             }}>
                             {
                                 room.favoriteRoom ?
-                                    <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
+                                    <StarRateRoundedIcon style={{ color: '#f4e02d'}} />
                                     :
-                                    <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
+                                    <StarRateRoundedIcon style={{ color: '#c0c0c0'}} />
                             }
                         </Button>
                         :
                         null
                     }
-                    <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
+                    {
+                        userInfo && room.owner === userInfo.no ?
+                        null
+                        :
+                        <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
+                    }
                 </div>
                 <Link to={`/chat/${room.no}`}>
                 <ListItem button key={`${room.no}`} className={classes.roomContainer} >
@@ -222,14 +228,15 @@ const madeStyles = makeStyles({
         minHeight: "2px",
         minWidth: "2px",
         padding: 0,
-        paddingLeft: "2px"
+        paddingLeft: "3px"
     },
     exitRoom: {
         minHeight: "0.5px",
         float: "right",
         minWidth: "1px",
         padding: 0,
-        paddingRight: "5px"
+        paddingRight: "5px",
+        color: '#686868'
     },
     close: {
         color: '#ffffff',

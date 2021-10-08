@@ -23,6 +23,8 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
     const [noData, setNoData] = useState(false);
     const [searchMessageOffset, setSearchMessageOffset] = useState([]);
 
+
+    console.log('offsetNo: ', offsetNo);
     useEffect(() => {
         socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
             console.log(msg , "msgmsgmsgmsgmsg");

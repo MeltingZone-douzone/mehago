@@ -11,6 +11,8 @@ import { colors } from '../../assets/styles/properties/Colors';
 import Logo from '../../assets/images/black-mehago.png';
 import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
 import { createNonMember } from '../../../api/AccountApi';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
 
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
@@ -106,7 +108,9 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
                     <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link> {/* 일단 홈 클릭하면 채팅방리스트으로 보이게 해놓음 */}
-                    <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
+                    <NaviButton active={chatList} onClick={() => handleChatList()}>
+                        <FontAwesomeIcon icon={faComments} style={{fontSize: '1em'}} />    
+                    </NaviButton>
                     <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
                 </div>
                 <div className={"FavoriteNav"}>

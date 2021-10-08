@@ -1,17 +1,20 @@
 import React, { Fragment } from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent,  DialogTitle } from '@material-ui/core';
+import { Button, TextField, Dialog, DialogActions, DialogContent,  DialogTitle, makeStyles } from '@material-ui/core';
 import { DropzoneDialog } from 'material-ui-dropzone';
 
 export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUploadOpen }) {
+
+    const classes = madeStyle();
     return (
-        <Fragment>
+        <Fragment> {/* TODO:YJ 왜 Fragment */}
             <Dialog open={noticeOpen} onClose={buttonFunction.handleClose} aria-labelledby="form-dialog-title">
                 <form onSubmit={buttonFunction.handleNoticeSubmit}>
-                    <DialogTitle id="form-dialog-title">Notice</DialogTitle>
+                    <DialogTitle className={classes.formDialogTitle} id="form-dialog-title">공지사항</DialogTitle>
                     <DialogContent>
                         <TextField
                             margin="dense"
-                            label="Insert your Notice"
+                            label="공지사항"
+                            placeholder="공지사항을 입력해주세요"
                             name="notice"
                             type="text"
                             autoFocus={true}
@@ -42,3 +45,9 @@ export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUplo
         </Fragment>
     );
 }
+
+const madeStyle = makeStyles({
+    formDialogTitle: {
+        width: '500px'
+    }
+})

@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import moment from 'moment';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import pictures from '../../../assets/images/images.svg';
 
 export default function ChatUtilFile({ fileList }) {
     return (
@@ -17,11 +17,11 @@ export default function ChatUtilFile({ fileList }) {
                                 </Fragment>
                                 :
                                 <Image key={index} src={file.url} />
-                        )
+                        ) 
                     })
                     :
                     <NonFile>
-                        <Pictures src={pictures} />
+                        <ErrorOutlineIcon/>
                         <Text>업로드 한 이미지가 없습니다.</Text>
                     </NonFile>
 
@@ -35,8 +35,10 @@ const Container = styled.div`
     width:100%;
 `
 const Text = styled.div`
-    font-weight:bold;
-    margin:10px 0;
+    text-align: center;
+    width: 100%;
+    padding-top:1em;
+    color: #272727;
 `
 const ImageContainer = styled.div`
     margin: 20px 0;
@@ -48,8 +50,11 @@ const Image = styled.img`
 `
 
 const NonFile = styled.div`
-   margin-top: 10%;
-   text-align:center;
+    color: #272727;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1em;
 `
 
 const Pictures = styled.img`

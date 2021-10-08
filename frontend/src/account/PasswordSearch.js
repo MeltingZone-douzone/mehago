@@ -5,6 +5,7 @@ import "../assets/sass/account/Form.scss";
 import axios from "axios";
 
 import NonMembers from "../components/NonMember";
+import Login from "../components/Login";
 
 export default function PasswordSearch() {
 
@@ -97,7 +98,7 @@ export default function PasswordSearch() {
           </div>
         </ThemeProvider>
       </form>
-      <NonMembers />
+      <Login />
     </div>
   );
 }
