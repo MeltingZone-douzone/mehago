@@ -39,7 +39,7 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
         socket.on(`members:leave:room${room.no}`, (msg) => {
             // 멤버 줄이기 추가도 해야됨
             console.log("members:leave", msg)
-            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
+            setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["participantCount"]: msg.AllChatMembers }));
         });
 
         socket.on(`room:leave:${room.no}`, (msg) => {

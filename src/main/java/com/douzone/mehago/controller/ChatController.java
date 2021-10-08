@@ -110,7 +110,11 @@ public class ChatController {
 
     @GetMapping("/getMessageList/{chatRoomNo}")
     public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset, @AuthUser TokenInfo auth) {
-        List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset), auth.getNo());
+
+        List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset),
+                auth.getIsNonMember() == true ? auth.getNo()
+                        : participantService.getParticipantInfo(new Account(auth), chatRoomNo).getNo());
+
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
     }
@@ -191,7 +195,6 @@ public class ChatController {
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 To-Do가 존재하지 않습니다"));
     }
-
 
     @Auth(role = "ACCOUNT")
     @PostMapping("/todo")
