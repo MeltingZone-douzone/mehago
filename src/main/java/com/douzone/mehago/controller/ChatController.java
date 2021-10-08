@@ -94,7 +94,7 @@ public class ChatController {
 
         // chatRoomNo, participantNo return 해야됨... (페이지 이동)
         participant.setNo(participantNo);
-        return ResponseEntity.ok().body( CommonResponse.success(participant));
+        return ResponseEntity.ok().body(CommonResponse.success(participant));
     }
 
     @GetMapping("/roomInfo/{chatRoomNo}")
@@ -163,8 +163,8 @@ public class ChatController {
             file.setChatRoomNo(Long.valueOf(chatRoomNo));
             file.setParticipantNo(Long.valueOf(participantNo));
             file.setUrl(fileUploadService.restore("chatroom", a));
+            file.setType(fileUploadService.getType(a));
             file.setNo(fileUploadService.addFile(file));
-            System.out.println("file" + file.toString());
             fileList.add(file);
         }
         return ResponseEntity.ok().body(CommonResponse.success(fileList));
@@ -172,7 +172,8 @@ public class ChatController {
 
     @GetMapping("/getFileList/{chatRoomNo}")
     public ResponseEntity<?> getFileList(@PathVariable String chatRoomNo, @AuthUser TokenInfo auth) {
-        List<FileUpload> list = fileUploadService.getFileList(Long.valueOf(chatRoomNo), auth.getNo());
+        List<FileUpload> list = fileUploadService.getFileList(Long.valueOf(chatRoomNo),
+                auth.getIsNonMember() == true ? 0L : auth.getNo(), auth.getIsNonMember() == true ? auth.getNo() : 0L);
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 올린 파일이 없습니다."));
     }
@@ -190,6 +191,7 @@ public class ChatController {
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 To-Do가 존재하지 않습니다"));
     }
+
 
     @Auth(role = "ACCOUNT")
     @PostMapping("/todo")
@@ -358,8 +360,8 @@ public class ChatController {
             favoriteRoomList = chatRoomService.getFavoriteRoomList((auth.getIsNonMember() == true ? 0L : auth.getNo()),
                     (auth.getIsNonMember() == true ? auth.getNo() : 0L));
         }
-        return ResponseEntity.ok().body(favoriteRoomList.size() == 0 ? CommonResponse.success(favoriteRoomList)
-                : CommonResponse.fail("not exist participantingRoom"));
+        return ResponseEntity.ok().body(favoriteRoomList == null ? CommonResponse.fail("not exist participantingRoom")
+                : CommonResponse.success(favoriteRoomList));
     }
 
     @GetMapping("/getFavoriteRoomList")
@@ -405,6 +407,7 @@ public class ChatController {
             result = chatRoomService.exitRoomMember(Long.parseLong(chatRoomNo), participant.getNo()); // 알 수 없음
         } else {
             participant.setNo(auth.getNo());
+            participant.setChatNickname(auth.getNickname());
             result = chatRoomService.exitRoomNonmember(Long.parseLong(chatRoomNo), participant.getNo());
         }
         return ResponseEntity.ok()

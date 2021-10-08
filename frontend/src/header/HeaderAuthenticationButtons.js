@@ -2,22 +2,36 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
-import { faBell as solidBell, faPlus} from '@fortawesome/free-solid-svg-icons';
+import { faBell as solidBell} from '@fortawesome/free-solid-svg-icons';
 
+import AlarmPoint from '../components/AlarmPoint';
 import HeaderDropdownTemp from './HeaderAuthenticationToggleTemplate';
 import Thumbnail from '../components/Thumbnail';
 import { NavLink } from 'react-router-dom';
 import CircleDiv from '../assets/styles/CircleDiv';
+import { updateAlarmsApi } from '../../api/AlarmApi';
 
 
-const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo}) =>{
+const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo, alarms, alarmsCount, setAlarmsCount}) =>{
 
     const [hiddenProfile,setHiddenProfile] = useState(true);
     const [hiddenAlarm,setHiddenAlarm] = useState(true);
     const [hiddenTemp,setHiddenTemp] = useState(true);
+    const [updated, setUpdated] = useState(false);
     const toggleContainer = useRef(null);
 
-    
+    useEffect(() =>{
+
+        if(!hiddenAlarm && !updated) {
+            updateAlarmsApi().then(res => {
+                console.log(res);
+                if(res.data.result === 'fail') {
+                    return ;
+                }
+                setUpdated(true);
+            });
+        }
+    },[hiddenAlarm])
 
     function handleSetAlarm (){
         if(!hiddenProfile){
@@ -26,6 +40,7 @@ const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo}) =>{
 
         if(hiddenAlarm){
             setHiddenAlarm(false);
+            setAlarmsCount(0);
         }else{
             setHiddenAlarm(true);
         }
@@ -82,23 +97,30 @@ const AccountHeaderButtons = ({handleAuthentication, userInfo, setUserInfo}) =>{
             <CreateChatRoomButton to="/chat">
                 <span>방 둘러보기</span>
             </CreateChatRoomButton>
+            <AlarmsCount>
             <DropdownButton onClick={() => handleSetAlarm()}>
                 {
                     hiddenAlarm?
-                    <FontAwesomeIcon icon={faBell} size="2x" color="#fff"/>
+                    <>
+                        <FontAwesomeIcon icon={faBell} size="2x" color="#fff"/>
+                        {alarmsCount ? <AlarmPoint num={alarmsCount} left={"30px"} top={"20px"}/> : null}
+                    </>
                     :
                     <FontAwesomeIcon icon={solidBell} size="2x" color="#fff"/>
                 }
             </DropdownButton>
-                    <DropdownButton onClick={() => handleSetProfile()}>
-                    <ImageDiv>
-                        <Thumbnail thumbnailUrl={userInfo.thumbnailUrl} nickname={userInfo.nickname}/>
-                    </ImageDiv>
-                    </DropdownButton>
+            </AlarmsCount>
+            <DropdownButton onClick={() => handleSetProfile()}>
+                <ImageDiv>
+                    <Thumbnail thumbnailUrl={userInfo.thumbnailUrl} nickname={userInfo.nickname}/>
+                </ImageDiv>
+            </DropdownButton>
             {
                 hiddenTemp? null:
                 <HeaderDropdownTemp
                     userInfo = {userInfo}
+                    alarms = {alarms}
+                    alarmsCount = {alarmsCount}
                     handleAuthentication = {handleAuthentication}
                     hiddenAlarm = {hiddenAlarm}
                     hiddenProfile = {hiddenProfile}
@@ -168,4 +190,8 @@ const CreateChatRoomButton = styled(NavLink)`
         background-color: #00000010;
         transition-duration: .5s;
     }
+`
+
+const AlarmsCount = styled.div`
+    position: relative;
 `

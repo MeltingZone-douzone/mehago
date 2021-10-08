@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import com.douzone.mehago.repository.FileUploadRepository;
 import com.douzone.mehago.vo.FileUpload;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,9 +23,14 @@ public class FileUploadService {
 	private final FileUploadRepository fileUploadRepository;
 
 	private static final String ACCOUNT_SAVE_PATH = "/uploads-mehago/account";
-	private static final String CATHROOM_SAVE_PATH = "/uploads-mehago/chatroom";
+	private static final String CHATROOM_SAVE_PATH = "/uploads-mehago/chatroom";
 	private static final String ACCOUNT_URL_BASE = "/images/account";
-	private static final String CATHROOM_URL_BASE = "/images/chatroom";
+	private static final String CHATROOM_URL_BASE = "/images/chatroom";
+
+	public String getType(MultipartFile file) {
+		String type = FilenameUtils.getExtension(file.getOriginalFilename());
+		return type;
+	}
 
 	public String restore(String imageCategory, MultipartFile file) {
 		String url = null;
@@ -48,7 +55,7 @@ public class FileUploadService {
 			if (imageCategory == "account") {
 				os = new FileOutputStream(ACCOUNT_SAVE_PATH + "/" + saveFilename);
 			} else if (imageCategory == "chatroom") {
-				os = new FileOutputStream(CATHROOM_SAVE_PATH + "/" + saveFilename);
+				os = new FileOutputStream(CHATROOM_SAVE_PATH + "/" + saveFilename);
 			}
 
 			os.write(data);
@@ -57,7 +64,7 @@ public class FileUploadService {
 			if (imageCategory == "account") {
 				url = ACCOUNT_URL_BASE + "/" + saveFilename;
 			} else if (imageCategory == "chatroom") {
-				url = CATHROOM_URL_BASE + "/" + saveFilename;
+				url = CHATROOM_URL_BASE + "/" + saveFilename;
 			}
 
 		} catch (IOException e) {
@@ -85,8 +92,12 @@ public class FileUploadService {
 		return fileUploadRepository.addFile(file);
 	}
 
-	public List<FileUpload> getFileList(Long chatRoomNo, Long accountNo) {
-		return fileUploadRepository.getFileList(chatRoomNo, accountNo);
+	public List<FileUpload> getFileList(Long chatRoomNo, Long accountNo, Long nonMemberNo) {
+		return fileUploadRepository.getFileList(chatRoomNo, accountNo, nonMemberNo);
+	}
+
+	public Map<String, String> getFileName(Long fileNo) {
+		return fileUploadRepository.getFileName(fileNo);
 	}
 
 }

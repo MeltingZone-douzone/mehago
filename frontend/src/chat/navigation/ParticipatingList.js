@@ -15,43 +15,47 @@ import AlarmPoint from '../../components/AlarmPoint';
 
 Modal.setAppElement('body');
 
-export default function ParticipatingList({ socket, room, userInfo, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom}) {
+export default function ParticipatingList({ socket, room, userInfo, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom }) {
     const classes = madeStyles();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
-    const [nonMember, setNonMember] = useState({});
-
-    useEffect(() => {
-        if (!userInfo) {
-            getNonMemberInfo().then(res => {
-                setNonMember(res.data.data);
-            });
-        }
-    }, [userInfo]);
-
+    // 나가는거 구현해야 됨
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
-            setUpdatedRoom(prevState => ((userInfo ? userInfo.no != msg.accountNo : nonMember.no != msg.participantNo ) ?  {...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now(), ["notReadCount"] : prevState.notReadCount + 1} : {...prevState, ["leastMessage"] : msg.message, ["leastMessageAt"] : Date.now()}));
+            console.log(`chat:message:room${room.no}`);
+            setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now(), ["notReadCount"]: prevState.notReadCount + 1 }));
         });
 
-        socket.on(`join:room${room.no}`, (msg)=>{
-            console.log(msg);
-            setUpdatedRoom(prevState => ({...prevState, ["participantCount"] : msg.AllChatMembers}));
+        socket.on(`join:room${room.no}`, (msg) => {
+            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
-        
-        socket.on(`update:readCount:room${room.no}`, () =>{
-            setUpdatedRoom(prevState => ({...prevState, ["notReadCount"] : 0}));
+
+        socket.on(`update:readCount:room${room.no}`, (msg) => {
+            console.log(`update:readCount:room${room.no}`);
+            setUpdatedRoom(prevState => ({ ...prevState, ["notReadCount"]: 0 }));
+        });
+
+        socket.on(`members:leave:room${room.no}`, (msg) => {
+            // 멤버 줄이기 추가도 해야됨
+            console.log("members:leave", msg)
+            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
     
-        socket.on(`room:deleted:room${room.no}`, (msg) =>{
+        socket.on(`room:leave:${room.no}`, (msg) =>{
             deletedParticipatingRoom.deletedParticipatingRoom(msg);
         });
+
+        socket.on(`room:deleted:room${room.no}`, (msg) =>{
+            deletedParticipatingRoom.deletedParticipatingRoom(msg);
+            deletedParticipatingRoom.handleAlarm();
+        });
+
     },[])
 
-    useEffect(()=>{
+    useEffect(() => {
         return () => {
-            if(room !== updatedRoom) {
-                room.leastMessage !== updatedRoom.leastMessage ? updateParticipatingRoomMessage(updatedRoom) : updateParticipatingRoom(updatedRoom);
+            if (room !== updatedRoom) {
+                updateParticipatingRoom(updatedRoom);
             }
         }
     }, [updatedRoom])
@@ -89,40 +93,40 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                 <div className={"profileHeader"}>
                     {
                         userInfo !== undefined ?
-                        <Button
-                            className={classes.favoriteButton}
-                            onClick={() => {
-                                setFavoriteCheck(room.favoriteRoom ? false : true)
-                                updateFavoriteRoom(room.no, room.favoriteRoom)
-                            }}>
-                            {
-                                room.favoriteRoom ?
-                                    <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
-                                    :
-                                    <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
-                            }
-                        </Button>
-                        :
-                        null
+                            <Button
+                                className={classes.favoriteButton}
+                                onClick={() => {
+                                    setFavoriteCheck(room.favoriteRoom ? false : true)
+                                    updateFavoriteRoom(room.no, room.favoriteRoom)
+                                }}>
+                                {
+                                    room.favoriteRoom ?
+                                        <StarRateRoundedIcon style={{ color: '#f4e02d' }} />
+                                        :
+                                        <StarRateRoundedIcon style={{ color: '#c0c0c0' }} />
+                                }
+                            </Button>
+                            :
+                            null
                     }
                     <Button className={classes.exitRoom} onClick={() => setModalIsOpen(true)}><ExitToAppRoundedIcon /></Button>
                 </div>
                 <Link to={`/chat/${room.no}`}>
-                <ListItem button key={`${room.no}`} className={classes.roomContainer} >
-                    <ChattingRoomImage>
-                        <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
-                    </ChattingRoomImage>
-                    <ChattingRoomContent>
-                        <div className={classes.content}>
-                            <span className={classes.title} > {room.title} </span>
-                            <span className={classes.participantCount}>{updatedRoom.participantCount === 1 ? ' ' : updatedRoom.participantCount}</span>
-                            <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
-                        </div>
-                        <div className={classes.content}>
-                            <span className={classes.leastMessage}>{updatedRoom.leastMessage ? updatedRoom.leastMessage : '새로운 채팅방입니다.'}</span> {updatedRoom.notReadCount ? <AlarmPoint num={updatedRoom.notReadCount} /> : null }
-                        </div>
-                    </ChattingRoomContent>
-                </ListItem>
+                    <ListItem button key={`${room.no}`} className={classes.roomContainer} >
+                        <ChattingRoomImage>
+                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
+                        </ChattingRoomImage>
+                        <ChattingRoomContent>
+                            <div className={classes.content}>
+                                <span className={classes.title} > {room.title} </span>
+                                <span className={classes.participantCount}>{updatedRoom.participantCount === 1 ? ' ' : updatedRoom.participantCount}</span>
+                                <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
+                            </div>
+                            <div className={classes.content}>
+                                <span className={classes.leastMessage}>{updatedRoom.leastMessage ? updatedRoom.leastMessage : '새로운 채팅방입니다.'}</span> {updatedRoom.notReadCount ? <AlarmPoint num={updatedRoom.notReadCount} /> : null}
+                            </div>
+                        </ChattingRoomContent>
+                    </ListItem>
                 </Link>
             </List>
             <Modal
@@ -138,7 +142,7 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                 <ListItemText className={classes.container} align="center" primary={<Typography style={{ fontSize: '1em' }}>{'채팅방에서 나가시겠습니까?'} </Typography>} />
                 <div className={"modalButton"}>
                     <Button className={classes.cancelButton} onClick={() => { setModalIsOpen(false) }} variant="contained" color="primary" disableElevation>취소</Button>
-                    <Button className={classes.okButton} onClick={() => { exitRoom(room.no, userInfo.nickname); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
+                    <Button className={classes.okButton} onClick={() => { exitRoom(room.no); setModalIsOpen(false); }} variant="contained" color="primary" disableElevation>확인</Button>
                 </div>
             </Modal>
         </div >

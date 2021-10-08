@@ -12,5 +12,9 @@ public class Alarm {
     private boolean read;
     private String createdAt;
 
-    
+    private String nickname;
+    private String title;
+    private String thumbnailUrl;
+
+    private String[] participantsAccountNo;
 }
