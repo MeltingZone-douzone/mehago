@@ -67,13 +67,13 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
     }
 
     const updateParticipatingRoom = (updatedData) => {
-        const updatedParticipatingRoom = participatingRoom.map((room) => {
+        let newArr = participatingRoom.map((room) => {
             if (room.no != updatedData.no) {
                 return room;
-            } else {
-                return updatedData;
             }
         })
+        newArr = newArr.filter(arr => typeof arr === 'object');
+        const updatedParticipatingRoom = [].concat(updatedData, newArr);
         setParticipatingRoom(updatedParticipatingRoom);
     }
 
@@ -85,27 +85,32 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
         })
         newArr = newArr.filter(arr => typeof arr === 'object');
         const updatedParticipatingRoom = [].concat(updatedData, newArr);
+        console.log(updatedParticipatingRoom);
         setParticipatingRoom(updatedParticipatingRoom);
     }
 
+    //favoriteRoom 없애려고 만들었음
+    const [deletedRoom, setDeletedRoom] = useState();
+
     const deletedParticipatingRoom = {
-        deletedParticipatingRoom:({chatRoomNo}) =>{
-            let newArr = participatingRoom.map((room)=>{
-                if(room.no != chatRoomNo) {
+        deletedParticipatingRoom: ({ chatRoomNo }) => {
+            let newArr = participatingRoom.map((room) => {
+                if (room.no != chatRoomNo) {
                     return room;
                 }
             })
             newArr = newArr.filter(arr => typeof arr === 'object');
             setParticipatingRoom(newArr);
+            setDeletedRoom(chatRoomNo);
         },
 
-        handleAlarm: ()  =>{
+        handleAlarm: () => {
             reloadHeaderAlarm();
         }
     }
     return (
         <div className={"ChattingContainer"} >
-            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants={setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />
+            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants={setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} deletedRoom={deletedRoom} />
             <div className={"chattingRoom"}>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} socket={socket} userInfo={userInfo} />} />

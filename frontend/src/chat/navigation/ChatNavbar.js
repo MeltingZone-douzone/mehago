@@ -15,7 +15,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom, deletedRoom }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -23,6 +23,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
+
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -30,7 +31,16 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                     room.no === msg.roomObject.no ? { ...room, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl } : room)
             );
         })
-    }, [favoriteRoom])
+    }, [favoriteRoom]);
+
+    useEffect(() => {
+        if (deletedRoom !== undefined) {
+            setFavoriteRoom(
+                favoriteRoom.filter((room) =>
+                    room.no !== deletedRoom)
+            );
+        }
+    }, [deletedRoom]);
 
     useEffect(() => {
         fetchRooms();
@@ -53,7 +63,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         try {
             getFavoriteRoomList().then(res => {
                 if (res.data.result === "fail") {
-                    console.log("즐겨찾기 한 방이 없어요");
+                    // console.log("즐겨찾기 한 방이 없어요");
                     setFavoriteRoom([]);
                     return;
                 }
@@ -124,7 +134,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} /> : null}
+                {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} deletedRoom={deletedRoom} /> : null}
                 {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </div>
 

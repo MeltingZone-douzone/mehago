@@ -113,7 +113,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
             break;
-        case "room-deleted": io.to(roomname).emit(`room:deleted:${roomname}`,msgToJson);
+        case "room-deleted": io.to(roomname).emit(`room:deleted:${roomname}`, msgToJson);
             break;
     }
 });
@@ -300,9 +300,9 @@ io.on("connection", (socket) => {
         await messageController.addMessage(leaveMessage);
         await messageController.leaveRoom(chatRoomNo);
 
-        io.to(socket.id).emit(`room:leave:${chatRoomNo}`, {"chatRoomNo": chatRoomNo});
+        io.to(socket.id).emit(`room:leave:${chatRoomNo}`, { "chatRoomNo": chatRoomNo });
         io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
-        
+
         socket.leave(`room${chatRoomNo}`);
         redisClient.unsubscribe(`room${chatRoomNo}`);
 
@@ -325,7 +325,7 @@ io.on("connection", (socket) => {
         redisClient.zremrangebylex(getRoomNo(currentRoomName), "-", "+");
         const roomDeleted = {
             "validation": "room-deleted",
-            "deletedRoomNo": roomObj.no
+            "chatRoomNo": roomObj.no
         }
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(roomDeleted));
     });
