@@ -67,9 +67,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
 
     useEffect(() => {
         socket.on(`file:room${chatRoomNo}`, (msg) => {
-            console.log(msg)
             const newList = msg.files.concat(fileList);
-            console.log(newList);
             setFileList(newList);
         })
     }, [fileList]);

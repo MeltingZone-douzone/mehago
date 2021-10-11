@@ -19,7 +19,7 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
     const classes = madeStyles();
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
-    // 나가는거 구현해야 됨
+    
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
             console.log(`chat:message:room${room.no}`);
@@ -38,7 +38,9 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
         socket.on(`members:leave:room${room.no}`, (msg) => {
             // 멤버 줄이기 추가도 해야됨
             console.log("members:leave", msg)
-            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
+            if(msg.accountNo !== userInfo.no){
+                setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
+            }
         });
     
         socket.on(`room:leave:${room.no}`, (msg) =>{

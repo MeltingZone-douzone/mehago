@@ -59,7 +59,6 @@ export default function ChatList({ socket, userInfo }) {
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
         const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
         if (scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
-            console.log('개시발')
             fetchChatRooms();
             setIsFetching(true);
         }
@@ -129,7 +128,7 @@ export default function ChatList({ socket, userInfo }) {
                 noResult ? (
                     <p className={"noResult"}>{noResult}</p>
                 ) : (
-                    <div className={"ChatListContainer"} onScroll={onScroll}> {/*  ref={chatRoomAreaRef} */}
+                    <ChatListTemplate onScroll={onScroll}> {/*  ref={chatRoomAreaRef} */}
                         <List className={"ChatRoom"}>
                             {rooms ? getChatrooms().map((room, index) => {
                                 return (
@@ -156,7 +155,7 @@ export default function ChatList({ socket, userInfo }) {
                                 )
                             }) : null}
                         </List>
-                    </div>
+                    </ChatListTemplate>
                 )
             }
             <CreateChatRoomButton to="/chat/chatroom/create">
@@ -180,6 +179,35 @@ const materialStyles = makeStyles({
         marginTop: "9px"
     }
 })
+
+const ChatListTemplate = styled.div`
+    width: 100%;
+    height: 100%;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    .ChatRoom{
+        width: 90%;
+        height: 100%;
+        margin: auto;
+        display: grid;
+        
+        grid-template-columns: repeat(3,minmax(20%, auto));
+
+        gap: 2vw;
+
+        @media ${(props) =>props.theme.tablet}{
+            grid-template-columns: repeat(2,minmax(20%, auto));
+        }
+
+        @media ${(props) =>props.theme.mobileL}{
+            grid-template-columns: repeat(1,minmax(20%, auto));
+        }
+    }
+}
+`
 
 const ChatListContainer = styled.div`
     width:100%;

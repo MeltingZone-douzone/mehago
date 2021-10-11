@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import styled from 'styled-components';
 import ChatNavbar from '../../chat/navigation/ChatNavbar';
 import ChatSection from '../../chat/chatSection/ChatSection';
-import '../../assets/sass/chat/Chat.scss';
 import ChatList from '../../chat/ChatList';
 import CreateChatRoom from '../../chat/CreateChatRoom';
 import { getParticipantsList, getMyChatListApi } from '../../../api/ChatApi'
@@ -90,13 +90,17 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
 
     const deletedParticipatingRoom = {
         deletedParticipatingRoom:({chatRoomNo}) =>{
-            let newArr = participatingRoom.map((room)=>{
+            // let newArr = participatingRoom.map((room)=>{
+            //     if(room.no != chatRoomNo) {
+            //         return room;
+            //     }
+            // })
+            // newArr = newArr.filter(arr => typeof arr === 'object');
+            setParticipatingRoom(prevState => prevState.map((room) => {
                 if(room.no != chatRoomNo) {
                     return room;
                 }
-            })
-            newArr = newArr.filter(arr => typeof arr === 'object');
-            setParticipatingRoom(newArr);
+            }).filter(arr => typeof arr === 'object'));
         },
 
         handleAlarm: ()  =>{
@@ -104,15 +108,39 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
         }
     }
     return (
-        <div className={"ChattingContainer"} >
+        <ChattingContainer >
             <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants={setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />
-            <div className={"chattingRoom"}>
+            <ChattingRoom>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} socket={socket} userInfo={userInfo} />} />
                     <Route exact path={`${match.path}/:no`} render={(props) => <ChatSection {...props} socket={socket} handleCurrentParticipants={handleCurrentParticipants} handleParticipants={handleParticipants} participants={participants} userInfo={userInfo} fetchRooms={fetchRooms} />} />
                     <Route path={`${match.path}/chatroom/create`} render={(props) => <CreateChatRoom {...props} fetchRooms={fetchRooms} participatingRoom={participatingRoom} />} />
                 </Switch>
-            </div>
-        </div>
+            </ChattingRoom>
+        </ChattingContainer>
     )
 }
+
+const ChattingContainer = styled.div`
+    display: flex;
+    width: 100%;
+    height: 93vh;
+
+    @media only screen and (min-height: 700px) {
+        height: 92vh;
+    }
+
+    @media only screen and (min-height: 600px) {
+        height: 91vh;
+    }
+
+`
+
+const ChattingRoom = styled.div`
+    width: 80%;
+    height: 100%;
+    max-height: 100%;
+    @media ${(props) =>props.theme.laptop}{
+        width: 95%;
+    }
+`
