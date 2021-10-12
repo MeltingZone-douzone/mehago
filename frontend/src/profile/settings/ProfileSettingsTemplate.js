@@ -49,7 +49,9 @@ export default function UserSettingsTemplate({ handleAuthentication ,user, setti
                         phoneNumber = {user.phoneNumber}
                         setUserInfoApi = {settingsApi.setUserInfo}/>
             </SettingBox>
-            <DropOutButton onClick={() => { setModalIsOpen(true) }}>회원 탈퇴</DropOutButton>
+            <div className={classes.dropButton}>
+                <DropOutButton onClick={() => { setModalIsOpen(true) }}>회원 탈퇴</DropOutButton>
+            </div>
             <ReactModal
                 className={"modal"}
                 isOpen={modalIsOpen}
@@ -99,12 +101,9 @@ const TitleText = styled.div`
 `
 
 const DropOutButton = styled(FullColorButton)`
-    min-width: 100px;
-    margin-left: 72%;
-    margin-right: 18%;
     border-color:#ff0606cc;
     background-color:#ff0606cc;
-
+    padding: 10px;
     opacity:.9;
 `
 
@@ -137,5 +136,11 @@ const madeStyles = makeStyles({
         '&:hover': {
             background: '#40a3fd',
         },
+    },
+    dropButton:{
+        minWidth: "100px",
+        maxWidth: "800px",
+        display: "flex",
+        justifyContent: "flex-end"
     }
 })
