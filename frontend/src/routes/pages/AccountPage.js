@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import Logo from '../../assets/images/black-mehago.png';
 import "../../assets/sass/account/AccountPage.scss";
 import { Switch, Route, NavLink } from "react-router-dom";
@@ -13,7 +14,7 @@ import SignUpSuccess from "../../account/SignUpSuccess";
 
 export default function AccountPage({ match, isExistToken, setAuthentication }) {
     return (
-        <div className={"PageContainer"}>
+        <PageContainer>
             <div className={"Page"}>
                 <div className={"LogoWrapper"}>
                     <NavLink to="/account/login">
@@ -66,7 +67,7 @@ export default function AccountPage({ match, isExistToken, setAuthentication }) 
                 </div>
                 <Links />
             </div>
-        </div>
+        </PageContainer>
     )
 }
 
@@ -97,3 +98,19 @@ const pageStyle = {
     position: "absolute"
 
 };
+
+const PageContainer = styled.div`
+    display: flex;
+    width: 100%;
+    max-width: 100vw;
+    height: 93vh;
+
+    @media only screen and (min-height: 700px) {
+        height: 92vh;
+    }
+
+    @media only screen and (min-height: 600px) {
+        height: 91vh;
+    }
+
+`

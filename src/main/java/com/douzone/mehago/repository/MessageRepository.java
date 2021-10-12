@@ -17,11 +17,11 @@ public class MessageRepository {
 
     private final SqlSession sqlSession;
 
-    public List<Message> getMessageList(Long chatRoomNo, Long offset, Long accountNo) {
+    public List<Message> getMessageList(Long chatRoomNo, Long offset, Long participantNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("chatRoomNo", chatRoomNo);
         map.put("offset", offset);
-        map.put("accountNo", accountNo);
+        map.put("participantNo", participantNo);
         return sqlSession.selectList("message.getMessageList", map);
     }
 

@@ -208,6 +208,7 @@
 		<![CDATA[
 		select 
 			no, chat_nickname as chatNickname, chat_room_no as chatRoomNo, not_read_count as notReadCount, last_read_chat_no as lastReadChatNo
+			,(select if(max(no),'true','false') from message where participant_no = #{no }) as hasData
 		from
 			participant
 		where

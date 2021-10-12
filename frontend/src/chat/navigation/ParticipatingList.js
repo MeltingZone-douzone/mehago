@@ -18,7 +18,9 @@ Modal.setAppElement('body');
 export default function ParticipatingList({ socket, room, userInfo, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom }) {
     const classes = madeStyles();
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [leave, setLeave] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
+
     // 나가는거 구현해야 됨
     useEffect(() => {
         socket.on(`chat:message:room${room.no}`, (msg) => {
@@ -38,23 +40,27 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
         socket.on(`members:leave:room${room.no}`, (msg) => {
             // 멤버 줄이기 추가도 해야됨
             console.log("members:leave", msg)
-            setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
+            if(msg.accountNo !== userInfo.no){
+                setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["participantCount"]: msg.AllChatMembers }));
+            }
         });
-    
-        socket.on(`room:leave:${room.no}`, (msg) =>{
+
+        socket.on(`room:leave:${room.no}`, (msg) => {
+            setLeave(true);
             deletedParticipatingRoom.deletedParticipatingRoom(msg);
         });
 
-        socket.on(`room:deleted:room${room.no}`, (msg) =>{
-            deletedParticipatingRoom.deletedParticipatingRoom(msg);
+        socket.on(`room:deleted:room${room.no}`, (msg) => {
+            setLeave(true);
             deletedParticipatingRoom.handleAlarm();
+            deletedParticipatingRoom.deletedParticipatingRoom(msg);
         });
 
-    },[])
+    }, [])
 
     useEffect(() => {
         return () => {
-            if (room !== updatedRoom) {
+            if (!leave && room !== updatedRoom) {
                 updateParticipatingRoom(updatedRoom);
             }
         }

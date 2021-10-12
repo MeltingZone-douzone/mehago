@@ -28,7 +28,7 @@ export default function HomePage({ authentication, userInfo, handleAuthenticatio
     }
 
     return (
-        <div className={"PageContainer"}>
+        <PageContainer>
             <div className={"Page"}>
                 <img src={Logo} alt={"logo"} className={"logo"} />
                 <div className={"home"}>
@@ -36,9 +36,9 @@ export default function HomePage({ authentication, userInfo, handleAuthenticatio
                             (userInfo && userInfo.name !== "")?(
                             <div className={"homePage"}>
                                 <span className={"selectAcount"} ></span>
-                                <div className={"thumbnailUrl"}>
+                                <ChattingRoomImage>
                                     <Thumbnail thumbnailUrl={userInfo.thumbnailUrl} nickname={userInfo.nickname} />
-                                </div>
+                                </ChattingRoomImage>
                                 <div className={"container"}>
                                     <button className={"accountButton"} onClick={(e) => { chatting(e) }}>
                                         <Avatar className={classes.logoImg} alt="프로필 사진" src={userInfo.thumbnailUrl} />
@@ -72,7 +72,7 @@ export default function HomePage({ authentication, userInfo, handleAuthenticatio
 
                 </div>
             </div>
-        </div>
+        </PageContainer>
     )
 }
 
@@ -85,10 +85,8 @@ const madeStyles = makeStyles({
 });
 
 const ChattingRoomImage = styled.div`
-    width: 60px;
-    height: 50px;
-
-    overflow:hidden;
+    width: 200px;
+    
 
     border: 1px solid #ccc;
     border-color: rgba(0,0,0,.2);
@@ -100,4 +98,21 @@ const ChattingRoomContent = styled.div`
    flex-direction: column;
    width:100%;
    color: #000000;
+`
+
+
+const PageContainer = styled.div`
+    display: flex;
+    width: 100%;
+    max-width: 100vw;
+    height: 93vh;
+
+    @media only screen and (min-height: 700px) {
+        height: 92vh;
+    }
+
+    @media only screen and (min-height: 600px) {
+        height: 91vh;
+    }
+
 `

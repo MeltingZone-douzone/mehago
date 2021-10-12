@@ -1,28 +1,59 @@
+import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import Logo from '../../assets/images/black-mehago.png';
 import { Avatar, makeStyles } from '@material-ui/core';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import HomeIcon from '@material-ui/icons/Home';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PeopleAltOutlinedIcon from '@material-ui/icons/PeopleAltOutlined';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import localStorage from "local-storage";
 import styled from 'styled-components';
-import '../../assets/sass/chat/ChatNav.scss';
 import { colors } from '../../assets/styles/properties/Colors';
-import Logo from '../../assets/images/black-mehago.png';
+import '../../assets/sass/chat/ChatNav.scss';
+import localStorage from "local-storage";
+
 import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
 import { createNonMember } from '../../../api/AccountApi';
 
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom, deletedRoom }) {
     const classes = madeStyles();
+    const [trigger, setTrigger] = useState(false);
 
-    const [chatList, setChatList] = useState(true);
+    const [chatList, setChatList] = useState(()=>{
+        return window.innerWidth <= 1024 ? false: true;
+    });
     const [chatMember, setChatMember] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [favoriteRoom, setFavoriteRoom] = useState([]);
     const [favoriteCheck, setFavoriteCheck] = useState(false);
+
+    useEffect(()=>{
+        fetchRooms(); // 사이즈가 작아지면 패치가 안되기 때문에 다시 패치룸을 호출
+        
+        const delay = 300;
+        let timer = null;
+
+        window.addEventListener('resize', function (){
+            this.clearTimeout(timer);
+
+            timer = this.setTimeout(()=>{
+                if(this.window.innerWidth <= 1024){
+                    closeAll();
+                } else if (!trigger) {
+                    setChatList(true);
+                }
+
+            },delay)
+        })
+
+        return () => {
+            this.clearTimeout(timer);
+            window.removeEventListener('resize');
+        }
+    },[])
+
     useEffect(() => {
         socket.on(`room:updateInfo`, (msg) => {
             setFavoriteRoom(
@@ -30,13 +61,21 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                     room.no === msg.roomObject.no ? { ...room, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl } : room)
             );
         })
-    }, [favoriteRoom])
+    }, [favoriteRoom]);
+
+    useEffect(() => {
+        if (deletedRoom !== undefined) {
+            setFavoriteRoom(
+                favoriteRoom.filter((room) =>
+                    room.no !== deletedRoom)
+            );
+        }
+    }, [deletedRoom]);
 
     useEffect(() => {
         fetchRooms();
         fetchFavoriteRooms();
     }, [favoriteCheck]);
-
 
     useEffect(() => {
         // DB에 저장 된 채팅 방 모두 입장
@@ -53,7 +92,6 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         try {
             getFavoriteRoomList().then(res => {
                 if (res.data.result === "fail") {
-                    console.log("즐겨찾기 한 방이 없어요");
                     setFavoriteRoom([]);
                     return;
                 }
@@ -62,6 +100,12 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         } catch (e) {
             console.log(e);
         }
+    }
+
+    const closeAll = () => {
+        setTrigger(false);
+        setChatList(false);
+        setChatMember(false);
     }
 
     const updateFavoriteRoom = (chatRoomNo, favoriteStatus) => {
@@ -73,9 +117,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             console.log(e);
         }
     }
-    // setNotice(
-    // notice.filter((notice) => notice.no !== msg.no)
-
+    
     const exitRoom = (chatRoomNo) => {
         try {
             exitRoomApi(chatRoomNo).then((res) => {
@@ -96,16 +138,18 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const handleChatList = () => {
         setChatList(true);
         setChatMember(false);
+        setTrigger(true);
     }
 
     const handleChatMember = () => {
         setChatList(false);
         setChatMember(true);
+        setTrigger(true);
     }
 
     return (
-        <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
-            <div className={"ChatNavbar"}>
+        <ChatNav onClick={(e) => e.stopPropagation()}>
+            <ChatNavbarStyled>
                 <div className={"BasicNav"}>
                     <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link> {/* 일단 홈 클릭하면 채팅방리스트으로 보이게 해놓음 */}
                     <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
@@ -122,17 +166,25 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                         })
                     }
                 </div>
-            </div>
-            <div className={"ChatList"}>
+            </ChatNavbarStyled>
+            <ChatNavStyled trigger={trigger}>
+                {trigger? <CloseTrigger onClick={()=>closeAll()}><ArrowBackIcon/></CloseTrigger>: null}
                 {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} /> : null}
+                {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} deletedRoom={deletedRoom} /> : null}
                 {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
-            </div>
+            </ChatNavStyled>
 
 
-        </div>
+        </ChatNav>
     );
 }
 
+const madeStyles = makeStyles({
+    favoriteRoom: {
+        width: "30px",
+        height: "30px"
+    }
+})
 
 const NaviButton = styled.button`
     padding: 5px 5px;
@@ -143,11 +195,50 @@ const NaviButton = styled.button`
 
     background-color:#fff;
     color: ${props => props.active ? colors.mainThemeColor : "gray"};
+
 `
 
-const madeStyles = makeStyles({
-    favoriteRoom: {
-        width: "30px",
-        height: "30px"
+const ChatNav = styled.div`
+    display: flex;
+    height:100%;
+    width:23%;
+    overflow-x: hidden;
+
+    @media ${(props) =>props.theme.laptop}{
+        width: 40px;
     }
-})
+`
+
+const ChatNavbarStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-color: #fff;
+    min-width: 40px;
+    max-width: 3.5em;
+`
+
+const ChatNavStyled = styled.div`
+    width: 100%;
+    height: 100%;
+    background-color:#fff;
+    border-right: 1px solid #ccc;
+    transition: transform 0.3s ease-in-out;
+
+    @media ${(props) =>props.theme.laptop}{
+        position:absolute;
+        z-index:10;
+
+        width: 300px;
+        transform: ${({ trigger }) => trigger ? 'translateX(37px)' : 'translateX(-100%)'};
+    }
+`
+
+const CloseTrigger = styled.div`
+    position:absolute;
+    z-index:1;
+    padding: 10px;
+    left: 250px;
+    top:10px;
+`

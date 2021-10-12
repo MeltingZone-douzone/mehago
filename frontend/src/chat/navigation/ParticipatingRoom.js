@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { TextField, makeStyles, InputAdornment } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { NavLink } from 'react-router-dom';
 import ParticipatingList from './ParticipatingList';
 
 
