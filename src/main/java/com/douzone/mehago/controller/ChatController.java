@@ -344,6 +344,7 @@ public class ChatController {
                 participantService.updateIsDeleted(auth.getNo());
                 map.put("chatRoomNo", list.get(0).get("no"));
                 map.put("participantNo", auth.getNo());
+                map.put("nickname", auth.getNickname());
             }
 
             nonMember.setParticipantNo(participantService.addNonMember(participant));

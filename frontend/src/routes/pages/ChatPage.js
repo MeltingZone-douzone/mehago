@@ -110,7 +110,7 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
     }
     return (
         <ChattingContainer >
-            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants={setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} />
+            <ChatNavbar socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} setParticipants={setParticipants} fetchRooms={fetchRooms} participatingRoom={participatingRoom} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} deletedRoom={deletedRoom} />
             <ChattingRoom>
                 <Switch>
                     <Route exact path={match.path} render={(props) => <ChatList {...props} socket={socket} userInfo={userInfo} />} />
@@ -141,7 +141,7 @@ const ChattingRoom = styled.div`
     width: 80%;
     height: 100%;
     max-height: 100%;
-    @media ${(props) =>props.theme.laptop}{
+    @media ${(props) => props.theme.laptop}{
         width: 95%;
     }
 `

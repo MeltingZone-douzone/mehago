@@ -158,9 +158,11 @@ export default function ChatList({ socket, userInfo }) {
                     </ChatListTemplate>
                 )
             }
-            <CreateChatRoomButton to="/chat/chatroom/create">
-                <FontAwesomeIcon className={classes.createChatIcon} icon={faPlus} size="2x" />
-            </CreateChatRoomButton>
+            {userInfo ?
+                <CreateChatRoomButton to="/chat/chatroom/create">
+                    <FontAwesomeIcon className={classes.createChatIcon} icon={faPlus} size="2x" />
+                </CreateChatRoomButton>
+                : null}
         </ChatListContainer>
     );
 }
@@ -198,11 +200,11 @@ const ChatListTemplate = styled.div`
 
         gap: 2vw;
 
-        @media ${(props) =>props.theme.tablet}{
+        @media ${(props) => props.theme.tablet}{
             grid-template-columns: repeat(2,minmax(20%, auto));
         }
 
-        @media ${(props) =>props.theme.mobileL}{
+        @media ${(props) => props.theme.mobileL}{
             grid-template-columns: repeat(1,minmax(20%, auto));
         }
     }
