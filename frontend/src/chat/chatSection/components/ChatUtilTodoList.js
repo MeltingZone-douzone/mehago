@@ -14,7 +14,7 @@ export default function ChatUtilTodoList({ socket, participantObject, chatRoomNo
     const [isEnd, setIsEnd] = useState(false);
 
     useEffect(() => {
-        socket.on('todo', result => {
+        socket.on(`todo:room${chatRoomNo}`, result => {
             if (result.purpose === "add") { setTodos([...todos, result.todo]) }
             else if (result.purpose === "update") { setTodos(todos.map((todo) => todo.no === result.todo ? { ...todo, checked: !todo.checked } : todo)) }
             else if (result.purpose === "remove") { setTodos(todos.filter((todo) => todo.no !== result.todo)) }
@@ -104,7 +104,7 @@ export default function ChatUtilTodoList({ socket, participantObject, chatRoomNo
     }
     console.log(todos);
     const handleKeyPress = (e) => {
-        if(e.key === 'Enter' && inputText !== '') {
+        if (e.key === 'Enter' && inputText !== '') {
             console.log(inputText);
             handleAddTodo();
         }

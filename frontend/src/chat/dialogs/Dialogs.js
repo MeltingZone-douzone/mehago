@@ -6,7 +6,7 @@ export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUplo
 
     const classes = madeStyle();
     return (
-        <Fragment> {/* TODO:YJ 왜 Fragment */}
+        <Fragment> 
             <Dialog open={noticeOpen} onClose={buttonFunction.handleClose} aria-labelledby="form-dialog-title">
                 <form onSubmit={buttonFunction.handleNoticeSubmit}>
                     <DialogTitle className={classes.formDialogTitle} id="form-dialog-title">공지사항</DialogTitle>
@@ -36,7 +36,6 @@ export default function Dialogs({ buttonFunction, todoOpen, noticeOpen, fileUplo
                 submitButtonText={"등록"}
                 maxFileSize={50000000} /**변경하기???? */
                 open={fileUploadOpen}
-                acceptedFiles={['image/jpeg', 'image/png', 'image/jpg']}
                 onClose={buttonFunction.handleClose}
                 onSave={(files) => { buttonFunction.handleFileUploadSubmit(files) }}
                 showPreviews={true}

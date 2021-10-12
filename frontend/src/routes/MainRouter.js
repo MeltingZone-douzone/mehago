@@ -10,6 +10,7 @@ import Header from '../header/Header';
 import ChatPage from './pages/ChatPage';
 
 import { getUserInfoApi } from '../../api/AccountApi';
+import { getAlarmsApi } from '../../api/AlarmApi';
 
 import PublicRouter from './PublicRouter';
 import PrivateRouter from './PrivateRouter';
@@ -22,11 +23,11 @@ export default function MainRouter() {
     const [isExistToken, setIsExistToken] = useState(false);
     const [authentication, setAuthentication] = useState(false);
 
-    const handleAuthentication = (result) => {
-        setAuthentication(result);
-    }
+    const [alarms, setAlarms] = useState([]);
+    const [alarmsCount, setAlarmsCount] = useState("");
 
 
+    
     useEffect(() => {
         if (localStorage.getItem("token")) {
             setAuthentication(true);
@@ -39,6 +40,21 @@ export default function MainRouter() {
         }
     }, [authentication])
 
+    useEffect(()=>{
+        if(userInfo){
+            getAlarms();
+        }
+    },[userInfo]);
+    
+    const handleAuthentication = (result) => {
+        setAuthentication(result);
+    }
+    
+    const reloadHeaderAlarm = () =>{
+        if(userInfo) {
+            getAlarms();
+        }
+    }
 
     const getUserInfo = () => {
         getUserInfoApi().then(res => {
@@ -57,10 +73,21 @@ export default function MainRouter() {
         });
     }
 
+    
+    const getAlarms = () =>{
+        getAlarmsApi().then((res) =>{
+            if(res.data.result === 'fail') {
+                return;
+            }
+            setAlarms(res.data.data);
+            setAlarmsCount(res.data.data.length);
+        });
+    }
+
     return (
         <Router>
             <Fragment>
-                <Header handleAuthentication={handleAuthentication} authentication={authentication} userInfo={userInfo} setUserInfo={setUserInfo} />
+                <Header handleAuthentication={handleAuthentication} authentication={authentication} userInfo={userInfo} setUserInfo={setUserInfo} alarms={alarms} alarmsCount={alarmsCount} setAlarmsCount={setAlarmsCount} />
                 <WebPage>
                     <Switch>
                         {/* 로그인(토큰이 존재)을 하고서도 들어올 수 있는 공용 라우터 => <PublicRouter restricted={false} */}
@@ -70,7 +97,7 @@ export default function MainRouter() {
                         {/* 로그인(토큰이 존재)을 해야 들어올 수 있는 라우터 => <privateRouter */}
                         <PrivateRouter handleAuthentication={handleAuthentication} reloadUser={getUserInfo} authentication={authentication} userInfo={userInfo} path="/profile" component={ProfileSettingsPage} />
                         {/* <Route authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} /> */}
-                        <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" component={ChatPage} />
+                        <PrivateRouter authentication={authentication} userInfo={userInfo} reloadHeaderAlarm={reloadHeaderAlarm} path="/chat" component={ChatPage} />
                         {/* <PrivateRouter authentication={authentication} userInfo={userInfo} path="/chat" render={(props) => <ChatPage {...props} userInfo={userInfo} />} /> */}
                     </Switch>
                 </WebPage>

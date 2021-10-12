@@ -41,7 +41,10 @@ public class JwtTokenUtil {
     public String generateAccessToken(Account account) {
         String token = null;
         try {
-            token = JWT.create().withIssuer(issuer).withClaim("role", "MEMBER").withClaim("no", account.getNo())
+            token = JWT.create()
+                    .withIssuer(issuer)
+                    .withClaim("role", "MEMBER")
+                    .withClaim("no", account.getNo())
                     .withClaim("nickname", account.getNickname())
                     .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                     .sign(generateAlgorithm());
@@ -65,14 +68,18 @@ public class JwtTokenUtil {
                 Date expirationDate = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME);
                 result = participantService.setExpirationDate(nonMember, expirationDate);
                 if (result) {
-                    token = JWT.create().withIssuer(issuer).withClaim("role", "NONMEMBER")
+                    token = JWT.create()
+                            .withIssuer(issuer)
+                            .withClaim("role", "NONMEMBER")
                             .withClaim("no", nonMember.getParticipantNo())
                             .withClaim("nickname", nonMember.getNickname())
                             .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                             .sign(generateAlgorithm());
                 }
             } else { // 비회원으로 시작
-                token = JWT.create().withIssuer(issuer).withClaim("role", "NONMEMBER")
+                token = JWT.create()
+                        .withIssuer(issuer)
+                        .withClaim("role", "NONMEMBER")
                         .withExpiresAt(new Date(System.currentTimeMillis() + NONMEMBER_ACCESS_TOKEN_EXPIRE_TIME))
                         .sign(generateAlgorithm());
             }

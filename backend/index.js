@@ -99,11 +99,11 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "members_status": io.to(roomname).emit(`members:status:${roomname}`, msgToJson);
             break;
-        case "notice": io.to(roomname).emit('notice', msgToJson);
+        case "notice": io.to(roomname).emit(`notice:${roomname}`, msgToJson);
             break;
-        case "file": io.to(roomname).emit('file', msgToJson);
+        case "file": io.to(roomname).emit(`file:${roomname}`, msgToJson);
             break;
-        case "todo": io.to(roomname).emit('todo', msgToJson);
+        case "todo": io.to(roomname).emit(`todo:${roomname}`, msgToJson);
             break;
         case "update": io.to(roomname).emit(`message:update:readCount:${roomname}`, msgToJson);
             break;
@@ -112,6 +112,9 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
         case "leave": io.to(roomname).emit(`members:leave:${roomname}`, msgToJson);
             break;
         case "disconnected": io.to(roomname).emit('disconnect message', msgToJson);
+            break;
+        case "room-deleted": io.to(roomname).emit(`room:deleted:${roomname}`,msgToJson);
+            break;
     }
 });
 
@@ -184,7 +187,7 @@ io.on("connection", (socket) => {
             changedRows
         }
         console.log(object);
-        if (changedRows ) {
+        if (changedRows) {
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object));
             io.to(socket.id).emit(`update:readCount:${currentRoomName}`, { "chatRoomNo": roomObj.no });
         }
@@ -198,7 +201,7 @@ io.on("connection", (socket) => {
 
     socket.on('chat message', async (message) => {
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount } );
+        const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state": 1 });
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
     });
@@ -278,14 +281,11 @@ io.on("connection", (socket) => {
 
         // 비회원
         // roomNo, participantNo를 가져와야 하는데 front단에서 넘겨줘야 하지 않을까??????
+        // redisClient.zremrangebylex(chatRoomNo, `${participantNo}`);
+        // redisClient.zrem(chatRoomNo, `${participantNo}`);
 
-        redisClient.zrem(chatRoomNo, `${participantNo}`, (err, result) => {
-            console.log('leave:chat-room', result); // 1
-        });
-        // const memberObj = {
-        //     "chatRoomNo": chatRoomNo,
-        //     "participantNo": participantNo,
-        // }
+        exitChatMember(chatRoomNo, participantNo);
+
         const leaveMessage = {
             "validation": "leave",
             "message": `${nickname}님이 방을 나가셨습니다.`,
@@ -295,15 +295,15 @@ io.on("connection", (socket) => {
             "notReadCount": 0
         }
 
+
         await messageController.addMessage(leaveMessage);
         await messageController.leaveRoom(chatRoomNo);
 
-        // /chat 화면으로 보내기위해
-        io.to(socket.id).emit(`room:leave:room${chatRoomNo}`);
-
-        // 퇴장메시지 뿌리기 위해
-        io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage)); 
+        io.to(socket.id).emit(`room:leave:${chatRoomNo}`, {"chatRoomNo": chatRoomNo});
+        io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
         
+        socket.leave(`room${chatRoomNo}`);
+        redisClient.unsubscribe(`room${chatRoomNo}`);
 
         // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
@@ -321,13 +321,17 @@ io.on("connection", (socket) => {
 
     // delete:chat-room -> 방 삭제했을 때
     socket.on("delete:chat-room", () => {
-
+        redisClient.zremrangebylex(getRoomNo(currentRoomName), "-", "+");
+        const roomDeleted = {
+            "validation": "room-deleted",
+            "deletedRoomNo": roomObj.no
+        }
+        io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(roomDeleted));
     });
 
     const sendMemberStatus = async () => {
         let onlineChatMember;
         await getOnlineChatMember(currentRoomName).then(res => onlineChatMember = res);
-        console.log('onlineChatMember', onlineChatMember);
         const object = {
             "validation": "members_status",
             onlineChatMember
@@ -354,12 +358,24 @@ const getOnlineChatMember = currentRoomName => { // 해당 채팅방의 온라�
 
 const getAllChatMember = currentRoomName => { // 해당 채팅방의 총 인원 구할 때 사용
     currentRoomName = getRoomNo(currentRoomName);
-
     return new Promise((resolve, reject) => {
         redisClient.zcard(currentRoomName, (error, result) => { // zcard : currentRoomName에 속한 멤버 개수 리턴
             if (error) {
                 reject(error);
             } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+const exitChatMember = (chatRoomNo, participantNo) => { // 해당 채팅방의 총 인원 구할 때 사용
+    return new Promise((resolve, reject) => {
+        redisClient.zrem(chatRoomNo, participantNo, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                console.log("zrem success", result);
                 resolve(result);
             }
         });

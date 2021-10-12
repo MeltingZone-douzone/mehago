@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="alarm">
+    <insert id="createDeletedChatAlarm" parameterType="alarm">
+        INSERT INTO
+            deleted_chat_alarm
+        VALUES
+        <foreach collection="participantsAccountNo" item="participantsAccountNo" separator=",">
+            (null,#{participantsAccountNo} ,#{chatRoomNo}, #{reason}, false, now())
+        </foreach>
+    </insert>
+
+    <select id="findAlarmNotRead" parameterType="long" resultType="alarm">
+        <![CDATA[
+          select 
+            dca.no, dca.account_no as accountNo, cr.thumbnail_url as thumbnailUrl, cr.title, dca.reason, DATE_FORMAT(dca.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, a.nickname
+          from 
+            deleted_chat_alarm dca, chat_room cr, account a
+          where 
+            account_no = #{no }
+            AND
+            dca.chat_room_no = cr.no
+            AND
+            cr.owner = a.no
+            AND
+            dca.read = 0
+          order by dca.created_at desc;
+        ]]>
+    </select>
+
+    <update id="updateReadByAccountNo" parameterType="long">
+      <![CDATA[
+        update deleted_chat_alarm
+        set deleted_chat_alarm.read = true
+        where 
+          account_no= #{no }
+        and
+        deleted_chat_alarm.read = 0;
+      ]]>
+    </update>
+
+</mapper>

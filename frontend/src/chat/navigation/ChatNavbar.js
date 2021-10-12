@@ -12,12 +12,12 @@ import Logo from '../../assets/images/black-mehago.png';
 import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
 import { createNonMember } from '../../../api/AccountApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComments } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants,setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom}) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom }) {
     const classes = madeStyles();
 
     const [chatList, setChatList] = useState(true);
@@ -39,6 +39,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         fetchFavoriteRooms();
     }, [favoriteCheck]);
 
+
     useEffect(() => {
         // DB에 저장 된 채팅 방 모두 입장
         if (participatingRoom.length >= 1) {
@@ -54,7 +55,9 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         try {
             getFavoriteRoomList().then(res => {
                 if (res.data.result === "fail") {
-                    return false;
+                    console.log("즐겨찾기 한 방이 없어요");
+                    setFavoriteRoom([]);
+                    return;
                 }
                 setFavoriteRoom(res.data.data);
             });
@@ -73,13 +76,12 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         }
     }
     // setNotice(
-        // notice.filter((notice) => notice.no !== msg.no)
+    // notice.filter((notice) => notice.no !== msg.no)
 
-    const exitRoom = (chatRoomNo, nickname) => {
-        console.log("chatRoomNo:", chatRoomNo);
+    const exitRoom = (chatRoomNo) => {
         try {
             exitRoomApi(chatRoomNo).then((res) => {
-                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, nickname);
+                socket.emit('leave:chat-room', chatRoomNo, res.data.data.no, res.data.data.chatNickname);
                 if (userInfo === undefined) {
                     createNonMember().then((res) => {
                         localStorage.set('token', res.data);
@@ -107,11 +109,31 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         <div className={"ChatNav"} onClick={(e) => e.stopPropagation()}>
             <div className={"ChatNavbar"}>
                 <div className={"BasicNav"}>
-                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link> {/* 일단 홈 클릭하면 채팅방리스트으로 보이게 해놓음 */}
+                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link>
                     <NaviButton active={chatList} onClick={() => handleChatList()}>
-                        <FontAwesomeIcon icon={faComments} style={{fontSize: '1em'}} />    
+                        <FontAwesomeIcon icon={faComment} style={{
+                            fontSize: '1.25em',
+                            fill: 'currentColor',
+                            width: '1em', 
+                            height: '1em',
+                            display: 'inline-block',
+                            transition: 'fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                            flexShrink: '0',
+                            marginLeft: '4px',
+                            userSelect: 'none'}} 
+                            />
                     </NaviButton>
-                    <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
+                    <NaviButton active={chatMember} onClick={() => handleChatMember()}><FontAwesomeIcon icon={faUserFriends} style={{
+                            fontSize: '1.6em',
+                            fill: 'currentColor',
+                            width: '1em', 
+                            height: '1em',
+                            display: 'inline-block',
+                            transition: 'fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                            flexShrink: '0',
+                            marginLeft: '2px',
+                            userSelect: 'none'}} 
+                            /></NaviButton>
                 </div>
                 <div className={"FavoriteNav"}>
                     {
@@ -126,8 +148,8 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 </div>
             </div>
             <div className={"ChatList"}>
-                {chatList? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom}/>: null}
-                {chatMember? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants}/>: null}
+                {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} /> : null}
+                {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </div>
 
 
@@ -139,6 +161,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
 const NaviButton = styled.button`
     padding: 5px 5px;
     margin-top: 10px;
+    margin-left: 4px;
 
     border:none;
     border-radius: 8px;

@@ -31,7 +31,7 @@ export default function UtilsTemplate({ socket, isOnChatSection, participantObje
                 break;
             case "todo": return <ChatUtilTodoList socket={socket} participantObject={participantObject} chatRoomNo={chatRoomNo} />;
                 break;
-            case "file": return <ChatUtilFile chatRoomNo={chatRoomNo} fileList={fileList} />;
+            case "file": return <ChatUtilFile chatRoomNo={chatRoomNo} fileList={fileList} userInfo={userInfo} />;
                 break;
             case "setting": return <ChatRoomSetting roomObject={roomObject} settingRoomFunction={settingRoomFunction} passwordDialog={passwordDialog} />;
                 break;

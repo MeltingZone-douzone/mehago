@@ -1,6 +1,14 @@
 package com.douzone.mehago.controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.douzone.mehago.responses.CommonResponse;
 import com.douzone.mehago.security.Auth;
@@ -165,5 +173,29 @@ public class AccountController {
         System.out.println(accountNo);
         accountService.leaveMember(accountNo);
         return ResponseEntity.ok().body(null);
+    }
+
+    @GetMapping("/fileDownload/{fileNo}")
+    public void fileDownload(@PathVariable Long fileNo, HttpServletResponse response) throws IOException {
+        Map<String, String> map = fileUploadService.getFileName(fileNo);
+        String fileName = map.get("url").split("/")[3];
+        File file = new File("/uploads-mehago/chatroom/" + fileName);
+
+        String downName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + downName + "\"");
+        response.setContentType("application/octet-stream");
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+        byte[] buffer = new byte[8192];
+        int bytesRead = -1;
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+        outputStream.close();
+
     }
 }

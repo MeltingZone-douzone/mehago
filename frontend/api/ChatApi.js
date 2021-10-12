@@ -132,13 +132,13 @@ export function vaildateNickname(chatRoomNo, chatNickname) {
 
 export function enterRoomValidationApi(chatRoomNo) { // FIXME: 함수명 바꾸기   방에 이미 입장해있는지 check
     setAuthHeader();
-    return axios.get(`/api/chat/enterRoomValidation`, { params : { chatRoomNo }, headers: AuthHeader})
+    return axios.get(`/api/chat/enterRoomValidation`, { params: { chatRoomNo }, headers: AuthHeader })
         .then(res => res)
         .catch(e => console.log(e));
 }
 
 
-export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus){
+export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus) {
     setAuthHeader();
     const favoriteStatusObject = { "favoriteRoom": favoriteStatus };
     // console.log(favoriteStatusObject);
@@ -209,5 +209,10 @@ export function deleteNotice(noticeNo) {
     setAuthHeader();
     return axios.delete(`/api/chat/deleteNotice/${noticeNo}`, { headers: AuthHeader })
         .then(res => res);
+}
+
+export function fileDownload(fileNo) {
+    setAuthHeader();
+    return axios.get(`/api/account/fileDownload/${fileNo}`, { headers: AuthHeader }).then(res => res);
 }
 
