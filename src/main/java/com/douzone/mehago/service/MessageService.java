@@ -17,8 +17,8 @@ public class MessageService {
     // private final ES_MesaageRepository es_MesaageRepository;
     private final MessageRepository messageRepository;
 
-    public List<Message> getMessageList(Long chatRoomNo, Long offset, Long accountNo) {
-        return messageRepository.getMessageList(chatRoomNo, offset, accountNo);
+    public List<Message> getMessageList(Long chatRoomNo, Long offset, Long participantNo) {
+        return messageRepository.getMessageList(chatRoomNo, offset, participantNo);
     }
 
     public List<Long> getSearchMessage(Long chatRoomNo, String searchKeyword) {
@@ -29,6 +29,6 @@ public class MessageService {
         // }
  
         return result;
-        
+
     }
 }
