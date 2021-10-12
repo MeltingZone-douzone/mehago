@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react';
-import moment from 'moment';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import moment from 'moment';
 import styled from 'styled-components';
+import Document from '../../../assets/images/document.png';
 import Folder from '../../../assets/images/folder.png';
 import ZipFolder from '../../../assets/images/zip-folder.png';
-import Document from '../../../assets/images/document.png';
 
 export default function ChatUtilFile({ fileList, userInfo }) {
 
@@ -76,7 +77,8 @@ export default function ChatUtilFile({ fileList, userInfo }) {
                     })
                     :
                     <NonFile>
-                        <Text>업로드 한 이미지가 없습니다.</Text>
+                        <ErrorOutlineIcon/>
+                        <Text>업로드 한 파일이 없습니다.</Text>
                     </NonFile>
 
                 }
@@ -89,8 +91,10 @@ const Container = styled.div`
     width:100%;
 `
 const Text = styled.div`
-    font-weight:bold;
-    margin:10px 0;
+    text-align: center;
+    width: 100%;
+    padding-top:1em;
+    color: #272727;
 `
 const ImageContainer = styled.div`
     margin: 20px 0;
@@ -126,8 +130,11 @@ const DownloadIcon = styled.div`
 
 
 const NonFile = styled.div`
-   margin-top: 10%;
-   text-align:center;
+    color: #272727;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1em;
 `
 
 const FileName = styled.span`

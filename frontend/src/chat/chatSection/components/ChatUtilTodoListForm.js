@@ -5,13 +5,13 @@ const ChatUtilTodoListForm = ({value, onChange, onCreate, onKeyPress}) => {
     const classes = useStyles();  
     return (
         <div className={classes.form}>
-        <input 
-            value={value} 
-            onChange={onChange} 
-            onKeyPress={onKeyPress}/>
-        <div className={classes.createButton} onClick={onCreate}>
-            추가
-        </div>
+            <input 
+                value={value} 
+                onChange={onChange} 
+                onKeyPress={onKeyPress}/>
+            <div className={classes.createButton} onClick={onCreate}>
+                추가
+            </div>
         </div>
     );
 };
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
             fontSize: '1.25rem',
             outline: 'none',
             border: 'none',
-            borderBottom: '1px solid #2E3B55',
+            border: '1px solid #2E3B55',
         },
     },
     createButton: {

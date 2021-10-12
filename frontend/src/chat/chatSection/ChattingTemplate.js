@@ -69,14 +69,14 @@ const NoticeTemplate = styled.button`
   min-height: 3em;
   position: fixed;
   z-index: 1;
-  background-color: #f4f4f4;
+  background-color: #f8f8f8;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: inset;
   box-sizing: border-box;
   padding-top: 0.5em;
+  box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%)
 `
 
 const Notice = styled.div`
@@ -102,8 +102,8 @@ const useStyles = makeStyles((theme) => ({
     
     noticeIcon : { 
         paddingLeft:"1.5em",
-      },
-      notice:{
+    },
+    notice:{
         paddingLeft:"1em",
         display:"flex",
         flexDirection: "row",
@@ -112,8 +112,8 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "space-between"
 
 
-      },
-      dropDown:{
+    },
+    dropDown:{
         justifyContent: "end",
-      }
+    }
 }))

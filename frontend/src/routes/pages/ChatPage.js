@@ -15,8 +15,10 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
     const [participants, setParticipants] = useState([]);
     const [currentParticipants, setCurrentParticipants] = useState([]);
     const [participatingRoom, setParticipatingRoom] = useState([]);
-
+    
+    console.log(participatingRoom);
     useEffect(() => {
+        console.log(participatingRoom);
         socket.on(`room:updateInfo`, (msg) => {
             setParticipatingRoom(participatingRoom.map((room) =>
                 room.no === msg.roomObject.no ? { ...room, ["title"]: msg.roomObject.title, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl } : room

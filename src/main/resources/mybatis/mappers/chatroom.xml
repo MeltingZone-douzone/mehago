@@ -110,7 +110,7 @@
   <select id="participatingRoom" parameterType="Long" resultType="map">
     <![CDATA[
          SELECT 
-            c.no, c.title, c.thumbnail_url as thumbnailUrl, p.favorite_room as favoriteRoom, p.not_read_count as notReadCount,
+            c.no, c.title, c.thumbnail_url as thumbnailUrl, c.owner,p.favorite_room as favoriteRoom, p.not_read_count as notReadCount,
               (select count(no) from participant where chat_room_no = c.no and is_deleted = false) as participantCount,
                   (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
                     from message 

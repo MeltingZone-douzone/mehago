@@ -32,13 +32,20 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
 
     const getContent = () => {
         console.log(status);
-        switch (status) { 
+        /* switch (status) { 
             case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />
             case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}  handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg}/>
             case "basic": return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg}/>
             case "onlyAuthorized": return <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
             // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
-        }
+        } */
+        return { 
+            secret :  <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />,
+            nickname:  <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}  handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg}/>,
+            basic:  <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg}/>,
+            onlyAuthorized:  <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
+            // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
+        }[status]
     }
     // return { 
     //     secret :  <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />,
@@ -73,7 +80,6 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
     const basicEnterRoom = () => {
         try {
             enterRoomValidationApi(no).then(res => {
-                console.log(res);
                 if(res.data.result === 'success') { // 새입장
                     if(participantCount >= limitedUserCount) {
                         console.log("인원 다 차서 못들어감"); // <p> function()

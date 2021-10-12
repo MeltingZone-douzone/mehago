@@ -94,10 +94,37 @@
                     color: #1C90FC;
                     justify-content: center;
                     align-items: center;
-                    border-radius: 10px;
-                    &:hover {
-                        background-color: #1C90FC;
-                        color: #ffffff;
+                    .accountButton{
+                        background-color: white;
+                        width: 70%;
+                        border: none;
+                        border-bottom: ridge;
+                        display: flex;
+                        padding: 1em 2em 1em 2em;
+                        text-shadow: 0 0 black;
+                        .userInfo{
+                            width: 80%;
+                            text-align: justify;
+                        }
+                        .search{
+                            width: 1.5em;
+                            color: #616161;
+                        }
+                        p{
+                            padding-left: 1em;
+                            align-self: center;
+                            color: #616161;
+                        }
+                        span{
+                            width: 20%;
+                            padding: 0.5em;
+                            align-self: center;
+                            font-size: small;
+                            border-radius: 10px;
+                            // border: 1px solid #1C90FC;
+                            color: #1C90FC;
+                        }
+                        
                     }
                     p{
                         padding-left: 1em;

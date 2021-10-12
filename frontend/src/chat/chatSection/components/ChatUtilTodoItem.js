@@ -11,7 +11,6 @@ const useStyles = theme => ({
         userSelect: 'none',
         '&:hover': {
             background: '#a9d6fe',
-            // /* todo-item 에 마우스가 있을때만 .remove 보이기 */
             '&:hover $remove': {
                 opacity: '1',
             }

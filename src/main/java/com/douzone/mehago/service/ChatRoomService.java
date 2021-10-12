@@ -3,11 +3,8 @@ package com.douzone.mehago.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import com.douzone.mehago.entities.ChatRoomEntity;
 import com.douzone.mehago.repository.ChatRoomRepository;
-import com.douzone.mehago.repository.ES_ChatRoomRepository;
 import com.douzone.mehago.vo.ChatRoom;
 
 import org.springframework.stereotype.Service;
@@ -20,7 +17,7 @@ public class ChatRoomService {
 
     private final ParticipantService participantService;
     private final ChatRoomRepository chatRoomRepository;
-    private final ES_ChatRoomRepository esChatRoomRepository;
+    // private final ES_ChatRoomRepository esChatRoomRepository;
 
     public Long createRoom(ChatRoom chatRoom) {
         return chatRoomRepository.createRoom(chatRoom);
@@ -72,7 +69,6 @@ public class ChatRoomService {
 
     public boolean deleteChatRoom(Long chatRoomNo) {
         boolean result = participantService.chatRoomDeleted(chatRoomNo);
-        System.out.println("deleteChatRoom result : " + result);
         return result ? chatRoomRepository.deleteChatRoom(chatRoomNo) : false;
     }
 

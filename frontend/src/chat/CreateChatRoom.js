@@ -35,7 +35,13 @@ const styles = makeStyles({
     },
     button: {
         marginLeft: "10px"
-    }
+    },
+    onlyAuthorizedSwitch : {
+        marginTop: "10px"
+    },
+    searchableSwitch : {
+        marginTop: "10px"
+    },
 })
 
 export default function CreateChatRoom({ history, fetchRooms}) {
@@ -158,7 +164,7 @@ export default function CreateChatRoom({ history, fetchRooms}) {
                         </FormWrapper>
                         <ButtonWrapper>
                             <div className={classes.buttons}>
-                                <Button className={classes.button} variant="outlined" color="primary" type="submit" >채팅방 개설하기</Button>
+                                <Button className={classes.button} variant="contained" color="primary" type="submit" >채팅방 개설하기</Button>
                             </div>
                         </ButtonWrapper>
 

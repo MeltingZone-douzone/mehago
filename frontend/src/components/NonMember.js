@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import "../assets/sass/account/Nonmember.scss";
+import "../assets/sass/account/Login.scss";
 
 export default function NonMembers({ isExistToken, getNonMemberToken }) {
   return (

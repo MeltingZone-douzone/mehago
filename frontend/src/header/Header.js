@@ -17,8 +17,8 @@ export default function Header({ handleAuthentication, authentication, userInfo 
                 <HeaderAuthenticationButtons handleAuthentication={handleAuthentication} userInfo={userInfo} setUserInfo={setUserInfo} alarms={alarms} alarmsCount={alarmsCount} setAlarmsCount={setAlarmsCount}/>
                 :
                 <AuthenticationWrapper>
-                    <NavLinkButton to="/account/login">로그인</NavLinkButton>
-                    <NavLinkButton to="/account/signup">회원가입</NavLinkButton>
+                    <NavLinkButton style={{border: '1px solid #00000000'}} to="/account/login">로그인</NavLinkButton>
+                    <NavLinkButton style={{border: '1px solid #fff'}} to="/account/signup">회원가입</NavLinkButton>
                 </AuthenticationWrapper>
             }
         </HeaderContainer>
@@ -54,12 +54,13 @@ const NavLinkButton = styled(NavLink)`
 
     padding: .5rem;
     color: #fff;
-    border:1px solid #fff;
+    
     border-radius: 8px;
     font-weight: bold;
 
-    &: hover{
-        background-color:${colors.mainThemeColor};
+    &: hover {
+        background-color: #0381f1;
+        color: #eAeAeA;
     }
 
     & + & {
