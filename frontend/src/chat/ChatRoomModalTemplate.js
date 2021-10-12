@@ -40,6 +40,13 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
             // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
         }
     }
+    // return { 
+    //     secret :  <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />,
+    //     nickname:  <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}  handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg}/>,
+    //     basic:  <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg}/>,
+    //     onlyAuthorized:  <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
+    //     // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
+    // }[status]
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -153,7 +160,7 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
                 </InfoArea>
             </ModalHeader>
             <div className={"tagsContainer"}>
-                {tagName != "" ? <ListItem className={"tag"}>
+                {tagName != "" && <ListItem className={"tag"}>
                     {tagName.map((tag, index) => {
                         return (
                             <Chip
@@ -165,7 +172,7 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
                         )
                     })
                     }
-                </ListItem> : null}
+                </ListItem> }
             </div>
             <ContentWrapper>
                 {getContent()}

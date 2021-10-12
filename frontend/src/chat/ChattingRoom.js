@@ -162,7 +162,7 @@ export default function ChattingRoom({
                             null
                     }
                     {
-                        joinValidationRoom ? <p>{joinValidationRoom}</p> : null
+                        joinValidationRoom && <p>{joinValidationRoom}</p> 
                     }
                     {
                         account ?

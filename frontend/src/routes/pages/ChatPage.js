@@ -11,7 +11,7 @@ import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:8888');
 export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
-
+    console.log(match);
     const [participants, setParticipants] = useState([]);
     const [currentParticipants, setCurrentParticipants] = useState([]);
     const [participatingRoom, setParticipatingRoom] = useState([]);

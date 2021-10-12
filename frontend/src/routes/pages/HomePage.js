@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Avatar, makeStyles } from '@material-ui/core';
+import localStorage from "local-storage";
+import React from 'react';
+import styled from 'styled-components';
 import Logo from '../../assets/images/black-mehago.png';
 import chattingPage from '../../assets/images/mehago-chat.png';
 import "../../assets/sass/account/AccountPage.scss";
-import localStorage from "local-storage";
-import { Link } from 'react-router-dom';
-import { Avatar, makeStyles, Button } from '@material-ui/core';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserAltSlash, faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import styled from 'styled-components';
 import Thumbnail from '../../components/Thumbnail';
-
 
 export default function HomePage({ authentication, userInfo, handleAuthentication, history, setUserInfo }) {
     const classes = madeStyles();
