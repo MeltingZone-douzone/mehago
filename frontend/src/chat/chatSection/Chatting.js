@@ -24,7 +24,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     useEffect(() => {
         socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
-            console.log(msg , "msgmsgmsgmsgmsg");
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
@@ -45,7 +44,6 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
 
     useEffect(() => {
         setMessageList([receivedMsg, ...messageList]);
-
     }, [receivedMsg]);
     
     useEffect(() => {
@@ -129,7 +127,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                 messageList.map((message, index) => {
                     return (
                         message.state === 0 ? 
-                        <div style={{
+                        <div key={index} style={{
                             display: "flex",
                             width: "100%",
                             justifyContent: "center"
@@ -147,7 +145,7 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
                             </p>
                         </div>
                         :
-                        <div>
+                        <div key={index}>
                             {
                             message.participantNo !== participantObject.no ?
                                 <div key={index}>

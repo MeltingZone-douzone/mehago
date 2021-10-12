@@ -17,7 +17,7 @@ import { createNonMember } from '../../../api/AccountApi';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom, deletedRoom }) {
     const classes = madeStyles();
     const [trigger, setTrigger] = useState(false);
 
@@ -30,6 +30,8 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [favoriteCheck, setFavoriteCheck] = useState(false);
 
     useEffect(()=>{
+        fetchRooms(); // 사이즈가 작아지면 패치가 안되기 때문에 다시 패치룸을 호출
+        
         const delay = 300;
         let timer = null;
 
@@ -45,6 +47,11 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
 
             },delay)
         })
+
+        return () => {
+            this.clearTimeout(timer);
+            window.removeEventListener('resize');
+        }
     },[])
 
     useEffect(() => {
@@ -54,7 +61,16 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                     room.no === msg.roomObject.no ? { ...room, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl } : room)
             );
         })
-    }, [favoriteRoom])
+    }, [favoriteRoom]);
+
+    useEffect(() => {
+        if (deletedRoom !== undefined) {
+            setFavoriteRoom(
+                favoriteRoom.filter((room) =>
+                    room.no !== deletedRoom)
+            );
+        }
+    }, [deletedRoom]);
 
     useEffect(() => {
         fetchRooms();
@@ -154,6 +170,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             <ChatNavStyled trigger={trigger}>
                 {trigger? <CloseTrigger onClick={()=>closeAll()}><ArrowBackIcon/></CloseTrigger>: null}
                 {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} /> : null}
+                {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} deletedRoom={deletedRoom} /> : null}
                 {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </ChatNavStyled>
 
