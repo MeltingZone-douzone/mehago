@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+
 public class LoginInterceptor implements HandlerInterceptor {
 
 	@Autowired
@@ -28,7 +29,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 			throws Exception {
 
 		String body = JsonBodyConverter.getBody(request);
-
 		Account account = new Account();
 		account.setEmail(body.split("\"")[3]);
 		account.setPassword(body.split("\"")[7]);

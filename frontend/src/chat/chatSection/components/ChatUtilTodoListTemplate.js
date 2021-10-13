@@ -6,9 +6,9 @@ const ChatUtilTodoListTemplate = ({ form, children }) => {
 
     return (
         <main className={classes.todoListTemplate}>
-            <div className={classes.title}>
+            {/* <div className={classes.title}>
                 해야 할 일
-            </div>
+            </div> */}
             <section className={classes.formWrapper}>
                 {form}
             </section>

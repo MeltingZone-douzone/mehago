@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import '../assets/sass/chat/ChatRoomButton.scss';
-import '../assets/sass/chat/modal.scss'
-import { Chip } from '@material-ui/core';
-import Logo from '../assets/images/black-mehago.png';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import { Chip, makeStyles } from '@material-ui/core';
 import FaceIcon from '@material-ui/icons/Face';
-
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import React, { useState } from 'react';
 import ReactModal from "react-modal";
-ReactModal.setAppElement('body');
-
+import Logo from '../assets/images/black-mehago.png';
+import '../assets/sass/chat/ChatRoomButton.scss';
+import '../assets/sass/chat/modal.scss';
 import ChatRoomModalTemplate from './ChatRoomModalTemplate';
 
-export default function ChatRoom({ socket, userInfo, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl }) {
+ReactModal.setAppElement('body');
 
+
+export default function ChatRoom({ socket, userInfo, no, title, limitedUserCount, onlyAuthorized, owner, searchable, tagName, thumbnailUrl, room, keyword, participantCount, secretRoom, lastMessage, ownerNickname, ownerThumbnailUrl }) {
+    const classes = madeStyle();
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
     const getTags = () => {
@@ -32,7 +32,6 @@ export default function ChatRoom({ socket, userInfo, no, title, limitedUserCount
                 )
             })
         } else {
-
             return tagName && tagName.map((tag, index) => {
                 return (
                     <Chip
@@ -43,7 +42,8 @@ export default function ChatRoom({ socket, userInfo, no, title, limitedUserCount
                 );
             })
         }
-    }
+        }
+    
 
     function timeForToday(lastMessage) {
         const today = new Date();
@@ -94,7 +94,10 @@ export default function ChatRoom({ socket, userInfo, no, title, limitedUserCount
 
             </div>
             <div className={"TagZone"}>
-                {getTags()}
+                { tagName.length !== 0 ?
+                    getTags()
+                    : <p className={classes.noTag}> 태그 없음 </p>
+                }
             </div>
             <ReactModal
                 className={"modal"}
@@ -124,3 +127,9 @@ export default function ChatRoom({ socket, userInfo, no, title, limitedUserCount
     )
 }
 
+const madeStyle = makeStyles({
+    noTag: {
+        color: '#616161',
+        padding: '1em'
+    }
+}) 

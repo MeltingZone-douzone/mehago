@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 import styled from 'styled-components';
 import { Avatar, ListItem, makeStyles, Chip } from '@material-ui/core';
 import '../assets/sass/chat/modal.scss';
-import { colors } from '../assets/styles/properties/Colors';
 import Logo from '../assets/images/mehago.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
@@ -32,14 +31,28 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
 
     const getContent = () => {
         console.log(status);
-        switch (status) { 
+        /* switch (status) { 
             case "secret": return <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />
-            case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}  handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg}/>
-            case "basic": return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg}/>
+            case "nickname": return <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />
+            case "basic": return <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg} />
             case "onlyAuthorized": return <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
             // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
-        }
+        } */
+        return {
+            secret: <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />,
+            nickname: <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />,
+            basic: <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg} />,
+            onlyAuthorized: <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
+            // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
+        }[status]
     }
+    // return { 
+    //     secret :  <ChatRoomModalPassword handleChange={handleChange} account={account} password={password} wrongPassword={wrongPassword} basicEnterRoom={basicEnterRoom} passwordValidation={passwordValidation} hiddenPasswordInput={hiddenPasswordInput} status={status} handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg} />,
+    //     nickname:  <ChatRoomModalNickname nickname={nickname} handleChange={handleChange} nicknameValidation={nicknameValidation} wrongNickname={wrongNickname} hiddenNicknameInput={hiddenNicknameInput} basicEnterRoom={basicEnterRoom}  handleKeyPress={handleKeyPress} limitCountMsg={limitCountMsg}/>,
+    //     basic:  <ChatRoomModalBasic basicEnterRoom={basicEnterRoom} limitCountMsg={limitCountMsg}/>,
+    //     onlyAuthorized:  <ChatRoomModalDisabled isFull={false} onlyAuthorized={true} />
+    //     // case "isFull": return <ChatRoomModalDisabled isFull={true} onlyAuthorized={false} />
+    // }[status]
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -66,21 +79,20 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
     const basicEnterRoom = () => {
         try {
             enterRoomValidationApi(no).then(res => {
-                console.log(res);
-                if(res.data.result === 'success') { // 새입장
-                    if(participantCount >= limitedUserCount) {
+                if (res.data.result === 'success') { // 새입장
+                    if (participantCount >= limitedUserCount) {
                         console.log("인원 다 차서 못들어감"); // <p> function()
                         setLimitCountMsg(true);
                         return;
                     }
-                    if(res.data.data === 'noNickname') {  // 비회원이고 닉네임이 없는경우 닉네임 필드를 보여줌
+                    if (res.data.data === 'noNickname') {  // 비회원이고 닉네임이 없는경우 닉네임 필드를 보여줌
                         return setHiddenNicknameInput(false);
                     }
                     console.log(status);
                     switch (status) {
                         case 'secret': setHiddenPasswordInput(false); break;
                         case 'nickname': setHiddenNicknameInput(false); break;
-                        default: { console.log('새입장'); enterRoom();} break;
+                        default: { console.log('새입장'); enterRoom(); } break;
                     }
                 } else {
                     console.log('재입장');
@@ -119,7 +131,7 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
                 vaildateNickname(no, nickname).then((res) => {
                     console.log(res.data);
                     if (res.data.result === "success") {
-                        socket.emit('leave:chat-room', res.data.data.chatRoomNo, res.data.data.participantNo);
+                        socket.emit('leave:chat-room', res.data.data.chatRoomNo, res.data.data.participantNo, res.data.data.nickname);
                         localStorage.set("token", res.data.data.token);
                         enterRoom();
                     } else {
@@ -153,7 +165,7 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
                 </InfoArea>
             </ModalHeader>
             <div className={"tagsContainer"}>
-                {tagName != "" ? <ListItem className={"tag"}>
+                {tagName != "" && <ListItem className={"tag"}>
                     {tagName.map((tag, index) => {
                         return (
                             <Chip
@@ -165,7 +177,7 @@ export default function ChatRoomModalTemplate({ socket, no, title, thumbnailUrl,
                         )
                     })
                     }
-                </ListItem> : null}
+                </ListItem>}
             </div>
             <ContentWrapper>
                 {getContent()}

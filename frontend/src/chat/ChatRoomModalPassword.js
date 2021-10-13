@@ -17,10 +17,10 @@ export default function ChatRoomModalPassword({ handleChange, account, password,
     return (
         <ContentTemplate>
             {
-                limitCountMsg ? showResultMsgText() : null
+                limitCountMsg && showResultMsgText() 
             }
             {
-                hiddenPasswordInput ? null : showPasswordInput()
+                !hiddenPasswordInput && showPasswordInput()
             }
             <Button className={"joinButton"} onClick={()=>{ hiddenPasswordInput ? basicEnterRoom() : passwordValidation() }} variant="contained" color="primary" disableElevation disabled={account ? false : true}><LockIcon style={{ paddingRight:'0.25em'}}/> {account ? '방 입장하기' : '비밀방은 회원만 이용가능합니다.'}  </Button>
         </ContentTemplate>

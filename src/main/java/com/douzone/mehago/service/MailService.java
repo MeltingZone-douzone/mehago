@@ -19,7 +19,7 @@ public class MailService {
         Mail mailDto = new Mail(); 
         try {
             
-            mailDto.setAddress("mehagochat@gmail.com");     // email로 변경 해야함
+            mailDto.setAddress(email);     
 
             MailHandler mailHandler = new MailHandler(mailSender);
             // 받는 사람

@@ -13,6 +13,8 @@ import localStorage from "local-storage";
 
 import { updateFavoriteRoomApi, getFavoriteRoomList, exitRoomApi } from '../../../api/ChatApi';
 import { createNonMember } from '../../../api/AccountApi';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
@@ -133,9 +135,9 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                         localStorage.set('token', res.data);
                     })
                 };
+                fetchRooms();
+                fetchFavoriteRooms();
             })
-            fetchRooms();
-            fetchFavoriteRooms();
         } catch (error) {
             console.log();
         }
@@ -157,9 +159,31 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         <ChatNav onClick={(e) => e.stopPropagation()}>
             <ChatNavbarStyled>
                 <div className={"BasicNav"}>
-                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link> {/* 일단 홈 클릭하면 채팅방리스트으로 보이게 해놓음 */}
-                    <NaviButton active={chatList} onClick={() => handleChatList()}><ForumOutlinedIcon /></NaviButton>
-                    <NaviButton active={chatMember} onClick={() => handleChatMember()}><PeopleAltOutlinedIcon /></NaviButton>
+                    <Link to="/chat"><NaviButton onClick={() => handleChatList()}><HomeIcon /></NaviButton></Link>
+                    <NaviButton active={chatList} onClick={() => handleChatList()}>
+                        <FontAwesomeIcon icon={faComment} style={{
+                            fontSize: '1.25em',
+                            fill: 'currentColor',
+                            width: '1em', 
+                            height: '1em',
+                            display: 'inline-block',
+                            transition: 'fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                            flexShrink: '0',
+                            marginLeft: '4px',
+                            userSelect: 'none'}} 
+                            />
+                    </NaviButton>
+                    <NaviButton active={chatMember} onClick={() => handleChatMember()}><FontAwesomeIcon icon={faUserFriends} style={{
+                            fontSize: '1.6em',
+                            fill: 'currentColor',
+                            width: '1em', 
+                            height: '1em',
+                            display: 'inline-block',
+                            transition: 'fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                            flexShrink: '0',
+                            marginLeft: '2px',
+                            userSelect: 'none'}} 
+                            /></NaviButton>
                 </div>
                 <div className={"FavoriteNav"}>
                     {
@@ -194,6 +218,7 @@ const madeStyles = makeStyles({
 const NaviButton = styled.button`
     padding: 5px 5px;
     margin-top: 10px;
+    margin-left: 4px;
 
     border:none;
     border-radius: 8px;

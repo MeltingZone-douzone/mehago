@@ -33,18 +33,12 @@ export default function MsgInput({ message, messageFunction, buttonFunction, use
                         : null
                     }
                     <form onSubmit={messageFunction.onSubmitMessage} className={classes.inputMsgContainer}>
-                        <TextField
+                        <TextField 
+                            className={classes.inputMsg}
                             id="message"
                             name="message"
                             placeholder="메세지를 입력하세요"
                             onChange={messageFunction.onChangeMessage}
-                            style={{
-                                marginLeft: '1em',
-                                marginTop: '0.25em',
-                                marginBottom: '0.25em',
-                                display: 'flex',
-                                alignItems: 'center'
-                            }}
                             InputProps={{ disableUnderline: true }}
                             fullWidth
                         />
@@ -88,6 +82,13 @@ const madeStyles = makeStyles({
         '&:hover': {
             backgroundColor: '#0381f1'
         }
+    },
+    inputMsg: {
+        marginLeft: '1em',
+        marginTop: '0.25em',
+        marginBottom: '0.25em',
+        display: 'flex',
+        alignItems: 'center'
     }
 });
 

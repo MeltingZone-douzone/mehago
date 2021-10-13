@@ -5,12 +5,14 @@ import "../assets/sass/account/Form.scss";
 import axios from "axios";
 
 import NonMembers from "../components/NonMember";
+import Login from "../components/Login";
 
 export default function PasswordSearch() {
 
   const classes = madeStyles();
   const [accounts, setAccount] = useState({name:"", email:""});
   const [sendMassege, setSendMassege] = useState("");
+  
   const onChangeUserInput = (e) => {
     const { name, value } = e.target;
     setAccount({
@@ -18,6 +20,7 @@ export default function PasswordSearch() {
       [name]:value}
     );
   };
+
   const emailSend = () => {
     console.log("보내기");
     try {
@@ -97,7 +100,7 @@ export default function PasswordSearch() {
           </div>
         </ThemeProvider>
       </form>
-      <NonMembers />
+      <Login />
     </div>
   );
 }

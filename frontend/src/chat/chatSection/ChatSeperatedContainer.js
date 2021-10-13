@@ -49,7 +49,7 @@ export default function ChatSeperatedContainer({ socket, messageFunction, partic
 }
 
 const Container = styled.div`
-    //TODO : media - height
+    //TODO: media - height
 
     width:100%;
     height:92%;

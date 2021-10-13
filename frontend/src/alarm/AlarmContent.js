@@ -19,17 +19,17 @@ export default function AlarmContent({alarm}) {
 
                 </ChattingRoomContent>
                 <Angle>
-                    {alarm.reason? <FontAwesomeIcon icon={showReason ? faAngleUp : faAngleDown }/> : null }
+                    {alarm.reason && <FontAwesomeIcon icon={showReason ? faAngleUp : faAngleDown }/>  }
                 </Angle>
             </AlarmContentChat>
             <AlarmContentReason showReason={showReason}>
-                {showReason? <ReasonTemplate>
+                {showReason && <ReasonTemplate>
                                 {alarm.nickname}님의<span>마지막 메세지입니다.</span>
                                 <br/>
                                 <br/>
                                 <span>{alarm.reason}</span>
                              </ReasonTemplate>
-                           : null}
+                           }
             </AlarmContentReason>
         </AlarmContentTemplate>
     );

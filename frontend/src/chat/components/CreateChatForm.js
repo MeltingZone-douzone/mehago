@@ -9,7 +9,8 @@ export default function CreateChatForm({classes, chatRoom, handleChange, handleA
         <FormWrapper>
             <TextField
                 required className={classes.TextField}
-                label="방 이름을 입력하세요" variant="outlined"
+                label="방 이름" variant="outlined"
+                placeholder="방 이름을 입력하세요"
                 name="title" value={chatRoom.title} onChange={handleChange} />
 
             <ChipInput
@@ -24,7 +25,7 @@ export default function CreateChatForm({classes, chatRoom, handleChange, handleA
                         <Switch checked={chatRoom.secretRoom} onChange={handleChange}
                             name="secretRoom" color="primary" />
                     }
-                    label="password"
+                    label="비밀번호"
                 />
                 {chatRoom.secretRoom ?
                     <TextField
@@ -57,12 +58,14 @@ export default function CreateChatForm({classes, chatRoom, handleChange, handleA
             </FormControl>
 
             <FormControlLabel
+                className={classes.onlyAuthorizedSwitch} 
                 control={
                     <Switch checked={chatRoom.onlyAuthorized} onChange={handleChange}
                         name="onlyAuthorized" color="primary" />}
                 label="회원만 이용 가능" />
 
             <FormControlLabel
+                className={classes.searchableSwitch} 
                 control={
                     <Switch checked={chatRoom.searchable} onChange={handleChange}
                         name="searchable" color="primary" />}

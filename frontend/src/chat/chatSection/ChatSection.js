@@ -114,9 +114,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         }
     }, [participantObject])
 
-    useEffect(() =>{
-        if(participants){}
-    },[participants])
+    useEffect(() => {
+        if (participants) { }
+    }, [participants])
 
     useEffect(() => {
         socket.on(`members:status:room${chatRoomNo}`, (msgToJson) => {
@@ -138,11 +138,11 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             history.push("/chat");
         });
 
-        socket.on(`room:deleted:room${chatRoomNo}`, () =>{
+        socket.on(`room:deleted:room${chatRoomNo}`, () => {
             history.push("/chat");
         });
 
-        socket.on(`members:leave:room${chatRoomNo}`, (msgToJson) =>{ 
+        socket.on(`members:leave:room${chatRoomNo}`, (msgToJson) => {
             handleParticipants.leaveParticipant(msgToJson.participantNo);
         });
         socket.on(`join:room${chatRoomNo}`, () => {

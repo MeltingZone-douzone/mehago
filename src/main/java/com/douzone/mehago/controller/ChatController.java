@@ -110,10 +110,13 @@ public class ChatController {
 
     @GetMapping("/getMessageList/{chatRoomNo}")
     public ResponseEntity<?> getMessageList(@PathVariable Long chatRoomNo, String offset, @AuthUser TokenInfo auth) {
-
+        Participant participantInfo = new Participant();
+        if (auth.getIsNonMember() == false) {
+            participantInfo = participantService.getInfoForMessageList(new Account(auth), chatRoomNo);
+            System.out.println(participantInfo.toString());
+        }
         List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset),
-                auth.getIsNonMember() == true ? auth.getNo()
-                        : participantService.getParticipantInfo(new Account(auth), chatRoomNo).getNo());
+                auth.getIsNonMember() == true ? auth.getNo() : participantInfo.getNo());
 
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));
@@ -344,6 +347,7 @@ public class ChatController {
                 participantService.updateIsDeleted(auth.getNo());
                 map.put("chatRoomNo", list.get(0).get("no"));
                 map.put("participantNo", auth.getNo());
+                map.put("nickname", auth.getNickname());
             }
 
             nonMember.setParticipantNo(participantService.addNonMember(participant));
