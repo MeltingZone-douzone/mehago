@@ -107,7 +107,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "update": io.to(roomname).emit(`message:update:readCount:${roomname}`, msgToJson);
             break;
-        case "infoupdate": io.to(roomname).emit(`room:updateInfo`, msgToJson);
+        case "infoupdate": io.to(roomname).emit(`room:updateInfo:${roomname}`, msgToJson);
             break;
         case "leave": io.to(roomname).emit(`members:leave:${roomname}`, msgToJson);
             break;

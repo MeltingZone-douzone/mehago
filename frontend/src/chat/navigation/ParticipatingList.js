@@ -32,6 +32,10 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
             setUpdatedRoom(prevState => ({ ...prevState, ["participantCount"]: msg.AllChatMembers }));
         });
 
+        socket.on(`room:updateInfo:room${room.no}`, (msg) => {
+            setUpdatedRoom(prevState => ({ ...prevState, ["title"]: msg.roomObject.title, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl }));
+        })
+
         socket.on(`update:readCount:room${room.no}`, (msg) => {
             console.log(`update:readCount:room${room.no}`);
             setUpdatedRoom(prevState => ({ ...prevState, ["notReadCount"]: 0 }));
@@ -124,11 +128,11 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                 <Link to={`/chat/${room.no}`}>
                     <ListItem button key={`${room.no}`} className={classes.roomContainer} >
                         <ChattingRoomImage>
-                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
+                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={updatedRoom.thumbnailUrl ? updatedRoom.thumbnailUrl : defaultImage} alt={`${updatedRoom.title}의 이미지`} />
                         </ChattingRoomImage>
                         <ChattingRoomContent>
                             <div className={classes.content}>
-                                <span className={classes.title} > {room.title} </span>
+                                <span className={classes.title} > {updatedRoom.title} </span>
                                 <span className={classes.participantCount}>{updatedRoom.participantCount === 1 ? ' ' : updatedRoom.participantCount}</span>
                                 <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
                             </div>
