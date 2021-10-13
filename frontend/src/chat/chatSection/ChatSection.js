@@ -20,9 +20,9 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     const [hiddenSearchInput, setHiddenSearchInput] = useState(true);
 
     const [joinSuccess, setJoinSuccess] = useState(false);
+    const [deleted, setDeleted] = useState(false);
 
     const [seperate, setSeperate] = useState(false);
-
     const [todoOpen, setTodoOpen] = useState(false);
     const [noticeOpen, setNoticeOpen] = useState(false);
     const [fileUploadOpen, setFileUploadOpen] = useState(false);
@@ -150,14 +150,18 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         });
 
         return () => {
-            socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요
+            if(!deleted){
+                console.log("chatRoomNo unmout useEffect");
+                socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요
+            }
         }
     }, [chatRoomNo])
 
     // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
         return () => {
-            if(userInfo) {
+            if(!deleted && userInfo) {
+                console.log("construtor unmout useEffect");
                 socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
                 handleParticipants.fetchParticipants(); // 네비 Member없애기 위함
             }

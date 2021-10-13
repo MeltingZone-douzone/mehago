@@ -30,8 +30,6 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [favoriteCheck, setFavoriteCheck] = useState(false);
 
     useEffect(()=>{
-        fetchRooms(); // 사이즈가 작아지면 패치가 안되기 때문에 다시 패치룸을 호출
-        
         const delay = 300;
         let timer = null;
 
@@ -87,6 +85,14 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             socket.emit("join", rooms)
         }
     }, [participatingRoom]);
+
+    useEffect(()=>{
+        if(trigger) {
+            if( chatList ){
+                fetchRooms();
+            }
+        }
+    },[trigger])
 
     const fetchFavoriteRooms = () => {
         try {
@@ -169,7 +175,6 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
             </ChatNavbarStyled>
             <ChatNavStyled trigger={trigger}>
                 {trigger? <CloseTrigger onClick={()=>closeAll()}><ArrowBackIcon/></CloseTrigger>: null}
-                {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} /> : null}
                 {chatList ? <ParticipatingRoom socket={socket} userInfo={userInfo} participatingRoom={participatingRoom} setSearchValue={setSearchValue} searchValue={searchValue} updateFavoriteRoom={updateFavoriteRoom} exitRoom={exitRoom} setFavoriteCheck={setFavoriteCheck} updateParticipatingRoom={updateParticipatingRoom} updateParticipatingRoomMessage={updateParticipatingRoomMessage} deletedParticipatingRoom={deletedParticipatingRoom} deletedRoom={deletedRoom} /> : null}
                 {chatMember ? <ParticipatingMember socket={socket} currentParticipants={currentParticipants} userInfo={userInfo} participants={participants} /> : null}
             </ChatNavStyled>
