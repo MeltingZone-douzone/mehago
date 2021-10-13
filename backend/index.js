@@ -269,7 +269,6 @@ io.on("connection", (socket) => {
     socket.on('leave:chat-section', async () => {
         redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
         sendMemberStatus();
-        // TODO:  여기서 줘서 저기서 받아야하나  방나갔다고 프론트에 알려주고 거기서 나간거를 받으면 멤버리스트 안띄우게
         io.to(socket.id).emit(`room:leave:set`);
     });
 
@@ -347,7 +346,7 @@ const getOnlineChatMember = currentRoomName => { // 해당 채팅방의 온라�
     currentRoomName = getRoomNo(currentRoomName);
 
     return new Promise((resolve, reject) => {
-        redisClient.zrevrangebyscore(currentRoomName, 1, 1, (error, result) => {
+        redisClient.zrevrangebyscore(currentRoomName, 1, 1, (error, result) => { // zrevrangebyscore(key, max, min)
             if (error) {
                 reject(error);
             } else {
@@ -360,7 +359,7 @@ const getOnlineChatMember = currentRoomName => { // 해당 채팅방의 온라�
 const getAllChatMember = currentRoomName => { // 해당 채팅방의 총 인원 구할 때 사용
     currentRoomName = getRoomNo(currentRoomName);
     return new Promise((resolve, reject) => {
-        redisClient.zcard(currentRoomName, (error, result) => {
+        redisClient.zcard(currentRoomName, (error, result) => { // zcard : currentRoomName에 속한 멤버 개수 리턴
             if (error) {
                 reject(error);
             } else {

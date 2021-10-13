@@ -232,5 +232,9 @@ const CreateChatRoomButton = styled(NavLink)`
     border-radius:50px;
     text-align:center;
     box-shadow: 3px 3px 4px #999;
+    
+    &:hover {
+        background-color:#0380ef;
+        
     }
 `

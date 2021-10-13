@@ -4,6 +4,7 @@ import { theme } from '../assets/styles/material/MaterialTheme';
 import "../assets/sass/account/Form.scss";
 
 import NonMembers from "../components/NonMember";
+import Login from "../components/Login";
 import axios from 'axios';
 
 export default function IdSearch() {
@@ -100,7 +101,7 @@ export default function IdSearch() {
         </div>
         </ThemeProvider>
       </form>
-      <NonMembers />
+      <Login />
     </div>
   );
 }

@@ -59,7 +59,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 		TokenInfo decodedToken = (TokenInfo) jwtDecoder.decodeJwt(token.split("Bearer ")[1]);
 		request.setAttribute("tokenInfo", decodedToken);
 
-		// 7. 권한(Authorization) 체크를 위해서 @Auth의 role 가져오기 ("ADMIN", "USER")
+		// 7. 권한(Authorization) 체크를 위해서 @Auth의 role 가져오기 ("", "USER")
 		String role = auth.role();
 		String authRole = decodedToken.getIsNonMember() == false ? "ACCOUNT" : "NONMEMBER";
 

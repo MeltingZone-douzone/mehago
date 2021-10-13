@@ -29,6 +29,14 @@ public class ParticipantService {
         return participantRepository.createParticipant(participant);
     }
 
+    public Participant getInfoForMessageList(Account auth, Long chatRoomNo) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("accountNo", auth.getNo());
+        map.put("chatRoomNo", chatRoomNo);
+        return participantRepository.getParticipantInfo(map);
+
+    }
+
     public Participant getParticipantInfo(Account auth, Long chatRoomNo) {
         Map<String, Long> map = new HashMap<>();
         map.put("accountNo", auth.getNo());

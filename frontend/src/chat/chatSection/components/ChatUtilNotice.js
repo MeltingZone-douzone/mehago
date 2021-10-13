@@ -1,8 +1,10 @@
+import { faEraser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { Avatar } from '@material-ui/core';
 import React from 'react';
+import styled from 'styled-components';
 import "../../../assets/sass/chat/ChatUtil.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEraser } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChatUtilNotice({ handleDeleteNotice, notice, userInfo }) {
     return (
@@ -28,10 +30,25 @@ export default function ChatUtilNotice({ handleDeleteNotice, notice, userInfo })
 
         </div>
         ):(
-            <div style={{ lineHeight: "1.5rem" }} className={"nonNotice"} >
-                <p>공지사항이 없습니다.</p>
-            </div>
+            <NonFile>
+                <ErrorOutlineIcon/>
+                <Text>공지사항이 없습니다.</Text>
+            </NonFile>
         )
         
     )
 }
+
+const NonFile = styled.div`
+    color: #272727;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding-top: 2em;
+`
+const Text = styled.div`
+    text-align: center;
+    width: 100%;
+    padding-top:1em;
+    color: #272727;
+`

@@ -41,7 +41,7 @@ module.exports = {
         const conn = dbconn();
         const query = util.promisify(conn.query).bind(conn);
         try {
-            // join 하는 경우에 
+            // join 하는 경우에 TODO:YJ no> ?는 왜
                 return await query(
                     `update message 
                      set not_read_count = not_read_count -1 

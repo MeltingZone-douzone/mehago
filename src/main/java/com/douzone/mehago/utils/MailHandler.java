@@ -40,7 +40,6 @@ public class MailHandler {
     public void setText(String name, String rendomPassword, boolean useHtml) throws MessagingException {
         
         String htmlContent = "";
-        htmlContent += "<img src='https://mblogthumb-phinf.pstatic.net/MjAyMDA4MTRfMTIy/MDAxNTk3MzY4ODE4MDk4.oyQ5wNzuUpDdP860lRZPQ30T18noXnvyvd1x4evvtiwg.h5oh8yhqaF4YyaoM5DQkt1c4TMhsjpITOcO7eLfp210g.JPEG.designpress2016/%EB%A3%A8%ED%94%BC_1.jpg?type=w800' height='24' alt='MEHAGO' />";
         htmlContent += "<h2 style='font-size: 200%' ><strong>[MEHAGO]</strong> "+ name + "님</h2>";
         htmlContent += "<h2 style='font-size: 150%' >임시 비밀번호 안내메일입니다.</h2><br /><br />";
         htmlContent += "<h3 align='center'>안녕하세요 " + name + "회원님</h3>";

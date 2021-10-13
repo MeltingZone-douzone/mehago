@@ -14,18 +14,18 @@ function setAuthHeader() {
 
 export function createDeletedChatAlarmApi(alarmData) {
     setAuthHeader();
-    return axios.post("/api/alarm/deleted-chat/create", alarmData , { headers: AuthHeader })
-                .then(res => res);
+    return axios.post("/api/alarm/deleted-chat/create", alarmData, { headers: AuthHeader })
+        .then(res => res);
 }
 
 export function getAlarmsApi() {
     setAuthHeader();
     return axios.get("/api/alarm/getAlarms", { headers: AuthHeader })
-                .then(res => res);
+        .then(res => res);
 }
 
 export function updateAlarmsApi() {
     setAuthHeader();
-    return axios.get(`/api/alarm/update/read`, {headers: AuthHeader})
-                .then(res => res);
+    return axios.get(`/api/alarm/update/read`, { headers: AuthHeader })
+        .then(res => res);
 }
