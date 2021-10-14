@@ -76,9 +76,8 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     const handleDeleteNotice = (noticeNo) => {
         deleteNotice(noticeNo).then(res => {
             if (res.data.result === "success") {
-                setNotice(
-                    notice.filter((notice) => notice.no !== noticeNo)
-                )
+                // 수정
+                socket.emit(`notice:delete`, noticeNo);
             }
         })
     }
@@ -123,7 +122,8 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
             const { onlineChatMember } = msgToJson;
             handleCurrentParticipants(onlineChatMember);
         });
-        socket.on(`room:updateInfo`, (msgToJson) => {
+        // 수정
+        socket.on(`room:updateInfo:room${chatRoomNo}`, (msgToJson) => {
             setRoomObject(msgToJson.roomObject);
         })
         socket.on('disconnect', (msgToJson) => {
@@ -139,7 +139,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         });
 
         socket.on(`room:deleted:room${chatRoomNo}`, () => {
-            history.push("/chat");
+            history.push("/");
         });
 
         socket.on(`members:leave:room${chatRoomNo}`, (msgToJson) => {
@@ -150,7 +150,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
         });
 
         return () => {
-            if(!deleted){
+            if (!deleted) {
                 console.log("chatRoomNo unmout useEffect");
                 socket.emit('leave:chat-section'); // 네비에서 방 변경할때 필요
             }
@@ -160,7 +160,7 @@ export default function ChatSection({ history, match, handleCurrentParticipants,
     // console.table(`이전:${prevChatRoomNo} 지금: ${chatRoomNo}`);
     useEffect(() => {
         return () => {
-            if(!deleted && userInfo) {
+            if (!deleted && userInfo) {
                 console.log("construtor unmout useEffect");
                 socket.emit('leave:chat-section'); // 채팅리스트로 넘어갈때 즉 ChatSection에서 빠져 나갈때 필요
                 handleParticipants.fetchParticipants(); // 네비 Member없애기 위함
