@@ -34,7 +34,6 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
                 try {
                     getParticipantsList(chatRoomNo).then(res => {
                         if (res.data.result == "fail") {
-                            console.log('fail');
                             return;
                         }
                         setParticipants(res.data.data);
@@ -85,7 +84,6 @@ export default function ChatPage({ match, userInfo, reloadHeaderAlarm }) {
         })
         newArr = newArr.filter(arr => typeof arr === 'object');
         const updatedParticipatingRoom = [].concat(updatedData, newArr);
-        console.log(updatedParticipatingRoom);
         setParticipatingRoom(updatedParticipatingRoom);
     }
 

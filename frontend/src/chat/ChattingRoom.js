@@ -27,7 +27,6 @@ export default function ChattingRoom({
     const check = (no) => {
         try {
             isExistsPasswords(no).then((res) => {
-                // console.log(res.data.account);
                 setIsExistsPassword(res.data.isExistsPassword);
                 setAccount(res.data.account);
             });
@@ -37,11 +36,9 @@ export default function ChattingRoom({
     }
 
     const joinValidation = (no) => { // password check
-        console.log(password);   // account 처리 해야함
         try {
             if (password !== "") (
                 checkPassword(no, password).then((res) => {
-                    console.log(res.data);
                     setPassword({ password: "" });
                     setJoinValidationRoom(res.data);
                 })
@@ -52,10 +49,8 @@ export default function ChattingRoom({
 
     }
     const checkNickname = (no) => {
-        console.log(nickname, no);
         try {
             nicknameValidation(no, nickname).then((res) => {
-                // console.log(res.data);
                 setValidateNickname(res.data);
                 setNickname({ nickname: "" });
             })
@@ -63,8 +58,6 @@ export default function ChattingRoom({
             console.log(err);
         }
     }
-
-    console.log(account);
 
     // function checkJoin(){
     //     if(account === false && joinValidationRoom === "비밀번호가 틀렸습니다."){

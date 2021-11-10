@@ -130,7 +130,6 @@ export default function CreateChatRoom({ history, fetchRooms}) {
                     // history.push('/chat');
                 }
                 fetchRooms();
-                console.log(res);
                 history.replace(`/chat/${res.data.data.chatRoomNo}`);
             });
         } catch (err) {

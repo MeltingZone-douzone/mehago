@@ -19,7 +19,7 @@ import { faComment, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import ParticipatingRoom from './ParticipatingRoom';
 import ParticipatingMember from './ParticipatingMember';
 
-export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, setParticipants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom, deletedRoom }) {
+export default function ChatNavbar({ socket, currentParticipants, userInfo, participants, fetchRooms, participatingRoom, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom, setParticipatingRoom, deletedRoom }) {
     const classes = madeStyles();
     const [trigger, setTrigger] = useState(false);
 
@@ -32,6 +32,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
     const [favoriteCheck, setFavoriteCheck] = useState(false);
 
     useEffect(()=>{
+        
         const delay = 300;
         let timer = null;
 
@@ -88,13 +89,15 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
         }
     }, [participatingRoom]);
 
+
     useEffect(()=>{
         if(trigger) {
+
             if( chatList ){
                 fetchRooms();
             }
         }
-    },[trigger])
+    },[trigger, chatList])
 
     const fetchFavoriteRooms = () => {
         try {
@@ -139,7 +142,7 @@ export default function ChatNavbar({ socket, currentParticipants, userInfo, part
                 fetchFavoriteRooms();
             })
         } catch (error) {
-            console.log();
+            console.log(error);
         }
     }
 

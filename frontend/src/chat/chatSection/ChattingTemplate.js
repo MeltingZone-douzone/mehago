@@ -27,7 +27,7 @@ export default function ChattingTemplate({ socket, messageFunction, participantO
                             <span ><FontAwesomeIcon className={classes.noticeIcon} icon={faBullhorn}/></span>                            
                             <div className={classes.notice}>
                                 <p>{notice[0].notice}</p>
-                                <Button className={classes.dropDown} >{expandable ? <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronUp}/> : <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronDown}/>}</Button>
+                                {/* <Button className={classes.dropDown} >{expandable ? <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronUp}/> : <FontAwesomeIcon className={classes.noticeIcon} icon={faChevronDown}/>}</Button> */}
                             </div>
                             {/* 여기에 버튼 만들어서 접어두기/열기 만들어야 함 */}
                         </Notice>

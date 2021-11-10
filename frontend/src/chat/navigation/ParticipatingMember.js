@@ -25,7 +25,6 @@ export default function ParticipatingMember({ currentParticipants, userInfo, par
     useEffect(() => {
         if (!userInfo) {
             getNonMemberInfo().then(res => {
-                // console.log(res.data.data);
                 setNonMember(res.data.data);
             });
         }

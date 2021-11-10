@@ -17,14 +17,22 @@ Modal.setAppElement('body');
 
 export default function ParticipatingList({ socket, room, userInfo, updateFavoriteRoom, exitRoom, setFavoriteCheck, updateParticipatingRoom, updateParticipatingRoomMessage, deletedParticipatingRoom }) {
     const classes = madeStyles();
+    
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [leave, setLeave] = useState(false);
     const [updatedRoom, setUpdatedRoom] = useState(room);
 
-    // 나가는거 구현해야 됨
+    useEffect(()=>{
+        if(!leave) {
+            if(room !== updatedRoom) {
+                updateParticipatingRoom(updatedRoom);
+            }
+        }
+    },[leave,updatedRoom]);
+
     useEffect(() => {
-        socket.on(`chat:message:room${room.no}`, (msg) => {
-            console.log(`chat:message:room${room.no}`);
+
+        socket.on(`chat:message:nav:room${room.no}`, (msg) => {
             setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["leastMessageAt"]: Date.now(), ["notReadCount"]: prevState.notReadCount + 1 }));
         });
 
@@ -33,13 +41,14 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
         });
 
         socket.on(`update:readCount:room${room.no}`, (msg) => {
-            console.log(`update:readCount:room${room.no}`);
             setUpdatedRoom(prevState => ({ ...prevState, ["notReadCount"]: 0 }));
         });
 
+        socket.on(`room:updateInfo:room${room.no}`, (msg) => {
+            setUpdatedRoom(prevState => ({ ...prevState, ["title"]: msg.roomObject.title, ["thumbnailUrl"]: msg.roomObject.thumbnailUrl }));
+        })
+        
         socket.on(`members:leave:room${room.no}`, (msg) => {
-            // 멤버 줄이기 추가도 해야됨
-            console.log("members:leave", msg)
             if (msg.accountNo !== userInfo.no) {
                 setUpdatedRoom(prevState => ({ ...prevState, ["leastMessage"]: msg.message, ["participantCount"]: msg.AllChatMembers }));
             }
@@ -55,16 +64,16 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
             deletedParticipatingRoom.handleAlarm();
             deletedParticipatingRoom.deletedParticipatingRoom(msg);
         });
-
     }, [])
 
-    useEffect(() => {
-        return () => {
-            if (!leave && room !== updatedRoom) {
-                updateParticipatingRoom(updatedRoom);
-            }
-        }
-    }, [updatedRoom])
+
+    // useEffect(()=>{
+    //     return () =>{
+    //         if(!leave && room !== updatedRoom) {
+    //             updateParticipatingRoom(updatedRoom);
+    //         }
+    //     }
+    // },[leave,updatedRoom]);
 
     function timeForToday(leastMessageAt) {
         const today = new Date();
@@ -124,11 +133,11 @@ export default function ParticipatingList({ socket, room, userInfo, updateFavori
                 <Link to={`/chat/${room.no}`}>
                     <ListItem button key={`${room.no}`} className={classes.roomContainer} >
                         <ChattingRoomImage>
-                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={room.thumbnailUrl ? room.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
+                            <img className={room.thumbnailUrl ? classes.thumbnail : classes.defaultImage} src={updatedRoom.thumbnailUrl ? updatedRoom.thumbnailUrl : defaultImage} alt={`${room.title}의 이미지`} />
                         </ChattingRoomImage>
                         <ChattingRoomContent>
                             <div className={classes.content}>
-                                <span className={classes.title} > {room.title} </span>
+                                <span className={classes.title} > {updatedRoom.title} </span>
                                 <span className={classes.participantCount}>{updatedRoom.participantCount === 1 ? ' ' : updatedRoom.participantCount}</span>
                                 <span className={classes.leastMessageAt}>{timeForToday(updatedRoom.leastMessageAt)}</span>
                             </div>

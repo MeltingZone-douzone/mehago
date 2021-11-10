@@ -78,14 +78,12 @@ export function updateThumbnailApi(form) {
 
 
 export function createNonMember() {
-    console.log("nonMemberApi");
     return axios.get("/api/account/createNonMember", { headers: header })
         .then(res => res);
 }
 
 export function leaveMember(accountNo) {
     setAuthHeader();
-    console.log(accountNo);
     return axios.get(`/api/account/leaveMember/${accountNo}`, { headers: AuthHeader })
         .then(res => res);
 }

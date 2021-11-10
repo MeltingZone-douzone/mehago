@@ -13,7 +13,6 @@ export default function ProfileSettingsPage({ handleAuthentication,userInfo, rel
         
         setUserInfo: (newUserInfo) => {
             updateUserInfoApi(newUserInfo).then(res => {
-                console.log(res);
                 if (res.data.result === 'fail') {
                     alert(res.data.message);
                 } else {
@@ -31,7 +30,6 @@ export default function ProfileSettingsPage({ handleAuthentication,userInfo, rel
             }
 
             await updatePasswordApi(passwords).then(res => {
-                console.log(res);
                 if (res.data.result === 'fail') {
                     result = res.data.message;
                 } else {

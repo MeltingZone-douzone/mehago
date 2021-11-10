@@ -88,12 +88,12 @@ httpServer
 // 모두에게 메세지 보내기
 io.of('/').adapter.subClient.on('message', (roomname, message) => {
     const msgToJson = JSON.parse(message);
-    // console.log("msgToJson", msgToJson.validation, msgToJson, roomname);
+    console.log("msgToJson", msgToJson.validation, msgToJson, roomname);
 
     switch (msgToJson.validation) {
         case "join": io.to(roomname).emit(`join:${roomname}`, msgToJson);
             break;
-        case "message": io.to(roomname).emit(`chat:message:${roomname}`, msgToJson);
+        case "message": io.to(roomname).emit(`chat:message:section:${roomname}`, msgToJson); io.to(roomname).emit(`chat:message:nav:${roomname}`, msgToJson);
             break;
         case "members_count": io.to(roomname).emit(`members:count:${roomname}`, msgToJson);
             break;
@@ -107,7 +107,7 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
             break;
         case "update": io.to(roomname).emit(`message:update:readCount:${roomname}`, msgToJson);
             break;
-        case "infoupdate": io.to(roomname).emit(`room:updateInfo`, msgToJson);
+        case "infoupdate": io.to(roomname).emit(`room:updateInfo:${roomname}`, msgToJson);
             break;
         case "leave": io.to(roomname).emit(`members:leave:${roomname}`, msgToJson);
             break;
@@ -121,7 +121,6 @@ io.of('/').adapter.subClient.on('message', (roomname, message) => {
 
 
 io.on("connection", (socket) => {
-    console.log("node connected");
     let messageObj = {};
     let roomObj = {};
     let participantObj = {};
@@ -131,7 +130,6 @@ io.on("connection", (socket) => {
     // DB에 저장 된 채팅 방 모두 입장
     socket.on('join', (rooms) => {
         socket.join(rooms);
-
     })
 
     socket.on('join:chat', async (roomObject, participantObject) => {
@@ -185,7 +183,6 @@ io.on("connection", (socket) => {
             "validation": "update",
             changedRows
         }
-        console.log(object);
         if (changedRows) {
             io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(object));
             io.to(socket.id).emit(`update:readCount:${currentRoomName}`, { "chatRoomNo": roomObj.no });
@@ -193,14 +190,16 @@ io.on("connection", (socket) => {
     })
 
     socket.on("disconnect", async (reason) => {
-        redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
-        sendMemberStatus();
+        if( currentRoomName ){
+            redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
+            sendMemberStatus();
+        }
         console.log("node disconnected", reason);
     })
 
     socket.on('chat message', async (message) => {
+        console.log("chat Message");
         let chatMembersCount = await getAllChatMember(currentRoomName);
-        console.log(chatMembersCount);
         const insertMsg = Object.assign({}, messageObj, { "validation": "message", "message": message, "notReadCount": chatMembersCount, "state": 1 });
         await messageController.addMessage(insertMsg);
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(insertMsg));
@@ -267,9 +266,11 @@ io.on("connection", (socket) => {
 
     // leave:chat-section -> chatsection에서 나가게 되면 redis에 담긴 상태 변화함( 온라인, 오프라인 용도)
     socket.on('leave:chat-section', async () => {
-        redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
-        sendMemberStatus();
-        io.to(socket.id).emit(`room:leave:set`);
+        if(socket.rooms.has(currentRoomName)) {
+            redisClient.zadd(getRoomNo(currentRoomName), 0, participantObj.no); // key : 채팅방 no, score : 상태 , members : 참여자 no  ==> 상태 1일 경우 온라인 0일 경우 오프라인
+            sendMemberStatus();
+            io.to(socket.id).emit(`room:leave:set`);
+        }
     });
 
     // leave:chat-room -> 방 나가기로 소켓에서도 떠나야함. (DB에서 참여자가 채팅방에서 나갔을때)
@@ -297,13 +298,11 @@ io.on("connection", (socket) => {
 
 
         await messageController.addMessage(leaveMessage);
-        await messageController.leaveRoom(chatRoomNo);
 
         io.to(socket.id).emit(`room:leave:${chatRoomNo}`, { "chatRoomNo": chatRoomNo });
-        await io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
-
         socket.leave(`room${chatRoomNo}`);
         redisClient.unsubscribe(`room${chatRoomNo}`);
+        await io.of('/').adapter.pubClient.publish(`room${chatRoomNo}`, JSON.stringify(leaveMessage));
 
         // io.of('/').adapter.subClient.unsubscribe(`room${chatRoomNo}`) // 구독하고 있는 방 해제 / 얘를 하면 다른애들도 pub이안옴
 
@@ -326,8 +325,18 @@ io.on("connection", (socket) => {
             "validation": "room-deleted",
             "chatRoomNo": roomObj.no
         }
+        
         io.of('/').adapter.pubClient.publish(currentRoomName, JSON.stringify(roomDeleted));
     });
+
+    socket.on(`room:deleted`, (chatRoomNo)=>{
+        leaveRoom(chatRoomNo);
+    })
+
+    const leaveRoom = (chatRoomNo) =>{
+        socket.leave(`room${chatRoomNo}`);
+        redisClient.unsubscribe(`room${chatRoomNo}`);
+    }
 
     const sendMemberStatus = async () => {
         let onlineChatMember;

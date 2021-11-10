@@ -8,7 +8,7 @@ export default function Thumbnail({ thumbnailUrl, nickname }) {
                 thumbnailUrl ?
                     <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={thumbnailUrl} alt={"thumbnailUrl"} />
                     :
-                    <Jdenticon value={nickname} />
+                    <Jdenticon value={nickname || "guest"} />
             }
         </>
     )

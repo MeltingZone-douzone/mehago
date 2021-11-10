@@ -4,9 +4,7 @@ const participantModel = require("../models/participant");
 
 module.exports = {
     addMessage: async function (insertMsg) {
-        console.log("insertMsg", insertMsg);
         const result = await messageModel.addMessage(insertMsg);
-        console.log(result ,": affectedRows");
         if (result.affectedRows == 1 ) {
             insertMsg.no = result.insertId;
             await participantModel.addNotReadCount(insertMsg.chatRoomNo);
@@ -30,11 +28,7 @@ module.exports = {
         // participant의 not_read_count를 0으로, last_read_count를 채팅방 마지막 번호로
         await participantModel.updateLastReadChatNo(participant);
         const result = await participantModel.updateNotReadCountToZero(participant);
-        console.log(result);
 
-    },
-    leaveRoom : async function (chatRoomNo) {
-        console.log(chatRoomNo);
     }
 
 };

@@ -6,7 +6,6 @@ import { getMessageList } from '../../../api/ChatApi';
 import '../../assets/sass/chat/ChatRoomSection.scss';
 import ReceivedMessage from './ReceivedMessage';
 import SendMessage from './SendMessage';
-import styled from 'styled-components';
 
 
 export default function Chatting({ socket, participantObject, roomObject, chatRoomNo, searchMessage, cursor, hiddenSearchInput, notice }) {
@@ -23,18 +22,18 @@ export default function Chatting({ socket, participantObject, roomObject, chatRo
     const [searchMessageOffset, setSearchMessageOffset] = useState([]);
 
     useEffect(() => {
-        socket.on(`chat:message:room${chatRoomNo}`, (msg) => {
+        socket.on(`chat:message:section:room${chatRoomNo}`, (msg) => {
             setReceivedMsg(msg);
             setReceviedMessageSuccess(true);
         });
-
         socket.on(`message:update:readCount:room${chatRoomNo}`, (msgToJson) => {
             setChangedRows(msgToJson.changedRows);
         });
         fetchItems();
-
         socket.on(`members:leave:room${chatRoomNo}`, (msg)=>{
-            setReceivedMsg(msg);
+            if(participantObject.no != msg.participantNo) {
+                setReceivedMsg(msg);
+            }
         });
         socket.on(`join:room${chatRoomNo}`, (msg)=>{
             setReceivedMsg(msg);

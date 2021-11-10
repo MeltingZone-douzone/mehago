@@ -159,7 +159,6 @@ export default function ChatRoomSetting({ roomObject, settingRoomFunction, passw
                     };
                     settingRoomFunction.deletedChatRoom(reason);
                     window.alert(`${chatRoom && chatRoom.title !== undefined ? chatRoom.title : roomObject.title} 채팅방이 삭제되었습니다.`);
-                    history.replace('/chat');
                     return;
                 })
         },

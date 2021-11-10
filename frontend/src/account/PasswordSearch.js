@@ -22,7 +22,6 @@ export default function PasswordSearch() {
   };
 
   const emailSend = () => {
-    console.log("보내기");
     try {
         setSendMassege(true);
         const url = `/api/account/findByNameAndEmail`;

@@ -7,7 +7,6 @@ module.exports = {
         const conn = dbconn();
         const query = util.promisify(conn.query).bind(conn);
         try {
-            console.log(message);
             return await query(
                 "INSERT INTO message VALUES (null, ?, ?, ?, now(), ?, ?)",
                 [message.participantNo, message.message, message.notReadCount, message.chatRoomNo, message.state]

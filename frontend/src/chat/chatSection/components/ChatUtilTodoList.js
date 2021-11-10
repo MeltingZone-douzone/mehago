@@ -42,14 +42,11 @@ export default function ChatUtilTodoList({ socket, participantObject, chatRoomNo
     }
 
     const onScroll = (e) => {
-        console.log("ㅎㅇ");
         const scrollHeight = e.target.scrollHeight;     // chatRoomAreaRef 의 총 크기
         const fetchPointHeight = scrollHeight * 3 / 4;
         const scrollTop = Math.abs(e.target.scrollTop); // 스크롤해서 올라간 높이
         const clientHeight = e.target.clientHeight;     // 사용자 화면 크기
-        console.log(scrollHeight, fetchPointHeight, scrollTop, clientHeight);
         if (scrollTop + clientHeight >= fetchPointHeight && !isFetching && !isEnd) {
-            console.log("오 ㅎㅇ");
             fetchChatRooms();
             setIsFetching(true);
         }
@@ -58,7 +55,6 @@ export default function ChatUtilTodoList({ socket, participantObject, chatRoomNo
     const handleChange = (e) => setInputText(e.target.value);
 
     const handleToggle = (no) => {
-        console.log(no);
         updateCheckTodo(no)
             .then(res => {
                 if (res.data.result === 'success') {
@@ -102,10 +98,8 @@ export default function ChatUtilTodoList({ socket, participantObject, chatRoomNo
                 console.error(error);
             })
     }
-    console.log(todos);
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && inputText !== '') {
-            console.log(inputText);
             handleAddTodo();
         }
     }

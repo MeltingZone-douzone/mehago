@@ -33,7 +33,7 @@
             c.no = p.chat_room_no
             and c.owner = a.no
             and c.is_deleted = false
-            and c.searchable = true
+            and c.searchable=true
           order by 
               c.no desc
           limit
@@ -53,7 +53,7 @@
           c.no = p.chat_room_no
           and c.owner = a.no
           and c.is_deleted = false
-          and c.searchable = true
+          and c.searchable=true
           and c.no < #{value}
         order by 
             c.no desc
@@ -110,7 +110,7 @@
   <select id="participatingRoom" parameterType="Long" resultType="map">
     <![CDATA[
          SELECT 
-            c.no, c.title, c.thumbnail_url as thumbnailUrl, p.favorite_room as favoriteRoom, p.not_read_count as notReadCount,
+            c.no, c.title, c.thumbnail_url as thumbnailUrl, p.favorite_room as favoriteRoom, p.not_read_count as notReadCount, c.owner,
               (select count(no) from participant where chat_room_no = c.no and is_deleted = false) as participantCount,
                   (select ifnull(DATE_FORMAT(max(created_at), '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(c.created_at, '%Y-%m-%d %H:%i:%s'))
                     from message 
@@ -172,7 +172,7 @@
   <select id="keywordSearch" parameterType="String" resultType="map">
     <![CDATA[
      	SELECT DISTINCT
-            c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.searchable, c.owner,
+            c.no, c.title, c.password, c.thumbnail_url as thumbnailUrl, c.limited_user_count as limitedUserCount, DATE_FORMAT(c.created_at , '%Y-%m-%d %H:%i:%s') as createdAt, c.only_authorized as onlyAuthorized , c.secret_room as secretRoom, c.searchable, c.owner,
         (select count(no) from participant where chat_room_no = c.no and is_deleted = false) as participantCount,
         (select DATE_FORMAT(created_at , '%Y-%m-%d %H:%i:%s') from message where chat_room_no = c.no order by created_at desc limit 1) as lastMessage
       FROM
@@ -195,6 +195,8 @@
           c.is_deleted = false
       AND 
           p.is_deleted = false
+      AND
+          c.searchable = true
     ]]>
   </select>
 

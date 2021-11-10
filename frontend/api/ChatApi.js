@@ -141,7 +141,6 @@ export function enterRoomValidationApi(chatRoomNo) { // FIXME: 함수명 바꾸�
 export function updateFavoriteRoomApi(chatRoomNo, favoriteStatus) {
     setAuthHeader();
     const favoriteStatusObject = { "favoriteRoom": favoriteStatus };
-    // console.log(favoriteStatusObject);
     return axios.post(`/api/chat/updateFavoriteRoom/${chatRoomNo}`, favoriteStatusObject, { headers: AuthHeader })
         .then(res => res);
 }

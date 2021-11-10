@@ -29,7 +29,6 @@ export default function IdSearch() {
 
         axios.post(url, account , {headers:{'Context-Type': 'application/json'}})
             .then(res => {
-                console.log(res.data);
                 if(res.data == "cant find Account"){
                     setSearchEmail(false);
                 } else {

@@ -113,10 +113,9 @@ public class ChatController {
         Participant participantInfo = new Participant();
         if (auth.getIsNonMember() == false) {
             participantInfo = participantService.getInfoForMessageList(new Account(auth), chatRoomNo);
-            System.out.println(participantInfo.toString());
         }
         List<Message> list = messageService.getMessageList(chatRoomNo, Long.parseLong(offset),
-                auth.getIsNonMember() == true ? auth.getNo() : participantInfo.getNo());
+                auth.getIsNonMember() == true ? auth.getNo() : participantInfo==null? 0L: participantInfo.getNo());
 
         return ResponseEntity.ok()
                 .body(list != null ? CommonResponse.success(list) : CommonResponse.fail("해당 채팅방에 메세지가 존재하지 않습니다"));

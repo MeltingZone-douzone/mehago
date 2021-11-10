@@ -19,7 +19,7 @@ import HomePage from './pages/HomePage';
 
 export default function MainRouter() {
     // let history = useHistory();
-    const [userInfo, setUserInfo] = useState({ nickname: "", name: "", phoneNumber: "", thumbnailUrl: "" });
+    const [userInfo, setUserInfo] = useState({ nickname: "", name: "", phoneNumber: "", thumbnailUrl: "" , alarmTrigger: false});
     const [isExistToken, setIsExistToken] = useState(false);
     const [authentication, setAuthentication] = useState(false);
 
@@ -51,9 +51,8 @@ export default function MainRouter() {
     }
     
     const reloadHeaderAlarm = () =>{
-        if(userInfo) {
-            getAlarms();
-        }
+        console.log(userInfo);
+        setUserInfo( prevState => ({...prevState, ["alarmTrigger"] : !prevState.alarmTrigger}));
     }
 
     const getUserInfo = () => {

@@ -22,7 +22,6 @@ export default function UserSettingsTemplate({ handleAuthentication ,user, setti
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
     const unregister = () =>{
-        // console.log(user.no);
         leaveMember(user.no).then((res) => {
             handleAuthentication(false);
             localStorage.remove("token");
